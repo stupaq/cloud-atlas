@@ -25,6 +25,9 @@
         <module name="cloud-atlas" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="cloud-atlas" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 
