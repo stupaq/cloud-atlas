@@ -6,6 +6,7 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeType;
 import stupaq.cloudatlas.serialization.SerializationUtils;
+import stupaq.cloudatlas.zone.ZoneManagementInfo;
 
 import static org.junit.Assert.assertEquals;
 

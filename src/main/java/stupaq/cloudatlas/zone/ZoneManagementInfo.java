@@ -1,4 +1,4 @@
-package stupaq.cloudatlas;
+package stupaq.cloudatlas.zone;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -12,16 +12,14 @@ import stupaq.cloudatlas.serialization.ASCIIString;
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class ZoneManagementInfo implements CompactSerializable {
+public final class ZoneManagementInfo implements CompactSerializable {
   private final ASCIIString localName;
   private final Map<AttributeName, Attribute> attributes;
-  private transient ZoneManagementInfo parentZone;
 
   @SerializationOnly
   public ZoneManagementInfo() {
     localName = new ASCIIString(null);
     attributes = new HashMap<>();
-    parentZone = null;
   }
 
   public void addAttribute(Attribute attribute) {
@@ -53,9 +51,7 @@ public class ZoneManagementInfo implements CompactSerializable {
   public boolean equals(Object o) {
     ZoneManagementInfo that = (ZoneManagementInfo) o;
     return this == o || !(o == null || getClass() != o.getClass()) && attributes
-        .equals(that.attributes) && localName.equals(that.localName) && !(parentZone != null
-                                                                          ? !parentZone
-        .equals(that.parentZone) : that.parentZone != null);
+        .equals(that.attributes) && localName.equals(that.localName);
 
   }
 
@@ -63,7 +59,6 @@ public class ZoneManagementInfo implements CompactSerializable {
   public int hashCode() {
     int result = localName.hashCode();
     result = 31 * result + attributes.hashCode();
-    result = 31 * result + (parentZone != null ? parentZone.hashCode() : 0);
     return result;
   }
 }
