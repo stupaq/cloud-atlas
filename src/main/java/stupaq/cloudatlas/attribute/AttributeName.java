@@ -25,13 +25,13 @@ public final class AttributeName extends ASCIIString implements CompactSerializa
     super(name);
     verifyInvariants();
     Preconditions.checkArgument(reserved || !name.startsWith(RESERVED_PREFIX),
-                                "Attribute name cannot start with reserved prefix: "
+                                "AttributeName cannot start with reserved prefix: "
                                 + RESERVED_PREFIX);
   }
 
   private void verifyInvariants() throws NullPointerException, IllegalStateException {
-    Preconditions.checkNotNull(toString(), "Attribute name cannot be null");
-    Preconditions.checkState(!toString().isEmpty(), "Attribute name cannot be empty");
+    Preconditions.checkNotNull(toString(), "AttributeName cannot be null");
+    Preconditions.checkState(!toString().isEmpty(), "AttributeName cannot be empty");
   }
 
   @Override

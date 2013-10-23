@@ -8,8 +8,9 @@ import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.cloudatlas.serialization.TypeRegistry;
 
-public final class Attribute<Type> implements CompactSerializable {
+public final class Attribute<Type extends AttributeValue> implements CompactSerializable {
   private final AttributeName name;
   private AttributeType type;
   private Type value;
@@ -22,8 +23,8 @@ public final class Attribute<Type> implements CompactSerializable {
   }
 
   public Attribute(AttributeName name, AttributeType type, Type value) {
-    Preconditions.checkNotNull(name, "Attribute name cannot be null");
-    Preconditions.checkNotNull(type, "Attribute type cannot be null");
+    Preconditions.checkNotNull(name, "AttributeName cannot be null");
+    Preconditions.checkNotNull(type, "AttributeType cannot be null");
     this.name = name;
     this.type = type;
     this.value = value;
@@ -46,16 +47,14 @@ public final class Attribute<Type> implements CompactSerializable {
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     name.readFields(in);
     type = AttributeType.readInstance(in);
-    // TODO(stupaq): how not to rely on Java's serialization here
-    value = (Type) in.readObject();
+    value = TypeRegistry.readObject(in);
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
     name.writeFields(out);
     AttributeType.writeInstance(out, type);
-    // TODO(stupaq): how not to rely on Java's serialization here
-    out.writeObject(value);
+    TypeRegistry.writeObject(out, value);
   }
 
   @Override
