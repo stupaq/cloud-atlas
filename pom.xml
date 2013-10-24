@@ -8,6 +8,12 @@
     <artifactId>cloud-atlas</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <parsers.root-directory>src/main/java/</parsers.root-directory>
+        <parsers.package>stupaq.cloudatlas.parsers</parsers.package>
+        <parsers.query-language>QueryLanguage</parsers.query-language>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -32,6 +38,31 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <exec dir="${parsers.root-directory}" executable="bnfc">
+                                    <arg value="-java"/>
+                                    <arg value="-p"/>
+                                    <arg value="${parsers.package}"/>
+                                    <arg value="../../${parsers.query-language}.cf"/>
+                                </exec>
+                                <exec dir="${parsers.root-directory}" executable="rm">
+                                    <arg value="${parsers.query-language}.tex"/>
+                                </exec>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
