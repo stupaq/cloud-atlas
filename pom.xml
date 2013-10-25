@@ -73,86 +73,101 @@
                     </filesets>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <target name="bnf-converter">
-                                <exec dir="${parser.root-dir}" executable="bnfc">
-                                    <arg value="-java"/>
-                                    <arg value="-p"/>
-                                    <arg value="${parser.package-name}"/>
-                                    <arg value="${parser.grammar-file}"/>
-                                </exec>
-                                <exec dir="${parser.root-dir}" executable="rm">
-                                    <arg value="-f"/>
-                                    <arg value="${parser.grammar-name}.tex"/>
-                                </exec>
-                                <exec dir="${parser.root-dir}" executable="patch">
-                                    <arg value="-p0"/>
-                                    <arg value="-i"/>
-                                    <arg value="${parser.patch-file}"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>de.jflex</groupId>
-                <artifactId>maven-jflex-plugin</artifactId>
-                <version>1.4.3</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <backup>false</backup>
-                            <jlex>true</jlex>
-                            <lexDefinitions>
-                                <lexDefinition>${parser.jlex-file}</lexDefinition>
-                            </lexDefinitions>
-                            <outputDirectory>${parser.root-dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>edu.tum.cs</groupId>
-                <artifactId>cup-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <backup>false</backup>
-                    <cupDefinition>${parser.cup-file}</cupDefinition>
-                    <!--
-                    <className>${parser.grammar-name}Parser</className>
-                    <symbolsName>${parser.grammar-name}Symbols</symbolsName>
-                    -->
-                    <outputDirectory>${parser.code-dir}/</outputDirectory>
-                    <dumpGrammar>true</dumpGrammar>
-                    <noPositions>true</noPositions>
-                    <expectedConflicts>${parser.expected-conflicts}</expectedConflicts>
-                    <nontermsToSymbols>true</nontermsToSymbols>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>generate-parser-profile</id>
+            <activation>
+                <property>
+                    <name>generateParser</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <configuration>
+                                    <target name="bnf-converter">
+                                        <exec dir="${parser.root-dir}" executable="bnfc">
+                                            <arg value="-java"/>
+                                            <arg value="-p"/>
+                                            <arg value="${parser.package-name}"/>
+                                            <arg value="${parser.grammar-file}"/>
+                                        </exec>
+                                        <exec dir="${parser.root-dir}" executable="rm">
+                                            <arg value="-f"/>
+                                            <arg value="${parser.grammar-name}.tex"/>
+                                        </exec>
+                                        <exec dir="${parser.root-dir}" executable="patch">
+                                            <arg value="-p0"/>
+                                            <arg value="-i"/>
+                                            <arg value="${parser.patch-file}"/>
+                                        </exec>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>de.jflex</groupId>
+                        <artifactId>maven-jflex-plugin</artifactId>
+                        <version>1.4.3</version>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <backup>false</backup>
+                                    <jlex>true</jlex>
+                                    <lexDefinitions>
+                                        <lexDefinition>${parser.jlex-file}</lexDefinition>
+                                    </lexDefinitions>
+                                    <outputDirectory>${parser.root-dir}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>edu.tum.cs</groupId>
+                        <artifactId>cup-maven-plugin</artifactId>
+                        <version>1.0.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <backup>false</backup>
+                            <cupDefinition>${parser.cup-file}</cupDefinition>
+                            <!--
+                            <className>${parser.grammar-name}Parser</className>
+                            <symbolsName>${parser.grammar-name}Symbols</symbolsName>
+                            -->
+                            <outputDirectory>${parser.code-dir}/</outputDirectory>
+                            <dumpGrammar>true</dumpGrammar>
+                            <noPositions>true</noPositions>
+                            <expectedConflicts>${parser.expected-conflicts}</expectedConflicts>
+                            <nontermsToSymbols>true</nontermsToSymbols>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
