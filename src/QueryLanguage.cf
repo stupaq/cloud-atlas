@@ -1,38 +1,38 @@
 entrypoints Program;
 
-PProgram. Program ::= [Statement];
+PProgram.   Program ::= [Statement];
 separator nonempty Statement ";";
 
-SStmt. Statement ::= "SELECT" [SelectItem] WhereClause OrderClause;
+SStmt.      Statement ::= "SELECT" [SelectItem] WhereClause OrderClause;
 separator nonempty SelectItem ",";
 
-WCWhere. WhereClause ::= "WHERE" CondExpr;
-WCEmpty. WhereClause ::= "";
+WCWhere.    WhereClause ::= "WHERE" CondExpr;
+WCEmpty.    WhereClause ::= ;
 OClOrderBy. OrderClause ::= "ORDER BY" [OrderItem];
-OClEmpty.   OrderClause ::= "";
+OClEmpty.   OrderClause ::= ;
 
-OIBasic. OrderItem ::= BasicExpr OrderConst NullsClause;
-OICond.  OrderItem ::= CondExpr OrderConst NullsClause;
+OIBasic.    OrderItem ::= BasicExpr OrderConst NullsClause;
+OICond.     OrderItem ::= CondExpr OrderConst NullsClause;
 separator nonempty OrderItem ",";
 
-OCAsc.   OrderConst ::= "ASC";
-OCDesc.  OrderConst ::= "DESC";
-OCEmpty. OrderConst ::= "";
+OCAsc.      OrderConst ::= "ASC";
+OCDesc.     OrderConst ::= "DESC";
+OCEmpty.    OrderConst ::= ;
 
-NCNullsFirst. NullsClause ::= "NULLS" "FIRST";
-NCNullsLast.  NullsClause ::= "NULLS" "LAST";
-NCNullsEmpty. NullsClause ::= "";
+NCNullsFirst.   NullsClause ::= "NULLS" "FIRST";
+NCNullsLast.    NullsClause ::= "NULLS" "LAST";
+NCNullsEmpty.   NullsClause ::= ;
 
-SIItemBasic. SelectItem ::= BasicExpr AsClause;
-SIItemCond.  SelectItem ::= CondExpr AsClause;
+SIItemBasic.    SelectItem ::= BasicExpr AsClause;
+SIItemCond.     SelectItem ::= CondExpr AsClause;
 
-ACAsClause. AsClause ::= "AS" CloudAtlasIdent;
-ACAsClauseEmpty. AsClause ::= "";
+ACAsClause.         AsClause ::= "AS" CAIdent;
+ACAsClauseEmpty.    AsClause ::= ;
 
-CEOr.  CondExpr ::= CondExpr "OR" CondExpr1;
-CEAnd. CondExpr1 ::= CondExpr1 "AND" CondExpr2;
-CENot. CondExpr2 ::= "NOT" CondExpr2;
-CEBasic.     CondExpr2 ::= BasicExpr;
+CEOr.           CondExpr ::= CondExpr "OR" CondExpr1;
+CEAnd.          CondExpr1 ::= CondExpr1 "AND" CondExpr2;
+CENot.          CondExpr2 ::= "NOT" CondExpr2;
+CEBasic.        CondExpr2 ::= BasicExpr;
 
 coercions CondExpr 2;
 
@@ -48,8 +48,8 @@ BEMultiply.     BasicExpr2 ::= BasicExpr2 "*" BasicExpr3;
 BEDivide.       BasicExpr2 ::= BasicExpr2 "/" BasicExpr3;
 BEModulo.       BasicExpr2 ::= BasicExpr2 "%" BasicExpr3;
 BENeg.          BasicExpr3 ::= "-" BasicExpr3;
-BEVar.          BasicExpr4 ::= CloudAtlasIdent;
-BECall.         BasicExpr4 ::= CloudAtlasIdent "(" [ExprListItem] ")";
+BEVar.          BasicExpr4 ::= CAIdent;
+BECall.         BasicExpr4 ::= CAIdent "(" [ExprListItem] ")";
 BEString.       BasicExpr4 ::= String;
 BETrue.         BasicExpr4 ::= "true";
 BEFalse.        BasicExpr4 ::= "false";
@@ -65,4 +65,4 @@ ELIBasic.       ExprListItem ::= BasicExpr;
 ELICond.        ExprListItem ::= CondExpr;
 separator nonempty ExprListItem ",";
 
-token CloudAtlasIdent ((letter | '&') (letter | digit | '_')*);
+token CAIdent ((letter | '&') (letter | digit | '_')*);
