@@ -1,68 +1,69 @@
-entrypoints Program;
+entrypoints XProgram;
 
-PProgram.   Program ::= [Statement];
-separator nonempty Statement ";";
+Program.      XProgram ::= [XStatement];
+separator nonempty XStatement ";";
 
-SStmt.      Statement ::= "SELECT" [SelectItem] WhereClause OrderClause;
-separator nonempty SelectItem ",";
+Statement.    XStatement ::= "SELECT" [XSelectItem] XWhereClause XOrderClause;
+separator nonempty XSelectItem ",";
 
-WCWhere.    WhereClause ::= "WHERE" CondExpr;
-WCEmpty.    WhereClause ::= ;
-OClOrderBy. OrderClause ::= "ORDER BY" [OrderItem];
-OClEmpty.   OrderClause ::= ;
+WhereClause.        XWhereClause ::= "WHERE" XCondExpr;
+WhereClauseEmpty.   XWhereClause ::= ;
 
-OIBasic.    OrderItem ::= BasicExpr OrderConst NullsClause;
-OICond.     OrderItem ::= CondExpr OrderConst NullsClause;
-separator nonempty OrderItem ",";
+OrderClause.        XOrderClause ::= "ORDER BY" [XOrderItem];
+OrderClauseEmpty.   XOrderClause ::= ;
 
-OCAsc.      OrderConst ::= "ASC";
-OCDesc.     OrderConst ::= "DESC";
-OCEmpty.    OrderConst ::= ;
+OrderItemCond.      XOrderItem ::= XCondExpr XOrderOption XNullsOption;
+separator nonempty XOrderItem ",";
 
-NCNullsFirst.   NullsClause ::= "NULLS" "FIRST";
-NCNullsLast.    NullsClause ::= "NULLS" "LAST";
-NCNullsEmpty.   NullsClause ::= ;
+OrderOptionAsc.     XOrderOption ::= "ASC";
+OrderOptionDesc.    XOrderOption ::= "DESC";
+OrderOptionEmpty.   XOrderOption ::= ;
 
-SIItemBasic.    SelectItem ::= BasicExpr AsClause;
-SIItemCond.     SelectItem ::= CondExpr AsClause;
+NullsOptionFirst.   XNullsOption ::= "NULLS" "FIRST";
+NullsOptionLast.    XNullsOption ::= "NULLS" "LAST";
+NullsOptionEmpty.   XNullsOption ::= ;
 
-ACAsClause.         AsClause ::= "AS" CAIdent;
-ACAsClauseEmpty.    AsClause ::= ;
+SelectItem.         XSelectItem ::= XSelectModifier XCondExpr;
+SelectItemAs.       XSelectItem ::= XSelectModifier XCondExpr "AS" XIdent;
 
-CEOr.           CondExpr ::= CondExpr "OR" CondExpr1;
-CEAnd.          CondExpr1 ::= CondExpr1 "AND" CondExpr2;
-CENot.          CondExpr2 ::= "NOT" CondExpr2;
-CEBasic.        CondExpr2 ::= BasicExpr;
+SelectModifierAll.        XSelectModifier ::= "ALL";
+SelectModifierDistinct.   XSelectModifier ::= "DISTINCT";
+SelectModifierEmpty.      XSelectModifier ::= ;
 
-coercions CondExpr 2;
+-- TODO
+CondExprOr.         XCondExpr ::= XCondExpr "OR" XCondExpr1;
+CondExprAnd.        XCondExpr1 ::= XCondExpr1 "AND" XCondExpr2;
+CondExprNot.        XCondExpr2 ::= "NOT" XCondExpr2;
+CondExprBasic.      XCondExpr2 ::= XBasicExpr;
+coercions XCondExpr 2;
 
-BEEqual.        BasicExpr ::= BasicExpr "=" BasicExpr1;
-BENotEqual.     BasicExpr ::= BasicExpr "<>" BasicExpr1;
-BEGreater.      BasicExpr ::= BasicExpr ">" BasicExpr1;
-BEGreaterEqual. BasicExpr ::= BasicExpr ">=" BasicExpr1;
-BELesser.       BasicExpr ::= BasicExpr "<" BasicExpr1;
-BELesserEqual.  BasicExpr ::= BasicExpr "<=" BasicExpr1;
-BEPlus.         BasicExpr1 ::= BasicExpr1 "+" BasicExpr2;
-BEMinus.        BasicExpr1 ::= BasicExpr1 "-" BasicExpr2;
-BEMultiply.     BasicExpr2 ::= BasicExpr2 "*" BasicExpr3;
-BEDivide.       BasicExpr2 ::= BasicExpr2 "/" BasicExpr3;
-BEModulo.       BasicExpr2 ::= BasicExpr2 "%" BasicExpr3;
-BENeg.          BasicExpr3 ::= "-" BasicExpr3;
-BEVar.          BasicExpr4 ::= CAIdent;
-BECall.         BasicExpr4 ::= CAIdent "(" [ExprListItem] ")";
-BEString.       BasicExpr4 ::= String;
-BETrue.         BasicExpr4 ::= "true";
-BEFalse.        BasicExpr4 ::= "false";
-BEInt.          BasicExpr4 ::= Integer;
-BEDouble.       BasicExpr4 ::= Double;
-BEBraces.       BasicExpr4 ::= "{" "}";
-BEBrackets.     BasicExpr4 ::= "[" "]";
-BEAngle.        BasicExpr4 ::= "<" [ExprListItem] ">";
-BEStmt.         BasicExpr4 ::= Statement;
-coercions BasicExpr 4;
+BasicExprEqual.        XBasicExpr ::= XBasicExpr "=" XBasicExpr1;
+BasicExprNotEqual.     XBasicExpr ::= XBasicExpr "<>" XBasicExpr1;
+BasicExprGreater.      XBasicExpr ::= XBasicExpr ">" XBasicExpr1;
+BasicExprGreaterEqual. XBasicExpr ::= XBasicExpr ">=" XBasicExpr1;
+BasicExprLesser.       XBasicExpr ::= XBasicExpr "<" XBasicExpr1;
+BasicExprLesserEqual.  XBasicExpr ::= XBasicExpr "<=" XBasicExpr1;
+BasicExprPlus.         XBasicExpr1 ::= XBasicExpr1 "+" XBasicExpr2;
+BasicExprMinus.        XBasicExpr1 ::= XBasicExpr1 "-" XBasicExpr2;
+BasicExprMultiply.     XBasicExpr2 ::= XBasicExpr2 "*" XBasicExpr3;
+BasicExprDivide.       XBasicExpr2 ::= XBasicExpr2 "/" XBasicExpr3;
+BasicExprModulo.       XBasicExpr2 ::= XBasicExpr2 "%" XBasicExpr3;
+BasicExprNeg.          XBasicExpr3 ::= "-" XBasicExpr3;
+BasicExprVar.          XBasicExpr4 ::= XIdent;
+BasicExprCall.         XBasicExpr4 ::= XIdent "(" [XExprListItem] ")";
+BasicExprStar.         XBasicExpr4 ::= XIdent "(" "*" ")";
+BasicExprString.       XBasicExpr4 ::= String;
+BasicExprTrue.         XBasicExpr4 ::= "true";
+BasicExprFalse.        XBasicExpr4 ::= "false";
+BasicExprInt.          XBasicExpr4 ::= Integer;
+BasicExprDouble.       XBasicExpr4 ::= Double;
+BasicExprBraces.       XBasicExpr4 ::= "{" "}";
+BasicExprBrackets.     XBasicExpr4 ::= "[" "]";
+BasicExprAngle.        XBasicExpr4 ::= "<" [XExprListItem] ">";
+BasicExprStmt.         XBasicExpr4 ::= XStatement;
+coercions XBasicExpr 4;
 
-ELIBasic.       ExprListItem ::= BasicExpr;
-ELICond.        ExprListItem ::= CondExpr;
-separator nonempty ExprListItem ",";
+ExprListItem.        XExprListItem ::= XCondExpr;
+separator nonempty XExprListItem ",";
 
-token CAIdent ((letter | '&') (letter | digit | '_')*);
+token XIdent ((letter | '&') (letter | digit | '_')*);

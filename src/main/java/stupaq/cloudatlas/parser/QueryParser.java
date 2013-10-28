@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 
-import stupaq.cloudatlas.parser.QueryLanguage.Absyn.Program;
+import stupaq.cloudatlas.parser.QueryLanguage.Absyn.XProgram;
 import stupaq.cloudatlas.parser.QueryLanguage.Yylex;
 import stupaq.cloudatlas.parser.QueryLanguage.parser;
 
@@ -25,8 +25,8 @@ public class QueryParser implements AutoCloseable {
     parser = new parser(lexer);
   }
 
-  public Program parseProgram() throws Exception {
-    return parser.pProgram();
+  public XProgram parseProgram() throws Exception {
+    return parser.pXProgram();
   }
 
   @Override
