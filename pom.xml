@@ -159,7 +159,7 @@
                             <className>${parser.grammar-name}Parser</className>
                             <symbolsName>${parser.grammar-name}Symbols</symbolsName>
                             -->
-                            <outputDirectory>${parser.code-dir}/</outputDirectory>
+                            <outputDirectory>${parser.root-dir}/</outputDirectory>
                             <dumpGrammar>true</dumpGrammar>
                             <noPositions>true</noPositions>
                             <expectedConflicts>${parser.expected-conflicts}</expectedConflicts>
