@@ -74,6 +74,7 @@ CondExprAndNGT.     XExpressionNGT1 ::= XExpressionNGT1 "AND" XExpressionNGT2;
 CondExprNotNGT.     XExpressionNGT2 ::= "NOT" XExpressionNGT3;
 BoolExprRegexNGT.   XExpressionNGT3 ::= XExpressionNGT4 "REGEXP" String;
 BoolExprRelNGT.     XExpressionNGT4 ::= XExpressionNGT4 XRelOpNGT XExpression5;
+ExpressionNGT.      XExpressionNGT4 ::= XExpression5;
 
 RelOpEqualNGT.         XRelOpNGT ::= "=";
 RelOpNotEqualNGT.      XRelOpNGT ::= "<>";

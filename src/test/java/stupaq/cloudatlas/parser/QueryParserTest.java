@@ -10,13 +10,14 @@ public class QueryParserTest {
 
   @Test
   public void testOfficialExamples() throws Exception {
-    assertSuccess("SELECT count(*) AS child_zone_count");
+    assertSuccess("SELECT count(marina) AS child_zone_count");
     assertSuccess("SELECT avg(cpu_load * num_cpus) AS cpu_load, sum(num_cpus) AS num_cpus");
-    assertSuccess("SELECT DISTINCT random(5, unfold(contacts)) AS contacts");
+    assertSuccess("SELECT random(5, unfold(contacts)) AS contacts");
     assertSuccess("SELECT sum(total_disk) AS total_disk, sum(used_disk) AS used_disk");
-    assertSuccess("SELECT ALL first(3, name) AS heavy_disk_users WHERE total_disk > 0 ORDER BY used_disk / total_disk");
+    assertSuccess(
+        "SELECT first(3, name) AS heavy_disk_users WHERE total_disk > 0 ORDER BY used_disk / total_disk");
     assertSuccess("SELECT sum(total_disk) AS total_disk, sum(used_disk) AS used_disk;"
-                  + "SELECT ALL first(3, name) AS heavy_disk_users WHERE total_disk > 0 ORDER BY used_disk / total_disk");
+                  + "SELECT first(3, name) AS heavy_disk_users WHERE total_disk > 0 ORDER BY used_disk / total_disk");
   }
 
   private XProgram assertSuccess(String str) throws Exception {
