@@ -105,11 +105,6 @@
                                             <arg value="-f"/>
                                             <arg value="${parser.grammar-name}.tex"/>
                                         </exec>
-                                        <exec dir="${parser.root-dir}" executable="patch">
-                                            <arg value="-p0"/>
-                                            <arg value="-i"/>
-                                            <arg value="${parser.patch-file}"/>
-                                        </exec>
                                     </target>
                                 </configuration>
                                 <goals>
@@ -120,23 +115,23 @@
                     </plugin>
 
                     <plugin>
-                        <groupId>de.jflex</groupId>
-                        <artifactId>maven-jflex-plugin</artifactId>
-                        <version>1.4.3</version>
+                        <groupId>net.sourceforge.maven-jlex</groupId>
+                        <artifactId>maven-jlex-plugin</artifactId>
+                        <version>1.0</version>
+                        <configuration>
+                            <files>
+                                <filePair>
+                                    <inputFile>${parser.jlex-file}</inputFile>
+                                    <outputFile>${parser.jlex-file}.java</outputFile>
+                                </filePair>
+                            </files>
+                        </configuration>
                         <executions>
                             <execution>
                                 <phase>generate-sources</phase>
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>
-                                <configuration>
-                                    <backup>false</backup>
-                                    <jlex>true</jlex>
-                                    <lexDefinitions>
-                                        <lexDefinition>${parser.jlex-file}</lexDefinition>
-                                    </lexDefinitions>
-                                    <outputDirectory>${parser.root-dir}</outputDirectory>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

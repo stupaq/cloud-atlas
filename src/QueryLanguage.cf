@@ -9,7 +9,7 @@ separator nonempty XSelectItem ",";
 WhereClause.        XWhereClause ::= "WHERE" XCondExpr;
 WhereClauseEmpty.   XWhereClause ::= ;
 
-OrderClause.        XOrderClause ::= "ORDER BY" [XOrderItem];
+OrderClause.        XOrderClause ::= "ORDER" "BY" [XOrderItem];
 OrderClauseEmpty.   XOrderClause ::= ;
 
 OrderItemCond.      XOrderItem ::= XCondExpr XOrderOption XNullsOption;
