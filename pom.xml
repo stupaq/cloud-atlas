@@ -20,7 +20,6 @@
         <parser.code-dir>${parser.package-dir}/${parser.grammar-name}</parser.code-dir>
         <parser.jlex-file>${parser.code-dir}/Yylex</parser.jlex-file>
         <parser.cup-file>${parser.code-dir}/${parser.grammar-name}.cup</parser.cup-file>
-        <parser.expected-conflicts>1000</parser.expected-conflicts>
     </properties>
 
     <dependencies>
@@ -150,14 +149,9 @@
                         <configuration>
                             <backup>false</backup>
                             <cupDefinition>${parser.cup-file}</cupDefinition>
-                            <!--
-                            <className>${parser.grammar-name}Parser</className>
-                            <symbolsName>${parser.grammar-name}Symbols</symbolsName>
-                            -->
                             <outputDirectory>${parser.root-dir}/</outputDirectory>
-                            <dumpGrammar>true</dumpGrammar>
                             <noPositions>true</noPositions>
-                            <expectedConflicts>${parser.expected-conflicts}</expectedConflicts>
+                            <expectedConflicts>0</expectedConflicts>
                             <nontermsToSymbols>true</nontermsToSymbols>
                         </configuration>
                     </plugin>
