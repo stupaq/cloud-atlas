@@ -64,12 +64,12 @@ public class Yylex implements java_cup.runtime.Scanner {
 	private final int CHAR = 2;
 	private final int yy_state_dtrans[] = {
 		0,
-		57,
-		57,
-		57,
-		57,
 		59,
-		61
+		59,
+		59,
+		59,
+		61,
+		63
 	};
 	private void yybegin (int state) {
 		yy_lexical_state = state;
@@ -270,10 +270,10 @@ public class Yylex implements java_cup.runtime.Scanner {
 		/* 47 */ YY_NO_ANCHOR,
 		/* 48 */ YY_NO_ANCHOR,
 		/* 49 */ YY_NO_ANCHOR,
-		/* 50 */ YY_NOT_ACCEPT,
+		/* 50 */ YY_NO_ANCHOR,
 		/* 51 */ YY_NO_ANCHOR,
-		/* 52 */ YY_NO_ANCHOR,
-		/* 53 */ YY_NOT_ACCEPT,
+		/* 52 */ YY_NOT_ACCEPT,
+		/* 53 */ YY_NO_ANCHOR,
 		/* 54 */ YY_NO_ANCHOR,
 		/* 55 */ YY_NOT_ACCEPT,
 		/* 56 */ YY_NO_ANCHOR,
@@ -283,7 +283,7 @@ public class Yylex implements java_cup.runtime.Scanner {
 		/* 60 */ YY_NO_ANCHOR,
 		/* 61 */ YY_NOT_ACCEPT,
 		/* 62 */ YY_NO_ANCHOR,
-		/* 63 */ YY_NO_ANCHOR,
+		/* 63 */ YY_NOT_ACCEPT,
 		/* 64 */ YY_NO_ANCHOR,
 		/* 65 */ YY_NO_ANCHOR,
 		/* 66 */ YY_NO_ANCHOR,
@@ -318,7 +318,9 @@ public class Yylex implements java_cup.runtime.Scanner {
 		/* 95 */ YY_NO_ANCHOR,
 		/* 96 */ YY_NO_ANCHOR,
 		/* 97 */ YY_NO_ANCHOR,
-		/* 98 */ YY_NO_ANCHOR
+		/* 98 */ YY_NO_ANCHOR,
+		/* 99 */ YY_NO_ANCHOR,
+		/* 100 */ YY_NO_ANCHOR
 	};
 	private int yy_cmap[] = unpackFromString(1,65538,
 "51:9,54,55,51,54,55,51:18,54,51,49,51:2,15,46,51,4,5,13,12,2,3,53,14,47:10," +
@@ -326,38 +328,38 @@ public class Yylex implements java_cup.runtime.Scanner {
 "28,31,45,35,33,23,45,8,50,9,51,48,51,38,45:3,41,37,45:5,39,45,52,45:3,43,40" +
 ",42,44,45:5,6,51,7,51:66,45:23,51,45:31,51,45:8,51:65280,0:2")[0];
 
-	private int yy_rmap[] = unpackFromString(1,99,
-"0,1:10,2,3,1:5,4,5,1:5,6,7,8,7:3,9,7:10,1:8,10,11,12,13,14,12,15,16,17,18,1" +
+	private int yy_rmap[] = unpackFromString(1,101,
+"0,1:10,2,3,1:5,4,5,1:7,6,7,8,7:3,9,7:10,1:8,10,11,12,13,14,12,15,16,17,18,1" +
 "9,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,4" +
 "4,45,46,47,48,49,7,50,51,52,53,54,55,56")[0];
 
 	private int yy_nxt[][] = unpackFromString(57,56,
-"1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,51,84,88,91,54,91:2,93,91,94,9" +
-"1,95,56,91:4,96,91,97,91:4,98,91:4,19,-1,20,-1:2,91,-1,21:2,-1:67,22,-1:4,2" +
-"3,-1:55,24,-1:56,91,58,91,25,91:25,-1,91:2,-1:3,91,-1:50,19,-1:5,50,-1:19,9" +
-"1:4,29,91:24,-1,91:2,-1:3,91,-1:20,91:29,-1,91:2,-1:3,91,-1:20,91:2,92,91:2" +
-"6,-1,91:2,-1:3,91,-1:44,53,-1:5,31,-1:55,31,-1:25,91:13,60,62,91:14,-1,91:2" +
-",-1:3,91,-1:50,52,-1:11,55,-1:43,52,-1:25,91:6,26,91:22,-1,91:2,-1:3,91,-1:" +
-"20,91:10,27,91:18,-1,91:2,-1:3,91,-1:3,1,-1:72,91:2,28,91:26,-1,91:2,-1:3,9" +
-"1,-1:3,1,42:48,43,44,42:4,-1:18,91:11,30,91:17,-1,91:2,-1:3,91,-1:3,1,45:41" +
-",46,45:6,47,48,45,49,45:2,-1:18,91:12,89,91:16,-1,91:2,-1:3,91,-1:20,91:3,6" +
-"9,91:25,-1,91:2,-1:3,91,-1:20,91:10,70,91:18,-1,91:2,-1:3,91,-1:20,91:15,90" +
-",91:13,-1,91:2,-1:3,91,-1:20,91:7,72,91:21,-1,91:2,-1:3,91,-1:20,91:22,73,9" +
-"1:6,-1,91:2,-1:3,91,-1:20,91:27,74,91,-1,91:2,-1:3,91,-1:20,91:4,32,91:24,-" +
-"1,91:2,-1:3,91,-1:20,91:3,77,91:25,-1,91:2,-1:3,91,-1:20,91:11,33,91:17,-1," +
-"91:2,-1:3,91,-1:20,91:10,80,91:18,-1,91:2,-1:3,91,-1:20,91:23,81,91:5,-1,91" +
-":2,-1:3,91,-1:20,91:24,34,91:4,-1,91:2,-1:3,91,-1:20,91:3,35,91:25,-1,91:2," +
-"-1:3,91,-1:20,91:4,82,91:24,-1,91:2,-1:3,91,-1:20,91:11,36,91:17,-1,91:2,-1" +
-":3,91,-1:20,91:16,83,91:12,-1,91:2,-1:3,91,-1:20,91:10,37,91:18,-1,91:2,-1:" +
-"3,91,-1:20,91:7,38,91:21,-1,91:2,-1:3,91,-1:20,91:24,39,91:4,-1,91:2,-1:3,9" +
-"1,-1:20,91:11,40,91:17,-1,91:2,-1:3,91,-1:20,91:17,41,91:11,-1,91:2,-1:3,91" +
-",-1:20,91:7,63,91:21,-1,91:2,-1:3,91,-1:20,91:12,87,91:16,-1,91:2,-1:3,91,-" +
-"1:20,91:3,71,91:25,-1,91:2,-1:3,91,-1:20,91:7,76,91:21,-1,91:2,-1:3,91,-1:2" +
-"0,91:7,85,91:21,-1,91:2,-1:3,91,-1:20,91:12,75,91:16,-1,91:2,-1:3,91,-1:20," +
-"91:7,78,91:21,-1,91:2,-1:3,91,-1:20,91:7,79,91:21,-1,91:2,-1:3,91,-1:20,91:" +
-"9,64,91:19,-1,91:2,-1:3,91,-1:20,91:7,65,91:21,-1,91:2,-1:3,91,-1:20,86,91:" +
-"28,-1,91:2,-1:3,91,-1:20,91:19,66,91:9,-1,91:2,-1:3,91,-1:20,91:21,67,91:7," +
-"-1,91:2,-1:3,91,-1:20,91:26,68,91:2,-1,91:2,-1:3,91,-1:3");
+"1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,53,86,90,93,56,93:2,95,93,96,9" +
+"3,97,58,93:4,98,93,99,93:4,100,93:4,19,-1,20,-1:2,93,-1,21:2,-1:66,22,23,-1" +
+":4,24,-1:50,25,-1:4,26,-1:56,93,60,93,27,93:25,-1,93:2,-1:3,93,-1:50,19,-1:" +
+"5,52,-1:19,93:4,31,93:24,-1,93:2,-1:3,93,-1:20,93:29,-1,93:2,-1:3,93,-1:20," +
+"93:2,94,93:26,-1,93:2,-1:3,93,-1:44,55,-1:5,33,-1:55,33,-1:25,93:13,62,64,9" +
+"3:14,-1,93:2,-1:3,93,-1:50,54,-1:11,57,-1:43,54,-1:25,93:6,28,93:22,-1,93:2" +
+",-1:3,93,-1:20,93:10,29,93:18,-1,93:2,-1:3,93,-1:3,1,-1:72,93:2,30,93:26,-1" +
+",93:2,-1:3,93,-1:3,1,44:48,45,46,44:4,-1:18,93:11,32,93:17,-1,93:2,-1:3,93," +
+"-1:3,1,47:41,48,47:6,49,50,47,51,47:2,-1:18,93:12,91,93:16,-1,93:2,-1:3,93," +
+"-1:20,93:3,71,93:25,-1,93:2,-1:3,93,-1:20,93:10,72,93:18,-1,93:2,-1:3,93,-1" +
+":20,93:15,92,93:13,-1,93:2,-1:3,93,-1:20,93:7,74,93:21,-1,93:2,-1:3,93,-1:2" +
+"0,93:22,75,93:6,-1,93:2,-1:3,93,-1:20,93:27,76,93,-1,93:2,-1:3,93,-1:20,93:" +
+"4,34,93:24,-1,93:2,-1:3,93,-1:20,93:3,79,93:25,-1,93:2,-1:3,93,-1:20,93:11," +
+"35,93:17,-1,93:2,-1:3,93,-1:20,93:10,82,93:18,-1,93:2,-1:3,93,-1:20,93:23,8" +
+"3,93:5,-1,93:2,-1:3,93,-1:20,93:24,36,93:4,-1,93:2,-1:3,93,-1:20,93:3,37,93" +
+":25,-1,93:2,-1:3,93,-1:20,93:4,84,93:24,-1,93:2,-1:3,93,-1:20,93:11,38,93:1" +
+"7,-1,93:2,-1:3,93,-1:20,93:16,85,93:12,-1,93:2,-1:3,93,-1:20,93:10,39,93:18" +
+",-1,93:2,-1:3,93,-1:20,93:7,40,93:21,-1,93:2,-1:3,93,-1:20,93:24,41,93:4,-1" +
+",93:2,-1:3,93,-1:20,93:11,42,93:17,-1,93:2,-1:3,93,-1:20,93:17,43,93:11,-1," +
+"93:2,-1:3,93,-1:20,93:7,65,93:21,-1,93:2,-1:3,93,-1:20,93:12,89,93:16,-1,93" +
+":2,-1:3,93,-1:20,93:3,73,93:25,-1,93:2,-1:3,93,-1:20,93:7,78,93:21,-1,93:2," +
+"-1:3,93,-1:20,93:7,87,93:21,-1,93:2,-1:3,93,-1:20,93:12,77,93:16,-1,93:2,-1" +
+":3,93,-1:20,93:7,80,93:21,-1,93:2,-1:3,93,-1:20,93:7,81,93:21,-1,93:2,-1:3," +
+"93,-1:20,93:9,66,93:19,-1,93:2,-1:3,93,-1:20,93:7,67,93:21,-1,93:2,-1:3,93," +
+"-1:20,88,93:28,-1,93:2,-1:3,93,-1:20,93:19,68,93:9,-1,93:2,-1:3,93,-1:20,93" +
+":21,69,93:7,-1,93:2,-1:3,93,-1:20,93:26,70,93:2,-1,93:2,-1:3,93,-1:3");
 
 	public java_cup.runtime.Symbol next_token ()
 		throws java.io.IOException {
@@ -444,11 +446,11 @@ public class Yylex implements java_cup.runtime.Scanner {
 					case -11:
 						break;
 					case 11:
-						{ return new Symbol(sym._SYMB_9); }
+						{ return new Symbol(sym._SYMB_19); }
 					case -12:
 						break;
 					case 12:
-						{ return new Symbol(sym._SYMB_10); }
+						{ return new Symbol(sym._SYMB_17); }
 					case -13:
 						break;
 					case 13:
@@ -488,55 +490,55 @@ public class Yylex implements java_cup.runtime.Scanner {
 					case -22:
 						break;
 					case 22:
-						{ return new Symbol(sym._SYMB_16); }
+						{ return new Symbol(sym._SYMB_9); }
 					case -23:
 						break;
 					case 23:
-						{ return new Symbol(sym._SYMB_18); }
+						{ return new Symbol(sym._SYMB_16); }
 					case -24:
 						break;
 					case 24:
-						{ return new Symbol(sym._SYMB_17); }
+						{ return new Symbol(sym._SYMB_20); }
 					case -25:
 						break;
 					case 25:
-						{ return new Symbol(sym._SYMB_20); }
+						{ return new Symbol(sym._SYMB_10); }
 					case -26:
 						break;
 					case 26:
-						{ return new Symbol(sym._SYMB_22); }
+						{ return new Symbol(sym._SYMB_18); }
 					case -27:
 						break;
 					case 27:
-						{ return new Symbol(sym._SYMB_28); }
+						{ return new Symbol(sym._SYMB_22); }
 					case -28:
 						break;
 					case 28:
-						{ return new Symbol(sym._SYMB_19); }
+						{ return new Symbol(sym._SYMB_24); }
 					case -29:
 						break;
 					case 29:
-						{ return new Symbol(sym._SYMB_21); }
+						{ return new Symbol(sym._SYMB_30); }
 					case -30:
 						break;
 					case 30:
-						{ return new Symbol(sym._SYMB_26); }
+						{ return new Symbol(sym._SYMB_21); }
 					case -31:
 						break;
 					case 31:
-						{ return new Symbol(sym._DOUBLE_, new Double(yytext())); }
+						{ return new Symbol(sym._SYMB_23); }
 					case -32:
 						break;
 					case 32:
-						{ return new Symbol(sym._SYMB_23); }
+						{ return new Symbol(sym._SYMB_28); }
 					case -33:
 						break;
 					case 33:
-						{ return new Symbol(sym._SYMB_25); }
+						{ return new Symbol(sym._DOUBLE_, new Double(yytext())); }
 					case -34:
 						break;
 					case 34:
-						{ return new Symbol(sym._SYMB_34); }
+						{ return new Symbol(sym._SYMB_25); }
 					case -35:
 						break;
 					case 35:
@@ -544,7 +546,7 @@ public class Yylex implements java_cup.runtime.Scanner {
 					case -36:
 						break;
 					case 36:
-						{ return new Symbol(sym._SYMB_24); }
+						{ return new Symbol(sym._SYMB_36); }
 					case -37:
 						break;
 					case 37:
@@ -552,82 +554,82 @@ public class Yylex implements java_cup.runtime.Scanner {
 					case -38:
 						break;
 					case 38:
-						{ return new Symbol(sym._SYMB_32); }
+						{ return new Symbol(sym._SYMB_26); }
 					case -39:
 						break;
 					case 39:
-						{ return new Symbol(sym._SYMB_33); }
+						{ return new Symbol(sym._SYMB_31); }
 					case -40:
 						break;
 					case 40:
-						{ return new Symbol(sym._SYMB_31); }
+						{ return new Symbol(sym._SYMB_34); }
 					case -41:
 						break;
 					case 41:
-						{ return new Symbol(sym._SYMB_30); }
+						{ return new Symbol(sym._SYMB_35); }
 					case -42:
 						break;
 					case 42:
-						{ pstring += yytext(); }
+						{ return new Symbol(sym._SYMB_33); }
 					case -43:
 						break;
 					case 43:
-						{ String foo = pstring; pstring = new String(); yybegin(YYINITIAL); return new Symbol(sym._STRING_, foo.intern()); }
+						{ return new Symbol(sym._SYMB_32); }
 					case -44:
 						break;
 					case 44:
-						{ yybegin(ESCAPED); }
+						{ pstring += yytext(); }
 					case -45:
 						break;
 					case 45:
-						{ pstring += yytext(); yybegin(STRING); }
+						{ String foo = pstring; pstring = new String(); yybegin(YYINITIAL); return new Symbol(sym._STRING_, foo.intern()); }
 					case -46:
 						break;
 					case 46:
-						{ pstring += "\t"; yybegin(STRING); }
+						{ yybegin(ESCAPED); }
 					case -47:
 						break;
 					case 47:
-						{ pstring += "\""; yybegin(STRING); }
+						{ pstring += yytext(); yybegin(STRING); }
 					case -48:
 						break;
 					case 48:
-						{ pstring += "\\"; yybegin(STRING); }
+						{ pstring += "\t"; yybegin(STRING); }
 					case -49:
 						break;
 					case 49:
-						{ pstring +=  "\n"; yybegin(STRING); }
+						{ pstring += "\""; yybegin(STRING); }
 					case -50:
 						break;
-					case 51:
-						{ return new Symbol(sym.XIdent, yytext().intern()); }
+					case 50:
+						{ pstring += "\\"; yybegin(STRING); }
 					case -51:
 						break;
-					case 52:
-						{ return new Symbol(sym._DOUBLE_, new Double(yytext())); }
+					case 51:
+						{ pstring +=  "\n"; yybegin(STRING); }
 					case -52:
 						break;
-					case 54:
+					case 53:
 						{ return new Symbol(sym.XIdent, yytext().intern()); }
 					case -53:
 						break;
-					case 56:
-						{ return new Symbol(sym.XIdent, yytext().intern()); }
+					case 54:
+						{ return new Symbol(sym._DOUBLE_, new Double(yytext())); }
 					case -54:
 						break;
-					case 58:
+					case 56:
 						{ return new Symbol(sym.XIdent, yytext().intern()); }
 					case -55:
 						break;
-					case 60:
+					case 58:
 						{ return new Symbol(sym.XIdent, yytext().intern()); }
 					case -56:
 						break;
-					case 62:
+					case 60:
 						{ return new Symbol(sym.XIdent, yytext().intern()); }
 					case -57:
 						break;
-					case 63:
+					case 62:
 						{ return new Symbol(sym.XIdent, yytext().intern()); }
 					case -58:
 						break;
@@ -770,6 +772,14 @@ public class Yylex implements java_cup.runtime.Scanner {
 					case 98:
 						{ return new Symbol(sym.XIdent, yytext().intern()); }
 					case -93:
+						break;
+					case 99:
+						{ return new Symbol(sym.XIdent, yytext().intern()); }
+					case -94:
+						break;
+					case 100:
+						{ return new Symbol(sym.XIdent, yytext().intern()); }
+					case -95:
 						break;
 					default:
 						yy_error(YY_E_INTERNAL,false);

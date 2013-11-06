@@ -109,28 +109,5 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
     public R visitDefault(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XBoolConst p, A arg) {
       throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
     }
-/* XExpressionNGT */
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT p, A arg) { return visitDefault(p, arg); }
-
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT p, A arg) { return visitDefault(p, arg); }
-
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT p, A arg) { return visitDefault(p, arg); }
-
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT p, A arg) { return visitDefault(p, arg); }
-
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT p, A arg) { return visitDefault(p, arg); }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XExpressionNGT p, A arg) {
-      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
-    }
-/* XRelOpNGT */
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT p, A arg) { return visitDefault(p, arg); }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT p, A arg) { return visitDefault(p, arg); }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT p, A arg) { return visitDefault(p, arg); }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT p, A arg) { return visitDefault(p, arg); }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT p, A arg) { return visitDefault(p, arg); }
-    public R visitDefault(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOpNGT p, A arg) {
-      throw new IllegalArgumentException(this.getClass().getName() + ": " + p);
-    }
 
 }

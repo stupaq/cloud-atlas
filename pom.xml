@@ -94,6 +94,10 @@
                                 <phase>generate-sources</phase>
                                 <configuration>
                                     <target name="bnf-converter">
+                                        <exec executable="rm">
+                                            <arg value="-rf"/>
+                                            <arg value="${parser.code-dir}/"/>
+                                        </exec>
                                         <exec dir="${parser.root-dir}" executable="bnfc">
                                             <arg value="-java"/>
                                             <arg value="-p"/>

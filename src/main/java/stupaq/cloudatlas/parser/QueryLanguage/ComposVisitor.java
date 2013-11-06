@@ -16,9 +16,7 @@ public class ComposVisitor<A> implements
   stupaq.cloudatlas.parser.QueryLanguage.Absyn.XArithOpAdd.Visitor<stupaq.cloudatlas.parser.QueryLanguage.Absyn.XArithOpAdd,A>,
   stupaq.cloudatlas.parser.QueryLanguage.Absyn.XArithOpMultiply.Visitor<stupaq.cloudatlas.parser.QueryLanguage.Absyn.XArithOpMultiply,A>,
   stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOp.Visitor<stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOp,A>,
-  stupaq.cloudatlas.parser.QueryLanguage.Absyn.XBoolConst.Visitor<stupaq.cloudatlas.parser.QueryLanguage.Absyn.XBoolConst,A>,
-  stupaq.cloudatlas.parser.QueryLanguage.Absyn.XExpressionNGT.Visitor<stupaq.cloudatlas.parser.QueryLanguage.Absyn.XExpressionNGT,A>,
-  stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOpNGT.Visitor<stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOpNGT,A>
+  stupaq.cloudatlas.parser.QueryLanguage.Absyn.XBoolConst.Visitor<stupaq.cloudatlas.parser.QueryLanguage.Absyn.XBoolConst,A>
 {
 /* XProgram */
     public XProgram visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.Program p, A arg)
@@ -242,12 +240,12 @@ public class ComposVisitor<A> implements
     }
     public XExpression visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle p, A arg)
     {
-      ListXExpressionNGT listxexpressionngt_ = new ListXExpressionNGT();
-      for (XExpressionNGT x : p.listxexpressionngt_) {
-        listxexpressionngt_.add(x.accept(this,arg));
+      ListXExpression listxexpression_ = new ListXExpression();
+      for (XExpression x : p.listxexpression_) {
+        listxexpression_.add(x.accept(this,arg));
       }
 
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle(listxexpressionngt_);
+      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle(listxexpression_);
     }
     public XExpression visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt p, A arg)
     {
@@ -327,76 +325,6 @@ public class ComposVisitor<A> implements
     {
 
       return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolConstFalse();
-    }
-
-/* XExpressionNGT */
-    public XExpressionNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT p, A arg)
-    {
-      XExpressionNGT xexpressionngt_1 = p.xexpressionngt_1.accept(this, arg);
-      XExpressionNGT xexpressionngt_2 = p.xexpressionngt_2.accept(this, arg);
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT(xexpressionngt_1, xexpressionngt_2);
-    }
-    public XExpressionNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT p, A arg)
-    {
-      XExpressionNGT xexpressionngt_1 = p.xexpressionngt_1.accept(this, arg);
-      XExpressionNGT xexpressionngt_2 = p.xexpressionngt_2.accept(this, arg);
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT(xexpressionngt_1, xexpressionngt_2);
-    }
-    public XExpressionNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT p, A arg)
-    {
-      XExpressionNGT xexpressionngt_ = p.xexpressionngt_.accept(this, arg);
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT(xexpressionngt_);
-    }
-    public XExpressionNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT p, A arg)
-    {
-      XExpressionNGT xexpressionngt_ = p.xexpressionngt_.accept(this, arg);
-      String string_ = p.string_;
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT(xexpressionngt_, string_);
-    }
-    public XExpressionNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT p, A arg)
-    {
-      XExpressionNGT xexpressionngt_ = p.xexpressionngt_.accept(this, arg);
-      XRelOpNGT xrelopngt_ = p.xrelopngt_.accept(this, arg);
-      XExpression xexpression_ = p.xexpression_.accept(this, arg);
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT(xexpressionngt_, xrelopngt_, xexpression_);
-    }
-    public XExpressionNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT p, A arg)
-    {
-      XExpression xexpression_ = p.xexpression_.accept(this, arg);
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT(xexpression_);
-    }
-
-/* XRelOpNGT */
-    public XRelOpNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT p, A arg)
-    {
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT();
-    }
-    public XRelOpNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT p, A arg)
-    {
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT();
-    }
-    public XRelOpNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT p, A arg)
-    {
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT();
-    }
-    public XRelOpNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT p, A arg)
-    {
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT();
-    }
-    public XRelOpNGT visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT p, A arg)
-    {
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT();
     }
 
 }

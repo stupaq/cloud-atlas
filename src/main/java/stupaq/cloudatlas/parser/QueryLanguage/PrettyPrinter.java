@@ -255,21 +255,6 @@ public class PrettyPrinter
     buf_.delete(0,buf_.length());
     return temp;
   }
-  public static String print(stupaq.cloudatlas.parser.QueryLanguage.Absyn.ListXExpressionNGT foo)
-  {
-    pp(foo, 0);
-    trim();
-    String temp = buf_.toString();
-    buf_.delete(0,buf_.length());
-    return temp;
-  }
-  public static String show(stupaq.cloudatlas.parser.QueryLanguage.Absyn.ListXExpressionNGT foo)
-  {
-    sh(foo);
-    String temp = buf_.toString();
-    buf_.delete(0,buf_.length());
-    return temp;
-  }
   public static String print(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XArithOpAdd foo)
   {
     pp(foo, 0);
@@ -324,36 +309,6 @@ public class PrettyPrinter
     return temp;
   }
   public static String show(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XBoolConst foo)
-  {
-    sh(foo);
-    String temp = buf_.toString();
-    buf_.delete(0,buf_.length());
-    return temp;
-  }
-  public static String print(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XExpressionNGT foo)
-  {
-    pp(foo, 0);
-    trim();
-    String temp = buf_.toString();
-    buf_.delete(0,buf_.length());
-    return temp;
-  }
-  public static String show(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XExpressionNGT foo)
-  {
-    sh(foo);
-    String temp = buf_.toString();
-    buf_.delete(0,buf_.length());
-    return temp;
-  }
-  public static String print(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOpNGT foo)
-  {
-    pp(foo, 0);
-    trim();
-    String temp = buf_.toString();
-    buf_.delete(0,buf_.length());
-    return temp;
-  }
-  public static String show(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOpNGT foo)
   {
     sh(foo);
     String temp = buf_.toString();
@@ -683,9 +638,9 @@ public class PrettyPrinter
     {
        stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle _basicexprangle = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle) foo;
        if (_i_ > 8) render(_L_PAREN);
-       render("<");
-       pp(_basicexprangle.listxexpressionngt_, 0);
-       render(">");
+       render("<<");
+       pp(_basicexprangle.listxexpression_, 0);
+       render(">>");
        if (_i_ > 8) render(_R_PAREN);
     }
     else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt)
@@ -702,19 +657,6 @@ public class PrettyPrinter
   private static void pp(stupaq.cloudatlas.parser.QueryLanguage.Absyn.ListXExpression foo, int _i_)
   {
      for (java.util.Iterator<XExpression> it = foo.iterator(); it.hasNext();)
-     {
-       pp(it.next(), 0);
-       if (it.hasNext()) {
-         render(",");
-       } else {
-         render("");
-       }
-     }
-  }
-
-  private static void pp(stupaq.cloudatlas.parser.QueryLanguage.Absyn.ListXExpressionNGT foo, int _i_)
-  {
-     for (java.util.Iterator<XExpressionNGT> it = foo.iterator(); it.hasNext();)
      {
        pp(it.next(), 0);
        if (it.hasNext()) {
@@ -828,100 +770,6 @@ public class PrettyPrinter
        stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolConstFalse _boolconstfalse = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolConstFalse) foo;
        if (_i_ > 0) render(_L_PAREN);
        render("false");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-  }
-
-  private static void pp(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XExpressionNGT foo, int _i_)
-  {
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT _condexprorngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       pp(_condexprorngt.xexpressionngt_1, 0);
-       render("OR");
-       pp(_condexprorngt.xexpressionngt_2, 1);
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT _condexprandngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT) foo;
-       if (_i_ > 1) render(_L_PAREN);
-       pp(_condexprandngt.xexpressionngt_1, 1);
-       render("AND");
-       pp(_condexprandngt.xexpressionngt_2, 2);
-       if (_i_ > 1) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT _condexprnotngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT) foo;
-       if (_i_ > 2) render(_L_PAREN);
-       render("NOT");
-       pp(_condexprnotngt.xexpressionngt_, 3);
-       if (_i_ > 2) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT _boolexprregexngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT) foo;
-       if (_i_ > 3) render(_L_PAREN);
-       pp(_boolexprregexngt.xexpressionngt_, 4);
-       render("REGEXP");
-       printQuoted(_boolexprregexngt.string_);
-       if (_i_ > 3) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT _boolexprrelngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT) foo;
-       if (_i_ > 4) render(_L_PAREN);
-       pp(_boolexprrelngt.xexpressionngt_, 4);
-       pp(_boolexprrelngt.xrelopngt_, 0);
-       pp(_boolexprrelngt.xexpression_, 5);
-       if (_i_ > 4) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT _expressionngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT) foo;
-       if (_i_ > 4) render(_L_PAREN);
-       pp(_expressionngt.xexpression_, 5);
-       if (_i_ > 4) render(_R_PAREN);
-    }
-  }
-
-  private static void pp(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOpNGT foo, int _i_)
-  {
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT _relopequalngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("=");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT _relopnotequalngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("<>");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT _relopgreaterequalngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render(">=");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT _reloplesserngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("<");
-       if (_i_ > 0) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT _reloplesserequalngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT) foo;
-       if (_i_ > 0) render(_L_PAREN);
-       render("<=");
        if (_i_ > 0) render(_R_PAREN);
     }
   }
@@ -1238,7 +1086,7 @@ public class PrettyPrinter
        render("(");
        render("BasicExprAngle");
        render("[");
-       sh(_basicexprangle.listxexpressionngt_);
+       sh(_basicexprangle.listxexpression_);
        render("]");
        render(")");
     }
@@ -1255,16 +1103,6 @@ public class PrettyPrinter
   private static void sh(stupaq.cloudatlas.parser.QueryLanguage.Absyn.ListXExpression foo)
   {
      for (java.util.Iterator<XExpression> it = foo.iterator(); it.hasNext();)
-     {
-       sh(it.next());
-       if (it.hasNext())
-         render(",");
-     }
-  }
-
-  private static void sh(stupaq.cloudatlas.parser.QueryLanguage.Absyn.ListXExpressionNGT foo)
-  {
-     for (java.util.Iterator<XExpressionNGT> it = foo.iterator(); it.hasNext();)
      {
        sh(it.next());
        if (it.hasNext())
@@ -1350,92 +1188,6 @@ public class PrettyPrinter
     {
        stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolConstFalse _boolconstfalse = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolConstFalse) foo;
        render("BoolConstFalse");
-    }
-  }
-
-  private static void sh(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XExpressionNGT foo)
-  {
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT _condexprorngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT) foo;
-       render("(");
-       render("CondExprOrNGT");
-       sh(_condexprorngt.xexpressionngt_1);
-       sh(_condexprorngt.xexpressionngt_2);
-       render(")");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT _condexprandngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT) foo;
-       render("(");
-       render("CondExprAndNGT");
-       sh(_condexprandngt.xexpressionngt_1);
-       sh(_condexprandngt.xexpressionngt_2);
-       render(")");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT _condexprnotngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT) foo;
-       render("(");
-       render("CondExprNotNGT");
-       sh(_condexprnotngt.xexpressionngt_);
-       render(")");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT _boolexprregexngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT) foo;
-       render("(");
-       render("BoolExprRegexNGT");
-       sh(_boolexprregexngt.xexpressionngt_);
-       sh(_boolexprregexngt.string_);
-       render(")");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT _boolexprrelngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT) foo;
-       render("(");
-       render("BoolExprRelNGT");
-       sh(_boolexprrelngt.xexpressionngt_);
-       sh(_boolexprrelngt.xrelopngt_);
-       sh(_boolexprrelngt.xexpression_);
-       render(")");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT _expressionngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT) foo;
-       render("(");
-       render("ExpressionNGT");
-       sh(_expressionngt.xexpression_);
-       render(")");
-    }
-  }
-
-  private static void sh(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOpNGT foo)
-  {
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT _relopequalngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT) foo;
-       render("RelOpEqualNGT");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT _relopnotequalngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT) foo;
-       render("RelOpNotEqualNGT");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT _relopgreaterequalngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT) foo;
-       render("RelOpGreaterEqualNGT");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT _reloplesserngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT) foo;
-       render("RelOpLesserNGT");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT _reloplesserequalngt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT) foo;
-       render("RelOpLesserEqualNGT");
     }
   }
 

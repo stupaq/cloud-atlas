@@ -16,7 +16,5 @@ public interface AllVisitor<R,A> extends
   stupaq.cloudatlas.parser.QueryLanguage.Absyn.XArithOpAdd.Visitor<R,A>,
   stupaq.cloudatlas.parser.QueryLanguage.Absyn.XArithOpMultiply.Visitor<R,A>,
   stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOp.Visitor<R,A>,
-  stupaq.cloudatlas.parser.QueryLanguage.Absyn.XBoolConst.Visitor<R,A>,
-  stupaq.cloudatlas.parser.QueryLanguage.Absyn.XExpressionNGT.Visitor<R,A>,
-  stupaq.cloudatlas.parser.QueryLanguage.Absyn.XRelOpNGT.Visitor<R,A>
+  stupaq.cloudatlas.parser.QueryLanguage.Absyn.XBoolConst.Visitor<R,A>
 {}

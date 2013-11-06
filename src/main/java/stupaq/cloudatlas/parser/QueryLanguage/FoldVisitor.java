@@ -190,7 +190,7 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
     }
     public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle p, A arg) {
       R r = leaf(arg);
-      for (XExpressionNGT x : p.listxexpressionngt_) {
+      for (XExpression x : p.listxexpression_) {
         r = combine(x.accept(this,arg), r, arg);
       }
       return r;
@@ -257,64 +257,6 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
       return r;
     }
     public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolConstFalse p, A arg) {
-      R r = leaf(arg);
-      return r;
-    }
-
-/* XExpressionNGT */
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprOrNGT p, A arg) {
-      R r = leaf(arg);
-      r = combine(p.xexpressionngt_1.accept(this, arg), r, arg);
-      r = combine(p.xexpressionngt_2.accept(this, arg), r, arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprAndNGT p, A arg) {
-      R r = leaf(arg);
-      r = combine(p.xexpressionngt_1.accept(this, arg), r, arg);
-      r = combine(p.xexpressionngt_2.accept(this, arg), r, arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.CondExprNotNGT p, A arg) {
-      R r = leaf(arg);
-      r = combine(p.xexpressionngt_.accept(this, arg), r, arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRegexNGT p, A arg) {
-      R r = leaf(arg);
-      r = combine(p.xexpressionngt_.accept(this, arg), r, arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BoolExprRelNGT p, A arg) {
-      R r = leaf(arg);
-      r = combine(p.xexpressionngt_.accept(this, arg), r, arg);
-      r = combine(p.xrelopngt_.accept(this, arg), r, arg);
-      r = combine(p.xexpression_.accept(this, arg), r, arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.ExpressionNGT p, A arg) {
-      R r = leaf(arg);
-      r = combine(p.xexpression_.accept(this, arg), r, arg);
-      return r;
-    }
-
-/* XRelOpNGT */
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpEqualNGT p, A arg) {
-      R r = leaf(arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpNotEqualNGT p, A arg) {
-      R r = leaf(arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpGreaterEqualNGT p, A arg) {
-      R r = leaf(arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserNGT p, A arg) {
-      R r = leaf(arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.RelOpLesserEqualNGT p, A arg) {
       R r = leaf(arg);
       return r;
     }
