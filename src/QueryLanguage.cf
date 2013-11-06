@@ -43,8 +43,7 @@ BasicExprInt.       XExpression8 ::= Integer;
 BasicExprDouble.    XExpression8 ::= Double;
 BasicExprBraces.    XExpression8 ::= "{" "}";
 BasicExprBrackets.  XExpression8 ::= "[" "]";
-BasicExprAngle.     XExpression8 ::= "<" [XExpressionNGT] ">";
-separator XExpressionNGT ",";
+BasicExprAngle.     XExpression8 ::= "<<" [XExpression] ">>";
 BasicExprStmt.      XExpression8 ::= "(" XStatement ")";
 coercions XExpression 8;
 
@@ -66,21 +65,3 @@ BoolConstTrue.      XBoolConst ::= "true";
 BoolConstFalse.     XBoolConst ::= "false";
 
 token XIdent ((letter | '&') (letter | digit | '_')*);
-
--- NGT productions does not allow > sign without any parentheses
-CondExprOrNGT.      XExpressionNGT ::= XExpressionNGT "OR" XExpressionNGT1;
-_.                  XExpressionNGT ::= XExpressionNGT1;
-CondExprAndNGT.     XExpressionNGT1 ::= XExpressionNGT1 "AND" XExpressionNGT2;
-_.                  XExpressionNGT1 ::= XExpressionNGT2;
-CondExprNotNGT.     XExpressionNGT2 ::= "NOT" XExpressionNGT3;
-_.                  XExpressionNGT2 ::= XExpressionNGT3;
-BoolExprRegexNGT.   XExpressionNGT3 ::= XExpressionNGT4 "REGEXP" String;
-_.                  XExpressionNGT3 ::= XExpressionNGT4;
-BoolExprRelNGT.     XExpressionNGT4 ::= XExpressionNGT4 XRelOpNGT XExpression5;
-ExpressionNGT.      XExpressionNGT4 ::= XExpression5;
-
-RelOpEqualNGT.         XRelOpNGT ::= "=";
-RelOpNotEqualNGT.      XRelOpNGT ::= "<>";
-RelOpGreaterEqualNGT.  XRelOpNGT ::= ">=";
-RelOpLesserNGT.        XRelOpNGT ::= "<";
-RelOpLesserEqualNGT.   XRelOpNGT ::= "<=";
