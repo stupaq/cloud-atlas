@@ -7,7 +7,7 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeType;
 import stupaq.cloudatlas.attribute.types.CABoolean;
-import stupaq.cloudatlas.attribute.types.CALong;
+import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.serialization.SerializationUtils;
 import stupaq.cloudatlas.serialization.TypeRegistry;
@@ -28,7 +28,7 @@ public class ZoneManagementInfoTest {
     zmi.addAttribute(new Attribute<>(new AttributeName("attributeName1"), AttributeType.BOOLEAN,
                                      new CABoolean(Boolean.TRUE)));
     zmi.addAttribute(new Attribute<>(new AttributeName("attributeName2"), AttributeType.INTEGER,
-                                     new CALong(1337L)));
+                                     new CAInteger(1337L)));
     zmi.addAttribute(new Attribute<>(new AttributeName("attributeName3"), AttributeType.STRING,
                                      new CAString("aString")));
     ZoneManagementInfo zmiClone = SerializationUtils.clone(zmi);

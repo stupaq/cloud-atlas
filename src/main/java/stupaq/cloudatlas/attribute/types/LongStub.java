@@ -5,26 +5,26 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CAString extends PrimitiveWrapper<String> implements AttributeValue, Value {
+/** PACKAGE-LOCAL */
+abstract class LongStub extends PrimitiveWrapper<Long> implements AttributeValue {
   @SerializationOnly
-  public CAString() {
-    this(null);
+  public LongStub() {
+    this(0L);
   }
 
-  public CAString(String value) {
+  public LongStub(Long value) {
     super(value);
   }
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    setValue(in.readUTF());
+    setValue(in.readLong());
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeUTF(getValue());
+    out.writeLong(getValue());
   }
 }

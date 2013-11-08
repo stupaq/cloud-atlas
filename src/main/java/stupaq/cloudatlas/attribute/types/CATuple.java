@@ -6,9 +6,10 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 
-public class CATuple extends ArrayList<AttributeValue> implements AttributeValue {
+public class CATuple extends ArrayList<AttributeValue> implements AttributeValue, Value {
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     clear();

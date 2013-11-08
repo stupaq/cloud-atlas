@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CADouble;
+import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
-import stupaq.cloudatlas.attribute.types.CALong;
 import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATuple;
@@ -86,7 +86,7 @@ public final class TypeRegistry {
     registerType(CABoolean.class, TypeID.ATTRIBUTE_TYPES_BOOLEAN);
     registerType(CADouble.class, TypeID.ATTRIBUTE_TYPES_DOUBLE);
     registerType(CAList.class, TypeID.ATTRIBUTE_TYPES_LIST);
-    registerType(CALong.class, TypeID.ATTRIBUTE_TYPES_LONG);
+    registerType(CAInteger.class, TypeID.ATTRIBUTE_TYPES_LONG);
     registerType(CASet.class, TypeID.ATTRIBUTE_TYPES_SET);
     registerType(CAString.class, TypeID.ATTRIBUTE_TYPES_STRING);
     registerType(CATuple.class, TypeID.ATTRIBUTE_TYPES_TUPLE);

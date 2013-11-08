@@ -5,9 +5,10 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue {
+public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue, Value {
   @SerializationOnly
   public CADouble() {
     this(0D);

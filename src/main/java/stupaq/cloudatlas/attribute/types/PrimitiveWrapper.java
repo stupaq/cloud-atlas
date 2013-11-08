@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.attribute.types;
 
-public abstract class PrimitiveWrapper<Primitive> {
+/** PACKAGE-LOCAL */
+abstract class PrimitiveWrapper<Primitive> {
   private Primitive value;
 
   protected PrimitiveWrapper(Primitive value) {

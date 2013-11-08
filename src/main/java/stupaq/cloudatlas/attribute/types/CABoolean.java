@@ -5,9 +5,10 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeValue {
+public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeValue, Value {
   @SerializationOnly
   public CABoolean() {
     this(false);

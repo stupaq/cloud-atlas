@@ -6,8 +6,10 @@ import java.io.ObjectOutput;
 import java.util.HashSet;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.interpreter.Value;
 
-public class CASet<Type extends AttributeValue> extends HashSet<Type> implements AttributeValue {
+public class CASet<Type extends AttributeValue> extends HashSet<Type> implements AttributeValue,
+                                                                                 Value {
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     CAList<Type> list = new CAList<>();
