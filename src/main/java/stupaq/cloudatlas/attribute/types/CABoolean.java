@@ -5,10 +5,11 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.ConvertibleValue;
+import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeValue, Value {
+public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeValue {
   @SerializationOnly
   public CABoolean() {
     this(false);
@@ -26,5 +27,22 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
     out.writeBoolean(getValue());
+  }
+
+  @Override
+  public ConvertibleValue getConvertible() {
+    return new ConvertibleImplementation();
+  }
+
+  private class ConvertibleImplementation extends ConvertibleValueDefault {
+    @Override
+    public CABoolean to_Boolean() {
+      return CABoolean.this;
+    }
+
+    @Override
+    public CAString to_String() {
+      return new CAString(String.valueOf(CABoolean.this));
+    }
   }
 }

@@ -11,11 +11,14 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import stupaq.cloudatlas.attribute.types.CABoolean;
+import stupaq.cloudatlas.attribute.types.CAContact;
 import stupaq.cloudatlas.attribute.types.CADouble;
+import stupaq.cloudatlas.attribute.types.CADuration;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
+import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.attribute.types.CATuple;
 
 public final class TypeRegistry {
@@ -52,7 +55,8 @@ public final class TypeRegistry {
 
   public static TypeID resolveType(Class clazz) {
     TypeID id = classToID.get(clazz);
-    Preconditions.checkArgument(id != null, "TypeID for given class was not registered");
+    Preconditions
+        .checkArgument(id != null, "TypeID for: " + clazz.getSimpleName() + " was not registered");
     return id;
   }
 
@@ -84,11 +88,14 @@ public final class TypeRegistry {
     }
 
     registerType(CABoolean.class, TypeID.ATTRIBUTE_TYPES_BOOLEAN);
+    registerType(CAContact.class, TypeID.ATTRIBUTE_TYPES_CONTACT);
     registerType(CADouble.class, TypeID.ATTRIBUTE_TYPES_DOUBLE);
+    registerType(CADuration.class, TypeID.ATTRIBUTE_TYPES_DURATION);
+    registerType(CAInteger.class, TypeID.ATTRIBUTE_TYPES_INTEGER);
     registerType(CAList.class, TypeID.ATTRIBUTE_TYPES_LIST);
-    registerType(CAInteger.class, TypeID.ATTRIBUTE_TYPES_LONG);
     registerType(CASet.class, TypeID.ATTRIBUTE_TYPES_SET);
     registerType(CAString.class, TypeID.ATTRIBUTE_TYPES_STRING);
+    registerType(CATime.class, TypeID.ATTRIBUTE_TYPES_TIME);
     registerType(CATuple.class, TypeID.ATTRIBUTE_TYPES_TUPLE);
   }
 
