@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
-import stupaq.cloudatlas.attribute.AttributeType;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CAContact;
@@ -32,26 +31,22 @@ public class ZoneManagementInfoTest {
   @Test
   public void testSerialization() throws Exception {
     ZoneManagementInfo zmi = new ZoneManagementInfo();
-    addAttr(zmi, "attributeBoolean", AttributeType.BOOLEAN, new CABoolean(Boolean.TRUE));
-    addAttr(zmi, "attributeContact", AttributeType.CONTACT, new CAContact("UW1"));
-    addAttr(zmi, "attributeDouble", AttributeType.DOUBLE, new CADouble(1.337D));
-    addAttr(zmi, "attributeDuration", AttributeType.DURATION, new CADuration(1337331L));
-    addAttr(zmi, "attributeInteger", AttributeType.INTEGER, new CAInteger(1337L));
-    addAttr(zmi, "attributeList", AttributeType.LIST,
-        new CAList<>(new CAString("some..."), new CAString("string...")));
-    addAttr(zmi, "attributeSet", AttributeType.SET,
-        new CASet<>(new CAInteger(13L), new CAInteger(37L)));
-    addAttr(zmi, "attributeString", AttributeType.STRING, new CAString("aString"));
-    addAttr(zmi, "attributeTime", AttributeType.TIME, new CATime(11733L));
-    addAttr(zmi, "attributeTuple", AttributeType.TUPLE,
+    addAttr(zmi, "attributeBoolean", new CABoolean(Boolean.TRUE));
+    addAttr(zmi, "attributeContact", new CAContact("UW1"));
+    addAttr(zmi, "attributeDouble", new CADouble(1.337D));
+    addAttr(zmi, "attributeDuration", new CADuration(1337331L));
+    addAttr(zmi, "attributeInteger", new CAInteger(1337L));
+    addAttr(zmi, "attributeList", new CAList<>(new CAString("some..."), new CAString("string...")));
+    addAttr(zmi, "attributeSet", new CASet<>(new CAInteger(13L), new CAInteger(37L)));
+    addAttr(zmi, "attributeString", new CAString("aString"));
+    addAttr(zmi, "attributeTime", new CATime(11733L));
+    addAttr(zmi, "attributeTuple",
         new CATuple(new CAString("some..."), new CATuple(new CAInteger(11L), new CABoolean(false)),
             new CAInteger(1337L)));
-    ZoneManagementInfo zmiClone = SerializationUtils.clone(zmi);
-    assertEquals(zmi, zmiClone);
+    assertEquals(zmi, SerializationUtils.clone(zmi));
   }
 
-  private static void addAttr(ZoneManagementInfo zmi, String name, AttributeType type,
-      AttributeValue value) {
-    zmi.addAttribute(new Attribute<>(new AttributeName(name), type, value));
+  private static void addAttr(ZoneManagementInfo zmi, String name, AttributeValue value) {
+    zmi.addAttribute(new Attribute<>(new AttributeName(name), value));
   }
 }
