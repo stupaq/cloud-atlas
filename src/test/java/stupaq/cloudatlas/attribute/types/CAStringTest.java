@@ -26,4 +26,19 @@ public class CAStringTest {
     assertEquals(new CADuration(6235522024L), new CAString("+72 04:05:22.024").to().Duration());
     assertEquals(new CADuration(-6235522024L), new CAString("-72 04:05:22.024").to().Duration());
   }
+
+  @Test
+  public void testOperations() {
+    // addition
+    assertEquals(new CAString("aaaabbb"), new CAString("aaaa").operate().add(new CAString("bbb")));
+    assertEquals(new CAString("aaaa"), new CAString("aaaa").operate().add(new CAString("")));
+    // size
+    assertEquals(new CAInteger(3L), new CAString("aaa").operate().size());
+    assertEquals(new CAInteger(0L), new CAString("").operate().size());
+    // regexp
+    assertEquals(new CABoolean(true),
+        new CAString("aaaaaab").operate().matches(new CAString("a*b")));
+    assertEquals(new CABoolean(false),
+        new CAString("aaaacb").operate().matches(new CAString("a*b")));
+  }
 }

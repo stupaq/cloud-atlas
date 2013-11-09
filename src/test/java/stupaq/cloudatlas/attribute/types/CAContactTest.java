@@ -11,4 +11,8 @@ public class CAContactTest {
     assertEquals(new CAString("UW1"), new CAContact("UW1").to().String());
     assertEquals(new CAString("UW2"), new CAContact("UW2").to().String());
   }
+
+  @Test
+  public void testOperations() {
+  }
 }

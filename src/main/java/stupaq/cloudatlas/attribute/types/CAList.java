@@ -13,8 +13,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 import stupaq.cloudatlas.serialization.TypeID;
 import stupaq.cloudatlas.serialization.TypeRegistry;
@@ -78,6 +81,11 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
     return new ConvertibleImplementation();
   }
 
+  @Override
+  public OperableValue operate() {
+    return new OperableImplementation();
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAList<Type> List() {
@@ -94,6 +102,13 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
     @Override
     public CASet<Type> Set() {
       return new CASet<>(CAList.this);
+    }
+  }
+
+  private class OperableImplementation extends OperableValueDefault {
+    @Override
+    public Value size() {
+      return new CAInteger((long) CAList.this.size());
     }
   }
 }

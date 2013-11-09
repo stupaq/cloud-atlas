@@ -1,10 +1,18 @@
 package stupaq.cloudatlas.attribute.types;
 
+import com.google.common.base.Preconditions;
+
 /** PACKAGE-LOCAL */
 abstract class PrimitiveWrapper<Primitive> {
   private Primitive value;
 
   protected PrimitiveWrapper(Primitive value) {
+    Preconditions.checkNotNull(value);
+    this.value = value;
+  }
+
+  @SuppressWarnings("unused")
+  protected PrimitiveWrapper(Primitive value, Void safeNullValue) {
     this.value = value;
   }
 
@@ -13,6 +21,7 @@ abstract class PrimitiveWrapper<Primitive> {
   }
 
   protected void setValue(Primitive value) {
+    Preconditions.checkNotNull(value);
     this.value = value;
   }
 

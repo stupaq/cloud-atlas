@@ -21,4 +21,8 @@ public class CATupleTest {
         new CATuple(new CATuple(new CAString("aaa")), new CATuple(new CAInteger(1337L))).to()
             .String());
   }
+
+  @Test
+  public void testOperations() {
+  }
 }

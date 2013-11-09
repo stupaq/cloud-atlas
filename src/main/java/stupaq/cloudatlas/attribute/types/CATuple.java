@@ -13,8 +13,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 
@@ -61,6 +63,11 @@ public class CATuple extends ArrayList<AttributeValue> implements AttributeValue
     return new ConvertibleImplementation();
   }
 
+  @Override
+  public OperableValue operate() {
+    return new OperableImplementation();
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAString String() {
@@ -73,5 +80,8 @@ public class CATuple extends ArrayList<AttributeValue> implements AttributeValue
     public CATuple Tuple() {
       return CATuple.this;
     }
+  }
+
+  private class OperableImplementation extends OperableValueDefault {
   }
 }

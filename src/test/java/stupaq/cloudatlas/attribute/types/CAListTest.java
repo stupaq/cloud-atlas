@@ -38,4 +38,12 @@ public class CAListTest {
         new CAList<>(new CAList<>(new CAInteger(1337L)), new CAList<>(new CAInteger(1337L))).to()
             .Set());
   }
+
+  @Test
+  public void testOperations() {
+    assertEquals(new CAInteger(0L), new CAList<>().operate().size());
+    assertEquals(new CAInteger(3L),
+        new CAList<>(new CABoolean(true), new CABoolean(false), new CABoolean(true)).operate()
+            .size());
+  }
 }

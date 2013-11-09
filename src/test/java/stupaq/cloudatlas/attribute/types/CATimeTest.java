@@ -12,4 +12,13 @@ public class CATimeTest {
     // CATime#now()
     System.err.println("CATime.now() returned: " + CATime.now().to().String());
   }
+
+  @Test
+  public void testOperations() {
+    // negation
+    assertEquals(new CATime(-12345L), new CATime(12345L).operate().negate());
+    // addition
+    assertEquals(new CADuration(-1000L),
+        new CATime(10000L).operate().add(new CATime(11000L).operate().negate()));
+  }
 }

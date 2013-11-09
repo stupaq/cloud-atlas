@@ -7,17 +7,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CAString extends PrimitiveWrapper<String> implements AttributeValue {
   @SerializationOnly
   public CAString() {
-    this(null);
+    super(null, null);
   }
 
   public CAString(String value) {
@@ -35,13 +39,18 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
   }
 
   @Override
+  public Class<CAString> getType() {
+    return CAString.class;
+  }
+
+  @Override
   public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
   @Override
-  public Class<CAString> getType() {
-    return CAString.class;
+  public OperableValue operate() {
+    return new OperableImplementation();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
@@ -74,7 +83,8 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
         long time = format.parse(parts[1]).getTime();
         return new CADuration(
             (days >= 0 ? 1 : -1) * (TimeUnit.DAYS.toMillis(Math.abs(days)) + time));
-      } catch (NullPointerException | IndexOutOfBoundsException | NumberFormatException | ParseException e) {
+      } catch (NullPointerException | IndexOutOfBoundsException | NumberFormatException |
+          ParseException e) {
         throw new ConversionException(e);
       }
     }
@@ -97,6 +107,33 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
       } catch (ParseException e) {
         throw new ConversionException(e);
       }
+    }
+  }
+
+  private class OperableImplementation extends OperableValueDefault {
+    @Override
+    public Value add(Value value) {
+      return value.operate().addTo(CAString.this);
+    }
+
+    @Override
+    public Value addTo(CAString value) {
+      return new CAString(value.getValue() + getValue());
+    }
+
+    @Override
+    public Value matches(Value value) {
+      return value.operate().describes(CAString.this);
+    }
+
+    @Override
+    public Value describes(CAString value) {
+      return new CABoolean(Pattern.matches(getValue(), value.getValue()));
+    }
+
+    @Override
+    public Value size() {
+      return new CAInteger((long) CAString.this.getValue().length());
     }
   }
 }

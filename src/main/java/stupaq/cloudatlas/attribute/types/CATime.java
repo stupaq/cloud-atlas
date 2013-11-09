@@ -2,19 +2,18 @@ package stupaq.cloudatlas.attribute.types;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CATime extends Date implements AttributeValue {
+public class CATime extends LongStub {
   private static final Calendar EPOCH;
 
   static {
@@ -43,35 +42,52 @@ public class CATime extends Date implements AttributeValue {
   }
 
   @Override
+  public Class<CATime> getType() {
+    return CATime.class;
+  }
+
+  @Override
   public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
   @Override
-  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    setTime(in.readLong());
-  }
-
-  @Override
-  public void writeFields(ObjectOutput out) throws IOException {
-    out.writeLong(getTime());
-  }
-
-  @Override
-  public Class<CATime> getType() {
-    return CATime.class;
+  public OperableValue operate() {
+    return new OperableImplementation();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAString String() {
       return new CAString(DateFormatUtils
-          .format(getTime(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("CET")));
+          .format(getValue(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("CET")));
     }
 
     @Override
     public CATime Time() {
       return CATime.this;
+    }
+  }
+
+  private class OperableImplementation extends OperableValueDefault {
+    @Override
+    public Value add(Value value) {
+      return value.operate().addTo(CATime.this);
+    }
+
+    @Override
+    public Value addTo(CADuration value) {
+      return new CATime(value.getValue() + getValue());
+    }
+
+    @Override
+    public Value addTo(CATime value) {
+      return new CADuration(value.getValue() + getValue());
+    }
+
+    @Override
+    public Value negate() {
+      return new CATime(-getValue());
     }
   }
 }

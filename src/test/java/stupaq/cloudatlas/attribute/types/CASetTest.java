@@ -32,4 +32,12 @@ public class CASetTest {
     assertEquals(new CAList<>(new CAList<>(new CAInteger(337L))),
         new CASet<>(new CAList<>(new CAInteger(337L))).to().List());
   }
+
+  @Test
+  public void testOperations() {
+    assertEquals(new CAInteger(0L), new CASet<>().operate().size());
+    assertEquals(new CAInteger(2L),
+        new CASet<>(new CABoolean(true), new CABoolean(false), new CABoolean(true)).operate()
+            .size());
+  }
 }

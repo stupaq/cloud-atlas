@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.interpreter;
+package stupaq.cloudatlas.interpreter.semantics;
 
 import com.google.common.base.Function;
 
@@ -14,6 +14,7 @@ import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.attribute.types.CATuple;
+import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
 
 public interface ConvertibleValue {

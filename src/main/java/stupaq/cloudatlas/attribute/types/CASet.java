@@ -13,8 +13,11 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue;
-import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
+import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue;
+import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CASet<Type extends AttributeValue> extends HashSet<Type> implements AttributeValue {
@@ -62,6 +65,11 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
     return new ConvertibleImplementation();
   }
 
+  @Override
+  public OperableValue operate() {
+    return new OperableImplementation();
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAList<Type> List() {
@@ -78,6 +86,13 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
       return new CAString(
           "{ " + StringUtils.join(Collections2.transform(CASet.this, new Stringifier()), ", ")
           + " }");
+    }
+  }
+
+  private class OperableImplementation extends OperableValueDefault {
+    @Override
+    public Value size() {
+      return new CAInteger((long) CASet.this.size());
     }
   }
 }
