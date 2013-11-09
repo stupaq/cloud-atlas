@@ -25,6 +25,11 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
     this(Collections.<Type>emptySet());
   }
 
+  @SafeVarargs
+  public CAList(Type... elements) {
+    this(Arrays.asList(elements));
+  }
+
   public CAList(Collection<Type> elements) {
     super(elements);
     verifyInvariants();
@@ -32,11 +37,6 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
 
   private void verifyInvariants() throws IllegalStateException {
     TypeUtils.assertUniformCollection(this);
-  }
-
-  @SafeVarargs
-  public CAList(Type... elements) {
-    this(Arrays.asList(elements));
   }
 
   @Override
@@ -89,6 +89,11 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
       return new CAString(
           "[ " + StringUtils.join(Collections2.transform(CAList.this, new Stringifier()), ", ")
           + " ]");
+    }
+
+    @Override
+    public CASet<Type> to_Set() {
+      return new CASet<>(CAList.this);
     }
   }
 }

@@ -23,6 +23,11 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
     this(Collections.<Type>emptySet());
   }
 
+  @SafeVarargs
+  public CASet(Type... elements) {
+    this(Arrays.asList(elements));
+  }
+
   public CASet(Collection<Type> elements) {
     super(elements);
     verifyInvariants();
@@ -30,11 +35,6 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
 
   private void verifyInvariants() {
     TypeUtils.assertUniformCollection(this);
-  }
-
-  @SafeVarargs
-  public CASet(Type... elements) {
-    this(Arrays.asList(elements));
   }
 
   @Override
@@ -63,6 +63,11 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
+    @Override
+    public CAList<Type> to_List() {
+      return new CAList<>(CASet.this);
+    }
+
     @Override
     public CASet<Type> to_Set() {
       return CASet.this;

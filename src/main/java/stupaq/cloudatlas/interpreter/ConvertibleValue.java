@@ -41,8 +41,7 @@ public interface ConvertibleValue {
   public static abstract class ConvertibleValueDefault implements ConvertibleValue {
 
     private <T extends Value> T noConversion(Class<T> dest) throws ConversionException {
-      throw new ConversionException(
-          "Conversion not known from: " + getClass().getName() + " to: " + dest.getSimpleName());
+      throw new ConversionException("Conversion not known to: " + dest.getSimpleName());
     }
 
     @Override

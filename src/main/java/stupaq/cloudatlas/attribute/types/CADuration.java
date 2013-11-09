@@ -1,6 +1,6 @@
 package stupaq.cloudatlas.attribute.types;
 
-import java.sql.Timestamp;
+import org.apache.commons.lang.time.DurationFormatUtils;
 
 import stupaq.cloudatlas.interpreter.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
@@ -39,7 +39,8 @@ public class CADuration extends LongStub {
 
     @Override
     public CAString to_String() {
-      return new CAString(new Timestamp(getValue()).toString());
+      return new CAString((getValue() >= 0 ? "+" : "-") + DurationFormatUtils
+          .formatDuration(Math.abs(getValue()), "d HH:mm:ss.SSS"));
     }
   }
 }

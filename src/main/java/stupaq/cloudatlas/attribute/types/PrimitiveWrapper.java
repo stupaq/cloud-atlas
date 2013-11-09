@@ -17,6 +17,11 @@ abstract class PrimitiveWrapper<Primitive> {
   }
 
   @Override
+  public int hashCode() {
+    return value != null ? value.hashCode() : 0;
+  }
+
+  @Override
   public boolean equals(Object o) {
     PrimitiveWrapper that = (PrimitiveWrapper) o;
     return this == o || !(o == null || getClass() != o.getClass()) && !(value != null ? !value
@@ -24,14 +29,7 @@ abstract class PrimitiveWrapper<Primitive> {
   }
 
   @Override
-  public int hashCode() {
-    return value != null ? value.hashCode() : 0;
-  }
-
-  @Override
   public String toString() {
-    return "PrimitiveWrapper{" +
-           "value=" + value +
-           '}';
+    return String.valueOf(value);
   }
 }
