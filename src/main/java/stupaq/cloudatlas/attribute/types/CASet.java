@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-import stupaq.cloudatlas.attribute.AttributeType;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
@@ -29,10 +28,11 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
     verifyInvariants();
   }
 
-  private void verifyInvariants() throws IllegalStateException {
-    AttributeType.assertUniformCollection(this);
+  private void verifyInvariants() {
+    TypeUtils.assertUniformCollection(this);
   }
 
+  @SafeVarargs
   public CASet(Type... elements) {
     this(Arrays.asList(elements));
   }

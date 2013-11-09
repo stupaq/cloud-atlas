@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import stupaq.cloudatlas.attribute.AttributeType;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
@@ -28,15 +27,16 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
 
   public CAList(Collection<Type> elements) {
     super(elements);
-  }
-
-  public CAList(Type... elements) {
-    this(Arrays.asList(elements));
     verifyInvariants();
   }
 
   private void verifyInvariants() throws IllegalStateException {
-    AttributeType.assertUniformCollection(this);
+    TypeUtils.assertUniformCollection(this);
+  }
+
+  @SafeVarargs
+  public CAList(Type... elements) {
+    this(Arrays.asList(elements));
   }
 
   @Override
