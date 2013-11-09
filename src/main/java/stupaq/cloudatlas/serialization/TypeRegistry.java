@@ -48,7 +48,7 @@ public final class TypeRegistry {
     Preconditions.checkNotNull(factory, "TypeFactory cannot be null");
     TypeFactory oldFactory = idToFactory.get(id);
     Preconditions.checkState(oldFactory == null || oldFactory.equals(factory),
-                             "Cannot register different factory for TypeID: " + id);
+        "Cannot register different factory for TypeID: " + id);
     idToFactory.put(id, factory);
     classToID.put(clazz, id);
   }

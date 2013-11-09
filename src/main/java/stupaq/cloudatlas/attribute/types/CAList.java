@@ -74,25 +74,25 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CAList<Type> to_List() {
+    public CAList<Type> List() {
       return CAList.this;
     }
 
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return new CAString(
           "[ " + StringUtils.join(Collections2.transform(CAList.this, new Stringifier()), ", ")
           + " ]");
     }
 
     @Override
-    public CASet<Type> to_Set() {
+    public CASet<Type> Set() {
       return new CASet<>(CAList.this);
     }
   }

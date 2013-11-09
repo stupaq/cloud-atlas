@@ -58,23 +58,23 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CAList<Type> to_List() {
+    public CAList<Type> List() {
       return new CAList<>(CASet.this);
     }
 
     @Override
-    public CASet<Type> to_Set() {
+    public CASet<Type> Set() {
       return CASet.this;
     }
 
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return new CAString(
           "{ " + StringUtils.join(Collections2.transform(CASet.this, new Stringifier()), ", ")
           + " }");

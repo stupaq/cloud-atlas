@@ -28,6 +28,10 @@ public class ZoneManagementInfoTest {
     TypeRegistry.registerDefaultTypes();
   }
 
+  private static void addAttr(ZoneManagementInfo zmi, String name, AttributeValue value) {
+    zmi.addAttribute(new Attribute<>(new AttributeName(name), value));
+  }
+
   @Test
   public void testSerialization() throws Exception {
     ZoneManagementInfo zmi = new ZoneManagementInfo();
@@ -44,9 +48,5 @@ public class ZoneManagementInfoTest {
         new CATuple(new CAString("some..."), new CATuple(new CAInteger(11L), new CABoolean(false)),
             new CAInteger(1337L)));
     assertEquals(zmi, SerializationUtils.clone(zmi));
-  }
-
-  private static void addAttr(ZoneManagementInfo zmi, String name, AttributeValue value) {
-    zmi.addAttribute(new Attribute<>(new AttributeName(name), value));
   }
 }

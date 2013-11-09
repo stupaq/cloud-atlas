@@ -32,7 +32,7 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
@@ -43,12 +43,12 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CAContact to_Contact() {
+    public CAContact Contact() {
       return CAContact.this;
     }
 
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return new CAString(getValue());
     }
   }

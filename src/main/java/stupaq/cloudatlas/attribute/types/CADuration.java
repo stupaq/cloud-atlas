@@ -17,7 +17,7 @@ public class CADuration extends LongStub {
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
@@ -28,17 +28,17 @@ public class CADuration extends LongStub {
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CADuration to_Duration() {
+    public CADuration Duration() {
       return CADuration.this;
     }
 
     @Override
-    public CAInteger to_Integer() {
+    public CAInteger Integer() {
       return new CAInteger(getValue());
     }
 
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return new CAString((getValue() >= 0 ? "+" : "-") + DurationFormatUtils
           .formatDuration(Math.abs(getValue()), "d HH:mm:ss.SSS"));
     }

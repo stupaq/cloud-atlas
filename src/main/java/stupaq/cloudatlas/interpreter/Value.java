@@ -4,5 +4,5 @@ public interface Value {
 
   public Class<? extends Value> getType();
 
-  public ConvertibleValue getConvertible();
+  public ConvertibleValue to();
 }

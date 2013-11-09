@@ -15,7 +15,7 @@ public class CAInteger extends LongStub {
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
@@ -26,22 +26,22 @@ public class CAInteger extends LongStub {
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CADouble to_Double() {
+    public CADouble Double() {
       return new CADouble(getValue().doubleValue());
     }
 
     @Override
-    public CADuration to_Duration() {
+    public CADuration Duration() {
       return new CADuration(getValue());
     }
 
     @Override
-    public CAInteger to_Integer() {
+    public CAInteger Integer() {
       return CAInteger.this;
     }
 
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return new CAString(String.valueOf(getValue()));
     }
   }

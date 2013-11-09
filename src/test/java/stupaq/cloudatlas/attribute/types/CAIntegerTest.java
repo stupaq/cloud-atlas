@@ -8,10 +8,10 @@ public class CAIntegerTest {
   @Test
   public void testConversions() {
     // -> CAString
-    assertEquals(new CAString("1337"), new CAInteger(1337L).getConvertible().to_String());
+    assertEquals(new CAString("1337"), new CAInteger(1337L).to().String());
     // -> CADouble
-    assertEquals(new CADouble(1337.0D), new CAInteger(1337L).getConvertible().to_Double());
+    assertEquals(new CADouble(1337.0D), new CAInteger(1337L).to().Double());
     // -> CADuration
-    assertEquals(new CADuration(1337L), new CAInteger(1337L).getConvertible().to_Duration());
+    assertEquals(new CADuration(1337L), new CAInteger(1337L).to().Duration());
   }
 }

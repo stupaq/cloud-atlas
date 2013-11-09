@@ -30,7 +30,7 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
@@ -41,12 +41,12 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CABoolean to_Boolean() {
+    public CABoolean Boolean() {
       return CABoolean.this;
     }
 
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return new CAString(String.valueOf(CABoolean.this));
     }
   }

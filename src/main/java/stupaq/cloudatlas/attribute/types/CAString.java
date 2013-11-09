@@ -35,7 +35,7 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
@@ -46,22 +46,22 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CABoolean to_Boolean() {
+    public CABoolean Boolean() {
       return new CABoolean(Boolean.valueOf(getValue()));
     }
 
     @Override
-    public CAContact to_Contact() {
+    public CAContact Contact() {
       return new CAContact(getValue());
     }
 
     @Override
-    public CADouble to_Double() {
+    public CADouble Double() {
       return new CADouble(Double.valueOf(getValue()));
     }
 
     @Override
-    public CADuration to_Duration() {
+    public CADuration Duration() {
       String str = getValue();
       try {
         if (str.charAt(0) != '+' && str.charAt(0) != '-') {
@@ -80,17 +80,17 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
     }
 
     @Override
-    public CAInteger to_Integer() {
+    public CAInteger Integer() {
       return new CAInteger(Long.valueOf(getValue()));
     }
 
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return CAString.this;
     }
 
     @Override
-    public CATime to_Time() {
+    public CATime Time() {
       try {
         return new CATime(
             new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS z").parse(getValue()).getTime());

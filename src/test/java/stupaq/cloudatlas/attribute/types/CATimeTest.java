@@ -8,9 +8,8 @@ public class CATimeTest {
   @Test
   public void testConversions() {
     // -> CATime
-    assertEquals(new CAString("2000/01/01 00:00:00.000 CET"),
-        CATime.epoch().getConvertible().to_String());
+    assertEquals(new CAString("2000/01/01 00:00:00.000 CET"), CATime.epoch().to().String());
     // CATime#now()
-    System.err.println("CATime.now() returned: " + CATime.now().getConvertible().to_String());
+    System.err.println("CATime.now() returned: " + CATime.now().to().String());
   }
 }

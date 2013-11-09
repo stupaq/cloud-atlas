@@ -31,7 +31,7 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
@@ -42,17 +42,17 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CADouble to_Double() {
+    public CADouble Double() {
       return CADouble.this;
     }
 
     @Override
-    public CAInteger to_Integer() {
+    public CAInteger Integer() {
       return new CAInteger(getValue().longValue());
     }
 
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return new CAString(String.valueOf(getValue()));
     }
   }

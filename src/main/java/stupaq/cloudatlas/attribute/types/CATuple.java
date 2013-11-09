@@ -57,20 +57,20 @@ public class CATuple extends ArrayList<AttributeValue> implements AttributeValue
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return new CAString(
           "<< " + StringUtils.join(Collections2.transform(CATuple.this, new Stringifier()), ", ")
           + " >>");
     }
 
     @Override
-    public CATuple to_Tuple() {
+    public CATuple Tuple() {
       return CATuple.this;
     }
   }

@@ -43,7 +43,7 @@ public class CATime extends Date implements AttributeValue {
   }
 
   @Override
-  public ConvertibleValue getConvertible() {
+  public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
@@ -64,13 +64,13 @@ public class CATime extends Date implements AttributeValue {
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return new CAString(DateFormatUtils
           .format(getTime(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("CET")));
     }
 
     @Override
-    public CATime to_Time() {
+    public CATime Time() {
       return CATime.this;
     }
   }

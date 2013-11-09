@@ -14,11 +14,11 @@ public class CATupleTest {
   @Test
   public void testConversions() {
     // -> CAString
-    assertEquals(new CAString("<<  >>"), new CATuple().getConvertible().to_String());
+    assertEquals(new CAString("<<  >>"), new CATuple().to().String());
     assertEquals(new CAString("<< aaa, 1337 >>"),
-        new CATuple(new CAString("aaa"), new CAInteger(1337L)).getConvertible().to_String());
+        new CATuple(new CAString("aaa"), new CAInteger(1337L)).to().String());
     assertEquals(new CAString("<< << aaa >>, << 1337 >> >>"),
-        new CATuple(new CATuple(new CAString("aaa")), new CATuple(new CAInteger(1337L)))
-            .getConvertible().to_String());
+        new CATuple(new CATuple(new CAString("aaa")), new CATuple(new CAInteger(1337L))).to()
+            .String());
   }
 }

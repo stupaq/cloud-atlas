@@ -18,25 +18,25 @@ import stupaq.cloudatlas.interpreter.errors.ConversionException;
 
 public interface ConvertibleValue {
 
-  public CABoolean to_Boolean();
+  public CABoolean Boolean();
 
-  public CAContact to_Contact();
+  public CAContact Contact();
 
-  public CADouble to_Double();
+  public CADouble Double();
 
-  public CADuration to_Duration();
+  public CADuration Duration();
 
-  public CAInteger to_Integer();
+  public CAInteger Integer();
 
-  public CAList to_List();
+  public CAList List();
 
-  public CASet to_Set();
+  public CASet Set();
 
-  public CAString to_String();
+  public CAString String();
 
-  public CATime to_Time();
+  public CATime Time();
 
-  public CATuple to_Tuple();
+  public CATuple Tuple();
 
   public static abstract class ConvertibleValueDefault implements ConvertibleValue {
 
@@ -45,52 +45,52 @@ public interface ConvertibleValue {
     }
 
     @Override
-    public CABoolean to_Boolean() {
+    public CABoolean Boolean() {
       return noConversion(CABoolean.class);
     }
 
     @Override
-    public CAContact to_Contact() {
+    public CAContact Contact() {
       return noConversion(CAContact.class);
     }
 
     @Override
-    public CADouble to_Double() {
+    public CADouble Double() {
       return noConversion(CADouble.class);
     }
 
     @Override
-    public CADuration to_Duration() {
+    public CADuration Duration() {
       return noConversion(CADuration.class);
     }
 
     @Override
-    public CAInteger to_Integer() {
+    public CAInteger Integer() {
       return noConversion(CAInteger.class);
     }
 
     @Override
-    public CAList to_List() {
+    public CAList List() {
       return noConversion(CAList.class);
     }
 
     @Override
-    public CASet to_Set() {
+    public CASet Set() {
       return noConversion(CASet.class);
     }
 
     @Override
-    public CAString to_String() {
+    public CAString String() {
       return noConversion(CAString.class);
     }
 
     @Override
-    public CATime to_Time() {
+    public CATime Time() {
       return noConversion(CATime.class);
     }
 
     @Override
-    public CATuple to_Tuple() {
+    public CATuple Tuple() {
       return noConversion(CATuple.class);
     }
   }
@@ -98,7 +98,7 @@ public interface ConvertibleValue {
   public static class Stringifier implements Function<Value, String> {
     @Override
     public String apply(@Nullable Value value) {
-      return value.getConvertible().to_String().toString();
+      return value.to().String().toString();
     }
   }
 }
