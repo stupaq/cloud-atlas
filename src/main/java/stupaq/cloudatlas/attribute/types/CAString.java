@@ -3,11 +3,15 @@ package stupaq.cloudatlas.attribute.types;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.interpreter.errors.ConversionException;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CAString extends PrimitiveWrapper<String> implements AttributeValue {
@@ -58,7 +62,21 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
     @Override
     public CADuration to_Duration() {
-      return new CADuration(Long.valueOf(getValue()));
+      String str = getValue();
+      try {
+        if (str.charAt(0) != '+' && str.charAt(0) != '-') {
+          throw new ConversionException("Expected leading sign");
+        }
+        String[] parts = str.split(" ");
+        long days = Long.parseLong(parts[0]);
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        long time = format.parse(parts[1]).getTime();
+        return new CADuration(
+            (days >= 0 ? 1 : -1) * (TimeUnit.DAYS.toMillis(Math.abs(days)) + time));
+      } catch (NullPointerException | IndexOutOfBoundsException | NumberFormatException | ParseException e) {
+        throw new ConversionException(e);
+      }
     }
 
     @Override
@@ -73,7 +91,12 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
     @Override
     public CATime to_Time() {
-      return new CATime(Timestamp.valueOf(getValue()));
+      try {
+        return new CATime(
+            new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS z").parse(getValue()).getTime());
+      } catch (ParseException e) {
+        throw new ConversionException(e);
+      }
     }
   }
 }

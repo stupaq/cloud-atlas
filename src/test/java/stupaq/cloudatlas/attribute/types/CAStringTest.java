@@ -14,19 +14,21 @@ public class CAStringTest {
     assertEquals(new CAInteger(1337L), new CAString("1337").getConvertible().to_Integer());
     // -> CADouble
     assertEquals(new CADouble(1337.33D), new CAString("1337.33").getConvertible().to_Double());
+    // -> CAContact
+    assertEquals(new CAContact("UW1"), new CAString("UW1").getConvertible().to_Contact());
+    // -> CAString
+    assertEquals(new CAString("UW1"), new CAString("UW1").getConvertible().to_String());
     // -> CATime
-    assertEquals(new CATime(),
-        new CAString("2000/01/01 00:00:00.000 CET").getConvertible().to_Time());
-    assertEquals(new CATime(),
+    assertEquals(CATime.epoch(),
         new CAString("2000/01/01 00:00:00.000 CET").getConvertible().to_Time());
     // -> CADuration
     assertEquals(new CADuration(189141024L),
         new CAString("+2 04:32:21.024").getConvertible().to_Duration());
     assertEquals(new CADuration(-189141024L),
         new CAString("-2 04:32:21.024").getConvertible().to_Duration());
-    // -> CAContact
-    assertEquals(new CAContact("UW1"), new CAString("UW1").getConvertible().to_Contact());
-    // -> CAString
-    assertEquals(new CAString("UW1"), new CAString("UW1").getConvertible().to_String());
+    assertEquals(new CADuration(6235522024L),
+        new CAString("+72 04:05:22.024").getConvertible().to_Duration());
+    assertEquals(new CADuration(-6235522024L),
+        new CAString("-72 04:05:22.024").getConvertible().to_Duration());
   }
 }

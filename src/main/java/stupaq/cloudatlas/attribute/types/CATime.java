@@ -2,15 +2,27 @@ package stupaq.cloudatlas.attribute.types;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 
-import java.sql.Timestamp;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CATime extends LongStub {
+public class CATime extends Date implements AttributeValue {
+  private static final Calendar EPOCH;
+
+  static {
+    EPOCH = Calendar.getInstance(TimeZone.getTimeZone("CET"));
+    EPOCH.set(2000, Calendar.JANUARY, 1, 0, 0, 0);
+    EPOCH.set(Calendar.MILLISECOND, 0);
+  }
+
   @SerializationOnly
   public CATime() {
     this(0L);
@@ -20,25 +32,29 @@ public class CATime extends LongStub {
     super(value);
   }
 
-  public CATime(Timestamp timestamp) {
-    this(timestamp.getTime());
-  }
-
   /** Returns time corresponding to 2000/01/01 00:00:00.000 CET. */
   public static CATime epoch() {
-    // TODO
-    return new CATime();
+    return new CATime(EPOCH.getTime().getTime());
   }
 
-  /** Returns current time in CET time zone. */
+  /** Returns current time. */
   public static CATime now() {
-    // TODO
     return new CATime(new Date().getTime());
   }
 
   @Override
   public ConvertibleValue getConvertible() {
     return new ConvertibleImplementation();
+  }
+
+  @Override
+  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
+    setTime(in.readLong());
+  }
+
+  @Override
+  public void writeFields(ObjectOutput out) throws IOException {
+    out.writeLong(getTime());
   }
 
   @Override
@@ -50,7 +66,7 @@ public class CATime extends LongStub {
     @Override
     public CAString to_String() {
       return new CAString(DateFormatUtils
-          .format(getValue(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("UTC")));
+          .format(getTime(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("CET")));
     }
 
     @Override

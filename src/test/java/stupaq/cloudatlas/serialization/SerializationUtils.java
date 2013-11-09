@@ -21,7 +21,7 @@ public final class SerializationUtils {
     ) {
       object.writeFields(oos);
       oos.flush();
-      System.out.println(
+      System.err.println(
           "Serialized object of class: " + object.getClass().getSimpleName() + " size: " + baos
               .size());
       return baos.toByteArray();
