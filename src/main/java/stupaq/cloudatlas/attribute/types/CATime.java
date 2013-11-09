@@ -25,6 +25,11 @@ public class CATime extends LongStub {
     return new ConvertibleImplementation();
   }
 
+  @Override
+  public Class<CATime> getType() {
+    return CATime.class;
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAString to_String() {

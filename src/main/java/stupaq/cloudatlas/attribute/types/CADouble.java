@@ -35,6 +35,11 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
     return new ConvertibleImplementation();
   }
 
+  @Override
+  public Class<CADouble> getType() {
+    return CADouble.class;
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CADouble to_Double() {

@@ -34,6 +34,11 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
     return new ConvertibleImplementation();
   }
 
+  @Override
+  public Class<CABoolean> getType() {
+    return CABoolean.class;
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CABoolean to_Boolean() {

@@ -36,6 +36,11 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
     return new ConvertibleImplementation();
   }
 
+  @Override
+  public Class<CAContact> getType() {
+    return CAContact.class;
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAContact to_Contact() {

@@ -19,6 +19,11 @@ public class CAInteger extends LongStub {
     return new ConvertibleImplementation();
   }
 
+  @Override
+  public Class<CAInteger> getType() {
+    return CAInteger.class;
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CADouble to_Double() {

@@ -24,12 +24,12 @@ public class CATuple extends ArrayList<AttributeValue> implements AttributeValue
     this(Collections.<AttributeValue>emptyList());
   }
 
-  public CATuple(AttributeValue... elements) {
-    this(Arrays.asList(elements));
-  }
-
   public CATuple(Collection<AttributeValue> elements) {
     super(elements);
+  }
+
+  public CATuple(AttributeValue... elements) {
+    this(Arrays.asList(elements));
   }
 
   @Override
@@ -52,21 +52,26 @@ public class CATuple extends ArrayList<AttributeValue> implements AttributeValue
   }
 
   @Override
+  public Class<CATuple> getType() {
+    return CATuple.class;
+  }
+
+  @Override
   public ConvertibleValue getConvertible() {
     return new ConvertibleImplementation();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CATuple to_Tuple() {
-      return CATuple.this;
-    }
-
-    @Override
     public CAString to_String() {
       return new CAString(
           "<< " + StringUtils.join(Collections2.transform(CATuple.this, new Stringifier()), ", ")
           + " >>");
+    }
+
+    @Override
+    public CATuple to_Tuple() {
+      return CATuple.this;
     }
   }
 }

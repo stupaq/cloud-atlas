@@ -21,15 +21,20 @@ public class CADuration extends LongStub {
     return new ConvertibleImplementation();
   }
 
-  private class ConvertibleImplementation extends ConvertibleValueDefault {
-    @Override
-    public CAInteger to_Integer() {
-      return new CAInteger(getValue());
-    }
+  @Override
+  public Class<CADuration> getType() {
+    return CADuration.class;
+  }
 
+  private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CADuration to_Duration() {
       return CADuration.this;
+    }
+
+    @Override
+    public CAInteger to_Integer() {
+      return new CAInteger(getValue());
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import stupaq.cloudatlas.attribute.AttributeType;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.ConvertibleValue.ConvertibleValueDefault;
@@ -25,12 +26,17 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
     this(Collections.<Type>emptySet());
   }
 
-  public CAList(Type... elements) {
-    this(Arrays.asList(elements));
-  }
-
   public CAList(Collection<Type> elements) {
     super(elements);
+  }
+
+  public CAList(Type... elements) {
+    this(Arrays.asList(elements));
+    verifyInvariants();
+  }
+
+  private void verifyInvariants() throws IllegalStateException {
+    AttributeType.assertUniformCollection(this);
   }
 
   @Override
@@ -46,6 +52,7 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
       instance.readFields(in);
       add(instance);
     }
+    verifyInvariants();
   }
 
   @Override
@@ -54,11 +61,16 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
     if (isEmpty()) {
       return;
     }
-    TypeID typeID = TypeRegistry.resolveType(get(0).getClass());
+    TypeID typeID = TypeRegistry.resolveType(get(0).getType());
     TypeID.writeInstance(out, typeID);
     for (Type element : this) {
       element.writeFields(out);
     }
+  }
+
+  @Override
+  public Class<CAList> getType() {
+    return CAList.class;
   }
 
   @Override

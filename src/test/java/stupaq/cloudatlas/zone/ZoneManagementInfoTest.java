@@ -1,4 +1,4 @@
-package stupaq.cloudatlas;
+package stupaq.cloudatlas.zone;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,7 +19,6 @@ import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.attribute.types.CATuple;
 import stupaq.cloudatlas.serialization.SerializationUtils;
 import stupaq.cloudatlas.serialization.TypeRegistry;
-import stupaq.cloudatlas.zone.ZoneManagementInfo;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,11 +27,6 @@ public class ZoneManagementInfoTest {
   @BeforeClass
   public static void setUpClass() {
     TypeRegistry.registerDefaultTypes();
-  }
-
-  private static void addAttr(ZoneManagementInfo zmi, String name, AttributeType type,
-      AttributeValue value) {
-    zmi.addAttribute(new Attribute<>(new AttributeName(name), type, value));
   }
 
   @Test
@@ -54,5 +48,10 @@ public class ZoneManagementInfoTest {
             new CAInteger(1337L)));
     ZoneManagementInfo zmiClone = SerializationUtils.clone(zmi);
     assertEquals(zmi, zmiClone);
+  }
+
+  private static void addAttr(ZoneManagementInfo zmi, String name, AttributeType type,
+      AttributeValue value) {
+    zmi.addAttribute(new Attribute<>(new AttributeName(name), type, value));
   }
 }
