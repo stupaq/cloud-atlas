@@ -14,6 +14,7 @@ import java.util.HashSet;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -58,6 +59,11 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
   @Override
   public Class<CASet> getType() {
     return CASet.class;
+  }
+
+  @Override
+  public int compareTo(Value o) {
+    throw new OperationNotApplicable("Cannot compare: " + getType().getSimpleName());
   }
 
   @Override

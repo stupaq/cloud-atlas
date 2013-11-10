@@ -39,6 +39,12 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
   }
 
   @Override
+  public int compareTo(Value o) {
+    TypeUtils.assertSameType(this, o);
+    return getValue().compareTo(((CADouble) o).getValue());
+  }
+
+  @Override
   public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }

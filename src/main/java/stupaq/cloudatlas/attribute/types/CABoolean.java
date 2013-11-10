@@ -39,6 +39,12 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
   }
 
   @Override
+  public int compareTo(Value o) {
+    TypeUtils.assertSameType(this, o);
+    return getValue().compareTo(((CABoolean) o).getValue());
+  }
+
+  @Override
   public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }

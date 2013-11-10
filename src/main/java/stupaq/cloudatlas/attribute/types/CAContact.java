@@ -7,6 +7,7 @@ import java.io.ObjectOutput;
 import stupaq.cloudatlas.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -37,6 +38,11 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
   @Override
   public Class<CAContact> getType() {
     return CAContact.class;
+  }
+
+  @Override
+  public int compareTo(Value o) {
+    throw new OperationNotApplicable("Cannot compare: " + getType().getSimpleName());
   }
 
   @Override

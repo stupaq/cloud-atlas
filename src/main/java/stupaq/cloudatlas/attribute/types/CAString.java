@@ -45,6 +45,12 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
   }
 
   @Override
+  public int compareTo(Value o) {
+    TypeUtils.assertSameType(this, o);
+    return getValue().compareTo(((CAString) o).getValue());
+  }
+
+  @Override
   public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }

@@ -14,6 +14,7 @@ import java.util.Collections;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -74,6 +75,11 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
   @Override
   public Class<CAList> getType() {
     return CAList.class;
+  }
+
+  @Override
+  public int compareTo(Value o) {
+    throw new OperationNotApplicable("Cannot compare: " + getType().getSimpleName());
   }
 
   @Override
