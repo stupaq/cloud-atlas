@@ -8,27 +8,26 @@ import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
-import stupaq.cloudatlas.interpreter.types.RCollection;
 
 public interface OperableValue {
 
-  /** CONJUNCTION is defined for: Boolean, Collection */
+  /** CONJUNCTION is defined for: Boolean */
   public Value and(Value value);
 
   public Value andWith(CABoolean value);
 
-  /** ALTERNATIVE is defined for: Boolean, Collection */
+  /** ALTERNATIVE is defined for: Boolean */
   public Value or(Value value);
 
   public Value orWith(CABoolean value);
 
-  /** CONTRADICTION is defined for: Boolean, Collection */
+  /** CONTRADICTION is defined for: Boolean */
   public Value contradiction();
 
-  /** NEGATION is defined for: Double, Duration, Integer, Time, Collection */
+  /** NEGATION is defined for: Double, Duration, Integer, Time */
   public Value negate();
 
-  /** ADDITION is defined for: Double, Duration, Integer, String, Time, Collection */
+  /** ADDITION is defined for: Double, Duration, Integer, String, Time */
   public Value add(Value value);
 
   public Value addTo(CADouble value);
@@ -41,42 +40,36 @@ public interface OperableValue {
 
   public Value addTo(CATime value);
 
-  public Value addTo(RCollection collection);
-
-  /** MULTIPLICATION is defined for: Double, Integer, Collection */
+  /** MULTIPLICATION is defined for: Double, Integer */
   public Value multiply(Value value);
 
   public Value multiplyBy(CADouble value);
 
   public Value multiplyBy(CAInteger value);
 
-  public Value multiplyBy(RCollection column);
-
-  /** INVERSION is defined for: Double, Integer, Collection */
+  /** INVERSION is defined for: Double, Integer */
   public Value inverse();
 
-  /** REMAINDER is defined for: Integer, Collection */
+  /** REMAINDER is defined for: Integer */
   public Value modulo(Value value);
 
   public Value remainderOf(CAInteger value);
-
-  public Value remainderOf(RCollection collection);
 
   /** REGEXP is defined for: String */
   public Value matches(Value value);
 
   public Value describes(CAString value);
 
-  /** ROUND is defined for: Double, Integer, Collection */
+  /** ROUND is defined for: Double, Integer */
   public Value round();
 
-  /** CEIL is defined for: Double, Integer, Collection */
+  /** CEIL is defined for: Double, Integer */
   public Value ceil();
 
-  /** FLOOR is defined for: Double, Integer, Collection */
+  /** FLOOR is defined for: Double, Integer */
   public Value floor();
 
-  /** SIZE is defined for: List, Set, String, Collection */
+  /** SIZE is defined for: List, Set, String */
   public Value size();
 
   public static class OperableValueDefault implements OperableValue {
@@ -141,11 +134,6 @@ public interface OperableValue {
     }
 
     @Override
-    public Value addTo(RCollection collection) {
-      return noOperation("+");
-    }
-
-    @Override
     public Value negate() {
       return noOperation("-");
     }
@@ -166,11 +154,6 @@ public interface OperableValue {
     }
 
     @Override
-    public Value multiplyBy(RCollection collection) {
-      return noOperation("*");
-    }
-
-    @Override
     public Value inverse() {
       return noOperation("/");
     }
@@ -182,11 +165,6 @@ public interface OperableValue {
 
     @Override
     public Value remainderOf(CAInteger value) {
-      return noOperation("%");
-    }
-
-    @Override
-    public Value remainderOf(RCollection collection) {
       return noOperation("%");
     }
 
