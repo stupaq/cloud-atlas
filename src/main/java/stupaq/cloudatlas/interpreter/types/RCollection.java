@@ -115,6 +115,7 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
 
     @Override
     public RList random(int size) {
+      // FIXME nulls
       ArrayList<Integer> integers = new ArrayList<>();
       for (int i = 0; i < RCollection.this.size(); i++) {
         integers.add(i);
@@ -131,13 +132,13 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
     @Override
     public SemanticValue min() {
       // FIXME nulls
-      return null;
+      return new RSingle<>(Collections.min(RCollection.this));
     }
 
     @Override
     public SemanticValue max() {
       // FIXME nulls
-      return null;
+      return new RSingle<>(Collections.max(RCollection.this));
     }
 
     @Override

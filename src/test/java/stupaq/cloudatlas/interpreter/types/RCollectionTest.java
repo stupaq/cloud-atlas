@@ -83,9 +83,13 @@ public class RCollectionTest {
     assertEquals(new RSingle<>(new CAInteger(2)),
         collection.aggregate().random(2).aggregate().count());
     // min
-    // FIXME
+    assertEquals(new RSingle<>(new CAInteger(2)),
+        new RCollection<>(new CAInteger(4), new CAInteger(2), new CAInteger(4), new CAInteger(3))
+            .aggregate().min());
     // max
-    // FIXME
+    assertEquals(new RSingle<>(new CAInteger(4)),
+        new RCollection<>(new CAInteger(4), new CAInteger(2), new CAInteger(4), new CAInteger(3))
+            .aggregate().max());
     // land
     assertEquals(new RSingle<>(new CABoolean(true)),
         new RCollection<>(new CABoolean(true), new CABoolean(true)).aggregate().land());
