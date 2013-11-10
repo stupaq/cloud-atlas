@@ -11,6 +11,8 @@ import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeValue {
@@ -50,8 +52,13 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
   }
 
   @Override
-  public OperableValue operate() {
+  public OperableValue op() {
     return new OperableImplementation();
+  }
+
+  @Override
+  public RelationalValue rel() {
+    return new RelationalImplementation();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
@@ -69,7 +76,7 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public Value and(Value value) {
-      return value.operate().andWith(CABoolean.this);
+      return value.op().andWith(CABoolean.this);
     }
 
     @Override
@@ -79,7 +86,7 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
 
     @Override
     public Value or(Value value) {
-      return value.operate().orWith(CABoolean.this);
+      return value.op().orWith(CABoolean.this);
     }
 
     @Override
@@ -90,6 +97,18 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
     @Override
     public Value contradiction() {
       return new CABoolean(!getValue());
+    }
+  }
+
+  private class RelationalImplementation extends RelationalValueDefault {
+    @Override
+    public CABoolean equalsTo(Value value) {
+      return value.rel().equalsTo(CABoolean.this);
+    }
+
+    @Override
+    public CABoolean equalsTo(CABoolean value) {
+      return new CABoolean(getValue().equals(value.getValue()));
     }
   }
 }

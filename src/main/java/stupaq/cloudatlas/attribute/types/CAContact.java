@@ -12,6 +12,8 @@ import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 // TODO: contact has more structure than string, we don't know it right now though
@@ -51,8 +53,13 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
   }
 
   @Override
-  public OperableValue operate() {
+  public OperableValue op() {
     return new OperableValueDefault();
+  }
+
+  @Override
+  public RelationalValue rel() {
+    return new RelationalValueDefault();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {

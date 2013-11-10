@@ -16,30 +16,38 @@ public class CADoubleTest {
   @Test
   public void testOperations() {
     // addition
-    assertEquals(new CADouble(3.0), new CADouble(2.0).operate().add(new CADouble(1.0)));
-    assertEquals(new CADouble(3.0), new CAInteger(2L).operate().add(new CADouble(1.0)));
-    assertEquals(new CADouble(3.0), new CADouble(2.0).operate().add(new CAInteger(1L)));
+    assertEquals(new CADouble(3.0), new CADouble(2.0).op().add(new CADouble(1.0)));
+    assertEquals(new CADouble(3.0), new CAInteger(2L).op().add(new CADouble(1.0)));
+    assertEquals(new CADouble(3.0), new CADouble(2.0).op().add(new CAInteger(1L)));
     // negation
-    assertEquals(new CADouble(-3.0), new CADouble(3.0).operate().negate());
+    assertEquals(new CADouble(-3.0), new CADouble(3.0).op().negate());
     // multiplication
-    assertEquals(new CADouble(6.0), new CADouble(2.0).operate().multiply(new CADouble(3.0)));
-    assertEquals(new CADouble(6.0), new CAInteger(2L).operate().multiply(new CADouble(3.0)));
-    assertEquals(new CADouble(6.0), new CADouble(2.0).operate().multiply(new CAInteger(3L)));
+    assertEquals(new CADouble(6.0), new CADouble(2.0).op().multiply(new CADouble(3.0)));
+    assertEquals(new CADouble(6.0), new CAInteger(2L).op().multiply(new CADouble(3.0)));
+    assertEquals(new CADouble(6.0), new CADouble(2.0).op().multiply(new CAInteger(3L)));
     // inversion
-    assertEquals(new CADouble(1.0 / 3.0), new CADouble(3.0).operate().inverse());
+    assertEquals(new CADouble(1.0 / 3.0), new CADouble(3.0).op().inverse());
     // round
-    assertEquals(new CADouble(1.0), new CADouble(0.5).operate().round());
-    assertEquals(new CADouble(1.0), new CADouble(0.6).operate().round());
-    assertEquals(new CADouble(0.0), new CADouble(0.4).operate().round());
+    assertEquals(new CADouble(1.0), new CADouble(0.5).op().round());
+    assertEquals(new CADouble(1.0), new CADouble(0.6).op().round());
+    assertEquals(new CADouble(0.0), new CADouble(0.4).op().round());
     // ceil
-    assertEquals(new CADouble(1.0), new CADouble(0.5).operate().ceil());
-    assertEquals(new CADouble(1.0), new CADouble(0.6).operate().ceil());
-    assertEquals(new CADouble(1.0), new CADouble(0.4).operate().ceil());
-    assertEquals(new CADouble(0.0), new CADouble(0.0).operate().ceil());
+    assertEquals(new CADouble(1.0), new CADouble(0.5).op().ceil());
+    assertEquals(new CADouble(1.0), new CADouble(0.6).op().ceil());
+    assertEquals(new CADouble(1.0), new CADouble(0.4).op().ceil());
+    assertEquals(new CADouble(0.0), new CADouble(0.0).op().ceil());
     // floor
-    assertEquals(new CADouble(0.0), new CADouble(0.5).operate().floor());
-    assertEquals(new CADouble(0.0), new CADouble(0.6).operate().floor());
-    assertEquals(new CADouble(0.0), new CADouble(0.4).operate().floor());
-    assertEquals(new CADouble(1.0), new CADouble(1.0).operate().floor());
+    assertEquals(new CADouble(0.0), new CADouble(0.5).op().floor());
+    assertEquals(new CADouble(0.0), new CADouble(0.6).op().floor());
+    assertEquals(new CADouble(0.0), new CADouble(0.4).op().floor());
+    assertEquals(new CADouble(1.0), new CADouble(1.0).op().floor());
+  }
+
+  @Test
+  public void testRelational() {
+    assertEquals(new CABoolean(true), new CADouble(1).rel().equalsTo(new CADouble(1)));
+    assertEquals(new CABoolean(false), new CADouble(2).rel().equalsTo(new CADouble(1)));
+    assertEquals(new CABoolean(false), new CADouble(1).rel().greaterThan(new CADouble(1)));
+    assertEquals(new CABoolean(true), new CADouble(2).rel().greaterThan(new CADouble(1)));
   }
 }

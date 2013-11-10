@@ -19,6 +19,8 @@ import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CASet<Type extends AttributeValue> extends HashSet<Type> implements AttributeValue {
@@ -72,8 +74,13 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
   }
 
   @Override
-  public OperableValue operate() {
+  public OperableValue op() {
     return new OperableImplementation();
+  }
+
+  @Override
+  public RelationalValue rel() {
+    return new RelationalImplementation();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
@@ -99,6 +106,18 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
     @Override
     public Value size() {
       return new CAInteger((long) CASet.this.size());
+    }
+  }
+
+  private class RelationalImplementation extends RelationalValueDefault {
+    @Override
+    public CABoolean equalsTo(Value value) {
+      return value.rel().equalsTo(CASet.this);
+    }
+
+    @Override
+    public CABoolean equalsTo(CASet value) {
+      return new CABoolean(CASet.this.equals(value));
     }
   }
 }

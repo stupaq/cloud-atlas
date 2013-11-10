@@ -19,13 +19,21 @@ public class CADurationTest {
   @Test
   public void testOperations() {
     // negation
-    assertEquals(new CADuration(1000L), new CADuration(-1000L).operate().negate());
+    assertEquals(new CADuration(1000L), new CADuration(-1000L).op().negate());
     // addition
-    assertEquals(new CATime(1000L), new CATime(900L).operate().add(new CADuration(100L)));
-    assertEquals(new CATime(1000L), new CATime(100L).operate().add(new CADuration(900L)));
-    assertEquals(new CATime(1000L), new CADuration(900L).operate().add(new CATime(100L)));
-    assertEquals(new CATime(1000L), new CADuration(100L).operate().add(new CATime(900L)));
-    assertEquals(new CADuration(1000L), new CADuration(900L).operate().add(new CADuration(100L)));
-    assertEquals(new CADuration(1000L), new CADuration(100L).operate().add(new CADuration(900L)));
+    assertEquals(new CATime(1000L), new CATime(900L).op().add(new CADuration(100L)));
+    assertEquals(new CATime(1000L), new CATime(100L).op().add(new CADuration(900L)));
+    assertEquals(new CATime(1000L), new CADuration(900L).op().add(new CATime(100L)));
+    assertEquals(new CATime(1000L), new CADuration(100L).op().add(new CATime(900L)));
+    assertEquals(new CADuration(1000L), new CADuration(900L).op().add(new CADuration(100L)));
+    assertEquals(new CADuration(1000L), new CADuration(100L).op().add(new CADuration(900L)));
+  }
+
+  @Test
+  public void testRelational() {
+    assertEquals(new CABoolean(true), new CADuration(1).rel().equalsTo(new CADuration(1)));
+    assertEquals(new CABoolean(false), new CADuration(2).rel().equalsTo(new CADuration(1)));
+    assertEquals(new CABoolean(false), new CADuration(1).rel().greaterThan(new CADuration(1)));
+    assertEquals(new CABoolean(true), new CADuration(2).rel().greaterThan(new CADuration(1)));
   }
 }

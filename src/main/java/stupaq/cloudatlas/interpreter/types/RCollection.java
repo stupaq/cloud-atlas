@@ -82,8 +82,8 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
     @Override
     public RSingle<Value> avg() {
       // FIXME nulls
-      return new RSingle<>(RCollection.this.isEmpty() ? null : sum().getValue().operate()
-          .multiply(count().getValue().operate().inverse()));
+      return new RSingle<>(RCollection.this.isEmpty() ? null : sum().getValue().op()
+          .multiply(count().getValue().op().inverse()));
     }
 
     @Override
@@ -91,7 +91,7 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
       // FIXME nulls
       Value sum = new CAInteger(0L);
       for (Value elem : RCollection.this) {
-        sum = sum.operate().add(elem);
+        sum = sum.op().add(elem);
       }
       return new RSingle<>(sum);
     }
@@ -145,7 +145,7 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
       // FIXME nulls
       Value res = new CABoolean(true);
       for (Value elem : RCollection.this) {
-        res = res.operate().and(elem);
+        res = res.op().and(elem);
       }
       return new RSingle<>(res);
     }
@@ -155,7 +155,7 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
       // FIXME nulls
       Value res = new CABoolean(false);
       for (Value elem : RCollection.this) {
-        res = res.operate().or(elem);
+        res = res.op().or(elem);
       }
       return new RSingle<>(res);
     }

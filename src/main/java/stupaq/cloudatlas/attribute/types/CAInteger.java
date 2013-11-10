@@ -5,6 +5,8 @@ import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CAInteger extends LongStub {
@@ -23,12 +25,17 @@ public class CAInteger extends LongStub {
   }
 
   @Override
+  public RelationalValue rel() {
+    return new RelationalImplementation();
+  }
+
+  @Override
   public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
   @Override
-  public OperableValue operate() {
+  public OperableValue op() {
     return new OperableImplementation();
   }
 
@@ -57,7 +64,7 @@ public class CAInteger extends LongStub {
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public Value add(Value value) {
-      return value.operate().addTo(CAInteger.this);
+      return value.op().addTo(CAInteger.this);
     }
 
     @Override
@@ -77,7 +84,7 @@ public class CAInteger extends LongStub {
 
     @Override
     public Value multiply(Value value) {
-      return value.operate().multiplyBy(CAInteger.this);
+      return value.op().multiplyBy(CAInteger.this);
     }
 
     @Override
@@ -97,12 +104,34 @@ public class CAInteger extends LongStub {
 
     @Override
     public Value modulo(Value value) {
-      return value.operate().remainderOf(CAInteger.this);
+      return value.op().remainderOf(CAInteger.this);
     }
 
     @Override
     public Value remainderOf(CAInteger value) {
       return new CAInteger(value.getValue() % getValue());
+    }
+  }
+
+  private class RelationalImplementation extends RelationalValueDefault {
+    @Override
+    public CABoolean lessThan(Value value) {
+      return value.rel().greaterThan(CAInteger.this);
+    }
+
+    @Override
+    public CABoolean greaterThan(CAInteger value) {
+      return new CABoolean(CAInteger.this.getValue().compareTo(value.getValue()) > 0);
+    }
+
+    @Override
+    public CABoolean equalsTo(CAInteger value) {
+      return new CABoolean(CAInteger.this.getValue().equals(value.getValue()));
+    }
+
+    @Override
+    public CABoolean equalsTo(Value value) {
+      return value.rel().equalsTo(CAInteger.this);
     }
   }
 }

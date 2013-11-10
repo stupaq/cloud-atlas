@@ -11,6 +11,8 @@ import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CATime extends LongStub {
@@ -47,12 +49,17 @@ public class CATime extends LongStub {
   }
 
   @Override
+  public RelationalValue rel() {
+    return new RelationalImplementation();
+  }
+
+  @Override
   public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
   @Override
-  public OperableValue operate() {
+  public OperableValue op() {
     return new OperableImplementation();
   }
 
@@ -72,7 +79,7 @@ public class CATime extends LongStub {
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public Value add(Value value) {
-      return value.operate().addTo(CATime.this);
+      return value.op().addTo(CATime.this);
     }
 
     @Override
@@ -88,6 +95,28 @@ public class CATime extends LongStub {
     @Override
     public Value negate() {
       return new CATime(-getValue());
+    }
+  }
+
+  private class RelationalImplementation extends RelationalValueDefault {
+    @Override
+    public CABoolean lessThan(Value value) {
+      return value.rel().greaterThan(CATime.this);
+    }
+
+    @Override
+    public CABoolean greaterThan(CATime value) {
+      return new CABoolean(CATime.this.getValue().compareTo(value.getValue()) > 0);
+    }
+
+    @Override
+    public CABoolean equalsTo(CATime value) {
+      return new CABoolean(CATime.this.getValue().equals(value.getValue()));
+    }
+
+    @Override
+    public CABoolean equalsTo(Value value) {
+      return value.rel().equalsTo(CATime.this);
     }
   }
 }

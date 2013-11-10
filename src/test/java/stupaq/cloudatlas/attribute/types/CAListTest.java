@@ -41,9 +41,16 @@ public class CAListTest {
 
   @Test
   public void testOperations() {
-    assertEquals(new CAInteger(0L), new CAList<>().operate().size());
+    assertEquals(new CAInteger(0L), new CAList<>().op().size());
     assertEquals(new CAInteger(3L),
-        new CAList<>(new CABoolean(true), new CABoolean(false), new CABoolean(true)).operate()
-            .size());
+        new CAList<>(new CABoolean(true), new CABoolean(false), new CABoolean(true)).op().size());
+  }
+
+  @Test
+  public void testRelational() {
+    assertEquals(new CABoolean(true), new CAList<>(new CAInteger(2), new CAInteger(3)).rel()
+        .equalsTo(new CAList<>(new CAInteger(2), new CAInteger(3))));
+    assertEquals(new CABoolean(false), new CAList<>(new CAInteger(3), new CAInteger(2)).rel()
+        .equalsTo(new CAList<>(new CAInteger(2), new CAInteger(3))));
   }
 }

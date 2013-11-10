@@ -7,6 +7,8 @@ import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CADuration extends LongStub {
@@ -25,12 +27,17 @@ public class CADuration extends LongStub {
   }
 
   @Override
+  public RelationalValue rel() {
+    return new RelationalImplementation();
+  }
+
+  @Override
   public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }
 
   @Override
-  public OperableValue operate() {
+  public OperableValue op() {
     return new OperableImplementation();
   }
 
@@ -55,7 +62,7 @@ public class CADuration extends LongStub {
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public Value add(Value value) {
-      return value.operate().addTo(CADuration.this);
+      return value.op().addTo(CADuration.this);
     }
 
     @Override
@@ -71,6 +78,28 @@ public class CADuration extends LongStub {
     @Override
     public Value negate() {
       return new CADuration(-getValue());
+    }
+  }
+
+  private class RelationalImplementation extends RelationalValueDefault {
+    @Override
+    public CABoolean lessThan(Value value) {
+      return value.rel().greaterThan(CADuration.this);
+    }
+
+    @Override
+    public CABoolean greaterThan(CADuration value) {
+      return new CABoolean(CADuration.this.getValue().compareTo(value.getValue()) > 0);
+    }
+
+    @Override
+    public CABoolean equalsTo(CADuration value) {
+      return new CABoolean(CADuration.this.getValue().equals(value.getValue()));
+    }
+
+    @Override
+    public CABoolean equalsTo(Value value) {
+      return value.rel().equalsTo(CADuration.this);
     }
   }
 }

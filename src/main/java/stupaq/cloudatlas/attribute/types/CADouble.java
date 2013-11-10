@@ -11,6 +11,8 @@ import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue, Value {
@@ -39,6 +41,11 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
   }
 
   @Override
+  public RelationalValue rel() {
+    return new RelationalImplementation();
+  }
+
+  @Override
   public int compareTo(Value o) {
     TypeUtils.assertSameType(this, o);
     return getValue().compareTo(((CADouble) o).getValue());
@@ -50,7 +57,7 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
   }
 
   @Override
-  public OperableValue operate() {
+  public OperableValue op() {
     return new OperableImplementation();
   }
 
@@ -74,7 +81,7 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public Value add(Value value) {
-      return value.operate().addTo(CADouble.this);
+      return value.op().addTo(CADouble.this);
     }
 
     @Override
@@ -94,7 +101,7 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
     @Override
     public Value multiply(Value value) {
-      return value.operate().multiplyBy(CADouble.this);
+      return value.op().multiplyBy(CADouble.this);
     }
 
     @Override
@@ -125,6 +132,28 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
     @Override
     public Value floor() {
       return new CADouble(Math.floor(getValue()));
+    }
+  }
+
+  private class RelationalImplementation extends RelationalValueDefault {
+    @Override
+    public CABoolean lessThan(Value value) {
+      return value.rel().greaterThan(CADouble.this);
+    }
+
+    @Override
+    public CABoolean greaterThan(CADouble value) {
+      return new CABoolean(CADouble.this.getValue().compareTo(value.getValue()) > 0);
+    }
+
+    @Override
+    public CABoolean equalsTo(CADouble value) {
+      return new CABoolean(CADouble.this.getValue().equals(value.getValue()));
+    }
+
+    @Override
+    public CABoolean equalsTo(Value value) {
+      return value.rel().equalsTo(CADouble.this);
     }
   }
 }

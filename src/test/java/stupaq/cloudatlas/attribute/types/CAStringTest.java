@@ -30,15 +30,21 @@ public class CAStringTest {
   @Test
   public void testOperations() {
     // addition
-    assertEquals(new CAString("aaaabbb"), new CAString("aaaa").operate().add(new CAString("bbb")));
-    assertEquals(new CAString("aaaa"), new CAString("aaaa").operate().add(new CAString("")));
+    assertEquals(new CAString("aaaabbb"), new CAString("aaaa").op().add(new CAString("bbb")));
+    assertEquals(new CAString("aaaa"), new CAString("aaaa").op().add(new CAString("")));
     // size
-    assertEquals(new CAInteger(3L), new CAString("aaa").operate().size());
-    assertEquals(new CAInteger(0L), new CAString("").operate().size());
+    assertEquals(new CAInteger(3L), new CAString("aaa").op().size());
+    assertEquals(new CAInteger(0L), new CAString("").op().size());
     // regexp
-    assertEquals(new CABoolean(true),
-        new CAString("aaaaaab").operate().matches(new CAString("a*b")));
-    assertEquals(new CABoolean(false),
-        new CAString("aaaacb").operate().matches(new CAString("a*b")));
+    assertEquals(new CABoolean(true), new CAString("aaaaaab").op().matches(new CAString("a*b")));
+    assertEquals(new CABoolean(false), new CAString("aaaacb").op().matches(new CAString("a*b")));
+  }
+
+  @Test
+  public void testRelational() {
+    assertEquals(new CABoolean(true), new CAString("1").rel().equalsTo(new CAString("1")));
+    assertEquals(new CABoolean(false), new CAString("2").rel().equalsTo(new CAString("1")));
+    assertEquals(new CABoolean(false), new CAString("1").rel().greaterThan(new CAString("1")));
+    assertEquals(new CABoolean(true), new CAString("2").rel().greaterThan(new CAString("1")));
   }
 }

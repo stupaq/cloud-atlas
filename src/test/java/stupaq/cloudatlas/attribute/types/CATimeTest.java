@@ -16,9 +16,17 @@ public class CATimeTest {
   @Test
   public void testOperations() {
     // negation
-    assertEquals(new CATime(-12345L), new CATime(12345L).operate().negate());
+    assertEquals(new CATime(-12345L), new CATime(12345L).op().negate());
     // addition
     assertEquals(new CADuration(-1000L),
-        new CATime(10000L).operate().add(new CATime(11000L).operate().negate()));
+        new CATime(10000L).op().add(new CATime(11000L).op().negate()));
+  }
+
+  @Test
+  public void testRelational() {
+    assertEquals(new CABoolean(true), new CATime(1).rel().equalsTo(new CATime(1)));
+    assertEquals(new CABoolean(false), new CATime(2).rel().equalsTo(new CATime(1)));
+    assertEquals(new CABoolean(false), new CATime(1).rel().greaterThan(new CATime(1)));
+    assertEquals(new CABoolean(true), new CATime(2).rel().greaterThan(new CATime(1)));
   }
 }

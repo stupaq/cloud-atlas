@@ -19,6 +19,8 @@ import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
+import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 import stupaq.cloudatlas.serialization.TypeID;
 import stupaq.cloudatlas.serialization.TypeRegistry;
@@ -78,6 +80,11 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
   }
 
   @Override
+  public RelationalValue rel() {
+    return new RelationalImplementation();
+  }
+
+  @Override
   public int compareTo(Value o) {
     throw new OperationNotApplicable("Cannot compare: " + getType().getSimpleName());
   }
@@ -88,7 +95,7 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
   }
 
   @Override
-  public OperableValue operate() {
+  public OperableValue op() {
     return new OperableImplementation();
   }
 
@@ -115,6 +122,18 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
     @Override
     public Value size() {
       return new CAInteger((long) CAList.this.size());
+    }
+  }
+
+  private class RelationalImplementation extends RelationalValueDefault {
+    @Override
+    public CABoolean equalsTo(Value value) {
+      return value.rel().equalsTo(CAList.this);
+    }
+
+    @Override
+    public CABoolean equalsTo(CAList value) {
+      return new CABoolean(CAList.this.equals(value));
     }
   }
 }

@@ -21,14 +21,14 @@ public class RCollectionTest {
   final static Function<Value, Value> function = new Function<Value, Value>() {
     @Override
     public Value apply(Value value) {
-      return value.operate().negate();
+      return value.op().negate();
     }
   };
   final static BinaryOperation<Value, Value, Value> operation =
       new BinaryOperation<Value, Value, Value>() {
         @Override
         public Value apply(Value value1, Value value2) {
-          return value1.operate().add(value2.operate().negate());
+          return value1.op().add(value2.op().negate());
         }
       };
 
