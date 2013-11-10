@@ -39,7 +39,7 @@ public interface ConvertibleValue {
 
   public CATuple Tuple();
 
-  public static abstract class ConvertibleValueDefault implements ConvertibleValue {
+  public static class ConvertibleValueDefault implements ConvertibleValue {
 
     private <T extends Value> T noConversion(Class<T> dest) throws ConversionException {
       throw new ConversionException("Conversion not known to: " + dest.getSimpleName());

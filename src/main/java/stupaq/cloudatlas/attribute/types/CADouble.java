@@ -19,7 +19,7 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
     this(0D);
   }
 
-  public CADouble(Double value) {
+  public CADouble(double value) {
     super(value);
   }
 

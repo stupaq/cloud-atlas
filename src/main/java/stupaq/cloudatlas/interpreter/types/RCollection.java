@@ -6,9 +6,14 @@ import com.google.common.collect.Iterables;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
+import stupaq.cloudatlas.attribute.types.CABoolean;
+import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.semantics.AggregatableValue;
+import stupaq.cloudatlas.interpreter.semantics.AggregatableValue.AggregatableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 
@@ -61,4 +66,91 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
     return result;
   }
 
+  @Override
+  public final AggregatableValue aggregate() {
+    return new AggregatableImplementation();
+  }
+
+  private class AggregatableImplementation extends AggregatableValueDefault {
+    @Override
+    public RSingle<Value> avg() {
+      // FIXME nulls
+      return new RSingle<>(RCollection.this.isEmpty() ? null : sum().getValue().operate()
+          .multiply(count().getValue().operate().inverse()));
+    }
+
+    @Override
+    public RSingle<Value> sum() {
+      // FIXME nulls
+      Value sum = new CAInteger(0L);
+      for (Value elem : RCollection.this) {
+        sum = sum.operate().add(elem);
+      }
+      return new RSingle<>(sum);
+    }
+
+    @Override
+    public RSingle<CAInteger> count() {
+      return new RSingle<>(new CAInteger(RCollection.this.size()));
+    }
+
+    @Override
+    public RList first(int size) {
+      return FluentIterable.from(RCollection.this).limit(size).copyInto(new RList<>());
+    }
+
+    @Override
+    public RList last(int size) {
+      int toSkip = RCollection.this.size() - size;
+      return FluentIterable.from(RCollection.this).skip(toSkip > 0 ? toSkip : 0)
+          .copyInto(new RList<>());
+    }
+
+    @Override
+    public RList random(int size) {
+      ArrayList<Integer> integers = new ArrayList<>();
+      for (int i = 0; i < RCollection.this.size(); i++) {
+        integers.add(i);
+      }
+      Collections.shuffle(integers);
+      return FluentIterable.from(integers).limit(size).transform(new Function<Integer, Type>() {
+        @Override
+        public Type apply(Integer integer) {
+          return RCollection.this.get(integer);
+        }
+      }).copyInto(new RList<Type>());
+    }
+
+    @Override
+    public SemanticValue min() {
+      // FIXME nulls
+      return null;
+    }
+
+    @Override
+    public SemanticValue max() {
+      // FIXME nulls
+      return null;
+    }
+
+    @Override
+    public SemanticValue land() {
+      // FIXME nulls
+      Value res = new CABoolean(true);
+      for (Value elem : RCollection.this) {
+        res = res.operate().and(elem);
+      }
+      return new RSingle<>(res);
+    }
+
+    @Override
+    public SemanticValue lor() {
+      // FIXME nulls
+      Value res = new CABoolean(false);
+      for (Value elem : RCollection.this) {
+        res = res.operate().or(elem);
+      }
+      return new RSingle<>(res);
+    }
+  }
 }

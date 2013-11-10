@@ -19,7 +19,7 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
     this(false);
   }
 
-  public CABoolean(Boolean value) {
+  public CABoolean(boolean value) {
     super(value);
   }
 

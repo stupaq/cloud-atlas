@@ -6,9 +6,9 @@ import stupaq.cloudatlas.attribute.types.CADuration;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
+import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.types.RCollection;
-import stupaq.cloudatlas.interpreter.Value;
 
 public interface OperableValue {
 
@@ -79,10 +79,7 @@ public interface OperableValue {
   /** SIZE is defined for: List, Set, String, Collection */
   public Value size();
 
-  /** COUNT is defined for: Collection */
-  public Value count();
-
-  public static abstract class OperableValueDefault implements OperableValue {
+  public static class OperableValueDefault implements OperableValue {
 
     private <T extends Value> T noOperation(String operation) throws OperationNotApplicable {
       throw new OperationNotApplicable("Operation " + operation + " is not applicable here");
@@ -221,11 +218,6 @@ public interface OperableValue {
     @Override
     public Value size() {
       return noOperation("size(...)");
-    }
-
-    @Override
-    public Value count() {
-      return noOperation("count(...)");
     }
   }
 }

@@ -5,6 +5,8 @@ import com.google.common.collect.Iterables;
 
 import stupaq.cloudatlas.PrimitiveWrapper;
 import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.semantics.AggregatableValue;
+import stupaq.cloudatlas.interpreter.semantics.AggregatableValue.AggregatableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 
@@ -42,5 +44,10 @@ public final class RSingle<Type extends Value> extends PrimitiveWrapper<Type>
   public <Type extends Value> SemanticValue zipWith(RSingle<Type> first,
       BinaryOperation<Value, Value, Value> operation) {
     return new RSingle<>(operation.apply(first.getValue(), getValue()));
+  }
+
+  @Override
+  public AggregatableValue aggregate() {
+    return new AggregatableValueDefault();
   }
 }

@@ -46,7 +46,7 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
 
   @Override
   public OperableValue operate() {
-    return new OperableImplementation();
+    return new OperableValueDefault();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
@@ -59,8 +59,5 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
     public CAString String() {
       return new CAString(getValue());
     }
-  }
-
-  private class OperableImplementation extends OperableValueDefault {
   }
 }

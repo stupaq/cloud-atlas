@@ -15,7 +15,7 @@ public class CADuration extends LongStub {
     this(0L);
   }
 
-  public CADuration(Long value) {
+  public CADuration(long value) {
     super(value);
   }
 

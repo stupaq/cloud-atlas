@@ -27,7 +27,7 @@ public class CATime extends LongStub {
     this(0L);
   }
 
-  public CATime(Long value) {
+  public CATime(long value) {
     super(value);
   }
 

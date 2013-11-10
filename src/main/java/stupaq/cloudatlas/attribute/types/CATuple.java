@@ -65,7 +65,7 @@ public class CATuple extends ArrayList<AttributeValue> implements AttributeValue
 
   @Override
   public OperableValue operate() {
-    return new OperableImplementation();
+    return new OperableValueDefault();
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
@@ -80,8 +80,5 @@ public class CATuple extends ArrayList<AttributeValue> implements AttributeValue
     public CATuple Tuple() {
       return CATuple.this;
     }
-  }
-
-  private class OperableImplementation extends OperableValueDefault {
   }
 }

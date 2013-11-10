@@ -13,7 +13,7 @@ public class CAInteger extends LongStub {
     this(0L);
   }
 
-  public CAInteger(Long value) {
+  public CAInteger(long value) {
     super(value);
   }
 
