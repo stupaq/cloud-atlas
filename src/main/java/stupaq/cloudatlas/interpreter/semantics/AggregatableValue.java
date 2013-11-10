@@ -24,6 +24,10 @@ public interface AggregatableValue {
 
   public SemanticValue lor();
 
+  SemanticValue distinct();
+
+  SemanticValue unfold();
+
   public static class AggregatableValueDefault implements AggregatableValue {
     private SemanticValue noAggregate(String operation) throws OperationNotApplicable {
       throw new OperationNotApplicable("Aggregation with " + operation + " is not supported");
@@ -77,6 +81,16 @@ public interface AggregatableValue {
     @Override
     public SemanticValue lor() {
       return noAggregate("lor(...)");
+    }
+
+    @Override
+    public SemanticValue distinct() {
+      return noAggregate("distinct(...)");
+    }
+
+    @Override
+    public SemanticValue unfold() {
+      return noAggregate("unfold(...)");
     }
   }
 }

@@ -1,17 +1,24 @@
 package stupaq.cloudatlas.interpreter.types;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
+
+import com.sun.istack.internal.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.interpreter.errors.ConversionException;
+import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.AggregatableValue;
 import stupaq.cloudatlas.interpreter.semantics.AggregatableValue.AggregatableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
@@ -151,6 +158,33 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
         res = res.operate().or(elem);
       }
       return new RSingle<>(res);
+    }
+
+    @Override
+    public RList<Type> distinct() {
+      final Set<Type> seen = new HashSet<>();
+      return FluentIterable.from(RCollection.this).filter(new Predicate<Type>() {
+        @Override
+        public boolean apply(@Nullable Type elem) {
+          return seen.add(elem);
+        }
+      }).copyInto(new RList<Type>());
+    }
+
+    @Override
+    public RList unfold() {
+      return FluentIterable.from(RCollection.this)
+          .transformAndConcat(new Function<Type, Iterable<Value>>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public Iterable<Value> apply(@Nullable Type type) {
+              try {
+                return type.to().List();
+              } catch (ConversionException e) {
+                throw new OperationNotApplicable("Cannot unfold enclosing type: " + type.getType());
+              }
+            }
+          }).copyInto(new RList<>());
     }
   }
 }

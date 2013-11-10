@@ -9,6 +9,8 @@ import java.util.Collection;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
+import stupaq.cloudatlas.attribute.types.CAList;
+import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
 
@@ -94,5 +96,16 @@ public class RCollectionTest {
         new RCollection<>(new CABoolean(true), new CABoolean(true)).aggregate().lor());
     assertEquals(new RSingle<>(new CABoolean(true)),
         new RCollection<>(new CABoolean(false), new CABoolean(true)).aggregate().lor());
+    // distinct
+    assertEquals(new RList<>(new CAInteger(2), new CAInteger(3)),
+        new RList<>(new CAInteger(2), new CAInteger(3), new CAInteger(3), new CAInteger(2))
+            .aggregate().distinct());
+    // unfold
+    assertEquals(new RList<>(new CAInteger(2), new CAInteger(3), new CAInteger(3)),
+        new RList<>(new CAList<>(new CAInteger(2), new CAInteger(3)), new CAList<CAInteger>(),
+            new CAList<>(new CAInteger(3))).aggregate().unfold());
+    assertEquals(new RList<>(new CAInteger(3), new CAInteger(3)),
+        new RCollection<>(new CASet<>(new CAInteger(3), new CAInteger(3)), new CASet<CAInteger>(),
+            new CASet<>(new CAInteger(3))).aggregate().unfold());
   }
 }
