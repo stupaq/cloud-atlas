@@ -1,9 +1,8 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas;
 
 import com.google.common.base.Preconditions;
 
-/** PACKAGE-LOCAL */
-abstract class PrimitiveWrapper<Primitive> {
+public abstract class PrimitiveWrapper<Primitive> {
   private Primitive value;
 
   protected PrimitiveWrapper(Primitive value) {
@@ -26,15 +25,14 @@ abstract class PrimitiveWrapper<Primitive> {
   }
 
   @Override
-  public int hashCode() {
-    return value != null ? value.hashCode() : 0;
+  public boolean equals(Object o) {
+    return this == o || !(o == null || getClass() != o.getClass()) && value
+        .equals(((PrimitiveWrapper) o).value);
   }
 
   @Override
-  public boolean equals(Object o) {
-    PrimitiveWrapper that = (PrimitiveWrapper) o;
-    return this == o || !(o == null || getClass() != o.getClass()) && !(value != null ? !value
-        .equals(that.value) : that.value != null);
+  public int hashCode() {
+    return value != null ? value.hashCode() : 0;
   }
 
   @Override

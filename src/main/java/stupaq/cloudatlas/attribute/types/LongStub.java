@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import stupaq.cloudatlas.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
