@@ -19,7 +19,6 @@ import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
-import stupaq.cloudatlas.attribute.types.CATuple;
 
 public final class TypeRegistry {
   private static final Map<TypeID, TypeFactory> idToFactory = new EnumMap<>(TypeID.class);
@@ -96,7 +95,6 @@ public final class TypeRegistry {
     registerType(CASet.class, TypeID.ATTRIBUTE_TYPES_SET);
     registerType(CAString.class, TypeID.ATTRIBUTE_TYPES_STRING);
     registerType(CATime.class, TypeID.ATTRIBUTE_TYPES_TIME);
-    registerType(CATuple.class, TypeID.ATTRIBUTE_TYPES_TUPLE);
   }
 
   public static interface TypeFactory<T> {

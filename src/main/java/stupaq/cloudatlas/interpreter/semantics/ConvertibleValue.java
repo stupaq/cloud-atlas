@@ -13,7 +13,6 @@ import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
-import stupaq.cloudatlas.attribute.types.CATuple;
 import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
 
@@ -36,8 +35,6 @@ public interface ConvertibleValue {
   public CAString String();
 
   public CATime Time();
-
-  public CATuple Tuple();
 
   public static class ConvertibleValueDefault implements ConvertibleValue {
 
@@ -88,11 +85,6 @@ public interface ConvertibleValue {
     @Override
     public CATime Time() {
       return noConversion(CATime.class);
-    }
-
-    @Override
-    public CATuple Tuple() {
-      return noConversion(CATuple.class);
     }
   }
 

@@ -15,7 +15,6 @@ import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
-import stupaq.cloudatlas.attribute.types.CATuple;
 import stupaq.cloudatlas.serialization.SerializationUtils;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 
@@ -44,9 +43,6 @@ public class ZoneManagementInfoTest {
     addAttr(zmi, "attributeSet", new CASet<>(new CAInteger(13L), new CAInteger(37L)));
     addAttr(zmi, "attributeString", new CAString("aString"));
     addAttr(zmi, "attributeTime", new CATime(11733L));
-    addAttr(zmi, "attributeTuple",
-        new CATuple(new CAString("some..."), new CATuple(new CAInteger(11L), new CABoolean(false)),
-            new CAInteger(1337L)));
     assertEquals(zmi, SerializationUtils.clone(zmi));
   }
 }
