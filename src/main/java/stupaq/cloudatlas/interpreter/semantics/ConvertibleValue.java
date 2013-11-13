@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 
 import com.sun.istack.internal.Nullable;
 
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CAContact;
 import stupaq.cloudatlas.attribute.types.CADouble;
@@ -13,7 +14,6 @@ import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
 
 public interface ConvertibleValue {
@@ -38,7 +38,7 @@ public interface ConvertibleValue {
 
   public static class ConvertibleValueDefault implements ConvertibleValue {
 
-    private <T extends Value> T noConversion(Class<T> dest) throws ConversionException {
+    private <T extends AttributeValue> T noConversion(Class<T> dest) throws ConversionException {
       throw new ConversionException("Conversion not known to: " + dest.getSimpleName());
     }
 
@@ -88,9 +88,9 @@ public interface ConvertibleValue {
     }
   }
 
-  public static class Stringifier implements Function<Value, String> {
+  public static class Stringifier implements Function<AttributeValue, String> {
     @Override
-    public String apply(@Nullable Value value) {
+    public String apply(@Nullable AttributeValue value) {
       return value.to().String().toString();
     }
   }

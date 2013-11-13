@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -78,29 +78,29 @@ public class CATime extends LongStub {
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
-    public Value add(Value value) {
+    public AttributeValue add(AttributeValue value) {
       return value.op().addTo(CATime.this);
     }
 
     @Override
-    public Value addTo(CADuration value) {
+    public AttributeValue addTo(CADuration value) {
       return new CATime(value.getValue() + getValue());
     }
 
     @Override
-    public Value addTo(CATime value) {
+    public AttributeValue addTo(CATime value) {
       return new CADuration(value.getValue() + getValue());
     }
 
     @Override
-    public Value negate() {
+    public AttributeValue negate() {
       return new CATime(-getValue());
     }
   }
 
   private class RelationalImplementation extends RelationalValueDefault {
     @Override
-    public CABoolean lessThan(Value value) {
+    public CABoolean lessThan(AttributeValue value) {
       return value.rel().greaterThan(CATime.this);
     }
 
@@ -115,7 +115,7 @@ public class CATime extends LongStub {
     }
 
     @Override
-    public CABoolean equalsTo(Value value) {
+    public CABoolean equalsTo(AttributeValue value) {
       return value.rel().equalsTo(CATime.this);
     }
   }

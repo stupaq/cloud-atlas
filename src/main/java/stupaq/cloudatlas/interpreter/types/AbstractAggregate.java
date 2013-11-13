@@ -12,9 +12,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CAInteger;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
@@ -22,39 +22,39 @@ import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValue
 import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 
-abstract class AbstractAggregate<Type extends Value> extends ArrayList<Type>
+abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<Type>
     implements SemanticValue {
   public AbstractAggregate(Collection<? extends Type> collection) {
     super(collection);
   }
 
   @Override
-  public final SemanticValue map(Function<Value, Value> function) {
+  public final SemanticValue map(Function<AttributeValue, AttributeValue> function) {
     return FluentIterable.from(this).transform(function).copyInto(emptyInstance());
   }
 
-  protected abstract <Result extends Value> AbstractAggregate<Result> emptyInstance();
+  protected abstract <Result extends AttributeValue> AbstractAggregate<Result> emptyInstance();
 
   @Override
   public abstract SemanticValue zip(SemanticValue second,
-      BinaryOperation<Value, Value, Value> operation);
+      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation);
 
   @Override
-  public final <Type extends Value> SemanticValue zipWith(RCollection<Type> first,
-      BinaryOperation<Value, Value, Value> operation) {
+  public final <Type extends AttributeValue> SemanticValue zipWith(RCollection<Type> first,
+      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation) {
     return first.zipImplementation(first.iterator(), this.iterator(), operation);
   }
 
   @Override
-  public final <Type extends Value> SemanticValue zipWith(RList<Type> first,
-      BinaryOperation<Value, Value, Value> operation) {
+  public final <Type extends AttributeValue> SemanticValue zipWith(RList<Type> first,
+      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation) {
     return first.zipImplementation(first.iterator(), this.iterator(), operation);
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public final <Type extends Value> SemanticValue zipWith(RSingle<Type> first,
-      BinaryOperation<Value, Value, Value> operation) {
+  public final <Type extends AttributeValue> SemanticValue zipWith(RSingle<Type> first,
+      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation) {
     return zipImplementation(Iterables.cycle(first.getValue()).iterator(), this.iterator(),
         operation);
   }
@@ -64,8 +64,9 @@ abstract class AbstractAggregate<Type extends Value> extends ArrayList<Type>
     return getClass() == o.getClass() && super.equals(o);
   }
 
-  abstract RCollection zipImplementation(Iterator<? extends Value> it1,
-      Iterator<? extends Value> it2, BinaryOperation<Value, Value, Value> operation);
+  abstract RCollection zipImplementation(Iterator<? extends AttributeValue> it1,
+      Iterator<? extends AttributeValue> it2,
+      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation);
 
   @Override
   public final AggregatingValue aggregate() {
@@ -75,17 +76,17 @@ abstract class AbstractAggregate<Type extends Value> extends ArrayList<Type>
   /** {@link stupaq.cloudatlas.interpreter.semantics.AggregatingValue} */
   private class AggregatingImplementation extends AggregatingValueDefault {
     @Override
-    public RSingle<Value> avg() {
+    public RSingle<AttributeValue> avg() {
       // FIXME nulls
       return new RSingle<>(AbstractAggregate.this.isEmpty() ? null : sum().getValue().op()
           .multiply(count().getValue().op().inverse()));
     }
 
     @Override
-    public RSingle<Value> sum() {
+    public RSingle<AttributeValue> sum() {
       // FIXME nulls
-      Value sum = new CAInteger(0L);
-      for (Value elem : AbstractAggregate.this) {
+      AttributeValue sum = new CAInteger(0L);
+      for (AttributeValue elem : AbstractAggregate.this) {
         sum = sum.op().add(elem);
       }
       return new RSingle<>(sum);
@@ -139,8 +140,8 @@ abstract class AbstractAggregate<Type extends Value> extends ArrayList<Type>
     @Override
     public SemanticValue land() {
       // FIXME nulls
-      Value res = new CABoolean(true);
-      for (Value elem : AbstractAggregate.this) {
+      AttributeValue res = new CABoolean(true);
+      for (AttributeValue elem : AbstractAggregate.this) {
         res = res.op().and(elem);
       }
       return new RSingle<>(res);
@@ -149,8 +150,8 @@ abstract class AbstractAggregate<Type extends Value> extends ArrayList<Type>
     @Override
     public SemanticValue lor() {
       // FIXME nulls
-      Value res = new CABoolean(false);
-      for (Value elem : AbstractAggregate.this) {
+      AttributeValue res = new CABoolean(false);
+      for (AttributeValue elem : AbstractAggregate.this) {
         res = res.op().or(elem);
       }
       return new RSingle<>(res);
@@ -170,10 +171,10 @@ abstract class AbstractAggregate<Type extends Value> extends ArrayList<Type>
     @Override
     public RList unfold() {
       return FluentIterable.from(AbstractAggregate.this)
-          .transformAndConcat(new Function<Type, Iterable<Value>>() {
+          .transformAndConcat(new Function<Type, Iterable<AttributeValue>>() {
             @Override
             @SuppressWarnings("unchecked")
-            public Iterable<Value> apply(Type elem) {
+            public Iterable<AttributeValue> apply(Type elem) {
               try {
                 return elem.to().List();
               } catch (ConversionException e) {

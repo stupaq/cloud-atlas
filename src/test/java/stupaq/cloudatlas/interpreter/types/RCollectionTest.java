@@ -6,28 +6,28 @@ import org.junit.Test;
 
 import java.util.Collection;
 
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class RCollectionTest {
-  final static Function<Value, Value> function = new Function<Value, Value>() {
+  final static Function<AttributeValue, AttributeValue> function = new Function<AttributeValue, AttributeValue>() {
     @Override
-    public Value apply(Value value) {
+    public AttributeValue apply(AttributeValue value) {
       return value.op().negate();
     }
   };
-  final static BinaryOperation<Value, Value, Value> operation =
-      new BinaryOperation<Value, Value, Value>() {
+  final static BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation =
+      new BinaryOperation<AttributeValue, AttributeValue, AttributeValue>() {
         @Override
-        public Value apply(Value value1, Value value2) {
+        public AttributeValue apply(AttributeValue value1, AttributeValue value2) {
           return value1.op().add(value2.op().negate());
         }
       };

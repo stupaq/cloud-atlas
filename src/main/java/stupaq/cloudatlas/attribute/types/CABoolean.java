@@ -6,7 +6,6 @@ import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -41,7 +40,7 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
   }
 
   @Override
-  public int compareTo(Value o) {
+  public int compareTo(AttributeValue o) {
     TypeUtils.assertSameType(this, o);
     return getValue().compareTo(((CABoolean) o).getValue());
   }
@@ -75,34 +74,34 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
-    public Value and(Value value) {
+    public AttributeValue and(AttributeValue value) {
       return value.op().andWith(CABoolean.this);
     }
 
     @Override
-    public Value andWith(CABoolean value) {
+    public AttributeValue andWith(CABoolean value) {
       return new CABoolean(value.getValue() && getValue());
     }
 
     @Override
-    public Value or(Value value) {
+    public AttributeValue or(AttributeValue value) {
       return value.op().orWith(CABoolean.this);
     }
 
     @Override
-    public Value orWith(CABoolean value) {
+    public AttributeValue orWith(CABoolean value) {
       return new CABoolean(value.getValue() || getValue());
     }
 
     @Override
-    public Value contradiction() {
+    public AttributeValue contradiction() {
       return new CABoolean(!getValue());
     }
   }
 
   private class RelationalImplementation extends RelationalValueDefault {
     @Override
-    public CABoolean equalsTo(Value value) {
+    public CABoolean equalsTo(AttributeValue value) {
       return value.rel().equalsTo(CABoolean.this);
     }
 

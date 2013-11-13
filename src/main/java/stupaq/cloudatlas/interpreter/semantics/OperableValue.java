@@ -1,207 +1,207 @@
 package stupaq.cloudatlas.interpreter.semantics;
 
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CADuration;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 
 public interface OperableValue {
 
   /** CONJUNCTION is defined for: Boolean */
-  public Value and(Value value);
+  public AttributeValue and(AttributeValue value);
 
-  public Value andWith(CABoolean value);
+  public AttributeValue andWith(CABoolean value);
 
   /** ALTERNATIVE is defined for: Boolean */
-  public Value or(Value value);
+  public AttributeValue or(AttributeValue value);
 
-  public Value orWith(CABoolean value);
+  public AttributeValue orWith(CABoolean value);
 
   /** CONTRADICTION is defined for: Boolean */
-  public Value contradiction();
+  public AttributeValue contradiction();
 
   /** NEGATION is defined for: Double, Duration, Integer, Time */
-  public Value negate();
+  public AttributeValue negate();
 
   /** ADDITION is defined for: Double, Duration, Integer, String, Time */
-  public Value add(Value value);
+  public AttributeValue add(AttributeValue value);
 
-  public Value addTo(CADouble value);
+  public AttributeValue addTo(CADouble value);
 
-  public Value addTo(CADuration value);
+  public AttributeValue addTo(CADuration value);
 
-  public Value addTo(CAInteger value);
+  public AttributeValue addTo(CAInteger value);
 
-  public Value addTo(CAString value);
+  public AttributeValue addTo(CAString value);
 
-  public Value addTo(CATime value);
+  public AttributeValue addTo(CATime value);
 
   /** MULTIPLICATION is defined for: Double, Integer */
-  public Value multiply(Value value);
+  public AttributeValue multiply(AttributeValue value);
 
-  public Value multiplyBy(CADouble value);
+  public AttributeValue multiplyBy(CADouble value);
 
-  public Value multiplyBy(CAInteger value);
+  public AttributeValue multiplyBy(CAInteger value);
 
   /** INVERSION is defined for: Double, Integer */
-  public Value inverse();
+  public AttributeValue inverse();
 
   /** REMAINDER is defined for: Integer */
-  public Value modulo(Value value);
+  public AttributeValue modulo(AttributeValue value);
 
-  public Value remainderOf(CAInteger value);
+  public AttributeValue remainderOf(CAInteger value);
 
   /** REGEXP is defined for: String */
-  public Value matches(Value value);
+  public AttributeValue matches(AttributeValue value);
 
-  public Value describes(CAString value);
+  public AttributeValue describes(CAString value);
 
   /** ROUND is defined for: Double, Integer */
-  public Value round();
+  public AttributeValue round();
 
   /** CEIL is defined for: Double, Integer */
-  public Value ceil();
+  public AttributeValue ceil();
 
   /** FLOOR is defined for: Double, Integer */
-  public Value floor();
+  public AttributeValue floor();
 
   /** SIZE is defined for: List, Set, String */
-  public Value size();
+  public AttributeValue size();
 
-  Value multiplyBy(CADuration value);
+  AttributeValue multiplyBy(CADuration value);
 
   public static class OperableValueDefault implements OperableValue {
 
-    private <T extends Value> T noOperation(String operation) throws OperationNotApplicable {
+    private <T extends AttributeValue> T noOperation(String operation) throws OperationNotApplicable {
       throw new OperationNotApplicable("Operation " + operation + " is not applicable here");
     }
 
     @Override
-    public Value contradiction() {
+    public AttributeValue contradiction() {
       return noOperation("!");
     }
 
     @Override
-    public Value and(Value value) {
+    public AttributeValue and(AttributeValue value) {
       return noOperation("&&");
     }
 
     @Override
-    public Value andWith(CABoolean value) {
+    public AttributeValue andWith(CABoolean value) {
       return noOperation("&&");
     }
 
     @Override
-    public Value or(Value value) {
+    public AttributeValue or(AttributeValue value) {
       return noOperation("||");
     }
 
     @Override
-    public Value orWith(CABoolean value) {
+    public AttributeValue orWith(CABoolean value) {
       return noOperation("||");
     }
 
     @Override
-    public Value add(Value value) {
+    public AttributeValue add(AttributeValue value) {
       return noOperation("+");
     }
 
     @Override
-    public Value addTo(CADouble value) {
+    public AttributeValue addTo(CADouble value) {
       return noOperation("+");
     }
 
     @Override
-    public Value addTo(CADuration value) {
+    public AttributeValue addTo(CADuration value) {
       return noOperation("+");
     }
 
     @Override
-    public Value addTo(CAInteger value) {
+    public AttributeValue addTo(CAInteger value) {
       return noOperation("+");
     }
 
     @Override
-    public Value addTo(CAString value) {
+    public AttributeValue addTo(CAString value) {
       return noOperation("+");
     }
 
     @Override
-    public Value addTo(CATime value) {
+    public AttributeValue addTo(CATime value) {
       return noOperation("+");
     }
 
     @Override
-    public Value negate() {
+    public AttributeValue negate() {
       return noOperation("-");
     }
 
     @Override
-    public Value multiply(Value value) {
+    public AttributeValue multiply(AttributeValue value) {
       return noOperation("*");
     }
 
     @Override
-    public Value multiplyBy(CADouble value) {
+    public AttributeValue multiplyBy(CADouble value) {
       return noOperation("*");
     }
 
     @Override
-    public Value multiplyBy(CADuration value) {
+    public AttributeValue multiplyBy(CADuration value) {
       return noOperation("*");
     }
 
     @Override
-    public Value multiplyBy(CAInteger value) {
+    public AttributeValue multiplyBy(CAInteger value) {
       return noOperation("*");
     }
 
     @Override
-    public Value inverse() {
+    public AttributeValue inverse() {
       return noOperation("/");
     }
 
     @Override
-    public Value modulo(Value value) {
+    public AttributeValue modulo(AttributeValue value) {
       return noOperation("%");
     }
 
     @Override
-    public Value remainderOf(CAInteger value) {
+    public AttributeValue remainderOf(CAInteger value) {
       return noOperation("%");
     }
 
     @Override
-    public Value matches(Value value) {
+    public AttributeValue matches(AttributeValue value) {
       return noOperation("REGEXP");
     }
 
     @Override
-    public Value describes(CAString value) {
+    public AttributeValue describes(CAString value) {
       return noOperation("REGEXP");
     }
 
     @Override
-    public Value round() {
+    public AttributeValue round() {
       return noOperation("round(...)");
     }
 
     @Override
-    public Value ceil() {
+    public AttributeValue ceil() {
       return noOperation("ceil(...)");
     }
 
     @Override
-    public Value floor() {
+    public AttributeValue floor() {
       return noOperation("floor(...)");
     }
 
     @Override
-    public Value size() {
+    public AttributeValue size() {
       return noOperation("size(...)");
     }
   }

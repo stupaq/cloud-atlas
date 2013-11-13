@@ -6,7 +6,6 @@ import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -15,7 +14,7 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue, Value {
+public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue {
   @SerializationOnly
   public CADouble() {
     this(0D);
@@ -46,7 +45,7 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
   }
 
   @Override
-  public int compareTo(Value o) {
+  public int compareTo(AttributeValue o) {
     TypeUtils.assertSameType(this, o);
     return getValue().compareTo(((CADouble) o).getValue());
   }
@@ -80,69 +79,69 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
-    public Value add(Value value) {
+    public AttributeValue add(AttributeValue value) {
       return value.op().addTo(CADouble.this);
     }
 
     @Override
-    public Value addTo(CADouble value) {
+    public AttributeValue addTo(CADouble value) {
       return new CADouble(value.getValue() + getValue());
     }
 
     @Override
-    public Value addTo(CAInteger value) {
+    public AttributeValue addTo(CAInteger value) {
       return new CADouble(value.getValue() + getValue());
     }
 
     @Override
-    public Value negate() {
+    public AttributeValue negate() {
       return new CADouble(-getValue());
     }
 
     @Override
-    public Value multiply(Value value) {
+    public AttributeValue multiply(AttributeValue value) {
       return value.op().multiplyBy(CADouble.this);
     }
 
     @Override
-    public Value multiplyBy(CADouble value) {
+    public AttributeValue multiplyBy(CADouble value) {
       return new CADouble(value.getValue() * getValue());
     }
 
     @Override
-    public Value multiplyBy(CADuration value) {
+    public AttributeValue multiplyBy(CADuration value) {
       return new CADuration((long) (value.getValue() * getValue()));
     }
 
     @Override
-    public Value multiplyBy(CAInteger value) {
+    public AttributeValue multiplyBy(CAInteger value) {
       return new CADouble(value.getValue() * getValue());
     }
 
     @Override
-    public Value inverse() {
+    public AttributeValue inverse() {
       return new CADouble(1 / getValue());
     }
 
     @Override
-    public Value round() {
+    public AttributeValue round() {
       return new CADouble((double) Math.round(getValue()));
     }
 
     @Override
-    public Value ceil() {
+    public AttributeValue ceil() {
       return new CADouble(Math.ceil(getValue()));
     }
 
     @Override
-    public Value floor() {
+    public AttributeValue floor() {
       return new CADouble(Math.floor(getValue()));
     }
   }
 
   private class RelationalImplementation extends RelationalValueDefault {
     @Override
-    public CABoolean lessThan(Value value) {
+    public CABoolean lessThan(AttributeValue value) {
       return value.rel().greaterThan(CADouble.this);
     }
 
@@ -157,7 +156,7 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
     }
 
     @Override
-    public CABoolean equalsTo(Value value) {
+    public CABoolean equalsTo(AttributeValue value) {
       return value.rel().equalsTo(CADouble.this);
     }
   }

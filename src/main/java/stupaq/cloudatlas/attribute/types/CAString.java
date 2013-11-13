@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import stupaq.cloudatlas.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -52,7 +51,7 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
   }
 
   @Override
-  public int compareTo(Value o) {
+  public int compareTo(AttributeValue o) {
     TypeUtils.assertSameType(this, o);
     return getValue().compareTo(((CAString) o).getValue());
   }
@@ -126,34 +125,34 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
-    public Value add(Value value) {
+    public AttributeValue add(AttributeValue value) {
       return value.op().addTo(CAString.this);
     }
 
     @Override
-    public Value addTo(CAString value) {
+    public AttributeValue addTo(CAString value) {
       return new CAString(value.getValue() + getValue());
     }
 
     @Override
-    public Value matches(Value value) {
+    public AttributeValue matches(AttributeValue value) {
       return value.op().describes(CAString.this);
     }
 
     @Override
-    public Value describes(CAString value) {
+    public AttributeValue describes(CAString value) {
       return new CABoolean(Pattern.matches(getValue(), value.getValue()));
     }
 
     @Override
-    public Value size() {
+    public AttributeValue size() {
       return new CAInteger((long) CAString.this.getValue().length());
     }
   }
 
   private class RelationalImplementation extends RelationalValueDefault {
     @Override
-    public CABoolean lessThan(Value value) {
+    public CABoolean lessThan(AttributeValue value) {
       return value.rel().greaterThan(CAString.this);
     }
 
@@ -168,7 +167,7 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
     }
 
     @Override
-    public CABoolean equalsTo(Value value) {
+    public CABoolean equalsTo(AttributeValue value) {
       return value.rel().equalsTo(CAString.this);
     }
   }

@@ -2,7 +2,7 @@ package stupaq.cloudatlas.attribute.types;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 
-import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -61,49 +61,49 @@ public class CADuration extends LongStub {
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
-    public Value add(Value value) {
+    public AttributeValue add(AttributeValue value) {
       return value.op().addTo(CADuration.this);
     }
 
     @Override
-    public Value addTo(CADuration value) {
+    public AttributeValue addTo(CADuration value) {
       return new CADuration(value.getValue() + getValue());
     }
 
     @Override
-    public Value addTo(CATime value) {
+    public AttributeValue addTo(CATime value) {
       return new CATime(value.getValue() + getValue());
     }
 
     @Override
-    public Value negate() {
+    public AttributeValue negate() {
       return new CADuration(-getValue());
     }
 
     @Override
-    public Value multiply(Value value) {
+    public AttributeValue multiply(AttributeValue value) {
       return value.op().multiplyBy(CADuration.this);
     }
 
     @Override
-    public Value multiplyBy(CADouble value) {
+    public AttributeValue multiplyBy(CADouble value) {
       return new CADuration((long) (value.getValue() * (double) getValue()));
     }
 
     @Override
-    public Value multiplyBy(CADuration value) {
+    public AttributeValue multiplyBy(CADuration value) {
       return new CADuration(value.getValue() * getValue());
     }
 
     @Override
-    public Value multiplyBy(CAInteger value) {
+    public AttributeValue multiplyBy(CAInteger value) {
       return new CADuration(value.getValue() * getValue());
     }
   }
 
   private class RelationalImplementation extends RelationalValueDefault {
     @Override
-    public CABoolean lessThan(Value value) {
+    public CABoolean lessThan(AttributeValue value) {
       return value.rel().greaterThan(CADuration.this);
     }
 
@@ -118,7 +118,7 @@ public class CADuration extends LongStub {
     }
 
     @Override
-    public CABoolean equalsTo(Value value) {
+    public CABoolean equalsTo(AttributeValue value) {
       return value.rel().equalsTo(CADuration.this);
     }
   }

@@ -1,6 +1,6 @@
 package stupaq.cloudatlas.attribute.types;
 
-import stupaq.cloudatlas.interpreter.Value;
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -63,64 +63,64 @@ public class CAInteger extends LongStub {
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
-    public Value add(Value value) {
+    public AttributeValue add(AttributeValue value) {
       return value.op().addTo(CAInteger.this);
     }
 
     @Override
-    public Value addTo(CADouble value) {
+    public AttributeValue addTo(CADouble value) {
       return new CADouble(value.getValue() + (double) getValue());
     }
 
     @Override
-    public Value addTo(CAInteger value) {
+    public AttributeValue addTo(CAInteger value) {
       return new CAInteger(value.getValue() + getValue());
     }
 
     @Override
-    public Value negate() {
+    public AttributeValue negate() {
       return new CAInteger(-getValue());
     }
 
     @Override
-    public Value multiply(Value value) {
+    public AttributeValue multiply(AttributeValue value) {
       return value.op().multiplyBy(CAInteger.this);
     }
 
     @Override
-    public Value multiplyBy(CADouble value) {
+    public AttributeValue multiplyBy(CADouble value) {
       return new CADouble(value.getValue() * (double) getValue());
     }
 
     @Override
-    public Value multiplyBy(CADuration value) {
+    public AttributeValue multiplyBy(CADuration value) {
       return new CADuration((long) (value.getValue() * (double) getValue()));
     }
 
     @Override
-    public Value multiplyBy(CAInteger value) {
+    public AttributeValue multiplyBy(CAInteger value) {
       return new CAInteger(value.getValue() * getValue());
     }
 
     @Override
-    public Value inverse() {
+    public AttributeValue inverse() {
       return new CADouble(1 / (double) getValue());
     }
 
     @Override
-    public Value modulo(Value value) {
+    public AttributeValue modulo(AttributeValue value) {
       return value.op().remainderOf(CAInteger.this);
     }
 
     @Override
-    public Value remainderOf(CAInteger value) {
+    public AttributeValue remainderOf(CAInteger value) {
       return new CAInteger(value.getValue() % getValue());
     }
   }
 
   private class RelationalImplementation extends RelationalValueDefault {
     @Override
-    public CABoolean lessThan(Value value) {
+    public CABoolean lessThan(AttributeValue value) {
       return value.rel().greaterThan(CAInteger.this);
     }
 
@@ -135,7 +135,7 @@ public class CAInteger extends LongStub {
     }
 
     @Override
-    public CABoolean equalsTo(Value value) {
+    public CABoolean equalsTo(AttributeValue value) {
       return value.rel().equalsTo(CAInteger.this);
     }
   }

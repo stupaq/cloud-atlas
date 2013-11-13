@@ -24,6 +24,7 @@ public abstract class PrimitiveWrapper<Primitive> {
     this.value = value;
   }
 
+  /** {@link java.lang.Object} */
   @Override
   public boolean equals(Object o) {
     return this == o || !(o == null || getClass() != o.getClass()) && value

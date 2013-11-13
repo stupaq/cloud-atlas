@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.interpreter.semantics;
 
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CADuration;
@@ -8,13 +9,12 @@ import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 
 public interface RelationalValue {
 
   /** this < value */
-  public CABoolean lessThan(Value value);
+  public CABoolean lessThan(AttributeValue value);
 
   /** this > value */
   public CABoolean greaterThan(CABoolean value);
@@ -30,7 +30,7 @@ public interface RelationalValue {
   public CABoolean greaterThan(CATime value);
 
   /** this == value */
-  public CABoolean equalsTo(Value value);
+  public CABoolean equalsTo(AttributeValue value);
 
   public CABoolean equalsTo(CABoolean value);
 
@@ -49,12 +49,12 @@ public interface RelationalValue {
   public CABoolean equalsTo(CATime value);
 
   public static class RelationalValueDefault implements RelationalValue {
-    private CABoolean notComparable(Value value) {
+    private CABoolean notComparable(AttributeValue value) {
       throw new OperationNotApplicable("Cannot compare with: " + value);
     }
 
     @Override
-    public CABoolean lessThan(Value value) {
+    public CABoolean lessThan(AttributeValue value) {
       return notComparable(value);
     }
 
@@ -89,7 +89,7 @@ public interface RelationalValue {
     }
 
     @Override
-    public CABoolean equalsTo(Value value) {
+    public CABoolean equalsTo(AttributeValue value) {
       return notComparable(value);
     }
 

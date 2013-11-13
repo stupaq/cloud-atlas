@@ -6,7 +6,6 @@ import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -17,7 +16,7 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDe
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 // TODO: contact has more structure than string, we don't know it right now though
-public class CAContact extends PrimitiveWrapper<String> implements AttributeValue, Value {
+public class CAContact extends PrimitiveWrapper<String> implements AttributeValue {
   @SerializationOnly
   public CAContact() {
     super(null, null);
@@ -43,7 +42,7 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
   }
 
   @Override
-  public int compareTo(Value o) {
+  public int compareTo(AttributeValue o) {
     throw new OperationNotApplicable("Cannot compare: " + getType().getSimpleName());
   }
 
