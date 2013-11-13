@@ -19,8 +19,8 @@ import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.interpreter.Value;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
-import stupaq.cloudatlas.interpreter.semantics.AggregatableValue;
-import stupaq.cloudatlas.interpreter.semantics.AggregatableValue.AggregatableValueDefault;
+import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
+import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 
@@ -43,20 +43,21 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
   @Override
   public final <Type extends Value> SemanticValue zipWith(RCollection<Type> first,
       BinaryOperation<Value, Value, Value> operation) {
-    return first.zip(first.iterator(), this.iterator(), operation);
+    return first.zipImplementation(first.iterator(), this.iterator(), operation);
   }
 
   @Override
   public final <Type extends Value> SemanticValue zipWith(RList<Type> first,
       BinaryOperation<Value, Value, Value> operation) {
-    return first.zip(first.iterator(), this.iterator(), operation);
+    return first.zipImplementation(first.iterator(), this.iterator(), operation);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public final <Type extends Value> SemanticValue zipWith(RSingle<Type> first,
       BinaryOperation<Value, Value, Value> operation) {
-    return zip(Iterables.cycle(first.getValue()).iterator(), this.iterator(), operation);
+    return zipImplementation(Iterables.cycle(first.getValue()).iterator(), this.iterator(),
+        operation);
   }
 
   @Override
@@ -64,7 +65,7 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
     return getClass() == o.getClass() && super.equals(o);
   }
 
-  RCollection zip(Iterator<? extends Value> it1, Iterator<? extends Value> it2,
+  RCollection zipImplementation(Iterator<? extends Value> it1, Iterator<? extends Value> it2,
       BinaryOperation<Value, Value, Value> operation) {
     RCollection<Value> result = new RCollection<>();
     while (it1.hasNext() && it2.hasNext()) {
@@ -74,11 +75,11 @@ public class RCollection<Type extends Value> extends ArrayList<Type> implements 
   }
 
   @Override
-  public final AggregatableValue aggregate() {
-    return new AggregatableImplementation();
+  public final AggregatingValue aggregate() {
+    return new AggregatingImplementation();
   }
 
-  private class AggregatableImplementation extends AggregatableValueDefault {
+  private class AggregatingImplementation extends AggregatingValueDefault {
     @Override
     public RSingle<Value> avg() {
       // FIXME nulls

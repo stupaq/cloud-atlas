@@ -22,5 +22,5 @@ public interface SemanticValue {
   public <Type extends Value> SemanticValue zipWith(RSingle<Type> first,
       BinaryOperation<Value, Value, Value> operation);
 
-  public AggregatableValue aggregate();
+  public AggregatingValue aggregate();
 }

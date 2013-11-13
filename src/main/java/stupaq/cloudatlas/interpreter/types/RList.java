@@ -26,7 +26,7 @@ public final class RList<Type extends Value> extends RCollection<Type> {
     return second.zipWith(this, operation);
   }
 
-  RCollection zip(Iterator<? extends Value> it1, Iterator<? extends Value> it2,
+  RCollection zipImplementation(Iterator<? extends Value> it1, Iterator<? extends Value> it2,
       BinaryOperation<Value, Value, Value> operation) {
     throw new EvaluationException(
         "Semantic value " + RList.class.getSimpleName() + ", cannot be zipped with other: "

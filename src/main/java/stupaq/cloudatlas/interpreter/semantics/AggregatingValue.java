@@ -2,7 +2,7 @@ package stupaq.cloudatlas.interpreter.semantics;
 
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 
-public interface AggregatableValue {
+public interface AggregatingValue {
 
   public SemanticValue avg();
 
@@ -28,7 +28,7 @@ public interface AggregatableValue {
 
   SemanticValue unfold();
 
-  public static class AggregatableValueDefault implements AggregatableValue {
+  public static class AggregatingValueDefault implements AggregatingValue {
     private SemanticValue noAggregate(String operation) throws OperationNotApplicable {
       throw new OperationNotApplicable("Aggregation with " + operation + " is not supported");
     }
