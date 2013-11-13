@@ -1,8 +1,6 @@
 package stupaq.cloudatlas.interpreter.types;
 
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-
+import java.util.Arrays;
 import java.util.Iterator;
 
 import stupaq.cloudatlas.interpreter.Value;
@@ -10,15 +8,15 @@ import stupaq.cloudatlas.interpreter.errors.EvaluationException;
 import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 
-public final class RList<Type extends Value> extends RCollection<Type> {
+public final class RList<Type extends Value> extends AbstractAggregate<Type> {
   @SafeVarargs
   public RList(Type... elements) {
-    super(elements);
+    super(Arrays.asList(elements));
   }
 
   @Override
-  public SemanticValue map(Function<Value, Value> function) {
-    return FluentIterable.from(this).transform(function).copyInto(new RList<>());
+  protected <Result extends Value> AbstractAggregate<Result> emptyInstance() {
+    return new RList<>();
   }
 
   @Override
@@ -26,6 +24,7 @@ public final class RList<Type extends Value> extends RCollection<Type> {
     return second.zipWith(this, operation);
   }
 
+  @Override
   RCollection zipImplementation(Iterator<? extends Value> it1, Iterator<? extends Value> it2,
       BinaryOperation<Value, Value, Value> operation) {
     throw new EvaluationException(

@@ -12,6 +12,8 @@ import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 
 public final class RSingle<Type extends Value> extends PrimitiveWrapper<Type>
     implements SemanticValue {
+  private static final AggregatingValue AGGREGATE_IMPLEMENTATION = new AggregatingValueDefault();
+
   public RSingle(Type value) {
     super(value);
   }
@@ -50,6 +52,6 @@ public final class RSingle<Type extends Value> extends PrimitiveWrapper<Type>
 
   @Override
   public AggregatingValue aggregate() {
-    return new AggregatingValueDefault();
+    return AGGREGATE_IMPLEMENTATION;
   }
 }
