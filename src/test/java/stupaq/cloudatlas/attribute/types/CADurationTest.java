@@ -27,6 +27,11 @@ public class CADurationTest {
     assertEquals(new CATime(1000L), new CADuration(100L).op().add(new CATime(900L)));
     assertEquals(new CADuration(1000L), new CADuration(900L).op().add(new CADuration(100L)));
     assertEquals(new CADuration(1000L), new CADuration(100L).op().add(new CADuration(900L)));
+    // multiplication
+    assertEquals(new CADuration(1000L), new CADuration(100L).op().multiply(new CAInteger(10L)));
+    assertEquals(new CADuration(1000L), new CADuration(100L).op().multiply(new CADouble(10L)));
+    assertEquals(new CADuration(1000L), new CADouble(100L).op().multiply(new CADuration(10L)));
+    assertEquals(new CADuration(1000L), new CAInteger(100L).op().multiply(new CADuration(10L)));
   }
 
   @Test

@@ -110,6 +110,11 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
     }
 
     @Override
+    public Value multiplyBy(CADuration value) {
+      return new CADuration((long) (value.getValue() * getValue()));
+    }
+
+    @Override
     public Value multiplyBy(CAInteger value) {
       return new CADouble(value.getValue() * getValue());
     }

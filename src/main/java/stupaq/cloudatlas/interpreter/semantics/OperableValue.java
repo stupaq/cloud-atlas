@@ -72,6 +72,8 @@ public interface OperableValue {
   /** SIZE is defined for: List, Set, String */
   public Value size();
 
+  Value multiplyBy(CADuration value);
+
   public static class OperableValueDefault implements OperableValue {
 
     private <T extends Value> T noOperation(String operation) throws OperationNotApplicable {
@@ -145,6 +147,11 @@ public interface OperableValue {
 
     @Override
     public Value multiplyBy(CADouble value) {
+      return noOperation("*");
+    }
+
+    @Override
+    public Value multiplyBy(CADuration value) {
       return noOperation("*");
     }
 

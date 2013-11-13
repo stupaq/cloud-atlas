@@ -93,6 +93,11 @@ public class CAInteger extends LongStub {
     }
 
     @Override
+    public Value multiplyBy(CADuration value) {
+      return new CADuration((long) (value.getValue() * (double) getValue()));
+    }
+
+    @Override
     public Value multiplyBy(CAInteger value) {
       return new CAInteger(value.getValue() * getValue());
     }

@@ -79,6 +79,26 @@ public class CADuration extends LongStub {
     public Value negate() {
       return new CADuration(-getValue());
     }
+
+    @Override
+    public Value multiply(Value value) {
+      return value.op().multiplyBy(CADuration.this);
+    }
+
+    @Override
+    public Value multiplyBy(CADouble value) {
+      return new CADuration((long) (value.getValue() * (double) getValue()));
+    }
+
+    @Override
+    public Value multiplyBy(CADuration value) {
+      return new CADuration(value.getValue() * getValue());
+    }
+
+    @Override
+    public Value multiplyBy(CAInteger value) {
+      return new CADuration(value.getValue() * getValue());
+    }
   }
 
   private class RelationalImplementation extends RelationalValueDefault {
