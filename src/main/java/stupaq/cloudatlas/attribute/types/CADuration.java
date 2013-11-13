@@ -11,7 +11,7 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CADuration extends LongStub {
+public class CADuration extends AbstractLongValue {
   @SerializationOnly
   public CADuration() {
     this(0L);

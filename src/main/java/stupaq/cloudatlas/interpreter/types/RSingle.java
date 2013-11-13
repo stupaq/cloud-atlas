@@ -10,6 +10,7 @@ import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValue
 import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 
+/** PACKAGE-LOCAL */
 public final class RSingle<Type extends AttributeValue> extends PrimitiveWrapper<Type>
     implements SemanticValue {
   private static final AggregatingValue AGGREGATE_IMPLEMENTATION = new AggregatingValueDefault();

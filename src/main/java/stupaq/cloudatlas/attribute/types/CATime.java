@@ -15,7 +15,7 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CATime extends LongStub {
+public class CATime extends AbstractLongValue {
   private static final Calendar EPOCH;
 
   static {

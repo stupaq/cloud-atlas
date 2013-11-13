@@ -9,13 +9,13 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 /** PACKAGE-LOCAL */
-abstract class LongStub extends PrimitiveWrapper<Long> implements AttributeValue {
+abstract class AbstractLongValue extends PrimitiveWrapper<Long> implements AttributeValue {
   @SerializationOnly
-  public LongStub() {
+  public AbstractLongValue() {
     this(0L);
   }
 
-  public LongStub(Long value) {
+  public AbstractLongValue(Long value) {
     super(value);
   }
 
@@ -32,6 +32,6 @@ abstract class LongStub extends PrimitiveWrapper<Long> implements AttributeValue
   @Override
   public int compareTo(AttributeValue o) {
     TypeUtils.assertSameType(this, o);
-    return getValue().compareTo(((LongStub) o).getValue());
+    return getValue().compareTo(((AbstractLongValue) o).getValue());
   }
 }

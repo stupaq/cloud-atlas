@@ -9,7 +9,7 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CAInteger extends LongStub {
+public class CAInteger extends AbstractLongValue {
   @SerializationOnly
   public CAInteger() {
     this(0L);
