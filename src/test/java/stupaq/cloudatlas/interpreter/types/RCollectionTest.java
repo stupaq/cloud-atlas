@@ -43,6 +43,9 @@ public class RCollectionTest {
   public void testSemanticsMap() {
     // map
     assertEquals(C(Int(-2), Int(-3)), C(Int(2), Int(3)).map(UnOp()));
+    // map null
+    assertEquals(C(Int(-2), Int(), Int(-3)), C(Int(2), Int(), Int(3)).map(UnOp()));
+    assertEquals(C(Int(), Int(), Int()), C(Int(), Int(), Int()).map(UnOp()));
   }
 
   @Test
@@ -51,6 +54,14 @@ public class RCollectionTest {
     assertEquals(C(Int(3), Int(4)), C(Int(5), Int(3)).zip(C(Int(2), Int(-1)), BinOp()));
     assertEquals(C(Int(3), Int(1)), C(Int(5), Int(3)).zip(S(Int(2)), BinOp()));
     assertEquals(C(Int(-3), Int(-1)), S(Int(2)).zip(C(Int(5), Int(3)), BinOp()));
+    // zip null
+    assertEquals(C(Int(), Int()), C(Int(5), Int(3)).zip(S(Int()), BinOp()));
+    assertEquals(C(Int(), Int()), S(Int()).zip(C(Int(5), Int(3)), BinOp()));
+    assertEquals(C(Int(-3), Int()), S(Int(2)).zip(C(Int(5), Int()), BinOp()));
+    assertEquals(C(Int(), Int()), C(Int(), Int(3)).zip(C(Int(2), Int()), BinOp()));
+    assertEquals(C(Int(), Int()), C(Int(5), Int()).zip(C(Int(), Int(-1)), BinOp()));
+    assertEquals(C(Int(), Int()), C(Int(), Int()).zip(C(Int(2), Int(2)), BinOp()));
+    assertEquals(C(Int(), Int()), C(Int(), Int()).zip(C(Int(), Int()), BinOp()));
   }
 
   @Test
