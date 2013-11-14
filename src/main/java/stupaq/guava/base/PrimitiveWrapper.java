@@ -1,4 +1,4 @@
-package stupaq.cloudatlas;
+package stupaq.guava.base;
 
 import com.google.common.base.Preconditions;
 

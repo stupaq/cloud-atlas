@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.BinaryOperation;
+import stupaq.guava.base.Function2;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 
@@ -23,14 +23,14 @@ public final class RList<Type extends AttributeValue> extends AbstractAggregate<
 
   @Override
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zip(
-      SemanticValue<Other> second, BinaryOperation<Type, Other, Result> operation) {
+      SemanticValue<Other> second, Function2<Type, Other, Result> operation) {
     return second.zipWith(this, operation);
   }
 
   @Override
   <Arg0 extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> RList<Result> zipImplementation(
       Iterator<Optional<Arg0>> it0, Iterator<Optional<Arg1>> it1,
-      BinaryOperation<Arg0, Arg1, Result> operation) {
+      Function2<Arg0, Arg1, Result> operation) {
     throw new EvaluationException(
         "Semantic value " + RList.class.getSimpleName() + ", cannot be zipped with other: "
         + SemanticValue.class.getSimpleName());

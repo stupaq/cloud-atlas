@@ -9,7 +9,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import stupaq.cloudatlas.PrimitiveWrapper;
+import stupaq.guava.base.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;

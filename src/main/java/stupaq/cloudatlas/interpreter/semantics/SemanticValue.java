@@ -1,8 +1,8 @@
 package stupaq.cloudatlas.interpreter.semantics;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.BinaryOperation;
-import stupaq.cloudatlas.interpreter.UnaryOperation;
+import stupaq.guava.base.Function2;
+import stupaq.guava.base.Function1;
 import stupaq.cloudatlas.interpreter.types.RCollection;
 import stupaq.cloudatlas.interpreter.types.RList;
 import stupaq.cloudatlas.interpreter.types.RSingle;
@@ -10,19 +10,19 @@ import stupaq.cloudatlas.interpreter.types.RSingle;
 public interface SemanticValue<Type extends AttributeValue> {
 
   public <Result extends AttributeValue> SemanticValue<Result> map(
-      UnaryOperation<Type, Result> function);
+      Function1<Type, Result> function);
 
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zip(
-      SemanticValue<Other> second, BinaryOperation<Type, Other, Result> operation);
+      SemanticValue<Other> second, Function2<Type, Other, Result> operation);
 
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RCollection<Other> first, BinaryOperation<Other, Type, Result> operation);
+      RCollection<Other> first, Function2<Other, Type, Result> operation);
 
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RList<Other> first, BinaryOperation<Other, Type, Result> operation);
+      RList<Other> first, Function2<Other, Type, Result> operation);
 
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RSingle<Other> first, BinaryOperation<Other, Type, Result> operation);
+      RSingle<Other> first, Function2<Other, Type, Result> operation);
 
   public AggregatingValue aggregate();
 }

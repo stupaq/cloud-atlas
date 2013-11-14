@@ -18,13 +18,14 @@ import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
-import stupaq.cloudatlas.interpreter.BinaryOperation;
-import stupaq.cloudatlas.interpreter.UnaryOperation;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
+import stupaq.guava.base.Function1;
+import stupaq.guava.base.Function2;
+import stupaq.guava.base.Optionals;
 
 abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<Optional<Type>>
     implements SemanticValue<Type> {
@@ -39,7 +40,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
 
   @Override
   public final <Result extends AttributeValue> SemanticValue<Result> map(
-      UnaryOperation<Type, Result> function) {
+      Function1<Type, Result> function) {
     return FluentIterable.from(this).transform(function.liftOptional())
         .copyInto(this.<Result>emptyInstance());
   }
@@ -47,36 +48,31 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
   protected abstract <Result extends AttributeValue> AbstractAggregate<Result> emptyInstance();
 
   @Override
-  public abstract <Other extends AttributeValue, Result extends AttributeValue>
-  SemanticValue<Result> zip(
-      SemanticValue<Other> second, BinaryOperation<Type, Other, Result> operation);
+  public abstract <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zip(
+      SemanticValue<Other> second, Function2<Type, Other, Result> operation);
 
   @Override
-  public final <Other extends AttributeValue, Result extends AttributeValue>
-  SemanticValue<Result> zipWith(
-      RCollection<Other> first, BinaryOperation<Other, Type, Result> operation) {
+  public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
+      RCollection<Other> first, Function2<Other, Type, Result> operation) {
     return first.zipImplementation(first.iterator(), this.iterator(), operation);
   }
 
   @Override
-  public final <Other extends AttributeValue, Result extends AttributeValue>
-  SemanticValue<Result> zipWith(
-      RList<Other> first, BinaryOperation<Other, Type, Result> operation) {
+  public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
+      RList<Other> first, Function2<Other, Type, Result> operation) {
     return first.zipImplementation(first.iterator(), this.iterator(), operation);
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public final <Other extends AttributeValue, Result extends AttributeValue>
-  SemanticValue<Result> zipWith(
-      RSingle<Other> first, BinaryOperation<Other, Type, Result> operation) {
+  public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
+      RSingle<Other> first, Function2<Other, Type, Result> operation) {
     return zipImplementation(Iterables.cycle(first.value).iterator(), iterator(), operation);
   }
 
-  abstract <Arg0 extends AttributeValue, Arg1 extends AttributeValue,
-      Result extends AttributeValue> AbstractAggregate<Result> zipImplementation(
+  abstract <Arg0 extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> AbstractAggregate<Result> zipImplementation(
       Iterator<Optional<Arg0>> it0, Iterator<Optional<Arg1>> it1,
-      BinaryOperation<Arg0, Arg1, Result> operation);
+      Function2<Arg0, Arg1, Result> operation);
 
   @Override
   public final boolean equals(Object o) {
@@ -92,7 +88,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     if (isEmpty()) {
       return Optional.of(FluentIterable.from(Collections.<Type>emptyList()));
     }
-    FluentIterable<Type> notNulls = FluentIterable.from(Optional.presentInstances(this));
+    FluentIterable<Type> notNulls = Optionals.presentInstances(this);
     if (notNulls.isEmpty()) {
       return Optional.absent();
     }
@@ -258,12 +254,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
                 throw new OperationNotApplicable("Cannot unfold enclosing type: " + elem.getType());
               }
             }
-          }).transform(new Function<AttributeValue, Optional<AttributeValue>>() {
-            @Override
-            public Optional<AttributeValue> apply(AttributeValue value) {
-              return Optional.of(value);
-            }
-          }).copyInto(new RList<>());
+          }).transform(Optionals.<AttributeValue>optionalOf()).copyInto(new RList<>());
     }
   }
 }

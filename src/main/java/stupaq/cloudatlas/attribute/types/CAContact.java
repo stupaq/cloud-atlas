@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import stupaq.cloudatlas.PrimitiveWrapper;
+import stupaq.guava.base.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
