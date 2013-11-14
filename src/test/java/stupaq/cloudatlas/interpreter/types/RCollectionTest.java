@@ -1,10 +1,10 @@
 package stupaq.cloudatlas.interpreter.types;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 
 import org.junit.Test;
-
-import java.util.Collection;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
@@ -12,31 +12,17 @@ import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
-import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class RCollectionTest {
-  final static Function<AttributeValue, AttributeValue> function = new Function<AttributeValue, AttributeValue>() {
-    @Override
-    public AttributeValue apply(AttributeValue value) {
-      return value.op().negate();
-    }
-  };
-  final static BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation =
-      new BinaryOperation<AttributeValue, AttributeValue, AttributeValue>() {
-        @Override
-        public AttributeValue apply(AttributeValue value1, AttributeValue value2) {
-          return value1.op().add(value2.op().negate());
-        }
-      };
-
   @Test
   public void testSemanticsMap() {
     // map
     assertEquals(new RCollection<>(new CAInteger(-2L), new CAInteger(-3L)),
-        new RCollection<>(new CAInteger(2L), new CAInteger(3L)).map(RCollectionTest.function));
+        new RCollection<>(new CAInteger(2L), new CAInteger(3L))
+            .map(OperationsTestUtils.<CAInteger>function()));
   }
 
   @Test
@@ -44,13 +30,15 @@ public class RCollectionTest {
     // zip
     assertEquals(new RCollection<>(new CAInteger(3L), new CAInteger(4L)),
         new RCollection<>(new CAInteger(5L), new CAInteger(3L))
-            .zip(new RCollection<>(new CAInteger(2L), new CAInteger(-1L)), operation));
+            .zip(new RCollection<>(new CAInteger(2L), new CAInteger(-1L)),
+                OperationsTestUtils.integerOp()));
     assertEquals(new RCollection<>(new CAInteger(3L), new CAInteger(1L)),
         new RCollection<>(new CAInteger(5L), new CAInteger(3L))
-            .zip(new RSingle<>(new CAInteger(2L)), operation));
+            .zip(new RSingle<>(new CAInteger(2L)), OperationsTestUtils.integerOp()));
     assertEquals(new RCollection<>(new CAInteger(-3L), new CAInteger(-1L)),
         new RSingle<>(new CAInteger(2L))
-            .zip(new RCollection<>(new CAInteger(5L), new CAInteger(3L)), operation));
+            .zip(new RCollection<>(new CAInteger(5L), new CAInteger(3L)),
+                OperationsTestUtils.integerOp()));
   }
 
   @Test
@@ -67,21 +55,28 @@ public class RCollectionTest {
     assertEquals(new RSingle<>(new CAInteger(2)),
         new RCollection<>(new CAInteger(2), new CAInteger(6)).aggregate().count());
     // first
-    assertEquals(new RList<>(new CAInteger(1)),
+    assertEquals(new RSingle<>(new CAList<>(new CAInteger(1))),
         new RCollection<>(new CAInteger(1), new CAInteger(2)).aggregate().first(1));
-    assertEquals(new RList<>(new CAInteger(1)),
+    assertEquals(new RSingle<>(new CAList<>(new CAInteger(1))),
         new RCollection<>(new CAInteger(1)).aggregate().first(2));
     // last
-    assertEquals(new RList<>(new CAInteger(2)),
+    assertEquals(new RSingle<>(new CAList<>(new CAInteger(2))),
         new RCollection<>(new CAInteger(1), new CAInteger(2)).aggregate().last(1));
-    assertEquals(new RList<>(new CAInteger(1)),
+    assertEquals(new RSingle<>(new CAList<>(new CAInteger(1))),
         new RCollection<>(new CAInteger(1)).aggregate().last(2));
     // random
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") RCollection<CAInteger> collection =
+    RCollection<CAInteger> collection =
         new RCollection<>(new CAInteger(1), new CAInteger(2), new CAInteger(3));
-    assertTrue(collection.containsAll((Collection<?>) collection.aggregate().random(2)));
-    assertEquals(new RSingle<>(new CAInteger(2)),
-        collection.aggregate().random(2).aggregate().count());
+    RSingle<CAList<AttributeValue>> sample =
+        (RSingle<CAList<AttributeValue>>) collection.aggregate().random(2);
+    assertTrue(collection.containsAll(FluentIterable.from(sample.get())
+        .transform(new Function<AttributeValue, Optional<AttributeValue>>() {
+          @Override
+          public Optional<AttributeValue> apply(AttributeValue elem) {
+            return Optional.of(elem);
+          }
+        }).toList()));
+    assertEquals(new CAInteger(2), sample.get().op().size());
     // min
     assertEquals(new RSingle<>(new CAInteger(2)),
         new RCollection<>(new CAInteger(4), new CAInteger(2), new CAInteger(4), new CAInteger(3))

@@ -12,7 +12,8 @@ public class RListTest {
   public void testSemanticsMap() {
     // map
     assertEquals(new RList<>(new CAInteger(-2L), new CAInteger(-3L)),
-        new RList<>(new CAInteger(2L), new CAInteger(3L)).map(RCollectionTest.function));
+        new RList<>(new CAInteger(2L), new CAInteger(3L))
+            .map(OperationsTestUtils.<CAInteger>function()));
   }
 
   @Test(expected = EvaluationException.class)
@@ -20,12 +21,13 @@ public class RListTest {
     // zip
     assertEquals(new RList<>(new CAInteger(3L), new CAInteger(4L)),
         new RList<>(new CAInteger(5L), new CAInteger(3L))
-            .zip(new RList<>(new CAInteger(2L), new CAInteger(-1L)), RCollectionTest.operation));
+            .zip(new RList<>(new CAInteger(2L), new CAInteger(-1L)),
+                OperationsTestUtils.integerOp()));
     assertEquals(new RList<>(new CAInteger(3L), new CAInteger(1L)),
-        new RList<>(new CAInteger(5L), new CAInteger(3L))
-            .zip(new RSingle<>(new CAInteger(2L)), RCollectionTest.operation));
+        new RList<>(new CAInteger(5L), new CAInteger(3L)).zip(new RSingle<>(new CAInteger(2L)),
+            OperationsTestUtils.integerOp()));
     assertEquals(new RList<>(new CAInteger(-3L), new CAInteger(-1L)),
-        new RSingle<>(new CAInteger(2L))
-            .zip(new RList<>(new CAInteger(5L), new CAInteger(3L)), RCollectionTest.operation));
+        new RSingle<>(new CAInteger(2L)).zip(new RList<>(new CAInteger(5L), new CAInteger(3L)),
+            OperationsTestUtils.integerOp()));
   }
 }

@@ -1,96 +1,103 @@
 package stupaq.cloudatlas.interpreter.semantics;
 
+import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.attribute.types.CABoolean;
+import stupaq.cloudatlas.attribute.types.CADouble;
+import stupaq.cloudatlas.attribute.types.CAInteger;
+import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
+import stupaq.cloudatlas.interpreter.types.RSingle;
 
-public interface AggregatingValue {
+public interface AggregatingValue<Type extends AttributeValue> {
 
-  public SemanticValue avg();
+  public SemanticValue<CADouble> avg();
 
-  public SemanticValue sum();
+  public SemanticValue<Type> sum();
 
-  public SemanticValue count();
+  public SemanticValue<CAInteger> count();
 
-  public SemanticValue first(int size);
+  public SemanticValue<CAList<Type>> first(int size);
 
-  public SemanticValue last(int size);
+  public SemanticValue<CAList<Type>> last(int size);
 
-  public SemanticValue random(int size);
+  public SemanticValue<CAList<Type>> random(int size);
 
-  public SemanticValue min();
+  public SemanticValue<Type> min();
 
-  public SemanticValue max();
+  public SemanticValue<Type> max();
 
-  public SemanticValue land();
+  public SemanticValue<CABoolean> land();
 
-  public SemanticValue lor();
+  public SemanticValue<CABoolean> lor();
 
-  SemanticValue distinct();
+  SemanticValue<Type> distinct();
 
   SemanticValue unfold();
 
-  public static class AggregatingValueDefault implements AggregatingValue {
-    private SemanticValue noAggregate(String operation) throws OperationNotApplicable {
+  public static class AggregatingValueDefault<Type extends AttributeValue>
+      implements AggregatingValue<Type> {
+    private RuntimeException noAggregate(String operation) throws OperationNotApplicable {
       throw new OperationNotApplicable("Aggregation with " + operation + " is not supported");
     }
 
     @Override
-    public SemanticValue avg() {
-      return noAggregate("avg(...)");
+    public RSingle avg() {
+      throw noAggregate("avg(...)");
     }
 
     @Override
-    public SemanticValue sum() {
-      return noAggregate("sum(...)");
+    public RSingle sum() {
+      throw noAggregate("sum(...)");
     }
 
     @Override
-    public SemanticValue count() {
-      return noAggregate("count(...)");
+    public RSingle<CAInteger> count() {
+      throw noAggregate("count(...)");
     }
 
     @Override
-    public SemanticValue first(int size) {
-      return noAggregate("first(...)");
+    public RSingle<CAList<Type>> first(int size) {
+      throw noAggregate("first(...)");
     }
 
     @Override
-    public SemanticValue last(int size) {
-      return noAggregate("last(...)");
+    public RSingle<CAList<Type>> last(int size) {
+      throw noAggregate("last(...)");
     }
 
     @Override
-    public SemanticValue random(int size) {
-      return noAggregate("random(...)");
+    public RSingle<CAList<Type>> random(int size) {
+      throw noAggregate("random(...)");
     }
 
     @Override
-    public SemanticValue min() {
-      return noAggregate("min(...)");
+    public RSingle<Type> min() {
+      throw noAggregate("min(...)");
     }
 
     @Override
-    public SemanticValue max() {
-      return noAggregate("max(...)");
+    public RSingle<Type> max() {
+      throw noAggregate("max(...)");
     }
 
     @Override
     public SemanticValue land() {
-      return noAggregate("land(...)");
+      throw noAggregate("land(...)");
     }
 
     @Override
     public SemanticValue lor() {
-      return noAggregate("lor(...)");
+      throw noAggregate("lor(...)");
     }
 
     @Override
-    public SemanticValue distinct() {
-      return noAggregate("distinct(...)");
+    public SemanticValue<Type> distinct() {
+      throw noAggregate("distinct(...)");
     }
 
     @Override
     public SemanticValue unfold() {
-      return noAggregate("unfold(...)");
+      throw noAggregate("unfold(...)");
     }
   }
 }

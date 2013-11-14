@@ -1,10 +1,12 @@
 package stupaq.cloudatlas.interpreter.types;
 
+import com.google.common.base.Optional;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.semantics.BinaryOperation;
+import stupaq.cloudatlas.interpreter.BinaryOperation;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 
 public class RCollection<Type extends AttributeValue> extends AbstractAggregate<Type> {
@@ -19,18 +21,18 @@ public class RCollection<Type extends AttributeValue> extends AbstractAggregate<
   }
 
   @Override
-  public SemanticValue zip(SemanticValue second,
-      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation) {
+  public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zip(
+      SemanticValue<Other> second, BinaryOperation<Type, Other, Result> operation) {
     return second.zipWith(this, operation);
   }
 
   @Override
-  RCollection zipImplementation(Iterator<? extends AttributeValue> it1,
-      Iterator<? extends AttributeValue> it2,
-      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation) {
-    RCollection<AttributeValue> result = new RCollection<>();
-    while (it1.hasNext() && it2.hasNext()) {
-      result.add(operation.apply(it1.next(), it2.next()));
+  <Arg0 extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> RCollection<Result> zipImplementation(
+      Iterator<Optional<Arg0>> it0, Iterator<Optional<Arg1>> it1,
+      BinaryOperation<Arg0, Arg1, Result> operation) {
+    RCollection<Result> result = new RCollection<>();
+    while (it0.hasNext() && it1.hasNext()) {
+      result.add(operation.applyOptional(it0.next(), it1.next()));
     }
     return result;
   }

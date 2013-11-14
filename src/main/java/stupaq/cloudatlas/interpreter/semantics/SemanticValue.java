@@ -1,27 +1,28 @@
 package stupaq.cloudatlas.interpreter.semantics;
 
-import com.google.common.base.Function;
-
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.interpreter.BinaryOperation;
+import stupaq.cloudatlas.interpreter.UnaryOperation;
 import stupaq.cloudatlas.interpreter.types.RCollection;
 import stupaq.cloudatlas.interpreter.types.RList;
 import stupaq.cloudatlas.interpreter.types.RSingle;
 
-public interface SemanticValue {
+public interface SemanticValue<Type extends AttributeValue> {
 
-  public SemanticValue map(Function<AttributeValue, AttributeValue> function);
+  public <Result extends AttributeValue> SemanticValue<Result> map(
+      UnaryOperation<Type, Result> function);
 
-  public SemanticValue zip(SemanticValue second,
-      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation);
+  public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zip(
+      SemanticValue<Other> second, BinaryOperation<Type, Other, Result> operation);
 
-  public <Type extends AttributeValue> SemanticValue zipWith(RCollection<Type> first,
-      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation);
+  public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
+      RCollection<Other> first, BinaryOperation<Other, Type, Result> operation);
 
-  public <Type extends AttributeValue> SemanticValue zipWith(RList<Type> first,
-      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation);
+  public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
+      RList<Other> first, BinaryOperation<Other, Type, Result> operation);
 
-  public <Type extends AttributeValue> SemanticValue zipWith(RSingle<Type> first,
-      BinaryOperation<AttributeValue, AttributeValue, AttributeValue> operation);
+  public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
+      RSingle<Other> first, BinaryOperation<Other, Type, Result> operation);
 
   public AggregatingValue aggregate();
 }
