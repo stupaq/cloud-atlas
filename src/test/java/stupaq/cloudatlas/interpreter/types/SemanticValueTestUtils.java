@@ -8,6 +8,8 @@ import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
+import static org.junit.Assert.assertEquals;
+
 class SemanticValueTestUtils {
   private SemanticValueTestUtils() {
   }
@@ -44,6 +46,10 @@ class SemanticValueTestUtils {
     return new CAInteger(value);
   }
 
+  static Class<CAInteger> Int() {
+    return null;
+  }
+
   static CABoolean Bool(boolean value) {
     return new CABoolean(value);
   }
@@ -60,11 +66,21 @@ class SemanticValueTestUtils {
     return new RSingle<>(elem);
   }
 
+  static <Type extends AttributeValue> RSingle<Type> S(Class<Type> elem) {
+    return new RSingle<>();
+  }
+
   static <Type extends AttributeValue> RList<Type> L(Type... elems) {
     return new RList<>(elems);
   }
 
   static <Type extends AttributeValue> RCollection<Type> C(Type... elems) {
     return new RCollection<>(elems);
+  }
+
+  static void assertEqualsDebug(Object expected, Object actual) {
+    assertEquals(expected, actual);
+    System.out.println("expected:\t" + String.valueOf(expected) + '\n' +
+                       "actual:  \t" + String.valueOf(actual));
   }
 }
