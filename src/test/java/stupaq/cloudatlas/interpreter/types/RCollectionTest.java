@@ -5,7 +5,6 @@ import com.google.common.collect.FluentIterable;
 import org.junit.Test;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
@@ -16,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.BinOp;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Bool;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.C;
+import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Doub;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Int;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.L;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.List;
@@ -41,10 +41,14 @@ public class RCollectionTest {
   @Test
   public void testAggregators() {
     // avg
-    assertEquals(S(new CADouble(4)), C(Int(2), Int(6)).aggregate().avg());
+    assertEquals(S(Doub(4)), C(Int(2), Int(6)).aggregate().avg());
+    // avg null
+    assertEquals(S(Doub(2)), C(Doub(), Doub(2)).aggregate().avg());
+    assertEquals(S(Doub()), C(Doub(), Doub()).aggregate().avg());
+    assertEquals(S(Doub()), C().aggregate().avg());
     // sum
     assertEquals(S(Int(8)), C(Int(2), Int(6)).aggregate().sum());
-    assertEquals(S(new CADouble(8)), C(new CADouble(2), new CADouble(6)).aggregate().sum());
+    assertEquals(S(Doub(8)), C(Doub(2), Doub(6)).aggregate().sum());
     // count
     assertEquals(S(Int(2)), C(Int(2), Int(6)).aggregate().count());
     // first

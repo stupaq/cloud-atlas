@@ -1,7 +1,10 @@
 package stupaq.cloudatlas.interpreter.types;
 
+import com.google.common.base.Optional;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
+import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
@@ -46,7 +49,15 @@ class SemanticValueTestUtils {
     return new CAInteger(value);
   }
 
-  static Class<CAInteger> Int() {
+  static CAInteger Int() {
+    return null;
+  }
+
+  static CADouble Doub(double value) {
+    return new CADouble(value);
+  }
+
+  static CADouble Doub() {
     return null;
   }
 
@@ -63,11 +74,7 @@ class SemanticValueTestUtils {
   }
 
   static <Type extends AttributeValue> RSingle<Type> S(Type elem) {
-    return new RSingle<>(elem);
-  }
-
-  static <Type extends AttributeValue> RSingle<Type> S(Class<Type> elem) {
-    return new RSingle<>();
+    return new RSingle<>(Optional.fromNullable(elem));
   }
 
   static <Type extends AttributeValue> RList<Type> L(Type... elems) {
@@ -78,6 +85,7 @@ class SemanticValueTestUtils {
     return new RCollection<>(elems);
   }
 
+  @SuppressWarnings("unused")
   static void assertEqualsDebug(Object expected, Object actual) {
     assertEquals(expected, actual);
     System.out.println("expected:\t" + String.valueOf(expected) + '\n' +

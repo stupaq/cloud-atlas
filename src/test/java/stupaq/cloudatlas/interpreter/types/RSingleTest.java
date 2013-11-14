@@ -28,12 +28,12 @@ public class RSingleTest {
     assertEquals(S(Int()), S(Int(5)).zip(S(Int()), BinOp()));
     assertEquals(S(Int()), S(Int()).zip(S(Int(1)), BinOp()));
     assertEquals(S(Int()), S(Int()).zip(S(Int()), BinOp()));
-    assertEquals(C(null, null), C(Int(5), Int(3)).zip(S(Int()), BinOp()));
-    assertEquals(C(null, null), S(Int()).zip(C(Int(5), Int(3)), BinOp()));
-    assertEquals(C(null, Int(2)), C(null, Int(3)).zip(S(Int(1)), BinOp()));
-    assertEquals(C(null, Int(-2)), S(Int(1)).zip(C(null, Int(3)), BinOp()));
-    assertEquals(C(null, null), C(null, Int(3)).zip(S(Int()), BinOp()));
-    assertEquals(C(null, null), S(Int()).zip(C(null, Int(3)), BinOp()));
+    assertEquals(C(Int(), Int()), C(Int(5), Int(3)).zip(S(Int()), BinOp()));
+    assertEquals(C(Int(), Int()), S(Int()).zip(C(Int(5), Int(3)), BinOp()));
+    assertEquals(C(Int(), Int(2)), C(Int(), Int(3)).zip(S(Int(1)), BinOp()));
+    assertEquals(C(Int(), Int(-2)), S(Int(1)).zip(C(Int(), Int(3)), BinOp()));
+    assertEquals(C(Int(), Int()), C(Int(), Int(3)).zip(S(Int()), BinOp()));
+    assertEquals(C(Int(), Int()), S(Int()).zip(C(Int(), Int(3)), BinOp()));
   }
 
   @Test(expected = Exception.class)

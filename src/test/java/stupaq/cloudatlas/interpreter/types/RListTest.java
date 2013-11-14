@@ -20,7 +20,7 @@ public class RListTest {
     // map
     assertEquals(L(Int(-2), Int(-3)), L(Int(2), Int(3)).map(UnOp()));
     // map null
-    assertEquals(L(null, Int(-3)), L(null, Int(3)).map(UnOp()));
+    assertEquals(L(Int(), Int(-3)), L(Int(), Int(3)).map(UnOp()));
   }
 
   @Test(expected = EvaluationException.class)
@@ -30,9 +30,9 @@ public class RListTest {
     assertEquals(L(Int(3), Int(1)), L(Int(5), Int(3)).zip(S(Int(2)), BinOp()));
     assertEquals(L(Int(-3), Int(-1)), S(Int(2)).zip(L(Int(5), Int(3)), BinOp()));
     // zip null
-    assertEquals(L(null, null), L(null, Int(1)).zip(L(null, Int(1)), BinOp()));
-    assertEquals(L(null, null), L(null, Int(1)).zip(S(Int()), BinOp()));
-    assertEquals(L(null, null), S(Int()).zip(L(null, Int(3)), BinOp()));
+    assertEquals(L(Int(), Int()), L(Int(), Int(1)).zip(L(Int(), Int(1)), BinOp()));
+    assertEquals(L(Int(), Int()), L(Int(), Int(1)).zip(S(Int()), BinOp()));
+    assertEquals(L(Int(), Int()), S(Int()).zip(L(Int(), Int(3)), BinOp()));
   }
 
   @Test
