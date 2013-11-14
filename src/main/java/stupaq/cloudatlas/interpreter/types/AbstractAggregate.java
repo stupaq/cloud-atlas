@@ -15,7 +15,6 @@ import java.util.Set;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
-import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
@@ -103,8 +102,14 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
   private class AggregatingImplementation extends AggregatingValueDefault<Type> {
     @Override
     public RSingle avg() {
-      return new RSingle<>(AbstractAggregate.this.isEmpty() ? Optional.<CADouble>absent() : Optional
-          .of(sum().get().op().multiply(count().get().op().inverse())));
+      return new RSingle<>(
+          presentValues().transform(new Function<FluentIterable<Type>, Optional<AttributeValue>>() {
+            @Override
+            public Optional<AttributeValue> apply(FluentIterable<Type> types) {
+              return types.isEmpty() ? Optional.<AttributeValue>absent() : Optional
+                  .of(sum().get().op().multiply(count().get().op().inverse()));
+            }
+          }).or(Optional.<AttributeValue>absent()));
     }
 
     @Override
@@ -145,12 +150,12 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     }
 
     @Override
-    public RSingle<CAList<Type>> last(int size) {
-      final int toSkip = AbstractAggregate.this.size() - size;
+    public RSingle<CAList<Type>> last(final int size) {
       return new RSingle<>(
           presentValues().transform(new Function<FluentIterable<Type>, CAList<Type>>() {
             @Override
             public CAList<Type> apply(FluentIterable<Type> types) {
+              int toSkip = types.size() - size;
               return types.skip(toSkip > 0 ? toSkip : 0).copyInto(new CAList<Type>());
             }
           }));
@@ -164,7 +169,9 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       }
       ArrayList<Integer> indices = new ArrayList<>();
       for (int i = 0; i < AbstractAggregate.this.size(); i++) {
-        indices.add(i);
+        if (AbstractAggregate.this.get(i).isPresent()) {
+          indices.add(i);
+        }
       }
       Collections.shuffle(indices);
       return new RSingle<>(
@@ -221,7 +228,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
           presentValues().transform(new Function<FluentIterable<Type>, AttributeValue>() {
             @Override
             public AttributeValue apply(FluentIterable<Type> types) {
-              AttributeValue alt = new CABoolean(true);
+              AttributeValue alt = new CABoolean(false);
               for (Type elem : types) {
                 alt = alt.op().or(elem);
               }

@@ -65,12 +65,32 @@ class SemanticValueTestUtils {
     return new CABoolean(value);
   }
 
+  static CABoolean Bool() {
+    return null;
+  }
+
   static CAList<CAInteger> List(CAInteger... elems) {
     return new CAList<>(elems);
   }
 
+  static CAList<CAInteger> ListNull() {
+    return null;
+  }
+
+  static CAList<CAInteger> ListEmpty() {
+    return new CAList<>();
+  }
+
   static CASet<CAInteger> Set(CAInteger... elems) {
     return new CASet<>(elems);
+  }
+
+  static CASet<CAInteger> SetNull() {
+    return new CASet<>();
+  }
+
+  static CASet<CAInteger> SetEmpty() {
+    return new CASet<>();
   }
 
   static <Type extends AttributeValue> RSingle<Type> S(Type elem) {
