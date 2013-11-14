@@ -2,30 +2,25 @@ package stupaq.cloudatlas.interpreter.types;
 
 import org.junit.Test;
 
-import stupaq.cloudatlas.attribute.types.CAInteger;
-
 import static org.junit.Assert.assertEquals;
+import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.BinOp;
+import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.C;
+import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Int;
+import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.S;
+import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.UnOp;
 
 public class RSingleTest {
   @Test
   public void testSemanticsMap() {
     // map
-    assertEquals(new RSingle<>(new CAInteger(-2L)),
-        new RSingle<>(new CAInteger(2L)).map(OperationsTestUtils.<CAInteger>function()));
+    assertEquals(S(Int(-2)), S(Int(2)).map(UnOp()));
   }
 
   @Test
   public void testSemanticsZip() {
     // zip
-    assertEquals(new RSingle<>(new CAInteger(4L)), new RSingle<>(new CAInteger(5L))
-        .zip(new RSingle<>(new CAInteger(1L)), OperationsTestUtils.integerOp()));
-    assertEquals(new RCollection<>(new CAInteger(3L), new CAInteger(1L)),
-        new RCollection<>(new CAInteger(5L), new CAInteger(3L))
-            .zip(new RSingle<>(new CAInteger(2L)),
-                OperationsTestUtils.integerOp()));
-    assertEquals(new RCollection<>(new CAInteger(-3L), new CAInteger(-1L)),
-        new RSingle<>(new CAInteger(2L))
-            .zip(new RCollection<>(new CAInteger(5L), new CAInteger(3L)),
-                OperationsTestUtils.integerOp()));
+    assertEquals(S(Int(4)), S(Int(5)).zip(S(Int(1)), BinOp()));
+    assertEquals(C(Int(3), Int(1)), C(Int(5), Int(3)).zip(S(Int(2)), BinOp()));
+    assertEquals(C(Int(-3), Int(-1)), S(Int(2)).zip(C(Int(5), Int(3)), BinOp()));
   }
 }
