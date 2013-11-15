@@ -10,18 +10,18 @@ import stupaq.guava.base.Optionals;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Bool;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Doub;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Int;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.List;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.ListEmpty;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.ListNull;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Set;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.SetEmpty;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.BinOp;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Bool;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.C;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Doub;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Int;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.L;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.List;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.ListEmpty;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.ListNull;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.S;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Set;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.SetEmpty;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.UnOp;
 
 public class RCollectionTest {
