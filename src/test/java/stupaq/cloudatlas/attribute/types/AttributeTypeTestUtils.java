@@ -14,6 +14,22 @@ public class AttributeTypeTestUtils {
     return null;
   }
 
+  public static CADuration Dur(long value) {
+    return new CADuration(value);
+  }
+
+  public static CADuration Dur() {
+    return null;
+  }
+
+  public static CATime Time(long value) {
+    return new CATime(value);
+  }
+
+  public static CATime Time() {
+    return null;
+  }
+
   public static CADouble Doub(double value) {
     return new CADouble(value);
   }
@@ -27,6 +43,22 @@ public class AttributeTypeTestUtils {
   }
 
   public static CABoolean Bool() {
+    return null;
+  }
+
+  public static CAString Str(String value) {
+    return new CAString(value);
+  }
+
+  public static CAString Str() {
+    return null;
+  }
+
+  public static CAContact Cont(String value) {
+    return new CAContact(value);
+  }
+
+  public static CAContact Cont() {
     return null;
   }
 

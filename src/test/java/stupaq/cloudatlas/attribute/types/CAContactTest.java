@@ -7,22 +7,24 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDe
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Cont;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Str;
 
 public class CAContactTest {
   @Test
   public void testConversions() {
     // -> CAString
-    assertEquals(new CAString("UW1"), new CAContact("UW1").to().String());
-    assertEquals(new CAString("UW2"), new CAContact("UW2").to().String());
+    assertEquals(Str("UW1"), Cont("UW1").to().String());
+    assertEquals(Str("UW2"), Cont("UW2").to().String());
   }
 
   @Test
   public void testOperations() {
-    assertTrue(new CAContact("UW1").op() instanceof OperableValueDefault);
+    assertTrue(Cont("UW1").op() instanceof OperableValueDefault);
   }
 
   @Test
   public void testRelational() {
-    assertTrue(new CAContact("UW1").rel() instanceof RelationalValueDefault);
+    assertTrue(Cont("UW1").rel() instanceof RelationalValueDefault);
   }
 }

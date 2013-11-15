@@ -3,48 +3,41 @@ package stupaq.cloudatlas.attribute.types;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
 
 public class CASetTest {
   @Test
   public void testUniformity() {
-    new CASet<>(new CAString("string1"), new CAString("string2"));
+    Set(Str("string1"), Str("string2"));
   }
 
   @Test(expected = IllegalStateException.class)
   public void testNonuniformity() {
-    new CASet<>(new CAString("string1"), new CAInteger(1337L));
+    Set(Str("string1"), Int(1337L));
   }
 
   @Test
   public void testConversions() {
     // -> CAString
-    assertEquals(new CAString("{  }"), new CASet<>().to().String());
-    assertEquals(new CAString("{ aaa, bb }"),
-        new CASet<>(new CAString("aaa"), new CAString("bb")).to().String());
-    assertEquals(new CAString("{ { 1337 }, { aaa } }"),
-        new CASet<>(new CASet<>(new CAString("aaa")), new CASet<>(new CAInteger(1337L))).to()
-            .String());
+    assertEquals(Str("{  }"), Set().to().String());
+    assertEquals(Str("{ aaa, bb }"), Set(Str("aaa"), Str("bb")).to().String());
+    assertEquals(Str("{ { 1337 }, { aaa } }"), Set(Set(Str("aaa")), Set(Int(1337L))).to().String());
     // -> CAList
-    assertEquals(new CAList<>(), new CASet<>().to().List());
-    assertEquals(new CAList<>(new CAString("aaa"), new CAString("bb")),
-        new CASet<>(new CAString("aaa"), new CAString("bb")).to().List());
-    assertEquals(new CAList<>(new CAString("aaa")), new CASet<>(new CAString("aaa")).to().List());
-    assertEquals(new CAList<>(new CAList<>(new CAInteger(337L))),
-        new CASet<>(new CAList<>(new CAInteger(337L))).to().List());
+    assertEquals(List(), Set().to().List());
+    assertEquals(List(Str("aaa"), Str("bb")), Set(Str("aaa"), Str("bb")).to().List());
+    assertEquals(List(Str("aaa")), Set(Str("aaa")).to().List());
+    assertEquals(List(List(Int(337L))), Set(List(Int(337L))).to().List());
   }
 
   @Test
   public void testOperations() {
-    assertEquals(new CAInteger(0L), new CASet<>().op().size());
-    assertEquals(new CAInteger(2L),
-        new CASet<>(new CABoolean(true), new CABoolean(false), new CABoolean(true)).op().size());
+    assertEquals(Int(0L), Set().op().size());
+    assertEquals(Int(2L), Set(Bool(true), Bool(false), Bool(true)).op().size());
   }
 
   @Test
   public void testRelational() {
-    assertEquals(new CABoolean(true), new CASet<>(new CAInteger(2), new CAInteger(3)).rel()
-        .equalsTo(new CASet<>(new CAInteger(3), new CAInteger(2))));
-    assertEquals(new CABoolean(false), new CASet<>(new CAInteger(1), new CAInteger(2)).rel()
-        .equalsTo(new CASet<>(new CAInteger(2), new CAInteger(3))));
+    assertEquals(Bool(true), Set(Int(2), Int(3)).rel().equalsTo(Set(Int(3), Int(2))));
+    assertEquals(Bool(false), Set(Int(1), Int(2)).rel().equalsTo(Set(Int(2), Int(3))));
   }
 }

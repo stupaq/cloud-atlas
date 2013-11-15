@@ -3,42 +3,43 @@ package stupaq.cloudatlas.attribute.types;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
 
 public class CADurationTest {
   @Test
   public void testConversions() {
     // -> CAInteger
-    assertEquals(new CAInteger(1337L), new CADuration(1337L).to().Integer());
+    assertEquals(Int(1337L), Dur(1337L).to().Integer());
     // -> CAString
-    assertEquals(new CAString("+2 04:32:21.024"), new CADuration(189141024L).to().String());
-    assertEquals(new CAString("-2 04:32:21.024"), new CADuration(-189141024L).to().String());
-    assertEquals(new CAString("+72 04:05:22.024"), new CADuration(6235522024L).to().String());
-    assertEquals(new CAString("-72 04:05:22.024"), new CADuration(-6235522024L).to().String());
+    assertEquals(Str("+2 04:32:21.024"), Dur(189141024L).to().String());
+    assertEquals(Str("-2 04:32:21.024"), Dur(-189141024L).to().String());
+    assertEquals(Str("+72 04:05:22.024"), Dur(6235522024L).to().String());
+    assertEquals(Str("-72 04:05:22.024"), Dur(-6235522024L).to().String());
   }
 
   @Test
   public void testOperations() {
     // negation
-    assertEquals(new CADuration(1000L), new CADuration(-1000L).op().negate());
+    assertEquals(Dur(1000L), Dur(-1000L).op().negate());
     // addition
-    assertEquals(new CATime(1000L), new CATime(900L).op().add(new CADuration(100L)));
-    assertEquals(new CATime(1000L), new CATime(100L).op().add(new CADuration(900L)));
-    assertEquals(new CATime(1000L), new CADuration(900L).op().add(new CATime(100L)));
-    assertEquals(new CATime(1000L), new CADuration(100L).op().add(new CATime(900L)));
-    assertEquals(new CADuration(1000L), new CADuration(900L).op().add(new CADuration(100L)));
-    assertEquals(new CADuration(1000L), new CADuration(100L).op().add(new CADuration(900L)));
+    assertEquals(Time(1000L), Time(900L).op().add(Dur(100L)));
+    assertEquals(Time(1000L), Time(100L).op().add(Dur(900L)));
+    assertEquals(Time(1000L), Dur(900L).op().add(Time(100L)));
+    assertEquals(Time(1000L), Dur(100L).op().add(Time(900L)));
+    assertEquals(Dur(1000L), Dur(900L).op().add(Dur(100L)));
+    assertEquals(Dur(1000L), Dur(100L).op().add(Dur(900L)));
     // multiplication
-    assertEquals(new CADuration(1000L), new CADuration(100L).op().multiply(new CAInteger(10L)));
-    assertEquals(new CADuration(1000L), new CADuration(100L).op().multiply(new CADouble(10L)));
-    assertEquals(new CADuration(1000L), new CADouble(100L).op().multiply(new CADuration(10L)));
-    assertEquals(new CADuration(1000L), new CAInteger(100L).op().multiply(new CADuration(10L)));
+    assertEquals(Dur(1000L), Dur(100L).op().multiply(Int(10L)));
+    assertEquals(Dur(1000L), Dur(100L).op().multiply(Doub(10L)));
+    assertEquals(Dur(1000L), Doub(100L).op().multiply(Dur(10L)));
+    assertEquals(Dur(1000L), Int(100L).op().multiply(Dur(10L)));
   }
 
   @Test
   public void testRelational() {
-    assertEquals(new CABoolean(true), new CADuration(1).rel().equalsTo(new CADuration(1)));
-    assertEquals(new CABoolean(false), new CADuration(2).rel().equalsTo(new CADuration(1)));
-    assertEquals(new CABoolean(false), new CADuration(1).rel().greaterThan(new CADuration(1)));
-    assertEquals(new CABoolean(true), new CADuration(2).rel().greaterThan(new CADuration(1)));
+    assertEquals(Bool(true), Dur(1).rel().equalsTo(Dur(1)));
+    assertEquals(Bool(false), Dur(2).rel().equalsTo(Dur(1)));
+    assertEquals(Bool(false), Dur(1).rel().greaterThan(Dur(1)));
+    assertEquals(Bool(true), Dur(2).rel().greaterThan(Dur(1)));
   }
 }

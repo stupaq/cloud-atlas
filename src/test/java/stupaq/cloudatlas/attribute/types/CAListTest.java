@@ -2,55 +2,45 @@ package stupaq.cloudatlas.attribute.types;
 
 import org.junit.Test;
 
-import java.util.Collections;
-
 import static org.junit.Assert.assertEquals;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
 
 public class CAListTest {
   @Test
   public void testUniformity() {
-    new CAList<>(new CAString("string1"), new CAString("string2"));
+    List(Str("string1"), Str("string2"));
   }
 
   @Test(expected = IllegalStateException.class)
   public void testNonuniformity() {
-    new CAList<>(new CAString("string1"), new CAInteger(1337L));
+    List(Str("string1"), Int(1337L));
   }
 
   @Test
   public void testConversions() {
     // -> CAString
-    assertEquals(new CAString("[  ]"), new CAList<>().to().String());
-    assertEquals(new CAString("[ aaa, bb ]"),
-        new CAList<>(new CAString("aaa"), new CAString("bb")).to().String());
-    assertEquals(new CAString("[ [ 337 ], [ 1337 ] ]"),
-        new CAList<>(new CAList<>(new CAInteger(337L)), new CAList<>(new CAInteger(1337L))).to()
-            .String());
+    assertEquals(Str("[  ]"), List().to().String());
+    assertEquals(Str("[ aaa, bb ]"), List(Str("aaa"), Str("bb")).to().String());
+    assertEquals(Str("[ [ 337 ], [ 1337 ] ]"),
+        List(List(Int(337L)), List(Int(1337L))).to().String());
     // -> CASet
-    assertEquals(new CASet<>(), new CAList<>().to().Set());
-    assertEquals(new CASet<>(new CAString("aaa"), new CAString("bb")),
-        new CAList<>(new CAString("aaa"), new CAString("bb")).to().Set());
-    assertEquals(new CASet<>(new CAString("aaa")),
-        new CAList<>(new CAString("aaa"), new CAString("aaa")).to().Set());
+    assertEquals(Set(), List().to().Set());
+    assertEquals(Set(Str("aaa"), Str("bb")), List(Str("aaa"), Str("bb")).to().Set());
+    assertEquals(Set(Str("aaa")), List(Str("aaa"), Str("aaa")).to().Set());
     // We have to resolve ambiguity here and tell Java to treat internal CAList as a single
     // attribute instead of collection of attributes.
-    assertEquals(new CASet<>(Collections.singleton(new CAList<>(new CAInteger(1337L)))),
-        new CAList<>(new CAList<>(new CAInteger(1337L)), new CAList<>(new CAInteger(1337L))).to()
-            .Set());
+    assertEquals(Set(List(Int(1337L))), List(List(Int(1337L)), List(Int(1337L))).to().Set());
   }
 
   @Test
   public void testOperations() {
-    assertEquals(new CAInteger(0L), new CAList<>().op().size());
-    assertEquals(new CAInteger(3L),
-        new CAList<>(new CABoolean(true), new CABoolean(false), new CABoolean(true)).op().size());
+    assertEquals(Int(0L), List().op().size());
+    assertEquals(Int(3L), List(Bool(true), Bool(false), Bool(true)).op().size());
   }
 
   @Test
   public void testRelational() {
-    assertEquals(new CABoolean(true), new CAList<>(new CAInteger(2), new CAInteger(3)).rel()
-        .equalsTo(new CAList<>(new CAInteger(2), new CAInteger(3))));
-    assertEquals(new CABoolean(false), new CAList<>(new CAInteger(3), new CAInteger(2)).rel()
-        .equalsTo(new CAList<>(new CAInteger(2), new CAInteger(3))));
+    assertEquals(Bool(true), List(Int(2), Int(3)).rel().equalsTo(List(Int(2), Int(3))));
+    assertEquals(Bool(false), List(Int(3), Int(2)).rel().equalsTo(List(Int(2), Int(3))));
   }
 }
