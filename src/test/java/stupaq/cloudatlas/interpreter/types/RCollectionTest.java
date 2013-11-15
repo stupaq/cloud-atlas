@@ -40,6 +40,12 @@ public class RCollectionTest {
   }
 
   @Test
+  public void testSemanticsNull() {
+    assertEquals(C(Bool(true), Bool(false), Bool(false)), C(Int(), Int(2), Int(3)).isNull());
+    assertEquals(C(), C().isNull());
+  }
+
+  @Test
   public void testSemanticsMap() {
     // map
     assertEquals(C(Int(-2), Int(-3)), C(Int(2), Int(3)).map(UnOp()));

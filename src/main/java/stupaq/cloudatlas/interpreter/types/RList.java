@@ -6,9 +6,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.guava.base.Function2;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
+import stupaq.guava.base.Function2;
 
 public final class RList<Type extends AttributeValue> extends AbstractAggregate<Type> {
   @SafeVarargs

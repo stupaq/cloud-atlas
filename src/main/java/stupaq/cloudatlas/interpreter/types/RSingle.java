@@ -4,11 +4,12 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Iterators;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.guava.base.Function2;
-import stupaq.guava.base.Function1;
+import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
+import stupaq.guava.base.Function1;
+import stupaq.guava.base.Function2;
 
 public final class RSingle<Type extends AttributeValue> implements SemanticValue<Type> {
   private static final AggregatingValue AGGREGATE_IMPLEMENTATION = new AggregatingValueDefault();
@@ -29,6 +30,11 @@ public final class RSingle<Type extends AttributeValue> implements SemanticValue
 
   public Type get() {
     return value.get();
+  }
+
+  @Override
+  public RSingle<CABoolean> isNull() {
+    return new RSingle<>(new CABoolean(!value.isPresent()));
   }
 
   @Override

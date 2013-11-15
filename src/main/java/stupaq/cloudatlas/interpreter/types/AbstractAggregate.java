@@ -38,6 +38,16 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
   }
 
   @Override
+  public final AbstractAggregate<CABoolean> isNull() {
+    return FluentIterable.from(this).transform(new Function<Optional<Type>, Optional<CABoolean>>() {
+      @Override
+      public Optional<CABoolean> apply(Optional<Type> typeOptional) {
+        return Optional.of(new CABoolean(!typeOptional.isPresent()));
+      }
+    }).copyInto(this.<CABoolean>emptyInstance());
+  }
+
+  @Override
   public final <Result extends AttributeValue> SemanticValue<Result> map(
       Function1<Type, Result> function) {
     return FluentIterable.from(this).transform(function.liftOptional())

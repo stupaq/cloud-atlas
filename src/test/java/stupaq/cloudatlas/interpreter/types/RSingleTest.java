@@ -4,12 +4,19 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.BinOp;
+import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Bool;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.C;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Int;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.S;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.UnOp;
 
 public class RSingleTest {
+  @Test
+  public void testSemanticsNull() {
+    assertEquals(S(Bool(true)), S(Int()).isNull());
+    assertEquals(S(Bool(false)), S(Int(3)).isNull());
+  }
+
   @Test
   public void testSemanticsMap() {
     // map

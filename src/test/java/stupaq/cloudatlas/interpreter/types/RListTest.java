@@ -8,6 +8,7 @@ import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValue
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.BinOp;
+import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Bool;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.C;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.Int;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.L;
@@ -15,6 +16,12 @@ import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.S;
 import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.UnOp;
 
 public class RListTest {
+  @Test
+  public void testSemanticsNull() {
+    assertEquals(L(Bool(true), Bool(false), Bool(false)), L(Int(), Int(2), Int(3)).isNull());
+    assertEquals(L(), L().isNull());
+  }
+
   @Test
   public void testSemanticsMap() {
     // map

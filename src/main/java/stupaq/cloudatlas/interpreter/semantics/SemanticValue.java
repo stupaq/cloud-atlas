@@ -1,13 +1,16 @@
 package stupaq.cloudatlas.interpreter.semantics;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.guava.base.Function2;
-import stupaq.guava.base.Function1;
+import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.interpreter.types.RCollection;
 import stupaq.cloudatlas.interpreter.types.RList;
 import stupaq.cloudatlas.interpreter.types.RSingle;
+import stupaq.guava.base.Function1;
+import stupaq.guava.base.Function2;
 
 public interface SemanticValue<Type extends AttributeValue> {
+
+  public SemanticValue<CABoolean> isNull();
 
   public <Result extends AttributeValue> SemanticValue<Result> map(
       Function1<Type, Result> function);
