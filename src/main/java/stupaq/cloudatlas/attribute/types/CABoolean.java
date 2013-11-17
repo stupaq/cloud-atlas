@@ -89,17 +89,17 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
     }
 
     @Override
-    public AttributeValue or(AttributeValue value) {
+    public CABoolean or(AttributeValue value) {
       return value.op().orWith(CABoolean.this);
     }
 
     @Override
-    public AttributeValue orWith(CABoolean value) {
+    public CABoolean orWith(CABoolean value) {
       return new CABoolean(value.getValue() || getValue());
     }
 
     @Override
-    public AttributeValue contradiction() {
+    public AttributeValue not() {
       return new CABoolean(!getValue());
     }
   }

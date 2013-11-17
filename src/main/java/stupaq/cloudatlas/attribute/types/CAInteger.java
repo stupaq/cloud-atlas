@@ -120,7 +120,7 @@ public class CAInteger extends AbstractLongValue {
 
   private class RelationalImplementation extends RelationalValueDefault {
     @Override
-    public CABoolean lessThan(AttributeValue value) {
+    public CABoolean lesserThan(AttributeValue value) {
       return value.rel().greaterThan(CAInteger.this);
     }
 

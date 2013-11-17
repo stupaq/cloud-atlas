@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.interpreter.context;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import stupaq.cloudatlas.attribute.AttributeName;
@@ -12,9 +13,12 @@ public class InputContext {
   private final Map<AttributeName, SemanticValue> inputAttributes;
 
   public InputContext(AttributesRow row) {
+    this(new AttributesTable(row));
   }
 
   public InputContext(AttributesTable table) {
+    inputAttributes = new HashMap<>();
+    // FIXME
   }
 
   public SemanticValue get(String attribute) {

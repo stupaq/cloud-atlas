@@ -22,6 +22,8 @@ import stupaq.cloudatlas.interpreter.semantics.SemanticValue.SemanticValueCastEx
 import stupaq.cloudatlas.interpreter.types.RList;
 import stupaq.cloudatlas.interpreter.types.RSingle;
 import stupaq.cloudatlas.parser.QueryLanguage.Absyn.*;
+import stupaq.guava.base.Function1;
+import stupaq.guava.base.Function2;
 
 public class EvalVisitor {
   private final AttributesTable originalTable;
@@ -34,6 +36,14 @@ public class EvalVisitor {
     OutputContext outputContext = new CollectorOutputContext();
     program.accept(new XProgramVisitor(), outputContext);
     return outputContext;
+  }
+
+  private abstract static class AttributeValueZipper
+      extends Function2<AttributeValue, AttributeValue, AttributeValue> {
+  }
+
+  private abstract static class AttributeValueMapper
+      extends Function1<AttributeValue, AttributeValue> {
   }
 
   private class XProgramVisitor implements XProgram.Visitor<Void, OutputContext> {
@@ -289,54 +299,91 @@ public class EvalVisitor {
     }
   }
 
-  private class XArithOpAddVisitor implements XArithOpAdd.Visitor<SemanticValue, InputContext> {
-    public SemanticValue visit(ArithOpAdd p, InputContext context) {
+  private class XArithOpAddVisitor
+      implements XArithOpAdd.Visitor<AttributeValueZipper, InputContext> {
+    public AttributeValueZipper visit(ArithOpAdd p, InputContext context) {
       return null;
     }
 
-    public SemanticValue visit(ArithOpSubstract p, InputContext context) {
+    public AttributeValueZipper visit(ArithOpSubstract p, InputContext context) {
       return null;
     }
   }
 
   private class XArithOpMultiplyVisitor
-      implements XArithOpMultiply.Visitor<SemanticValue, InputContext> {
-    public SemanticValue visit(ArithOpMultiply p, InputContext context) {
+      implements XArithOpMultiply.Visitor<AttributeValueZipper, InputContext> {
+    public AttributeValueZipper visit(ArithOpMultiply p, InputContext context) {
       return null;
     }
 
-    public SemanticValue visit(ArithOpDivide p, InputContext context) {
+    public AttributeValueZipper visit(ArithOpDivide p, InputContext context) {
       return null;
     }
 
-    public SemanticValue visit(ArithOpModulo p, InputContext context) {
+    public AttributeValueZipper visit(ArithOpModulo p, InputContext context) {
       return null;
     }
   }
 
-  private class XRelOpVisitor implements XRelOp.Visitor<SemanticValue, InputContext> {
-    public SemanticValue visit(RelOpEqual p, InputContext context) {
-      return null;
+  private class XRelOpVisitor implements XRelOp.Visitor<AttributeValueZipper, InputContext> {
+    @Override
+    public AttributeValueZipper visit(RelOpEqual p, InputContext context) {
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value.rel().equalsTo(value2);
+        }
+      };
     }
 
-    public SemanticValue visit(RelOpNotEqual p, InputContext context) {
-      return null;
+    @Override
+    public AttributeValueZipper visit(RelOpNotEqual p, InputContext context) {
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value.rel().equalsTo(value2).op().not();
+        }
+      };
     }
 
-    public SemanticValue visit(RelOpGreater p, InputContext context) {
-      return null;
+    @Override
+    public AttributeValueZipper visit(RelOpGreater p, InputContext context) {
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value2.rel().lesserThan(value);
+        }
+      };
     }
 
-    public SemanticValue visit(RelOpGreaterEqual p, InputContext context) {
-      return null;
+    @Override
+    public AttributeValueZipper visit(RelOpGreaterEqual p, InputContext context) {
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value.rel().lesserThan(value2).op().not();
+        }
+      };
     }
 
-    public SemanticValue visit(RelOpLesser p, InputContext context) {
-      return null;
+    @Override
+    public AttributeValueZipper visit(RelOpLesser p, InputContext context) {
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value.rel().lesserThan(value2);
+        }
+      };
     }
 
-    public SemanticValue visit(RelOpLesserEqual p, InputContext context) {
-      return null;
+    @Override
+    public AttributeValueZipper visit(RelOpLesserEqual p, InputContext context) {
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value.rel().lesserOrEqual(value2);
+        }
+      };
     }
   }
 

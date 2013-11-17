@@ -152,7 +152,7 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
   private class RelationalImplementation extends RelationalValueDefault {
     @Override
-    public CABoolean lessThan(AttributeValue value) {
+    public CABoolean lesserThan(AttributeValue value) {
       return value.rel().greaterThan(CAString.this);
     }
 

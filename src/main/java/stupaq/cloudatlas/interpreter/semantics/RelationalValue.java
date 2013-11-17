@@ -14,7 +14,7 @@ import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 public interface RelationalValue {
 
   /** this < value */
-  public CABoolean lessThan(AttributeValue value);
+  public CABoolean lesserThan(AttributeValue value);
 
   /** this > value */
   public CABoolean greaterThan(CABoolean value);
@@ -48,13 +48,16 @@ public interface RelationalValue {
 
   public CABoolean equalsTo(CATime value);
 
+  /** this <= value (derived) */
+  public CABoolean lesserOrEqual(AttributeValue value);
+
   public static class RelationalValueDefault implements RelationalValue {
     private CABoolean notComparable(AttributeValue value) {
       throw new OperationNotApplicable("Cannot compare with: " + value);
     }
 
     @Override
-    public CABoolean lessThan(AttributeValue value) {
+    public CABoolean lesserThan(AttributeValue value) {
       return notComparable(value);
     }
 
@@ -131,6 +134,11 @@ public interface RelationalValue {
     @Override
     public CABoolean equalsTo(CATime value) {
       return notComparable(value);
+    }
+
+    @Override
+    public CABoolean lesserOrEqual(AttributeValue value) {
+      return this.lesserThan(value).op().or(this.equalsTo(value));
     }
   }
 }

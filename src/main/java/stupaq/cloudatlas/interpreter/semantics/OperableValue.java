@@ -17,12 +17,12 @@ public interface OperableValue {
   public AttributeValue andWith(CABoolean value);
 
   /** ALTERNATIVE is defined for: Boolean */
-  public AttributeValue or(AttributeValue value);
+  public CABoolean or(AttributeValue value);
 
-  public AttributeValue orWith(CABoolean value);
+  public CABoolean orWith(CABoolean value);
 
   /** CONTRADICTION is defined for: Boolean */
-  public AttributeValue contradiction();
+  public AttributeValue not();
 
   /** NEGATION is defined for: Double, Duration, Integer, Time */
   public AttributeValue negate();
@@ -76,12 +76,13 @@ public interface OperableValue {
 
   public static class OperableValueDefault implements OperableValue {
 
-    private <T extends AttributeValue> T noOperation(String operation) throws OperationNotApplicable {
+    private <T extends AttributeValue> T noOperation(String operation)
+        throws OperationNotApplicable {
       throw new OperationNotApplicable("Operation " + operation + " is not applicable here");
     }
 
     @Override
-    public AttributeValue contradiction() {
+    public AttributeValue not() {
       return noOperation("!");
     }
 
@@ -96,12 +97,12 @@ public interface OperableValue {
     }
 
     @Override
-    public AttributeValue or(AttributeValue value) {
+    public CABoolean or(AttributeValue value) {
       return noOperation("||");
     }
 
     @Override
-    public AttributeValue orWith(CABoolean value) {
+    public CABoolean orWith(CABoolean value) {
       return noOperation("||");
     }
 

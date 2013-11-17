@@ -15,8 +15,11 @@ public class AttributesTable extends ArrayList<AttributesRow> {
     super(table);
   }
 
+  public AttributesTable(AttributesRow row) {
+    add(row);
+  }
+
   public AttributesTable(Iterable<Set<Attribute>> subZones) {
-    // TODO collect types
     Set<AttributeName> allAttributes = new HashSet<>();
     for (Set<Attribute> zone : subZones) {
       AttributesRow row = new AttributesRow();
