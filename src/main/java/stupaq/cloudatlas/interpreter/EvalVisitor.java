@@ -9,6 +9,9 @@ import java.util.Iterator;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
+import stupaq.cloudatlas.attribute.types.CADouble;
+import stupaq.cloudatlas.attribute.types.CAInteger;
+import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.interpreter.context.Context;
 import stupaq.cloudatlas.interpreter.context.InputContext;
@@ -66,11 +69,15 @@ public class EvalVisitor {
       p.xwhereclause_.accept(new XWhereClauseVisitor(), table);
       p.xorderclause_.accept(new XOrderClauseVisitor(), table);
       Context context = new Context(outputContext, new InputContext(table));
-      RList<AttributeValue> result = new RList<>();
-      for (XSelectItem x : p.listxselectitem_) {
-        result.add(Optional.fromNullable(x.accept(new XSelectItemVisitor(), context).or(null)));
+      if (p.listxselectitem_.size() == 1) {
+        return p.listxselectitem_.get(0).accept(new XSelectItemVisitor(), context);
+      } else {
+        RList<AttributeValue> result = new RList<>();
+        for (XSelectItem x : p.listxselectitem_) {
+          result.add(Optional.fromNullable(x.accept(new XSelectItemVisitor(), context).or(null)));
+        }
+        return result;
       }
-      return result;
     }
   }
 
@@ -257,23 +264,24 @@ public class EvalVisitor {
       return null;
     }
 
+    @Override
     public SemanticValue visit(BasicExprString p, InputContext context) {
-      //p.string_;
-      return null;
+      return new RSingle<>(new CAString(p.string_));
     }
 
+    @Override
     public SemanticValue visit(BasicExprTrue p, InputContext context) {
-      p.xboolconst_.accept(new XBoolConstVisitor(), context);
-      return null;
+      return p.xboolconst_.accept(new XBoolConstVisitor(), context);
     }
 
+    @Override
     public SemanticValue visit(BasicExprInt p, InputContext context) {
-      return null;
+      return new RSingle<>(new CAInteger(p.integer_));
     }
 
+    @Override
     public SemanticValue visit(BasicExprDouble p, InputContext context) {
-      //p.double_;
-      return null;
+      return new RSingle<>(new CADouble(p.double_));
     }
 
     @Override
