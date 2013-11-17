@@ -17,15 +17,19 @@ public final class AttributeName extends ASCIIString implements CompactSerializa
     super(null);
   }
 
-  public AttributeName(String name) {
-    this(name, false);
-  }
-
-  public AttributeName(String name, boolean reserved) {
+  private AttributeName(String name) {
     super(name);
     verifyInvariants();
-    Preconditions.checkArgument(reserved || !name.startsWith(RESERVED_PREFIX),
+  }
+
+  public static AttributeName valueOf(String str) {
+    Preconditions.checkArgument(!str.startsWith(RESERVED_PREFIX),
         "AttributeName cannot start with reserved prefix: " + RESERVED_PREFIX);
+    return new AttributeName(str);
+  }
+
+  public static AttributeName valueOfReserved(String str) {
+    return new AttributeName(str);
   }
 
   private void verifyInvariants() throws NullPointerException, IllegalStateException {

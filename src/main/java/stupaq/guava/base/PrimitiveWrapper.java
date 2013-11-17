@@ -15,7 +15,7 @@ public abstract class PrimitiveWrapper<Primitive> {
     this.value = value;
   }
 
-  public Primitive getValue() {
+  protected Primitive getValue() {
     return value;
   }
 

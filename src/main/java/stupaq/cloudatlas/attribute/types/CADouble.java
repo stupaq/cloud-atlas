@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import stupaq.guava.base.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -13,6 +12,7 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefaul
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.guava.base.PrimitiveWrapper;
 
 public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue {
   @SerializationOnly
@@ -22,6 +22,11 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
   public CADouble(double value) {
     super(value);
+  }
+
+  @Override
+  public Double getValue() {
+    return super.getValue();
   }
 
   @Override

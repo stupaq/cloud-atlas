@@ -154,7 +154,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
           presentValues().transform(new Function<FluentIterable<Type>, CAList<Type>>() {
             @Override
             public CAList<Type> apply(FluentIterable<Type> types) {
-              return types.limit(size).copyInto(new CAList<Type>());
+              return new CAList<>(types.limit(size));
             }
           }));
     }
@@ -166,7 +166,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
             @Override
             public CAList<Type> apply(FluentIterable<Type> types) {
               int toSkip = types.size() - size;
-              return types.skip(toSkip > 0 ? toSkip : 0).copyInto(new CAList<Type>());
+              return new CAList<>(types.skip(toSkip > 0 ? toSkip : 0));
             }
           }));
     }
@@ -184,13 +184,13 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
         }
       }
       Collections.shuffle(indices);
-      return new RSingle<>(
+      return new RSingle<>(new CAList<>(
           FluentIterable.from(indices).limit(size).transform(new Function<Integer, Type>() {
             @Override
             public Type apply(Integer integer) {
               return AbstractAggregate.this.get(integer).get();
             }
-          }).copyInto(new CAList<Type>()));
+          })));
     }
 
     @Override
@@ -266,7 +266,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
             @Override
             public Iterable<AttributeValue> apply(Type elem) {
               try {
-                return elem.to().List();
+                return elem.to().List().asImmutableList();
               } catch (ConversionException e) {
                 throw new OperationNotApplicable("Cannot unfold enclosing type: " + elem.getType());
               }

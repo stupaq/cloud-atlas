@@ -28,7 +28,7 @@ public class ZoneManagementInfoTest {
   }
 
   private static void addAttr(ZoneManagementInfo zmi, String name, AttributeValue value) {
-    zmi.addAttribute(new Attribute<>(new AttributeName(name), value));
+    zmi.addAttribute(new Attribute<>(AttributeName.valueOf(name), value));
   }
 
   @Test

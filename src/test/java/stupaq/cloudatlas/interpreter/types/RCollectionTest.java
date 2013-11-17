@@ -32,9 +32,8 @@ public class RCollectionTest {
     if (resultSize < 0) {
       assertEquals(S(ListNull()), sample);
     } else {
-      assertTrue(collection.containsAll(
-          FluentIterable.from(sample.get()).transform(Optionals.<AttributeValue>optionalOf())
-              .toList()));
+      assertTrue(collection.containsAll(FluentIterable.from(sample.get().asImmutableList())
+          .transform(Optionals.<AttributeValue>optionalOf()).toList()));
       assertEquals(Int(resultSize), sample.get().op().size());
     }
   }

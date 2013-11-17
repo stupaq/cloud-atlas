@@ -21,8 +21,10 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefaul
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.guava.base.PrimitiveWrapper;
 
-public class CASet<Type extends AttributeValue> extends HashSet<Type> implements AttributeValue {
+public class CASet<Type extends AttributeValue> extends PrimitiveWrapper<HashSet<Type>>
+    implements AttributeValue {
   @SerializationOnly
   public CASet() {
     this(Collections.<Type>emptySet());
@@ -34,26 +36,26 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
   }
 
   public CASet(Collection<Type> elements) {
-    super(elements);
+    super(new HashSet<Type>());
+    getValue().addAll(elements);
     verifyInvariants();
   }
 
   private void verifyInvariants() {
-    TypeUtils.assertUniformCollection(this);
+    TypeUtils.assertUniformCollection(this.getValue());
   }
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     CAList<Type> list = new CAList<>();
     list.readFields(in);
-    addAll(list);
+    getValue().addAll(list.asImmutableList());
     verifyInvariants();
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    CAList<Type> list = new CAList<>();
-    list.addAll(this);
+    CAList<Type> list = new CAList<>(this.getValue());
     list.writeFields(out);
   }
 
@@ -85,7 +87,7 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAList<Type> List() {
-      return new CAList<>(CASet.this);
+      return new CAList<>(CASet.this.getValue());
     }
 
     @Override
@@ -95,16 +97,15 @@ public class CASet<Type extends AttributeValue> extends HashSet<Type> implements
 
     @Override
     public CAString String() {
-      return new CAString(
-          "{ " + StringUtils.join(Collections2.transform(CASet.this, new Stringifier()), ", ")
-          + " }");
+      return new CAString("{ " + StringUtils
+          .join(Collections2.transform(CASet.this.getValue(), new Stringifier()), ", ") + " }");
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public AttributeValue size() {
-      return new CAInteger((long) CASet.this.size());
+      return new CAInteger((long) CASet.this.getValue().size());
     }
   }
 

@@ -8,17 +8,16 @@ import java.util.Map;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
-import stupaq.cloudatlas.serialization.ASCIIString;
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public final class ZoneManagementInfo implements CompactSerializable {
-  private final ASCIIString localName;
+  private final ZoneLocalName localName;
   private final Map<AttributeName, Attribute> attributes;
 
   @SerializationOnly
   public ZoneManagementInfo() {
-    localName = new ASCIIString(null);
+    localName = new ZoneLocalName(null);
     attributes = new HashMap<>();
   }
 

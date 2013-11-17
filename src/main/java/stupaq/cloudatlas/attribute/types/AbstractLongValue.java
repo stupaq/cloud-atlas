@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import stupaq.guava.base.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.guava.base.PrimitiveWrapper;
 
 /** PACKAGE-LOCAL */
 abstract class AbstractLongValue extends PrimitiveWrapper<Long> implements AttributeValue {
@@ -17,6 +17,11 @@ abstract class AbstractLongValue extends PrimitiveWrapper<Long> implements Attri
 
   public AbstractLongValue(Long value) {
     super(value);
+  }
+
+  @Override
+  public Long getValue() {
+    return super.getValue();
   }
 
   @Override

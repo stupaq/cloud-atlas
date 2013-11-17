@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.attribute.types;
 
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -9,8 +10,8 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
@@ -23,8 +24,10 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDe
 import stupaq.cloudatlas.serialization.SerializationOnly;
 import stupaq.cloudatlas.serialization.TypeID;
 import stupaq.cloudatlas.serialization.TypeRegistry;
+import stupaq.guava.base.PrimitiveWrapper;
 
-public class CAList<Type extends AttributeValue> extends ArrayList<Type> implements AttributeValue {
+public class CAList<Type extends AttributeValue> extends PrimitiveWrapper<ArrayList<Type>>
+    implements AttributeValue {
   @SerializationOnly
   public CAList() {
     this(Collections.<Type>emptySet());
@@ -35,18 +38,23 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
     this(Arrays.asList(elements));
   }
 
-  public CAList(Collection<Type> elements) {
-    super(elements);
+  public CAList(Iterable<Type> elements) {
+    super(new ArrayList<Type>());
+    Iterables.addAll(getValue(), elements);
     verifyInvariants();
   }
 
+  public List<Type> asImmutableList() {
+    return Collections.unmodifiableList(getValue());
+  }
+
   private void verifyInvariants() throws IllegalStateException {
-    TypeUtils.assertUniformCollection(this);
+    TypeUtils.assertUniformCollection(getValue());
   }
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    clear();
+    getValue().clear();
     int elements = in.readInt();
     if (elements == 0) {
       return;
@@ -55,20 +63,20 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
     for (; elements > 0; elements--) {
       Type instance = TypeRegistry.newInstance(typeID);
       instance.readFields(in);
-      add(instance);
+      getValue().add(instance);
     }
     verifyInvariants();
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeInt(size());
-    if (isEmpty()) {
+    out.writeInt(getValue().size());
+    if (getValue().isEmpty()) {
       return;
     }
-    TypeID typeID = TypeRegistry.resolveType(get(0).getType());
+    TypeID typeID = TypeRegistry.resolveType(getValue().get(0).getType());
     TypeID.writeInstance(out, typeID);
-    for (Type element : this) {
+    for (Type element : getValue()) {
       element.writeFields(out);
     }
   }
@@ -106,21 +114,20 @@ public class CAList<Type extends AttributeValue> extends ArrayList<Type> impleme
 
     @Override
     public CAString String() {
-      return new CAString(
-          "[ " + StringUtils.join(Collections2.transform(CAList.this, new Stringifier()), ", ")
-          + " ]");
+      return new CAString("[ " + StringUtils
+          .join(Collections2.transform(CAList.this.getValue(), new Stringifier()), ", ") + " ]");
     }
 
     @Override
     public CASet<Type> Set() {
-      return new CASet<>(CAList.this);
+      return new CASet<>(CAList.this.getValue());
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public AttributeValue size() {
-      return new CAInteger((long) CAList.this.size());
+      return new CAInteger((long) CAList.this.getValue().size());
     }
   }
 
