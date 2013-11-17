@@ -286,29 +286,6 @@ public class VisitSkel
 
       return null;
     }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces p, A arg)
-    {
-      /* Code For BasicExprBraces Goes Here */
-
-
-      return null;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets p, A arg)
-    {
-      /* Code For BasicExprBrackets Goes Here */
-
-
-      return null;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle p, A arg)
-    {
-      /* Code For BasicExprAngle Goes Here */
-
-      for (XExpression x : p.listxexpression_) {
-      }
-
-      return null;
-    }
     public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt p, A arg)
     {
       /* Code For BasicExprStmt Goes Here */

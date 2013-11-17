@@ -72,9 +72,6 @@ public class AbstractVisitor<R,A> implements AllVisitor<R,A> {
     public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprTrue p, A arg) { return visitDefault(p, arg); }
     public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprInt p, A arg) { return visitDefault(p, arg); }
     public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprDouble p, A arg) { return visitDefault(p, arg); }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces p, A arg) { return visitDefault(p, arg); }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets p, A arg) { return visitDefault(p, arg); }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle p, A arg) { return visitDefault(p, arg); }
     public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt p, A arg) { return visitDefault(p, arg); }
 
     public R visitDefault(stupaq.cloudatlas.parser.QueryLanguage.Absyn.XExpression p, A arg) {

@@ -276,20 +276,6 @@ public class EvalVisitor {
       return null;
     }
 
-    public SemanticValue visit(BasicExprBraces p, InputContext context) {
-      return null;
-    }
-
-    public SemanticValue visit(BasicExprBrackets p, InputContext context) {
-      return null;
-    }
-
-    public SemanticValue visit(BasicExprAngle p, InputContext context) {
-      for (XExpression x : p.listxexpression_) {
-      }
-      return null;
-    }
-
     @Override
     public SemanticValue visit(BasicExprStmt p, InputContext context) {
       try {

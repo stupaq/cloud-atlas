@@ -180,21 +180,6 @@ public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {
       R r = leaf(arg);
       return r;
     }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces p, A arg) {
-      R r = leaf(arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets p, A arg) {
-      R r = leaf(arg);
-      return r;
-    }
-    public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle p, A arg) {
-      R r = leaf(arg);
-      for (XExpression x : p.listxexpression_) {
-        r = combine(x.accept(this,arg), r, arg);
-      }
-      return r;
-    }
     public R visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt p, A arg) {
       R r = leaf(arg);
       r = combine(p.xstatement_.accept(this, arg), r, arg);

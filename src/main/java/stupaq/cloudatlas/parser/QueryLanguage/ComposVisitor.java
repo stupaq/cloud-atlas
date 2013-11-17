@@ -228,25 +228,6 @@ public class ComposVisitor<A> implements
 
       return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprDouble(double_);
     }
-    public XExpression visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces p, A arg)
-    {
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces();
-    }
-    public XExpression visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets p, A arg)
-    {
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets();
-    }
-    public XExpression visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle p, A arg)
-    {
-      ListXExpression listxexpression_ = new ListXExpression();
-      for (XExpression x : p.listxexpression_) {
-        listxexpression_.add(x.accept(this,arg));
-      }
-
-      return new stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle(listxexpression_);
-    }
     public XExpression visit(stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt p, A arg)
     {
       XStatement xstatement_ = p.xstatement_.accept(this, arg);

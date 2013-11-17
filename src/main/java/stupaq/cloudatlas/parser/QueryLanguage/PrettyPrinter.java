@@ -618,31 +618,6 @@ public class PrettyPrinter
        pp(_basicexprdouble.double_, 0);
        if (_i_ > 8) render(_R_PAREN);
     }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces _basicexprbraces = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces) foo;
-       if (_i_ > 8) render(_L_PAREN);
-       render("{");
-       render("}");
-       if (_i_ > 8) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets _basicexprbrackets = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets) foo;
-       if (_i_ > 8) render(_L_PAREN);
-       render("[");
-       render("]");
-       if (_i_ > 8) render(_R_PAREN);
-    }
-    else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle _basicexprangle = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle) foo;
-       if (_i_ > 8) render(_L_PAREN);
-       render("<<");
-       pp(_basicexprangle.listxexpression_, 0);
-       render(">>");
-       if (_i_ > 8) render(_R_PAREN);
-    }
     else     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt)
     {
        stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt _basicexprstmt = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt) foo;
@@ -1068,26 +1043,6 @@ public class PrettyPrinter
        render("(");
        render("BasicExprDouble");
        sh(_basicexprdouble.double_);
-       render(")");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces _basicexprbraces = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBraces) foo;
-       render("BasicExprBraces");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets _basicexprbrackets = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprBrackets) foo;
-       render("BasicExprBrackets");
-    }
-    if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle)
-    {
-       stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle _basicexprangle = (stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprAngle) foo;
-       render("(");
-       render("BasicExprAngle");
-       render("[");
-       sh(_basicexprangle.listxexpression_);
-       render("]");
        render(")");
     }
     if (foo instanceof stupaq.cloudatlas.parser.QueryLanguage.Absyn.BasicExprStmt)
