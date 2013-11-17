@@ -30,9 +30,9 @@ public interface AggregatingValue<Type extends AttributeValue> {
 
   public SemanticValue<CABoolean> lor();
 
-  SemanticValue<Type> distinct();
+  public SemanticValue<Type> distinct();
 
-  SemanticValue unfold();
+  public SemanticValue unfold();
 
   public static class AggregatingValueDefault<Type extends AttributeValue>
       implements AggregatingValue<Type> {

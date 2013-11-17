@@ -189,8 +189,10 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
         }
       }
       Collections.shuffle(indices);
-      return new RSingle<>(new CAList<>(
-          FluentIterable.from(indices).limit(size).transform(new Function<Integer, Type>() {
+      indices = FluentIterable.from(indices).limit(size).copyInto(new ArrayList<Integer>());
+      Collections.sort(indices);
+      return new RSingle<>(
+          new CAList<>(FluentIterable.from(indices).transform(new Function<Integer, Type>() {
             @Override
             public Type apply(Integer integer) {
               return AbstractAggregate.this.get(integer).get();

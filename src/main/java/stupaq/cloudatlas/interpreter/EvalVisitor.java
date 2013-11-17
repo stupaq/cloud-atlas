@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Ordering;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -41,6 +42,19 @@ public class EvalVisitor {
     OutputContext outputContext = new CollectorOutputContext();
     program.accept(new XProgramVisitor(), outputContext);
     return outputContext;
+  }
+
+  @SuppressWarnings("unchecked")
+  private <Type extends AttributeValue> Type getAs(AttributeValue value, Class<Type> clazz) {
+    if (value == null) {
+      throw new EvaluationException("Expected: " + clazz.getSimpleName() + " got NULL");
+    }
+    if (clazz.isInstance(value)) {
+      return (Type) value;
+    } else {
+      throw new EvaluationException(
+          "Expected type: " + clazz.getSimpleName() + " got: " + value.getType().getSimpleName());
+    }
   }
 
   private abstract static class AttributeValueZipper
@@ -94,11 +108,12 @@ public class EvalVisitor {
         } catch (SemanticValueCastException e) {
           throw new EvaluationException("WHERE expression result is not a single value");
         }
-        if (!(value instanceof CABoolean)) {
+        try {
+          if (!getAs(value, CABoolean.class).getValue()) {
+            rows.remove();
+          }
+        } catch (EvaluationException e) {
           throw new EvaluationException("WHERE expression result is not a boolean");
-        }
-        if (!((CABoolean) value).getValue()) {
-          rows.remove();
         }
       }
       return null;
@@ -202,66 +217,181 @@ public class EvalVisitor {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private class XExpressionVisitor implements XExpression.Visitor<SemanticValue, InputContext> {
+    @Override
     public SemanticValue visit(CondExprOr p, InputContext context) {
-      p.xexpression_1.accept(new XExpressionVisitor(), context);
-      p.xexpression_2.accept(new XExpressionVisitor(), context);
-      return null;
+      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+          .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
+              new AttributeValueZipper() {
+                @Override
+                public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+                  return value.op().or(value2);
+                }
+              });
     }
 
+    @Override
     public SemanticValue visit(CondExprAnd p, InputContext context) {
-      p.xexpression_1.accept(new XExpressionVisitor(), context);
-      p.xexpression_2.accept(new XExpressionVisitor(), context);
-      return null;
+      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+          .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
+              new AttributeValueZipper() {
+                @Override
+                public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+                  return value.op().and(value2);
+                }
+              });
     }
 
+    @Override
     public SemanticValue visit(CondExprNot p, InputContext context) {
-      p.xexpression_.accept(new XExpressionVisitor(), context);
-      return null;
+      return p.xexpression_.accept(new XExpressionVisitor(), context)
+          .map(new AttributeValueMapper() {
+            @Override
+            public AttributeValue apply(AttributeValue value) {
+              return value.op().not();
+            }
+          });
     }
 
-    public SemanticValue visit(BoolExprRegex p, InputContext context) {
-      p.xexpression_.accept(new XExpressionVisitor(), context);
-      //p.string_;
-      return null;
+    @Override
+    public SemanticValue visit(final BoolExprRegex p, InputContext context) {
+      return p.xexpression_.accept(new XExpressionVisitor(), context)
+          .map(new AttributeValueMapper() {
+            @Override
+            public AttributeValue apply(AttributeValue value) {
+              return value.op().matches(new CAString(p.string_));
+            }
+          });
     }
 
+    @Override
     public SemanticValue visit(BoolExprRel p, InputContext context) {
-      p.xexpression_1.accept(new XExpressionVisitor(), context);
-      p.xrelop_.accept(new XRelOpVisitor(), context);
-      p.xexpression_2.accept(new XExpressionVisitor(), context);
-      return null;
+      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+          .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
+              p.xrelop_.accept(new XRelOpVisitor(), context));
     }
 
+    @Override
     public SemanticValue visit(ArithExprAdd p, InputContext context) {
-      p.xexpression_1.accept(new XExpressionVisitor(), context);
-      p.xarithopadd_.accept(new XArithOpAddVisitor(), context);
-      p.xexpression_2.accept(new XExpressionVisitor(), context);
-      return null;
+      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+          .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
+              p.xarithopadd_.accept(new XArithOpAddVisitor(), context));
     }
 
+    @Override
     public SemanticValue visit(ArithExprMultiply p, InputContext context) {
-      p.xexpression_1.accept(new XExpressionVisitor(), context);
-      p.xarithopmultiply_.accept(new XArithOpMultiplyVisitor(), context);
-      p.xexpression_2.accept(new XExpressionVisitor(), context);
-      return null;
+      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+          .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
+              p.xarithopmultiply_.accept(new XArithOpMultiplyVisitor(), context));
     }
 
+    @Override
     public SemanticValue visit(ArithExprNeg p, InputContext context) {
-      p.xexpression_.accept(new XExpressionVisitor(), context);
-      return null;
+      return p.xexpression_.accept(new XExpressionVisitor(), context)
+          .map(new AttributeValueMapper() {
+            @Override
+            public AttributeValue apply(AttributeValue value) {
+              return value.op().negate();
+            }
+          });
     }
 
+    @Override
     public SemanticValue visit(BasicExprVar p, InputContext context) {
-      //p.xident_;
-      return null;
+      return context.get(p.xident_);
     }
 
-    public SemanticValue visit(BasicExprCall p, InputContext context) {
-      //p.xident_;
+    @Override
+    public SemanticValue visit(final BasicExprCall p, InputContext context) {
+      final ArgumentsList args = new ArgumentsList();
+      // We follow greedy evaluation (it doesn't really matter here since our
+      // functions need all arguments at all times)
       for (XExpression x : p.listxexpression_) {
+        args.add(x.accept(new XExpressionVisitor(), context));
       }
-      return null;
+      try {
+        switch (p.xident_.toLowerCase()) {
+          // Aggregations
+          case "avg":
+            return args.get(0).aggregate().avg();
+          case "sum":
+            return args.get(0).aggregate().sum();
+          case "count":
+            return args.get(0).aggregate().count();
+          case "first":
+            return args.get(1).aggregate().first(
+                getAs(args.get(0).getSingle().or(null), CAInteger.class).getValue().intValue());
+          case "last":
+            return args.get(1).aggregate().last(
+                getAs(args.get(0).getSingle().or(null), CAInteger.class).getValue().intValue());
+          case "random":
+            return args.get(1).aggregate().random(
+                getAs(args.get(0).getSingle().or(null), CAInteger.class).getValue().intValue());
+          case "min":
+            return args.get(0).aggregate().min();
+          case "max":
+            return args.get(0).aggregate().max();
+          case "land":
+            return args.get(0).aggregate().land();
+          case "lor":
+            return args.get(0).aggregate().lor();
+          case "distinct":
+            return args.get(0).aggregate().distinct();
+          case "unfold":
+            return args.get(0).aggregate().unfold();
+          // Utility
+          case "isnull":
+            return args.get(0).isNull();
+          case "now":
+            return new RSingle<>(CATime.now());
+          case "epoch":
+            return new RSingle<>(CATime.epoch());
+          // Operations mapped over container
+          default:
+            return args.get(0).map(new AttributeValueMapper() {
+              @Override
+              public AttributeValue apply(AttributeValue value) {
+                switch (p.xident_) {
+                  case "round":
+                    return value.op().round();
+                  case "ceil":
+                    return value.op().ceil();
+                  case "floor":
+                    return value.op().floor();
+                  case "size":
+                    return value.op().size();
+                  // Conversions
+                  case "to_boolean":
+                    return value.to().Boolean();
+                  case "to_contact":
+                    return value.to().Contact();
+                  case "to_double":
+                    return value.to().Double();
+                  case "to_duration":
+                    return value.to().Duration();
+                  case "to_integer":
+                    return value.to().Integer();
+                  case "to_list":
+                    return value.to().List();
+                  case "to_set":
+                    return value.to().Set();
+                  case "to_string":
+                    return value.to().String();
+                  case "to_time":
+                    return value.to().Time();
+                  default:
+                    // Other operations were served in outer switch
+                    throw new EvaluationException("Function: " + p.xident_ + " is not defined");
+                }
+              }
+            });
+        }
+      } catch (SemanticValueCastException e) {
+        throw new EvaluationException("Function parameter must be a single value");
+      } finally {
+        args.checkUsage();
+      }
     }
 
     @Override
@@ -290,7 +420,26 @@ public class EvalVisitor {
         return p.xstatement_.accept(new XStatementVisitor(), new InnerSelectOutputContext())
             .getSingle();
       } catch (SemanticValueCastException e) {
-        throw new EvaluationException("INNER SELECT must return a single value");
+        throw new EvaluationException("Inner SELECT must return a single value");
+      }
+    }
+
+    private class ArgumentsList extends ArrayList<SemanticValue> {
+      private int highestReferenced = -1;
+
+      @Override
+      public SemanticValue get(int index) {
+        highestReferenced = Math.max(highestReferenced, index);
+        if (index >= size()) {
+          throw new EvaluationException("Argument: " + index + " is missing");
+        }
+        return super.get(index);
+      }
+
+      public void checkUsage() {
+        if (highestReferenced + 1 != size()) {
+          throw new EvaluationException("Function applied to too many arguments.");
+        }
       }
     }
   }

@@ -47,6 +47,8 @@ public interface OperableValue {
 
   public AttributeValue multiplyBy(CAInteger value);
 
+  public AttributeValue multiplyBy(CADuration value);
+
   /** INVERSION is defined for: Double, Integer */
   public AttributeValue inverse();
 
@@ -71,8 +73,6 @@ public interface OperableValue {
 
   /** SIZE is defined for: List, Set, String */
   public AttributeValue size();
-
-  AttributeValue multiplyBy(CADuration value);
 
   public static class OperableValueDefault implements OperableValue {
 
