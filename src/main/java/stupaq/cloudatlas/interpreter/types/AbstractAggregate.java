@@ -84,6 +84,11 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       Function2<Arg0, Arg1, Result> operation);
 
   @Override
+  public final RSingle<Type> getSingle() throws SemanticValueCastException {
+    throw new SemanticValueCastException();
+  }
+
+  @Override
   public final boolean equals(Object o) {
     return getClass() == o.getClass() && super.equals(o);
   }

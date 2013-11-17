@@ -2,8 +2,6 @@ package stupaq.cloudatlas.interpreter.semantics;
 
 import com.google.common.base.Function;
 
-import com.sun.istack.internal.Nullable;
-
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CAContact;
@@ -90,7 +88,7 @@ public interface ConvertibleValue {
 
   public static class Stringifier implements Function<AttributeValue, String> {
     @Override
-    public String apply(@Nullable AttributeValue value) {
+    public String apply(AttributeValue value) {
       return value.to().String().toString();
     }
   }

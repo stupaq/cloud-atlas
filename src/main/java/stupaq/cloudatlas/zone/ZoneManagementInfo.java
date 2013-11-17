@@ -3,6 +3,8 @@ package stupaq.cloudatlas.zone;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +36,10 @@ public final class ZoneManagementInfo implements Nameable, CompactSerializable {
 
   public void addAttribute(Attribute attribute) {
     attributes.put(attribute.getName(), attribute);
+  }
+
+  public Collection<Attribute> getAttributes() {
+    return Collections.unmodifiableCollection(attributes.values());
   }
 
   @Override

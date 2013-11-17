@@ -41,9 +41,6 @@ BasicExprString.    XExpression8 ::= String;
 BasicExprTrue.      XExpression8 ::= XBoolConst;
 BasicExprInt.       XExpression8 ::= Integer;
 BasicExprDouble.    XExpression8 ::= Double;
-BasicExprBraces.    XExpression8 ::= "{" "}";
-BasicExprBrackets.  XExpression8 ::= "[" "]";
-BasicExprAngle.     XExpression8 ::= "<<" [XExpression] ">>";
 BasicExprStmt.      XExpression8 ::= "(" XStatement ")";
 coercions XExpression 8;
 

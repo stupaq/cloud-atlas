@@ -27,5 +27,10 @@ public interface SemanticValue<Type extends AttributeValue> {
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RSingle<Other> first, Function2<Other, Type, Result> operation);
 
+  public RSingle<Type> getSingle() throws SemanticValueCastException;
+
   public AggregatingValue aggregate();
+
+  public static class SemanticValueCastException extends Exception {
+  }
 }

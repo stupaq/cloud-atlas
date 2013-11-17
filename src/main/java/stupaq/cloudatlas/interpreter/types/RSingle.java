@@ -32,6 +32,15 @@ public final class RSingle<Type extends AttributeValue> implements SemanticValue
     return value.get();
   }
 
+  public Type or(Type alternative) {
+    return value.or(alternative);
+  }
+
+  @Override
+  public RSingle<Type> getSingle() {
+    return this;
+  }
+
   @Override
   public RSingle<CABoolean> isNull() {
     return new RSingle<>(new CABoolean(!value.isPresent()));
