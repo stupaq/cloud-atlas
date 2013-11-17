@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
+import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.interpreter.context.Context;
 import stupaq.cloudatlas.interpreter.context.InputContext;
 import stupaq.cloudatlas.interpreter.context.OutputContext;
@@ -17,6 +18,7 @@ import stupaq.cloudatlas.interpreter.context.OutputContext.InnerSelectOutputCont
 import stupaq.cloudatlas.interpreter.data.AttributesRow;
 import stupaq.cloudatlas.interpreter.data.AttributesTable;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
+import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 import stupaq.cloudatlas.interpreter.semantics.SemanticValue.SemanticValueCastException;
 import stupaq.cloudatlas.interpreter.types.RList;
@@ -301,27 +303,63 @@ public class EvalVisitor {
 
   private class XArithOpAddVisitor
       implements XArithOpAdd.Visitor<AttributeValueZipper, InputContext> {
+    @Override
     public AttributeValueZipper visit(ArithOpAdd p, InputContext context) {
-      return null;
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          // Note that addition is not defined for CATime but subtraction is,
+          // since our arithmetic does not implement dual operators we have to
+          // manually check types here.
+          if (value instanceof CATime && value2 instanceof CATime) {
+            throw new OperationNotApplicable("Cannot add CATime to CATime");
+          }
+          return value.op().add(value2);
+        }
+      };
     }
 
+    @Override
     public AttributeValueZipper visit(ArithOpSubstract p, InputContext context) {
-      return null;
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value.op().add(value2.op().negate());
+        }
+      };
     }
   }
 
   private class XArithOpMultiplyVisitor
       implements XArithOpMultiply.Visitor<AttributeValueZipper, InputContext> {
+    @Override
     public AttributeValueZipper visit(ArithOpMultiply p, InputContext context) {
-      return null;
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value.op().multiply(value2);
+        }
+      };
     }
 
+    @Override
     public AttributeValueZipper visit(ArithOpDivide p, InputContext context) {
-      return null;
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value.op().multiply(value2.op().inverse());
+        }
+      };
     }
 
+    @Override
     public AttributeValueZipper visit(ArithOpModulo p, InputContext context) {
-      return null;
+      return new AttributeValueZipper() {
+        @Override
+        public AttributeValue apply(AttributeValue value, AttributeValue value2) {
+          return value.op().modulo(value2);
+        }
+      };
     }
   }
 
