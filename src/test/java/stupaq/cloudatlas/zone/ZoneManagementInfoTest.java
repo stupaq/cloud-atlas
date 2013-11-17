@@ -15,6 +15,7 @@ import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
+import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.serialization.SerializationUtils;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 
@@ -33,7 +34,7 @@ public class ZoneManagementInfoTest {
 
   @Test
   public void testSerialization() throws Exception {
-    ZoneManagementInfo zmi = new ZoneManagementInfo();
+    ZoneManagementInfo zmi = new ZoneManagementInfo(LocalName.ROOT);
     addAttr(zmi, "attributeBoolean", new CABoolean(Boolean.TRUE));
     addAttr(zmi, "attributeContact", new CAContact("UW1"));
     addAttr(zmi, "attributeDouble", new CADouble(1.337D));

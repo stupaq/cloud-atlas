@@ -70,7 +70,7 @@ public class AttributeTypeTestUtils {
     return null;
   }
 
-  public static <Type extends AttributeValue> CAList<Type> ListEmpty() {
+  public static <Type extends AttributeValue> CAList<Type> ListEmpty(Type elem) {
     return new CAList<>();
   }
 
@@ -82,7 +82,7 @@ public class AttributeTypeTestUtils {
     return new CASet<>();
   }
 
-  public static <Type extends AttributeValue> CASet<Type> SetEmpty() {
+  public static <Type extends AttributeValue> CASet<Type> SetEmpty(Type elem) {
     return new CASet<>();
   }
 }

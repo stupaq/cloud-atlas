@@ -8,17 +8,28 @@ import java.util.Map;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
+import stupaq.cloudatlas.naming.LocalName;
+import stupaq.cloudatlas.naming.Nameable;
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public final class ZoneManagementInfo implements CompactSerializable {
-  private final ZoneLocalName localName;
+public final class ZoneManagementInfo implements Nameable, CompactSerializable {
+  private final LocalName localName;
   private final Map<AttributeName, Attribute> attributes;
 
   @SerializationOnly
   public ZoneManagementInfo() {
-    localName = new ZoneLocalName(null);
+    this(new LocalName());
+  }
+
+  public ZoneManagementInfo(LocalName localName) {
+    this.localName = localName;
     attributes = new HashMap<>();
+  }
+
+  @Override
+  public LocalName localName() {
+    return localName;
   }
 
   public void addAttribute(Attribute attribute) {

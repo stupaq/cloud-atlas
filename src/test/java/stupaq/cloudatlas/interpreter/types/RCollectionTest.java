@@ -10,19 +10,8 @@ import stupaq.guava.base.Optionals;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Bool;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Doub;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Int;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.List;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.ListEmpty;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.ListNull;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Set;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.SetEmpty;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.BinOp;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.C;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.L;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.S;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.UnOp;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
+import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.*;
 
 public class RCollectionTest {
   private void testRandom(RCollection<? extends AttributeValue> collection, int sampleSize,
@@ -155,13 +144,13 @@ public class RCollectionTest {
     assertEquals(L(), L(Int(), Int(), Int(), Int()).aggregate().distinct());
     // unfold
     assertEquals(L(Int(2), Int(3), Int(3)),
-        L(List(Int(2), Int(3)), ListEmpty(), List(Int(3))).aggregate().unfold());
+        L(List(Int(2), Int(3)), ListEmpty(Int()), List(Int(3))).aggregate().unfold());
     assertEquals(L(Int(2), Int(3), Int(3)),
-        L(Set(Int(2), Int(3)), SetEmpty(), Set(Int(3))).aggregate().unfold());
+        L(Set(Int(2), Int(3)), SetEmpty(Int()), Set(Int(3))).aggregate().unfold());
     assertEquals(L(Int(3), Int(3), Int(3)),
-        C(List(Int(3), Int(3)), ListEmpty(), List(Int(3))).aggregate().unfold());
+        C(List(Int(3), Int(3)), ListEmpty(Int()), List(Int(3))).aggregate().unfold());
     assertEquals(L(Int(3), Int(3)),
-        C(Set(Int(3), Int(3)), SetEmpty(), Set(Int(3))).aggregate().unfold());
+        C(Set(Int(3), Int(3)), SetEmpty(Int()), Set(Int(3))).aggregate().unfold());
     assertEquals(L(), C().aggregate().unfold());
     // unfold null
     assertEquals(L(Int(3), Int(3), Int(3)),
