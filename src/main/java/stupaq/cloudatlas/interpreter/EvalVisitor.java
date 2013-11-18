@@ -4,6 +4,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Ordering;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -32,9 +35,11 @@ import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
 public class EvalVisitor {
+  private static final Log LOG = LogFactory.getLog(EvalVisitor.class);
   private final AttributesTable originalTable;
 
   public EvalVisitor(AttributesTable originalTable) {
+    LOG.info(originalTable);
     this.originalTable = originalTable;
   }
 

@@ -1,23 +1,43 @@
 package stupaq.cloudatlas.zone.hierarchy;
 
+import com.google.common.collect.FluentIterable;
+
+import java.util.Arrays;
+
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CAContact;
 import stupaq.cloudatlas.attribute.types.CASet;
+import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
+import stupaq.guava.base.Function1.CountingFunction1;
 
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
 
 public final class ZoneHierarchyTestUtils {
+  private static final String EP = CATime.epoch().to().String().toString();
   private static final String V7 = "/uw/violet07", K31 = "/uw/khaki31", K13 = "/uw/khaki13", W1 =
       "/pjwstk/whatever01", W2 = "/pjwstk/whatever02";
 
   private ZoneHierarchyTestUtils() {
   }
 
-  public static ZoneHierarchy<ZoneManagementInfo> exampleHierarchy1() {
+  @SuppressWarnings("unchecked")
+  public static ZoneHierarchy<ZoneManagementInfo> oneLevelHierarchy(Attribute root,
+      Attribute... children) {
+    return Node(Zmi("/", V7, EP, SetEmpty(Cont()), 0, root),
+        FluentIterable.from(Arrays.asList(children))
+            .transform(new CountingFunction1<Attribute, ZoneHierarchy<ZoneManagementInfo>>() {
+              @Override
+              public ZoneHierarchy<ZoneManagementInfo> apply(int iteration, Attribute attribute) {
+                return Node(Zmi("/uw" + iteration, K13, EP, SetEmpty(Cont()), 0, attribute));
+              }
+            }).toArray((Class) ZoneHierarchy.class));
+  }
+
+  public static ZoneHierarchy<ZoneManagementInfo> officialExampleHierarchy() {
     return Node(Zmi("/", V7, "2012/11/09 20:10:17.342 CET", SetEmpty(Cont()), 0),
         Node(Zmi("/uw", V7, "2012/11/09 20:8:13.123 CET", SetEmpty(Cont()), 0), Node(
             Zmi("/uw/violet07", V7, "2012/11/09 18:00:00.000 CET",

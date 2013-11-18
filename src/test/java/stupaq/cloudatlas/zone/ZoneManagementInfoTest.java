@@ -34,7 +34,7 @@ public class ZoneManagementInfoTest {
 
   @Test
   public void testSerialization() throws Exception {
-    ZoneManagementInfo zmi = new ZoneManagementInfo(LocalName.ROOT);
+    ZoneManagementInfo zmi = new ZoneManagementInfo(LocalName.getRoot());
     addAttr(zmi, "attributeBoolean", new CABoolean(Boolean.TRUE));
     addAttr(zmi, "attributeContact", new CAContact("UW1"));
     addAttr(zmi, "attributeDouble", new CADouble(1.337D));

@@ -1,6 +1,6 @@
 package stupaq.cloudatlas.naming;
 
-public interface Nameable {
+public interface LocallyNameable {
 
   public LocalName localName();
 }

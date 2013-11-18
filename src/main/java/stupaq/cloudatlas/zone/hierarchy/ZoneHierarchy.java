@@ -11,8 +11,9 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 
+import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
-import stupaq.cloudatlas.naming.Nameable;
+import stupaq.cloudatlas.naming.LocallyNameable;
 import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.guava.base.Function2;
 
@@ -81,6 +82,21 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     parentZone.childZones.put(payload.localName(), this);
   }
 
+  public Payload getPayload() {
+    return payload;
+  }
+
+  public GlobalName globalName() {
+    final GlobalName.Builder builder = GlobalName.builder();
+    walkUp(new ReadOnlyAggregator<Payload>() {
+      @Override
+      protected void read(Iterable<Payload> payloads, Payload payload) {
+        builder.add(payload.localName());
+      }
+    });
+    return builder.build();
+  }
+
   @Override
   public final int hashCode() {
     return super.hashCode();
@@ -91,10 +107,41 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     return super.equals(obj);
   }
 
-  public static interface Hierarchical extends Nameable {
+  private void appendTo(final StringBuilder builder) {
+    builder.append(globalName()).append('\n');
+    builder.append(payload.toString()).append("\n\n");
+    FluentIterable.from(childZones.values())
+        .transform(new Function<ZoneHierarchy<Payload>, Void>() {
+          @Override
+          public Void apply(ZoneHierarchy<Payload> children) {
+            children.appendTo(builder);
+            return null;
+          }
+        });
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder result = new StringBuilder();
+    appendTo(result);
+    return result.toString();
+  }
+
+  public static interface Hierarchical extends LocallyNameable {
   }
 
   public abstract static class Aggregator<Payload extends Hierarchical>
       extends Function2<Iterable<Payload>, Payload, Payload> {
+  }
+
+  public static abstract class ReadOnlyAggregator<Payload extends Hierarchical>
+      extends Aggregator<Payload> {
+    @Override
+    public Payload apply(Iterable<Payload> payloads, Payload payload) {
+      read(payloads, payload);
+      return payload;
+    }
+
+    protected abstract void read(Iterable<Payload> payloads, Payload payload);
   }
 }

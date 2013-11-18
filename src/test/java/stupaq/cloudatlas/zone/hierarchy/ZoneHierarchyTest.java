@@ -5,6 +5,6 @@ import org.junit.Test;
 public class ZoneHierarchyTest {
   @Test
   public void testHierarchyCreation() {
-    ZoneHierarchyTestUtils.exampleHierarchy1();
+    ZoneHierarchyTestUtils.officialExampleHierarchy();
   }
 }
