@@ -25,6 +25,10 @@ public class CAQuery extends PrimitiveWrapper<String> implements AttributeValue 
     super(value);
   }
 
+  public String getQueryString() {
+    return getValue();
+  }
+
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     setValue(in.readUTF());

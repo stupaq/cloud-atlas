@@ -23,8 +23,8 @@ public class AttributesTable extends ArrayList<AttributesRow> {
     add(row);
   }
 
-  public AttributesTable(Collection<ZoneManagementInfo> zones) {
-    this(FluentIterable.from(zones)
+  public AttributesTable(Iterable<ZoneManagementInfo> zones) {
+    fill(FluentIterable.from(zones)
         .transform(new Function<ZoneManagementInfo, Collection<Attribute>>() {
           @Override
           public Collection<Attribute> apply(ZoneManagementInfo managementInfo) {
@@ -33,7 +33,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
         }));
   }
 
-  private AttributesTable(Iterable<Collection<Attribute>> subZones) {
+  private void fill(Iterable<Collection<Attribute>> subZones) {
     Set<AttributeName> allAttributes = new HashSet<>();
     for (Collection<Attribute> zone : subZones) {
       AttributesRow row = new AttributesRow();

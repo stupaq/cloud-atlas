@@ -41,10 +41,10 @@ public interface OutputContext {
     }
   }
 
-  public static class HierarchyUpdaterOutputContext implements OutputContext {
+  public static class ZMIUpdaterOutputContext implements OutputContext {
     private final ZoneManagementInfo destination;
 
-    public HierarchyUpdaterOutputContext(ZoneManagementInfo destination) {
+    public ZMIUpdaterOutputContext(ZoneManagementInfo destination) {
       this.destination = destination;
     }
 

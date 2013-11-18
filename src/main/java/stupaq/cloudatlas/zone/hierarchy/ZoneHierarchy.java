@@ -27,7 +27,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     this.parentZone = null;
   }
 
-  public void walkUp(Aggregator action) {
+  public void walkUp(Aggregator<Payload> action) {
     ZoneHierarchy<Payload> current = this;
     while (current != null) {
       current.payload = action.apply(current.childZonesPayloads(), current.payload);
@@ -59,7 +59,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
         });
   }
 
-  public void aggregate(Aggregator action) {
+  public void aggregate(Aggregator<Payload> action) {
     Set<ZoneHierarchy<Payload>> added = new HashSet<>();
     Queue<ZoneHierarchy<Payload>> queue =
         findLeaves().copyInto(new ArrayDeque<ZoneHierarchy<Payload>>());
@@ -94,6 +94,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
   public static interface Hierarchical extends Nameable {
   }
 
-  public abstract class Aggregator extends Function2<Iterable<Payload>, Payload, Payload> {
+  public abstract static class Aggregator<Payload extends Hierarchical>
+      extends Function2<Iterable<Payload>, Payload, Payload> {
   }
 }
