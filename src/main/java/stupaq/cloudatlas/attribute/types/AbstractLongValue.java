@@ -20,23 +20,28 @@ abstract class AbstractLongValue extends PrimitiveWrapper<Long> implements Attri
   }
 
   @Override
-  public Long getValue() {
+  public final Long getValue() {
     return super.getValue();
   }
 
   @Override
-  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
+  public final void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     setValue(in.readLong());
   }
 
   @Override
-  public void writeFields(ObjectOutput out) throws IOException {
+  public final void writeFields(ObjectOutput out) throws IOException {
     out.writeLong(getValue());
   }
 
   @Override
-  public int compareTo(AttributeValue o) {
+  public final int compareTo(AttributeValue o) {
     TypeUtils.assertSameType(this, o);
     return getValue().compareTo(((AbstractLongValue) o).getValue());
+  }
+
+  @Override
+  public final String toString() {
+    return to().String().toString();
   }
 }

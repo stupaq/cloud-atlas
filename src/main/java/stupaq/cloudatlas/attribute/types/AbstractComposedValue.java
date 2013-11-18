@@ -11,6 +11,7 @@ import stupaq.cloudatlas.serialization.TypeID;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 import stupaq.guava.base.PrimitiveWrapper;
 
+/** PACKAGE-LOCAL */
 abstract class AbstractComposedValue<Type extends AttributeValue, Composed extends Collection<Type>>
     extends PrimitiveWrapper<Composed> implements AttributeValue {
   protected AbstractComposedValue(Composed value) {

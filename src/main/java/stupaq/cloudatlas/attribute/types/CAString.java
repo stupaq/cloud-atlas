@@ -1,5 +1,7 @@
 package stupaq.cloudatlas.attribute.types;
 
+import com.google.common.base.Optional;
+
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -9,7 +11,6 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import stupaq.guava.base.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
@@ -19,8 +20,11 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefaul
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.guava.base.PrimitiveWrapper;
 
 public class CAString extends PrimitiveWrapper<String> implements AttributeValue {
+  private static final AttributeValue STRING_NULL = new CAString("NULL");
+
   @SerializationOnly
   public CAString() {
     super(null, null);
@@ -28,6 +32,11 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
   public CAString(String value) {
     super(value);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static AttributeValue valueOf(Optional<? extends AttributeValue> value) {
+    return ((Optional<AttributeValue>) value).or(STRING_NULL);
   }
 
   @Override

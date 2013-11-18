@@ -48,12 +48,13 @@ public interface OutputContext {
     }
 
     @Override
-    public void put(String attribute, RSingle<? extends AttributeValue> value) {
-      Preconditions.checkNotNull(attribute);
+    public void put(String nameStr, RSingle<? extends AttributeValue> value) {
+      Preconditions.checkNotNull(nameStr);
       Preconditions.checkNotNull(value);
       // Attribute value cannot start with reserved prefix
-      AttributeName name = AttributeName.valueOf(attribute);
-      destination.updateAttribute(new Attribute<>(name, value.or(null)));
+      AttributeName name = AttributeName.valueOf(nameStr);
+      Attribute attribute = new Attribute<>(name, value.or(null));
+      destination.updateAttribute(attribute);
     }
   }
 }

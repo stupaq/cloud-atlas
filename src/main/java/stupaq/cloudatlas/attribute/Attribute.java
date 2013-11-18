@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 import stupaq.cloudatlas.serialization.TypeRegistry;
@@ -76,8 +77,9 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
     return result;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public String toString() {
-    return name + " = " + value;
+    return name + " = " + CAString.valueOf(value);
   }
 }

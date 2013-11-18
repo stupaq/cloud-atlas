@@ -33,7 +33,7 @@ public final class RSingle<Type extends AttributeValue> implements SemanticValue
   }
 
   public Type or(Type alternative) {
-    return value.isPresent() ? value.get() : alternative;
+    return value.orNull();
   }
 
   @Override

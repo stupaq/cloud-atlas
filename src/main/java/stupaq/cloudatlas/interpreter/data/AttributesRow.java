@@ -8,4 +8,9 @@ import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 
 public class AttributesRow extends HashMap<AttributeName, Optional<AttributeValue>> {
+  @Override
+  public String toString() {
+    return super.toString().replace("=", " = ").replace("Optional.of(", "")
+        .replace("Optional.absent(", "").replace("),", ",");
+  }
 }
