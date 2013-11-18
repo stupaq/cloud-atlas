@@ -7,6 +7,5 @@ public class ExampleShell {
 
   /** MAIN */
   public static void main(String[] args) {
-    ZoneHierarchy<ZoneManagementInfo> root = null;
   }
 }
