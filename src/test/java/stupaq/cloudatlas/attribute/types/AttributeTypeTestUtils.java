@@ -1,6 +1,15 @@
 package stupaq.cloudatlas.attribute.types;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.attribute.types.CABoolean;
+import stupaq.cloudatlas.attribute.types.CAContact;
+import stupaq.cloudatlas.attribute.types.CADouble;
+import stupaq.cloudatlas.attribute.types.CADuration;
+import stupaq.cloudatlas.attribute.types.CAInteger;
+import stupaq.cloudatlas.attribute.types.CAList;
+import stupaq.cloudatlas.attribute.types.CASet;
+import stupaq.cloudatlas.attribute.types.CAString;
+import stupaq.cloudatlas.attribute.types.CATime;
 
 public class AttributeTypeTestUtils {
   private AttributeTypeTestUtils() {

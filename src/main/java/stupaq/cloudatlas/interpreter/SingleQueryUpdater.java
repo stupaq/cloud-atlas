@@ -9,10 +9,10 @@ import stupaq.cloudatlas.parser.QueryParser;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
 import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchy.InPlaceAggregator;
 
-public class ZoneManagementInfoUpdater extends InPlaceAggregator<ZoneManagementInfo> {
+public class SingleQueryUpdater extends InPlaceAggregator<ZoneManagementInfo> {
   private final XProgram program;
 
-  public ZoneManagementInfoUpdater(CAQuery query) throws Exception {
+  public SingleQueryUpdater(CAQuery query) throws Exception {
     program = new QueryParser(query.getQueryString()).parseProgram();
   }
 

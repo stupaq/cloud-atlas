@@ -1,12 +1,13 @@
 package stupaq.cloudatlas.zone;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +46,12 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
   }
 
   public Collection<Attribute> getAttributes() {
-    return Collections.unmodifiableCollection(attributes.values());
+    return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
+      @Override
+      public boolean apply(Attribute attribute) {
+        return !attribute.getName().isSpecial();
+      }
+    }).toList();
   }
 
   @Override

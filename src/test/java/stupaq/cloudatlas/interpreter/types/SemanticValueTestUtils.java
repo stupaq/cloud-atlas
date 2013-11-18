@@ -7,12 +7,12 @@ import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
-class SemanticValueTestUtils {
+public class SemanticValueTestUtils {
   private SemanticValueTestUtils() {
   }
 
   /** Generic */
-  static <Arg0 extends AttributeValue, Arg1 extends AttributeValue> Function2<Arg0, Arg1, AttributeValue> operation() {
+  public static <Arg0 extends AttributeValue, Arg1 extends AttributeValue> Function2<Arg0, Arg1, AttributeValue> operation() {
     return new Function2<Arg0, Arg1, AttributeValue>() {
       @Override
       public AttributeValue apply(AttributeValue value1, AttributeValue value2) {
@@ -21,7 +21,7 @@ class SemanticValueTestUtils {
     };
   }
 
-  static <Arg0 extends AttributeValue> Function1<Arg0, AttributeValue> function() {
+  public static <Arg0 extends AttributeValue> Function1<Arg0, AttributeValue> function() {
     return new Function1<Arg0, AttributeValue>() {
       @Override
       public AttributeValue apply(AttributeValue value) {
@@ -31,11 +31,11 @@ class SemanticValueTestUtils {
   }
 
   /** Specific */
-  static Function1<CAInteger, AttributeValue> UnOp() {
+  public static Function1<CAInteger, AttributeValue> UnOp() {
     return function();
   }
 
-  static Function2<CAInteger, CAInteger, AttributeValue> BinOp() {
+  public static Function2<CAInteger, CAInteger, AttributeValue> BinOp() {
     return operation();
   }
 

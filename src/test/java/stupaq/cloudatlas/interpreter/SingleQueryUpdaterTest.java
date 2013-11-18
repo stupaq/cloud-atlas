@@ -14,7 +14,7 @@ import static stupaq.cloudatlas.zone.hierarchy.ZoneHierarchyTestUtils.Attr;
 import static stupaq.cloudatlas.zone.hierarchy.ZoneHierarchyTestUtils.Name;
 import static stupaq.cloudatlas.zone.hierarchy.ZoneHierarchyTestUtils.oneLevelHierarchy;
 
-public class ZoneManagementInfoUpdaterTest {
+public class SingleQueryUpdaterTest {
   @Test
   public void testSimple1() throws Exception {
     ZoneHierarchy<ZoneManagementInfo> root =
@@ -24,7 +24,7 @@ public class ZoneManagementInfoUpdaterTest {
     assertEquals(Attr("attr", Int(1)), rootZmi.getAttribute(Name("attr")).get());
     assertFalse(rootZmi.getAttribute(Name("attr_")).isPresent());
     CAQuery query = new CAQuery("SELECT to_integer(avg(attr)) AS attr, avg(attr) AS attr_");
-    root.zipFromLeaves(new ZoneManagementInfoUpdater(query));
+    root.zipFromLeaves(new SingleQueryUpdater(query));
     assertEquals(Attr("attr", Int(4)), rootZmi.getAttribute(Name("attr")).get());
     assertEquals(Attr("attr_", Doub(4.25)), rootZmi.getAttribute(Name("attr_")).get());
   }

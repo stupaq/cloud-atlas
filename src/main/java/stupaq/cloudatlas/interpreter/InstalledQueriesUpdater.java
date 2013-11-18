@@ -1,4 +1,4 @@
 package stupaq.cloudatlas.interpreter;
 
-public class QueryManager {
+public class InstalledQueriesUpdater {
 }

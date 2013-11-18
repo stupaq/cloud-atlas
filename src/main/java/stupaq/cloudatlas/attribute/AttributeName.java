@@ -34,6 +34,10 @@ public final class AttributeName extends ASCIIString implements CompactSerializa
     return new AttributeName(str);
   }
 
+  public boolean isSpecial() {
+    return toString().startsWith(RESERVED_PREFIX);
+  }
+
   private void verifyInvariants() throws NullPointerException, IllegalStateException {
     Preconditions.checkNotNull(toString(), "AttributeName cannot be null");
     Preconditions.checkState(!toString().isEmpty(), "AttributeName cannot be empty");
