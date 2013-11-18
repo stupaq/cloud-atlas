@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.attribute;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
@@ -12,25 +13,25 @@ import stupaq.cloudatlas.serialization.TypeRegistry;
 
 public final class Attribute<Type extends AttributeValue> implements CompactSerializable {
   private final AttributeName name;
-  private Type value;
+  private Optional<Type> value;
 
   @SerializationOnly
   public Attribute() {
     name = new AttributeName();
-    value = null;
+    value = Optional.absent();
   }
 
   public Attribute(AttributeName name, Type value) {
     Preconditions.checkNotNull(name, "AttributeName cannot be null");
     this.name = name;
-    this.value = value;
+    this.value = Optional.fromNullable(value);
   }
 
   public AttributeName getName() {
     return name;
   }
 
-  public Type getValue() {
+  public Optional<Type> getValue() {
     return value;
   }
 
@@ -38,13 +39,22 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
   @SuppressWarnings("unchecked")
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     name.readFields(in);
-    value = TypeRegistry.readObject(in);
+    if (in.readBoolean()) {
+      value = Optional.of((Type) TypeRegistry.readObject(in));
+    } else {
+      value = Optional.absent();
+    }
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
     name.writeFields(out);
-    TypeRegistry.writeObject(out, value);
+    if (value.isPresent()) {
+      out.writeBoolean(true);
+      TypeRegistry.writeObject(out, value.get());
+    } else {
+      out.writeBoolean(false);
+    }
   }
 
   @Override

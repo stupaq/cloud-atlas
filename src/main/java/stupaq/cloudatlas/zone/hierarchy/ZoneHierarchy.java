@@ -60,14 +60,18 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
         });
   }
 
-  public void aggregate(Aggregator<Payload> action) {
+  public void zip(Aggregator<Payload> action) {
+    this.payload = action.apply(this.childZonesPayloads(), this.payload);
+  }
+
+  public void zipFromLeaves(Aggregator<Payload> action) {
     Set<ZoneHierarchy<Payload>> added = new HashSet<>();
     Queue<ZoneHierarchy<Payload>> queue =
         findLeaves().copyInto(new ArrayDeque<ZoneHierarchy<Payload>>());
     while (!queue.isEmpty()) {
       ZoneHierarchy<Payload> current = queue.remove();
-      current.payload = action.apply(current.childZonesPayloads(), current.payload);
-      if (current.parentZone != null && added.add(current.parentZone)) {
+      current.zip(action);
+      if (current != this && current.parentZone != null && added.add(current.parentZone)) {
         queue.add(current.parentZone);
       }
     }

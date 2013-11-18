@@ -38,7 +38,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
     for (Collection<Attribute> zone : subZones) {
       AttributesRow row = new AttributesRow();
       for (Attribute attribute : zone) {
-        row.put(attribute.getName(), Optional.fromNullable(attribute.getValue()));
+        row.put(attribute.getName(), attribute.getValue());
         allAttributes.add(attribute.getName());
       }
       add(row);
@@ -50,5 +50,11 @@ public class AttributesTable extends ArrayList<AttributesRow> {
         }
       }
     }
+  }
+
+  @Override
+  public String toString() {
+    // TODO oh God!
+    return super.toString().replace("}, {", "\n\t\t").replace("[{", "value:\t").replace("}]", "");
   }
 }
