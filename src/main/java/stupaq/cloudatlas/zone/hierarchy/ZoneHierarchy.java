@@ -15,6 +15,7 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.naming.LocallyNameable;
 import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchy.Hierarchical;
+import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
 public final class ZoneHierarchy<Payload extends Hierarchical> {
@@ -58,6 +59,17 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
             return zone.isLeaf() ? Collections.singletonList(zone) : zone.findLeaves();
           }
         });
+  }
+
+  public void map(Mapper<Payload> action) {
+    this.payload = action.apply(this.payload);
+  }
+
+  public void mapAll(Mapper<Payload> action) {
+    this.map(action);
+    for (ZoneHierarchy<Payload> child : childZones.values()) {
+      child.mapAll(action);
+    }
   }
 
   public void zip(Aggregator<Payload> action) {
@@ -129,7 +141,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
   public static interface Hierarchical extends LocallyNameable {
   }
 
-  public abstract static class Aggregator<Payload extends Hierarchical>
+  public static abstract class Aggregator<Payload extends Hierarchical>
       extends Function2<Iterable<Payload>, Payload, Payload> {
   }
 
@@ -142,5 +154,19 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     }
 
     protected abstract void process(Iterable<Payload> payloads, Payload payload);
+  }
+
+  public static abstract class Mapper<Payload extends Hierarchical>
+      extends Function1<Payload, Payload> {
+  }
+
+  public static abstract class InPlaceMapper<Payload extends Hierarchical> extends Mapper<Payload> {
+    @Override
+    public Payload apply(Payload payload) {
+      process(payload);
+      return payload;
+    }
+
+    protected abstract void process(Payload payload);
   }
 }

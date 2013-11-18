@@ -41,15 +41,28 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     attributes.put(attribute.getName(), attribute);
   }
 
+  public void removeAttribute(AttributeName name) {
+    attributes.remove(name);
+  }
+
   public Optional<Attribute> getAttribute(AttributeName name) {
     return Optional.fromNullable(attributes.get(name));
   }
 
-  public Collection<Attribute> getAttributes() {
+  public Collection<Attribute> getPublicAttributes() {
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
         return !attribute.getName().isSpecial();
+      }
+    }).toList();
+  }
+
+  public Collection<Attribute> getPrivateAttributes() {
+    return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
+      @Override
+      public boolean apply(Attribute attribute) {
+        return attribute.getName().isSpecial();
       }
     }).toList();
   }

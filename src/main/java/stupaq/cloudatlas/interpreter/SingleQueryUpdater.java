@@ -1,5 +1,7 @@
 package stupaq.cloudatlas.interpreter;
 
+import com.google.common.collect.Iterables;
+
 import stupaq.cloudatlas.attribute.types.CAQuery;
 import stupaq.cloudatlas.interpreter.context.OutputContext;
 import stupaq.cloudatlas.interpreter.context.OutputContext.ZMIUpdaterOutputContext;
@@ -18,9 +20,9 @@ public class SingleQueryUpdater extends InPlaceAggregator<ZoneManagementInfo> {
 
   @Override
   public void process(Iterable<ZoneManagementInfo> children, final ZoneManagementInfo current) {
-    AttributesTable table = new AttributesTable(children);
-    // Run query for non-leaf zones
-    if (!table.isEmpty()) {
+    if (!Iterables.isEmpty(children)) {
+      AttributesTable table = new AttributesTable(children);
+      // Run query for non-leaf zones
       OutputContext outputContext = new ZMIUpdaterOutputContext(current);
       new EvalVisitor(table).eval(program, outputContext);
     }

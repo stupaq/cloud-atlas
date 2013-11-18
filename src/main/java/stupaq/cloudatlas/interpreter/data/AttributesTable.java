@@ -24,7 +24,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
         .transform(new Function<ZoneManagementInfo, Collection<Attribute>>() {
           @Override
           public Collection<Attribute> apply(ZoneManagementInfo managementInfo) {
-            return managementInfo.getAttributes();
+            return managementInfo.getPublicAttributes();
           }
         }));
   }
