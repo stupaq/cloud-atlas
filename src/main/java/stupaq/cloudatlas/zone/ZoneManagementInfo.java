@@ -105,8 +105,12 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
 
   @Override
   public String toString() {
-    // TODO oh God!
-    String tmp = attributes.values().toString();
-    return tmp.substring(1, tmp.length() - 1).replace(", ", "\n");
+    StringBuilder builder = new StringBuilder();
+    boolean skip = true;
+    for (Attribute attribute : attributes.values()) {
+      builder.append(skip ? "" : "\n").append(attribute.toString());
+      skip = false;
+    }
+    return builder.toString();
   }
 }
