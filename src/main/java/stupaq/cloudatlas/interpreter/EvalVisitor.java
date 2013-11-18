@@ -17,8 +17,8 @@ import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.interpreter.context.Context;
 import stupaq.cloudatlas.interpreter.context.InputContext;
 import stupaq.cloudatlas.interpreter.context.OutputContext;
-import stupaq.cloudatlas.interpreter.context.OutputContext.CollectorOutputContext;
 import stupaq.cloudatlas.interpreter.context.OutputContext.InnerSelectOutputContext;
+import stupaq.cloudatlas.interpreter.context.OutputContext.RedefinitionAwareOutputContext;
 import stupaq.cloudatlas.interpreter.data.AttributesRow;
 import stupaq.cloudatlas.interpreter.data.AttributesTable;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
@@ -38,8 +38,7 @@ public class EvalVisitor {
     this.originalTable = originalTable;
   }
 
-  public OutputContext eval(XProgram program) {
-    OutputContext outputContext = new CollectorOutputContext();
+  public OutputContext eval(XProgram program, OutputContext outputContext) {
     program.accept(new XProgramVisitor(), outputContext);
     return outputContext;
   }
@@ -69,7 +68,8 @@ public class EvalVisitor {
     @Override
     public Void visit(Program p, OutputContext outputContext) {
       for (XStatement x : p.listxstatement_) {
-        x.accept(new XStatementVisitor(), outputContext);
+        // We do not allow attribute redefinition within a single SELECT
+        x.accept(new XStatementVisitor(), new RedefinitionAwareOutputContext(outputContext));
       }
       return null;
     }

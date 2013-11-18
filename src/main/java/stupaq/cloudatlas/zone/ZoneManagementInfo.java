@@ -34,7 +34,7 @@ public final class ZoneManagementInfo implements Nameable, CompactSerializable {
     return localName;
   }
 
-  public void addAttribute(Attribute attribute) {
+  public void updateAttribute(Attribute attribute) {
     attributes.put(attribute.getName(), attribute);
   }
 

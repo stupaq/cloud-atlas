@@ -51,7 +51,7 @@ public final class ZoneHierarchyTestUtils {
 
   public static ZoneManagementInfo addAttrs(ZoneManagementInfo zmi, Attribute... attributes) {
     for (Attribute attribute : attributes) {
-      zmi.addAttribute(attribute);
+      zmi.updateAttribute(attribute);
     }
     return zmi;
   }

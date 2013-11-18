@@ -1,14 +1,18 @@
 package stupaq.cloudatlas.interpreter.data;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.zone.ZoneManagementInfo;
 
 public class AttributesTable extends ArrayList<AttributesRow> {
   public AttributesTable(AttributesTable table) {
@@ -19,12 +23,22 @@ public class AttributesTable extends ArrayList<AttributesRow> {
     add(row);
   }
 
-  public AttributesTable(Iterable<Set<Attribute>> subZones) {
+  public AttributesTable(Collection<ZoneManagementInfo> zones) {
+    this(FluentIterable.from(zones)
+        .transform(new Function<ZoneManagementInfo, Collection<Attribute>>() {
+          @Override
+          public Collection<Attribute> apply(ZoneManagementInfo managementInfo) {
+            return managementInfo.getAttributes();
+          }
+        }));
+  }
+
+  private AttributesTable(Iterable<Collection<Attribute>> subZones) {
     Set<AttributeName> allAttributes = new HashSet<>();
-    for (Set<Attribute> zone : subZones) {
+    for (Collection<Attribute> zone : subZones) {
       AttributesRow row = new AttributesRow();
       for (Attribute attribute : zone) {
-        row.put(attribute.getName(), Optional.of(attribute.getValue()));
+        row.put(attribute.getName(), Optional.fromNullable(attribute.getValue()));
         allAttributes.add(attribute.getName());
       }
       add(row);
