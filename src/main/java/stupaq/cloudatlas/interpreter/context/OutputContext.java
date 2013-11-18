@@ -2,7 +2,9 @@ package stupaq.cloudatlas.interpreter.context;
 
 import com.google.common.base.Preconditions;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
@@ -15,10 +17,17 @@ public interface OutputContext {
 
   public void put(String attribute, RSingle<? extends AttributeValue> value);
 
+  public void commit();
+
   public static class InnerSelectOutputContext implements OutputContext {
     @Override
     public void put(String attribute, RSingle<? extends AttributeValue> value) {
       throw new EvaluationException("Cannot set attribute in this context");
+    }
+
+    @Override
+    public void commit() {
+      // no-op
     }
   }
 
@@ -38,13 +47,20 @@ public interface OutputContext {
       }
       outputContext.put(name, value);
     }
+
+    @Override
+    public void commit() {
+      outputContext.commit();
+    }
   }
 
   public static class ZMIUpdaterOutputContext implements OutputContext {
     private final ZoneManagementInfo destination;
+    private final List<Attribute> putsLog;
 
     public ZMIUpdaterOutputContext(ZoneManagementInfo destination) {
       this.destination = destination;
+      this.putsLog = new ArrayList<>();
     }
 
     @Override
@@ -54,7 +70,15 @@ public interface OutputContext {
       // Attribute value cannot start with reserved prefix
       AttributeName name = AttributeName.valueOf(nameStr);
       Attribute attribute = new Attribute<>(name, value.or(null));
-      destination.updateAttribute(attribute);
+      putsLog.add(attribute);
+    }
+
+    @Override
+    public void commit() {
+      for (Attribute attribute : putsLog) {
+        destination.updateAttribute(attribute);
+      }
+      putsLog.clear();
     }
   }
 }

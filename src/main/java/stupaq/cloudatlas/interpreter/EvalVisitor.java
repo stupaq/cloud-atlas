@@ -26,10 +26,10 @@ import stupaq.cloudatlas.interpreter.data.AttributesRow;
 import stupaq.cloudatlas.interpreter.data.AttributesTable;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
 import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
-import stupaq.cloudatlas.interpreter.types.SemanticValue;
-import stupaq.cloudatlas.interpreter.types.SemanticValue.SemanticValueCastException;
 import stupaq.cloudatlas.interpreter.types.RList;
 import stupaq.cloudatlas.interpreter.types.RSingle;
+import stupaq.cloudatlas.interpreter.types.SemanticValue;
+import stupaq.cloudatlas.interpreter.types.SemanticValue.SemanticValueCastException;
 import stupaq.cloudatlas.parser.QueryLanguage.Absyn.*;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
@@ -214,6 +214,7 @@ public class EvalVisitor {
       }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public RSingle visit(SelectItemAs p, Context context) {
       RSingle value = visit(new SelectItem(p.xexpression_), context);

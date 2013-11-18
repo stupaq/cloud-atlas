@@ -25,6 +25,8 @@ public class SingleQueryUpdater extends InPlaceAggregator<ZoneManagementInfo> {
       // Run query for non-leaf zones
       OutputContext outputContext = new ZMIUpdaterOutputContext(current);
       new EvalVisitor(table).eval(program, outputContext);
+      // Commit after successful execution
+      outputContext.commit();
     }
   }
 }

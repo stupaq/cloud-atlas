@@ -144,6 +144,15 @@ public class ExampleShell {
   }
 
   @Test
+  public void testBad1() throws Exception {
+    executeQuery("&bad1", "SELECT 2 + 2 AS smth, 3 + 3 AS smth");
+    // Queries are atomic, nothing should happen really
+    assertNotSet("/", "smth");
+    assertNotSet("/uw", "smth");
+    assertNotSet("/pjwstk", "smth");
+  }
+
+  @Test
   public void testExample0() throws Exception {
     executeQuery("&two_plus_two", "SELECT 2 + 2 AS two_plus_two");
     assertSet("/", "two_plus_two", Int(4));
