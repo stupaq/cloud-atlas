@@ -19,10 +19,6 @@ public class AttributesTable extends ArrayList<AttributesRow> {
     super(table);
   }
 
-  public AttributesTable(AttributesRow row) {
-    add(row);
-  }
-
   public AttributesTable(Iterable<ZoneManagementInfo> zones) {
     fill(FluentIterable.from(zones)
         .transform(new Function<ZoneManagementInfo, Collection<Attribute>>() {
@@ -33,6 +29,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
         }));
   }
 
+  @SuppressWarnings("unchecked")
   private void fill(Iterable<Collection<Attribute>> subZones) {
     Set<AttributeName> allAttributes = new HashSet<>();
     for (Collection<Attribute> zone : subZones) {

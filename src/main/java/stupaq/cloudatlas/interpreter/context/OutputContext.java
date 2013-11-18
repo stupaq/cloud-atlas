@@ -2,23 +2,22 @@ package stupaq.cloudatlas.interpreter.context;
 
 import com.google.common.base.Preconditions;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.AttributeType;
-
 import java.util.HashSet;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
 import stupaq.cloudatlas.interpreter.types.RSingle;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
 
 public interface OutputContext {
 
-  public void put(String attribute, RSingle<? extends AttributeType> value);
+  public void put(String attribute, RSingle<? extends AttributeValue> value);
 
   public static class InnerSelectOutputContext implements OutputContext {
     @Override
-    public void put(String attribute, RSingle<? extends AttributeType> value) {
+    public void put(String attribute, RSingle<? extends AttributeValue> value) {
       throw new EvaluationException("Cannot set attribute in this context");
     }
   }
@@ -33,7 +32,7 @@ public interface OutputContext {
     }
 
     @Override
-    public void put(String name, RSingle<? extends AttributeType> value) {
+    public void put(String name, RSingle<? extends AttributeValue> value) {
       if (!alreadyDefined.add(name)) {
         throw new EvaluationException("Attribute: " + name + " already defined");
       }
@@ -49,7 +48,7 @@ public interface OutputContext {
     }
 
     @Override
-    public void put(String attribute, RSingle<? extends AttributeType> value) {
+    public void put(String attribute, RSingle<? extends AttributeValue> value) {
       Preconditions.checkNotNull(attribute);
       Preconditions.checkNotNull(value);
       // Attribute value cannot start with reserved prefix
