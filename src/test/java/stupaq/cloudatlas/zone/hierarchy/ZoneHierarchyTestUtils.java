@@ -90,9 +90,10 @@ public final class ZoneHierarchyTestUtils {
       CASet<CAContact> contacts, long cardinality, Attribute... attributes) {
     GlobalName globalName = GlobalName.parse(fullName);
     ZoneManagementInfo zmi = new ZoneManagementInfo(globalName.leaf());
-    addAttrs(zmi, Attr("level", Int(globalName.leafLevel())), Attr("name", Str(fullName)),
-        Attr("owner", Str(owner)), Attr("timestamp", Str(timestamp).to().Time()),
-        Attr("contacts", contacts), Attr("cardinality", Int(cardinality)));
+    addAttrs(zmi, Attr("level", Int(globalName.leafLevel())),
+        Attr("name", Str(zmi.localName().toString())), Attr("owner", Str(owner)),
+        Attr("timestamp", Str(timestamp).to().Time()), Attr("contacts", contacts),
+        Attr("cardinality", Int(cardinality)));
     addAttrs(zmi, attributes);
     return zmi;
   }

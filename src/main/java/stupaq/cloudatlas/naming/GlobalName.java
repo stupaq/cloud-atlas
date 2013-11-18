@@ -10,17 +10,18 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.guava.base.PrimitiveWrapper;
 
 public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
-    implements CompactSerializable {
+    implements CompactSerializable, Iterable<LocalName> {
   public static final String SEPARATOR = "/";
 
   /** Creates global name referring to the root. */
   private GlobalName() {
-    super(new ArrayList<LocalName>());
+    this(new ArrayList<>(Arrays.asList(LocalName.getRoot())));
   }
 
   /** This is for {@link Builder} only. */
@@ -51,22 +52,9 @@ public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
             }
           }).copyInto(globalName.getValue());
       assert !globalName.getValue().isEmpty();
-      assert globalName.atLevel(0).equals(LocalName.getRoot()) :
-          "String: " + string + " does not start with /";
+      assert globalName.getValue().get(0).equals(LocalName.getRoot());
       return globalName;
     }
-  }
-
-  public LocalName atLevel(int index) {
-    return index == 0 ? LocalName.getRoot() : getValue().get(index - 1);
-  }
-
-  public int leafLevel() {
-    return getValue().size();
-  }
-
-  public LocalName leaf() {
-    return atLevel(leafLevel());
   }
 
   @Override
@@ -108,6 +96,19 @@ public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
       index++;
     }
     return builder.toString();
+  }
+
+  @Override
+  public Iterator<LocalName> iterator() {
+    return getValue().iterator();
+  }
+
+  public LocalName leaf() {
+    return getValue().get(leafLevel());
+  }
+
+  public int leafLevel() {
+    return getValue().size() - 1;
   }
 
   public static class Builder {

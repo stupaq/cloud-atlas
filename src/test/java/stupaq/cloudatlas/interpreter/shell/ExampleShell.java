@@ -6,6 +6,7 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,14 +16,20 @@ import java.util.Map.Entry;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CAQuery;
 import stupaq.cloudatlas.interpreter.InstalledQueriesUpdater;
+import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.parser.QueryParser;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
 import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchy;
 import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchy.InPlaceAggregator;
 import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchy.InPlaceMapper;
 import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchyTestUtils;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
 
 public class ExampleShell {
   private static final Log LOG = LogFactory.getLog(ExampleShell.class);
@@ -42,8 +49,6 @@ public class ExampleShell {
       if (map.containsKey(name)) {
         throw new Exception("Duplicated query name");
       }
-      // Try to parse
-      new QueryParser(query.getQueryString()).parseProgram();
       map.put(name, query);
     }
     return map.entrySet();
@@ -59,7 +64,7 @@ public class ExampleShell {
         for (Entry<AttributeName, CAQuery> entry : queries) {
           shell.installQuery(entry.getKey(), entry.getValue());
         }
-        shell.recomputeAttributes();
+        shell.recomputeQueries();
         System.out.println(shell.root);
       } finally {
         for (Entry<AttributeName, CAQuery> entry : queries) {
@@ -71,8 +76,14 @@ public class ExampleShell {
     }
   }
 
-  private void installQuery(final AttributeName name, final CAQuery query) {
+  private void executeQuery(String name, String query) throws Exception {
+    installQuery(AttributeName.valueOfReserved(name), new CAQuery(query));
+    recomputeQueries();
+  }
+
+  private void installQuery(final AttributeName name, final CAQuery query) throws Exception {
     Preconditions.checkArgument(name.isSpecial());
+    new QueryParser(query.getQueryString()).parseProgram();
     root.zipFromLeaves(new InPlaceAggregator<ZoneManagementInfo>() {
       @Override
       protected void process(Iterable<ZoneManagementInfo> children,
@@ -94,12 +105,98 @@ public class ExampleShell {
     });
   }
 
-  private void recomputeAttributes() {
+  private void recomputeQueries() {
     root.zipFromLeaves(new InstalledQueriesUpdater());
+  }
+
+  private void assertSet(String path, String name, AttributeValue value) {
+    GlobalName globalName = GlobalName.parse(path);
+    assertEquals(value,
+        root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name)).get()
+            .getValue().get());
+  }
+
+  private void assertNotSet(String path, String name) {
+    GlobalName globalName = GlobalName.parse(path);
+    assertFalse(root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name))
+        .isPresent());
+  }
+
+  private void dumpHierarchy() {
+    LOG.info("Final hierarchy\n" + root);
   }
 
   @Before
   public void setUp() {
     root = ZoneHierarchyTestUtils.officialExampleHierarchy();
   }
+
+  @Test
+  public void testExample0() throws Exception {
+    executeQuery("&two_plus_two", "SELECT 2 + 2 AS two_plus_two");
+    assertSet("/", "two_plus_two", Int(4));
+  }
+
+  @Test
+  public void testExample1() throws Exception {
+    executeQuery("&ex1", "SELECT count(members) AS members_count");
+    assertSet("/uw", "members_count", Int(3));
+  }
+
+  @Test
+  public void testExample2() throws Exception {
+    executeQuery("&ex2",
+        "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY num_cores ASC NULLS FIRST, "
+        + "cpu_usage DESC NULLS LAST");
+    assertSet("/uw", "new_contacts", List(Cont("UW1B"), Cont("UW1A")));
+  }
+
+  @Test
+  public void testExample2v1() throws Exception {
+    executeQuery("&ex2", "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY cpu_usage "
+                         + "DESC NULLS LAST, num_cores ASC NULLS FIRST");
+    assertSet("/uw", "new_contacts", List(Cont("UW3A"), Cont("UW3B")));
+  }
+
+  @Test
+  public void testExample3() throws Exception {
+    executeQuery("&ex3",
+        "SELECT sum(num_cores * 2) AS ncores WHERE cpu_usage < ( SELECT avg(cpu_usage))");
+    assertSet("/pjwstk", "ncores", Int(14));
+  }
+
+  @Test
+  public void testExample4() throws Exception {
+    executeQuery("&ex4", "SELECT count(num_cores - size(some_names)) AS sth");
+    assertSet("/uw", "sth", Int(2));
+  }
+
+  @Test
+  public void testExample5() throws Exception {
+    executeQuery("&ex5",
+        "SELECT min(sum(distinct(2*level)) + 38 * size(contacts)) AS sth WHERE num_cores < 8");
+    assertSet("/uw", "sth", Int(42));
+  }
+
+  @Test
+  public void testExample6() throws Exception {
+    executeQuery("&ex6", "SELECT random(10, cpu_usage * num_cores / 10) AS sth");
+    assertSet("/pjwstk", "sth", List(Doub(0.07), Doub(0.52)));
+  }
+
+  @Test
+  public void testExample7v2() throws Exception {
+    executeQuery("&ex7", "SELECT first(1, name) AS concat_name WHERE num_cores >= "
+                         + "(SELECT min(num_cores) ORDER BY timestamp) ORDER BY creation ASC NULLS "
+                         + "LAST");
+    assertSet("/pjwstk", "concat_name", List(Str("whatever01")));
+  }
+
+  /*
+  @Test
+  public void testExample() throws Exception {
+    executeQuery("&ex", "");
+    assertSet("/", "", );
+  }
+  */
 }

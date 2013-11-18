@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.zone.hierarchy;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 
@@ -8,6 +9,7 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
 
@@ -49,6 +51,23 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
 
   public boolean isLeaf() {
     return childZones.isEmpty();
+  }
+
+  public Optional<ZoneHierarchy<Payload>> find(Iterator<LocalName> relative) {
+    if (!relative.hasNext()) {
+      return Optional.of(this);
+    } else {
+      ZoneHierarchy<Payload> child = childZones.get(relative.next());
+      return child == null ? Optional.<ZoneHierarchy<Payload>>absent() : child.find(relative);
+    }
+  }
+
+  public Optional<ZoneHierarchy<Payload>> find(GlobalName globalName) {
+    Preconditions.checkState(parentZone == null && localName().equals(LocalName.getRoot()),
+        "Resolving global name from non-root");
+    Iterator<LocalName> suffix = globalName.iterator();
+    assert suffix.next().equals(LocalName.getRoot());
+    return find(suffix);
   }
 
   public FluentIterable<ZoneHierarchy<Payload>> findLeaves() {
@@ -111,6 +130,10 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
       }
     });
     return builder.build();
+  }
+
+  private LocalName localName() {
+    return payload.localName();
   }
 
   @Override

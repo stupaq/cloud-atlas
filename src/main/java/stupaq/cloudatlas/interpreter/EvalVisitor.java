@@ -117,7 +117,8 @@ public class EvalVisitor {
             rows.remove();
           }
         } catch (EvaluationException e) {
-          throw new EvaluationException("WHERE expression result is not a boolean");
+          throw new EvaluationException(
+              "WHERE expression result is not a boolean: " + e.getMessage());
         }
       }
       return null;

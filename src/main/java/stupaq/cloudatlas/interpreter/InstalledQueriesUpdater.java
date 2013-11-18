@@ -24,7 +24,10 @@ public class InstalledQueriesUpdater extends InPlaceAggregator<ZoneManagementInf
         try {
           new SingleQueryUpdater(query).process(children, current);
         } catch (Exception e) {
-          LOG.error("Exception while processing query: " + query, e);
+          LOG.error(
+              "In local context: " + current.localName() + ", while processing query: " + query
+              + ", encountered exception: " + e.getMessage() + ", exception type: " + e.getClass()
+                  .getSimpleName());
         }
       }
     }
