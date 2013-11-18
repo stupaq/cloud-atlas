@@ -67,7 +67,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     while (!queue.isEmpty()) {
       ZoneHierarchy<Payload> current = queue.remove();
       current.payload = action.apply(current.childZonesPayloads(), current.payload);
-      if (added.add(current.parentZone)) {
+      if (current.parentZone != null && added.add(current.parentZone)) {
         queue.add(current.parentZone);
       }
     }
@@ -88,9 +88,9 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
 
   public GlobalName globalName() {
     final GlobalName.Builder builder = GlobalName.builder();
-    walkUp(new ReadOnlyAggregator<Payload>() {
+    walkUp(new InPlaceAggregator<Payload>() {
       @Override
-      protected void read(Iterable<Payload> payloads, Payload payload) {
+      protected void process(Iterable<Payload> payloads, Payload payload) {
         builder.add(payload.localName());
       }
     });
@@ -110,14 +110,9 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
   private void appendTo(final StringBuilder builder) {
     builder.append(globalName()).append('\n');
     builder.append(payload.toString()).append("\n\n");
-    FluentIterable.from(childZones.values())
-        .transform(new Function<ZoneHierarchy<Payload>, Void>() {
-          @Override
-          public Void apply(ZoneHierarchy<Payload> children) {
-            children.appendTo(builder);
-            return null;
-          }
-        });
+    for (ZoneHierarchy<Payload> child : childZones.values()) {
+      child.appendTo(builder);
+    }
   }
 
   @Override
@@ -134,14 +129,14 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
       extends Function2<Iterable<Payload>, Payload, Payload> {
   }
 
-  public static abstract class ReadOnlyAggregator<Payload extends Hierarchical>
+  public static abstract class InPlaceAggregator<Payload extends Hierarchical>
       extends Aggregator<Payload> {
     @Override
     public Payload apply(Iterable<Payload> payloads, Payload payload) {
-      read(payloads, payload);
+      process(payloads, payload);
       return payload;
     }
 
-    protected abstract void read(Iterable<Payload> payloads, Payload payload);
+    protected abstract void process(Iterable<Payload> payloads, Payload payload);
   }
 }

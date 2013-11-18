@@ -48,17 +48,26 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Attribute attribute = (Attribute) o;
+    return name.equals(attribute.name) && value.equals(attribute.value);
+  }
+
+  @Override
   public int hashCode() {
     int result = name.hashCode();
-    result = 31 * result + (value != null ? value.hashCode() : 0);
+    result = 31 * result + value.hashCode();
     return result;
   }
 
   @Override
-  public boolean equals(Object o) {
-    Attribute attribute = (Attribute) o;
-    return this == o || !(o == null || getClass() != o.getClass()) && name.equals(attribute.name)
-                        && !(value != null ? !value.equals(attribute.value)
-                                           : attribute.value != null);
+  public String toString() {
+    return name + " = " + value;
   }
 }

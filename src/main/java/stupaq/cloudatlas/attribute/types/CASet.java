@@ -46,6 +46,11 @@ public class CASet<Type extends AttributeValue> extends PrimitiveWrapper<HashSet
   }
 
   @Override
+  public String toString() {
+    return to().String().toString();
+  }
+
+  @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     CAList<Type> list = new CAList<>();
     list.readFields(in);

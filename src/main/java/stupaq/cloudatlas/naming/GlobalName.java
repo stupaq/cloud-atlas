@@ -101,10 +101,11 @@ public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    boolean skipSeparator = true;
+    int index = 0;
     for (LocalName localName : getValue()) {
-      builder.append(skipSeparator ? "" : SEPARATOR).append(localName.toString());
-      skipSeparator = false;
+      builder.append(localName.toString())
+          .append(index == 0 || index + 1 == getValue().size() ? "" : SEPARATOR);
+      index++;
     }
     return builder.toString();
   }

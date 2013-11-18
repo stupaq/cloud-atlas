@@ -98,6 +98,10 @@ public final class ZoneHierarchyTestUtils {
   }
 
   public static <Type extends AttributeValue> Attribute<Type> Attr(String name, Type value) {
-    return new Attribute<>(AttributeName.valueOf(name), value);
+    return new Attribute<>(Name(name), value);
+  }
+
+  public static AttributeName Name(String name) {
+    return AttributeName.valueOf(name);
   }
 }

@@ -53,6 +53,11 @@ public class CAList<Type extends AttributeValue> extends PrimitiveWrapper<ArrayL
   }
 
   @Override
+  public String toString() {
+    return to().String().toString();
+  }
+
+  @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     getValue().clear();
     int elements = in.readInt();

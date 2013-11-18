@@ -39,7 +39,7 @@ public class EvalVisitor {
   private final AttributesTable originalTable;
 
   public EvalVisitor(AttributesTable originalTable) {
-    LOG.info(originalTable);
+    LOG.info("Original table:\n" + originalTable);
     this.originalTable = originalTable;
   }
 

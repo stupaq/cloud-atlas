@@ -1,5 +1,7 @@
 package stupaq.cloudatlas.zone;
 
+import com.google.common.base.Optional;
+
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -36,6 +38,10 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
 
   public void updateAttribute(Attribute attribute) {
     attributes.put(attribute.getName(), attribute);
+  }
+
+  public Optional<Attribute> getAttribute(AttributeName name) {
+    return Optional.fromNullable(attributes.get(name));
   }
 
   public Collection<Attribute> getAttributes() {
@@ -76,5 +82,12 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     int result = localName.hashCode();
     result = 31 * result + attributes.hashCode();
     return result;
+  }
+
+  @Override
+  public String toString() {
+    // TODO oh God!
+    String tmp = attributes.values().toString();
+    return tmp.substring(1, tmp.length() - 1).replace(", ", "\n");
   }
 }
