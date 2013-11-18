@@ -29,6 +29,8 @@ public final class AttributeName extends ASCIIString implements CompactSerializa
   }
 
   public static AttributeName valueOfReserved(String str) {
+    Preconditions.checkArgument(str.startsWith(RESERVED_PREFIX),
+        "AttributeName must start with reserved prefix: " + RESERVED_PREFIX);
     return new AttributeName(str);
   }
 

@@ -11,11 +11,11 @@ import java.util.Map;
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.naming.LocalName;
-import stupaq.cloudatlas.naming.Nameable;
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchy.Hierarchical;
 
-public final class ZoneManagementInfo implements Nameable, CompactSerializable {
+public final class ZoneManagementInfo implements CompactSerializable, Hierarchical {
   private final LocalName localName;
   private final Map<AttributeName, Attribute> attributes;
 
