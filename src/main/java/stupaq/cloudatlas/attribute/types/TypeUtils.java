@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import java.util.Collection;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 
 // TODO dissolve this
 public class TypeUtils {
@@ -21,7 +21,7 @@ public class TypeUtils {
 
   static void assertSameType(AttributeValue a, AttributeValue b) {
     if (a.getType() != b.getType()) {
-      throw new OperationNotApplicable(
+      throw new UndefinedOperationException(
           "Cannot compare: " + a.getType().getSimpleName() + " with: " + b.getType()
               .getSimpleName());
     }

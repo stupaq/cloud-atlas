@@ -5,7 +5,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -48,7 +48,7 @@ public class CAQuery extends PrimitiveWrapper<String> implements AttributeValue 
 
   @Override
   public int compareTo(AttributeValue o) {
-    throw new OperationNotApplicable("Cannot compare: " + getType().getSimpleName());
+    throw new UndefinedOperationException("Cannot compare: " + getType().getSimpleName());
   }
 
   @Override

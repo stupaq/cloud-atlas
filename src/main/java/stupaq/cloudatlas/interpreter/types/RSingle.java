@@ -7,7 +7,6 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValueDefault;
-import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 

@@ -25,9 +25,9 @@ import stupaq.cloudatlas.interpreter.context.OutputContext.RedefinitionAwareOutp
 import stupaq.cloudatlas.interpreter.data.AttributesRow;
 import stupaq.cloudatlas.interpreter.data.AttributesTable;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
-import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
-import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
-import stupaq.cloudatlas.interpreter.semantics.SemanticValue.SemanticValueCastException;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
+import stupaq.cloudatlas.interpreter.types.SemanticValue;
+import stupaq.cloudatlas.interpreter.types.SemanticValue.SemanticValueCastException;
 import stupaq.cloudatlas.interpreter.types.RList;
 import stupaq.cloudatlas.interpreter.types.RSingle;
 import stupaq.cloudatlas.parser.QueryLanguage.Absyn.*;
@@ -460,7 +460,7 @@ public class EvalVisitor {
           // since our arithmetic does not implement dual operators we have to
           // manually check types here.
           if (value instanceof CATime && value2 instanceof CATime) {
-            throw new OperationNotApplicable("Cannot add CATime to CATime");
+            throw new UndefinedOperationException("Cannot add CATime to CATime");
           }
           return value.op().add(value2);
         }

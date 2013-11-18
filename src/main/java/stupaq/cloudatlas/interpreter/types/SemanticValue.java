@@ -1,10 +1,8 @@
-package stupaq.cloudatlas.interpreter.semantics;
+package stupaq.cloudatlas.interpreter.types;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
-import stupaq.cloudatlas.interpreter.types.RCollection;
-import stupaq.cloudatlas.interpreter.types.RList;
-import stupaq.cloudatlas.interpreter.types.RSingle;
+import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 

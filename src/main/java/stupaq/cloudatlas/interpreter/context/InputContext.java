@@ -10,7 +10,7 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.data.AttributesRow;
 import stupaq.cloudatlas.interpreter.data.AttributesTable;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
-import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
+import stupaq.cloudatlas.interpreter.types.SemanticValue;
 import stupaq.cloudatlas.interpreter.types.RCollection;
 import stupaq.cloudatlas.interpreter.types.RSingle;
 

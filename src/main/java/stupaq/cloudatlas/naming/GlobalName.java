@@ -1,30 +1,24 @@
 package stupaq.cloudatlas.naming;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.FluentIterable;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.guava.base.PrimitiveWrapper;
 
+import static stupaq.cloudatlas.naming.LocalName.getNotRoot;
+import static stupaq.cloudatlas.naming.LocalName.getRoot;
+
 public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
     implements CompactSerializable, Iterable<LocalName> {
   public static final String SEPARATOR = "/";
 
-  /** Creates global name referring to the root. */
-  private GlobalName() {
-    this(new ArrayList<>(Arrays.asList(LocalName.getRoot())));
-  }
-
-  /** This is for {@link Builder} only. */
   private GlobalName(ArrayList<LocalName> localNames) {
     super(localNames);
     Preconditions.checkArgument(!localNames.isEmpty(), "Global name cannot be empty");
@@ -39,21 +33,14 @@ public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
     Preconditions.checkArgument(!string.isEmpty(), "Global name cannot be empty");
     Preconditions.checkArgument(string.startsWith(SEPARATOR), "Global name must start with /");
     if (string.length() == 1) {
-      return new GlobalName();
+      return builder().parent(getRoot()).build();
     } else {
       Preconditions.checkArgument(!string.endsWith(SEPARATOR), "Global name cannot end with /");
-      string = string.substring(1);
-      GlobalName globalName = new GlobalName();
-      FluentIterable.from(Arrays.asList(string.split(SEPARATOR)))
-          .transform(new Function<String, LocalName>() {
-            @Override
-            public LocalName apply(String s) {
-              return LocalName.getNotRoot(s);
-            }
-          }).copyInto(globalName.getValue());
-      assert !globalName.getValue().isEmpty();
-      assert globalName.getValue().get(0).equals(LocalName.getRoot());
-      return globalName;
+      Builder builder = new Builder().parent(getRoot());
+      for (String chunk : string.substring(1).split(SEPARATOR)) {
+        builder.child(getNotRoot(chunk));
+      }
+      return builder.build();
     }
   }
 
@@ -112,26 +99,37 @@ public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
   }
 
   public static class Builder {
-    private ArrayList<LocalName> chunks = new ArrayList<>();
+    private ArrayDeque<LocalName> chunks = new ArrayDeque<>();
     private boolean finalized = false;
 
     private Builder() {
     }
 
-    public void add(LocalName chunk) {
+    private void checkBuilder() {
       Preconditions.checkState(chunks != null, "Builder already used");
-      boolean isRoot = chunk.equals(LocalName.getRoot());
-      Preconditions.checkState(!finalized || !isRoot, "Global name already finalized");
+    }
+
+    public Builder parent(LocalName chunk) {
+      checkBuilder();
+      boolean isRoot = chunk.isRoot();
+      Preconditions.checkState(!finalized || !isRoot, "Root cannot occur twice");
       finalized |= isRoot;
-      chunks.add(chunk);
+      chunks.addFirst(chunk);
+      return this;
+    }
+
+    public Builder child(LocalName chunk) {
+      checkBuilder();
+      Preconditions.checkState(!chunk.isRoot(), "Root cannot be added as child");
+      chunks.addLast(chunk);
+      return this;
     }
 
     public GlobalName build() {
-      Preconditions.checkState(chunks != null, "Builder already used");
-      Preconditions.checkState(finalized, "Global name must be finalized");
-      Collections.reverse(chunks);
+      checkBuilder();
+      Preconditions.checkState(finalized, "Global name must start at root");
       try {
-        return new GlobalName(chunks);
+        return new GlobalName(new ArrayList<>(chunks));
       } finally {
         chunks = null;
       }

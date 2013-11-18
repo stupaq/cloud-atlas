@@ -8,7 +8,7 @@ import java.io.ObjectOutput;
 import java.util.Collection;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.serialization.TypeID;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 import stupaq.guava.base.PrimitiveWrapper;
@@ -63,6 +63,6 @@ abstract class AbstractComposedValue<Type extends AttributeValue, Composed exten
 
   @Override
   public final int compareTo(AttributeValue o) {
-    throw new OperationNotApplicable("Cannot compare: " + getType().getSimpleName());
+    throw new UndefinedOperationException("Cannot compare: " + getType().getSimpleName());
   }
 }

@@ -126,7 +126,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     walkUp(new InPlaceAggregator<Payload>() {
       @Override
       protected void process(Iterable<Payload> payloads, Payload payload) {
-        builder.add(payload.localName());
+        builder.parent(payload.localName());
       }
     });
     return builder.build();

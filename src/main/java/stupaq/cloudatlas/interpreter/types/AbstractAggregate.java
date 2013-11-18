@@ -18,10 +18,9 @@ import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.interpreter.errors.ConversionException;
-import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValueDefault;
-import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 import stupaq.guava.base.Optionals;
@@ -275,7 +274,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
               try {
                 return elem.to().List().asImmutableList();
               } catch (ConversionException e) {
-                throw new OperationNotApplicable("Cannot unfold enclosing type: " + elem.getType());
+                throw new UndefinedOperationException("Cannot unfold enclosing type: " + elem.getType());
               }
             }
           }).transform(Optionals.<AttributeValue>optionalOf()).copyInto(new RList<>());

@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.semantics.SemanticValue;
 import stupaq.guava.base.Function2;
 
 public class RCollection<Type extends AttributeValue> extends AbstractAggregate<Type> {

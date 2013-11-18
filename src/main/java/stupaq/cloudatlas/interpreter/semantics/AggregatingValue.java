@@ -5,8 +5,9 @@ import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
-import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.interpreter.types.RSingle;
+import stupaq.cloudatlas.interpreter.types.SemanticValue;
 
 public interface AggregatingValue<Type extends AttributeValue> {
 
@@ -36,8 +37,8 @@ public interface AggregatingValue<Type extends AttributeValue> {
 
   public static class AggregatingValueDefault<Type extends AttributeValue>
       implements AggregatingValue<Type> {
-    private RuntimeException noAggregate(String operation) throws OperationNotApplicable {
-      throw new OperationNotApplicable("Aggregation with " + operation + " is not supported");
+    private RuntimeException noAggregate(String operation) throws UndefinedOperationException {
+      throw new UndefinedOperationException("Aggregation with " + operation + " is not supported");
     }
 
     @Override

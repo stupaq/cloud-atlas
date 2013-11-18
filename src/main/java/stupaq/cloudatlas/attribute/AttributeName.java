@@ -41,6 +41,8 @@ public final class AttributeName extends ASCIIString implements CompactSerializa
   private void verifyInvariants() throws NullPointerException, IllegalStateException {
     Preconditions.checkNotNull(toString(), "AttributeName cannot be null");
     Preconditions.checkState(!toString().isEmpty(), "AttributeName cannot be empty");
+    Preconditions.checkState(toString().trim().equals(toString()),
+        "AttributeName cannot have leading or trailing whitespaces");
   }
 
   @Override

@@ -9,7 +9,7 @@ import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
-import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 
 public interface RelationalValue {
 
@@ -53,7 +53,7 @@ public interface RelationalValue {
 
   public static class RelationalValueDefault implements RelationalValue {
     private CABoolean notComparable(AttributeValue value) {
-      throw new OperationNotApplicable("Cannot compare with: " + value);
+      throw new UndefinedOperationException("Cannot compare with: " + value);
     }
 
     @Override

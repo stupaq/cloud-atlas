@@ -7,7 +7,7 @@ import stupaq.cloudatlas.attribute.types.CADuration;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
-import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 
 public interface OperableValue {
 
@@ -77,8 +77,8 @@ public interface OperableValue {
   public static class OperableValueDefault implements OperableValue {
 
     private <T extends AttributeValue> T noOperation(String operation)
-        throws OperationNotApplicable {
-      throw new OperationNotApplicable("Operation " + operation + " is not applicable here");
+        throws UndefinedOperationException {
+      throw new UndefinedOperationException("Operation " + operation + " is not applicable here");
     }
 
     @Override

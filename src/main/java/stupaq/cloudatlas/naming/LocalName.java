@@ -30,6 +30,10 @@ public class LocalName extends ASCIIString {
     return new LocalName(string);
   }
 
+  public boolean isRoot() {
+    return toString().equals(ROOT_STRING);
+  }
+
   @Override
   public String toString() {
     String result = super.toString();

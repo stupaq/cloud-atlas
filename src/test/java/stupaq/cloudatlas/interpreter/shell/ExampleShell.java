@@ -29,6 +29,7 @@ import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchyTestUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
 
 public class ExampleShell {
@@ -76,14 +77,19 @@ public class ExampleShell {
     }
   }
 
-  private void executeQuery(String name, String query) throws Exception {
+  private void executeQuery(String name, String query) {
     installQuery(AttributeName.valueOfReserved(name), new CAQuery(query));
     recomputeQueries();
   }
 
-  private void installQuery(final AttributeName name, final CAQuery query) throws Exception {
+  private void installQuery(final AttributeName name, final CAQuery query) {
     Preconditions.checkArgument(name.isSpecial());
-    new QueryParser(query.getQueryString()).parseProgram();
+    try {
+      new QueryParser(query.getQueryString()).parseProgram();
+    } catch (Exception e) {
+      throw new IllegalArgumentException(
+          "Provided query was rejected by parser. Will not be installed.");
+    }
     root.zipFromLeaves(new InPlaceAggregator<ZoneManagementInfo>() {
       @Override
       protected void process(Iterable<ZoneManagementInfo> children,
@@ -131,6 +137,12 @@ public class ExampleShell {
     root = ZoneHierarchyTestUtils.officialExampleHierarchy();
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testBad0() throws Exception {
+    executeQuery("&bad0", "SELECT 2 + 2 AS SELECT");
+    fail();
+  }
+
   @Test
   public void testExample0() throws Exception {
     executeQuery("&two_plus_two", "SELECT 2 + 2 AS two_plus_two");
@@ -141,6 +153,7 @@ public class ExampleShell {
   public void testExample1() throws Exception {
     executeQuery("&ex1", "SELECT count(members) AS members_count");
     assertSet("/uw", "members_count", Int(3));
+    assertNotSet("/", "members_count");
   }
 
   @Test
@@ -149,6 +162,7 @@ public class ExampleShell {
         "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY num_cores ASC NULLS FIRST, "
         + "cpu_usage DESC NULLS LAST");
     assertSet("/uw", "new_contacts", List(Cont("UW1B"), Cont("UW1A")));
+    assertNotSet("/", "new_contacts");
   }
 
   @Test
@@ -163,12 +177,14 @@ public class ExampleShell {
     executeQuery("&ex3",
         "SELECT sum(num_cores * 2) AS ncores WHERE cpu_usage < ( SELECT avg(cpu_usage))");
     assertSet("/pjwstk", "ncores", Int(14));
+    assertNotSet("/", "ncores");
   }
 
   @Test
   public void testExample4() throws Exception {
     executeQuery("&ex4", "SELECT count(num_cores - size(some_names)) AS sth");
     assertSet("/uw", "sth", Int(2));
+    assertNotSet("/pjwstk", "sth");
   }
 
   @Test
@@ -176,12 +192,14 @@ public class ExampleShell {
     executeQuery("&ex5",
         "SELECT min(sum(distinct(2*level)) + 38 * size(contacts)) AS sth WHERE num_cores < 8");
     assertSet("/uw", "sth", Int(42));
+    assertNotSet("/", "sth");
   }
 
   @Test
   public void testExample6() throws Exception {
     executeQuery("&ex6", "SELECT random(10, cpu_usage * num_cores / 10) AS sth");
     assertSet("/pjwstk", "sth", List(Doub(0.07), Doub(0.52)));
+    assertNotSet("/", "sth");
   }
 
   @Test
