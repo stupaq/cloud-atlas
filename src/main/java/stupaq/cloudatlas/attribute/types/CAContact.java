@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import stupaq.guava.base.PrimitiveWrapper;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
@@ -14,12 +13,15 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefaul
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.guava.base.PrimitiveWrapper;
 
 // TODO: contact has more structure than string, we don't know it right now though
 public class CAContact extends PrimitiveWrapper<String> implements AttributeValue {
+  private static final String NOT_YET_DESERIALIZED = "";
+
   @SerializationOnly
   public CAContact() {
-    super(null, null);
+    super(NOT_YET_DESERIALIZED);
   }
 
   public CAContact(String value) {

@@ -7,6 +7,7 @@ import java.util.Collection;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.OperationNotApplicable;
 
+// TODO dissolve this
 public class TypeUtils {
   static void assertUniformCollection(Collection<? extends AttributeValue> collection) {
     if (!collection.isEmpty()) {

@@ -10,11 +10,6 @@ public abstract class PrimitiveWrapper<Primitive> {
     this.value = value;
   }
 
-  @SuppressWarnings("unused")
-  protected PrimitiveWrapper(Primitive value, Void safeNullValue) {
-    this.value = value;
-  }
-
   protected Primitive getValue() {
     return value;
   }

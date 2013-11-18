@@ -23,11 +23,12 @@ import stupaq.cloudatlas.serialization.SerializationOnly;
 import stupaq.guava.base.PrimitiveWrapper;
 
 public class CAString extends PrimitiveWrapper<String> implements AttributeValue {
+  private static final String NOT_YET_DESERIALIZED = "";
   private static final AttributeValue STRING_NULL = new CAString("NULL");
 
   @SerializationOnly
   public CAString() {
-    super(null, null);
+    super(NOT_YET_DESERIALIZED);
   }
 
   public CAString(String value) {

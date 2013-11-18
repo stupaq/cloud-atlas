@@ -10,7 +10,8 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 public class AttributesRow extends HashMap<AttributeName, Optional<AttributeValue>> {
   @Override
   public String toString() {
+    // TODO oh God!
     return super.toString().replace("=", " = ").replace("Optional.of(", "")
-        .replace("Optional.absent(", "").replace("),", ",");
+        .replace("Optional.absent(", "").replace(")", "");
   }
 }

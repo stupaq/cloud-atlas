@@ -16,9 +16,11 @@ import stupaq.cloudatlas.serialization.SerializationOnly;
 import stupaq.guava.base.PrimitiveWrapper;
 
 public class CAQuery extends PrimitiveWrapper<String> implements AttributeValue {
+  private static final String NOT_YET_DESERIALIZED = "";
+
   @SerializationOnly
   public CAQuery() {
-    super(null, null);
+    super(NOT_YET_DESERIALIZED);
   }
 
   public CAQuery(String value) {
