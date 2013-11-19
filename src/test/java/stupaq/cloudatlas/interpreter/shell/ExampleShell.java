@@ -123,6 +123,13 @@ public class ExampleShell {
             .get().get());
   }
 
+  private void assertSetNull(String path, String name) {
+    GlobalName globalName = GlobalName.parse(path);
+    assertFalse(
+        root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name)).get()
+            .get().isPresent());
+  }
+
   private void assertNotSet(String path, String name) {
     GlobalName globalName = GlobalName.parse(path);
     assertFalse(root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name))
@@ -181,6 +188,14 @@ public class ExampleShell {
     assertNotSet("/", "b");
     assertNotSet("/uw", "b");
     assertNotSet("/pjwstk", "b");
+  }
+
+  @Test
+  public void testBad6() throws Exception {
+    // This is a type error, even though some interpreters accept this query
+    executeQuery("&bad7",
+        "SELECT (SELECT avg(cpu_usage) WHERE isnull(cpu_usage)) + \"string\" AS smth");
+    assertNotSet("/uw", "smth");
   }
 
   @Test
@@ -301,6 +316,12 @@ public class ExampleShell {
     // time zone. Internal representation is global in the sense that it uses an offset from Unix
     // "epoch time", so this assumption affects string representation only.
     assertSet("/uw", "t2", Str("2019/04/16 05:31:30.000 CEST").to().Time());
+  }
+
+  @Test
+  public void testExample14() throws Exception {
+    executeQuery("&bad14", "SELECT avg(cpu_usage) AS anull WHERE isnull(cpu_usage)");
+    assertSetNull("/uw", "anull");
   }
 
   /*

@@ -12,7 +12,7 @@ import stupaq.cloudatlas.attribute.types.CASet;
 import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
-import stupaq.guava.base.Function1.CountingFunction1;
+import stupaq.guava.base.Function1;
 
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
 
@@ -29,10 +29,12 @@ public final class ZoneHierarchyTestUtils {
       Attribute... children) {
     return Node(Zmi("/", V7, EP, SetEmpty(Cont()), 0, root),
         FluentIterable.from(Arrays.asList(children))
-            .transform(new CountingFunction1<Attribute, ZoneHierarchy<ZoneManagementInfo>>() {
+            .transform(new Function1<Attribute, ZoneHierarchy<ZoneManagementInfo>>() {
+              private int iteration = 0;
+
               @Override
-              public ZoneHierarchy<ZoneManagementInfo> apply(int iteration, Attribute attribute) {
-                return Node(Zmi("/uw" + iteration, K13, EP, SetEmpty(Cont()), 0, attribute));
+              public ZoneHierarchy<ZoneManagementInfo> apply(Attribute attribute) {
+                return Node(Zmi("/uw" + iteration++, K13, EP, SetEmpty(Cont()), 0, attribute));
               }
             }).toArray((Class) ZoneHierarchy.class));
   }
