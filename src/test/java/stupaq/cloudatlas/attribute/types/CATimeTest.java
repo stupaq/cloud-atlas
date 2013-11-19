@@ -10,6 +10,11 @@ import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Time;
 
 public class CATimeTest {
   @Test
+  public void testTimeBase() {
+    assertEquals(Time(0), Str("1970/01/01 00:00:00.000 GMT").to().Time());
+  }
+
+  @Test
   public void testConversions() {
     // -> CATime
     assertEquals(Str("2000/01/01 00:00:00.000 CET"), CATime.epoch().to().String());

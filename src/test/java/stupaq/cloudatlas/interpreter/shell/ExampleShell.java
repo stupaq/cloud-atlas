@@ -296,6 +296,10 @@ public class ExampleShell {
   @Test
   public void testExample13() throws Exception {
     executeQuery("&ex13", "SELECT min(timestamp) + (max(timestamp) - epoch())/2 AS t2");
+    // The problem here is that (at least for Java) CET is not defined for dates within DST.
+    // I have decided to follow the convention and dates from DST must be specified with CEST
+    // time zone. Internal representation is global in the sense that it uses an offset from Unix
+    // "epoch time", so this assumption affects string representation only.
     assertSet("/uw", "t2", Str("2019/04/16 05:31:30.000 CEST").to().Time());
   }
 
