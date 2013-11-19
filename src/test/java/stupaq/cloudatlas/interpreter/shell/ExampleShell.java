@@ -9,8 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -18,7 +20,9 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CAQuery;
+import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.interpreter.InstalledQueriesUpdater;
+import stupaq.cloudatlas.interpreter.errors.ParsingException;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.parser.QueryParser;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
@@ -36,19 +40,20 @@ public class ExampleShell {
   private static final Log LOG = LogFactory.getLog(ExampleShell.class);
   private ZoneHierarchy<ZoneManagementInfo> root;
 
-  private static Collection<Entry<AttributeName, CAQuery>> parse() throws Exception {
+  private static Collection<Entry<AttributeName, CAQuery>> parse()
+      throws IOException, IllegalArgumentException, ParsingException {
     HashMap<AttributeName, CAQuery> map = new HashMap<>();
     BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
     String line;
     while ((line = stdin.readLine()) != null && line.length() != 0) {
       String[] parts = line.split(":");
       if (parts.length < 2) {
-        throw new Exception("Parse failed");
+        throw new ParsingException("Parse failed");
       }
       AttributeName name = AttributeName.valueOfReserved(parts[0].trim());
       CAQuery query = new CAQuery(parts[1].trim());
       if (map.containsKey(name)) {
-        throw new Exception("Duplicated query name");
+        throw new IllegalArgumentException("Duplicated query name");
       }
       map.put(name, query);
     }
@@ -57,23 +62,22 @@ public class ExampleShell {
 
   /** MAIN */
   public static void main(String[] args) {
+    ExampleShell shell = new ExampleShell();
+    shell.setUp();
+    Collection<Entry<AttributeName, CAQuery>> queries = Collections.emptyList();
     try {
-      ExampleShell shell = new ExampleShell();
-      shell.setUp();
-      Collection<Entry<AttributeName, CAQuery>> queries = parse();
-      try {
-        for (Entry<AttributeName, CAQuery> entry : queries) {
-          shell.installQuery(entry.getKey(), entry.getValue());
-        }
-        shell.recomputeQueries();
-        System.out.println(shell.root);
-      } finally {
-        for (Entry<AttributeName, CAQuery> entry : queries) {
-          shell.removeQuery(entry.getKey());
-        }
+      queries = parse();
+      for (Entry<AttributeName, CAQuery> entry : queries) {
+        shell.installQuery(entry.getKey(), entry.getValue());
       }
+      shell.recomputeQueries();
+      System.out.println(shell.root);
     } catch (Exception e) {
       LOG.error("Failure ", e);
+    } finally {
+      for (Entry<AttributeName, CAQuery> entry : queries) {
+        shell.removeQuery(entry.getKey());
+      }
     }
   }
 
@@ -84,11 +88,8 @@ public class ExampleShell {
 
   private void installQuery(final AttributeName name, final CAQuery query) {
     Preconditions.checkArgument(name.isSpecial());
-    try {
-      new QueryParser(query.getQueryString()).parseProgram();
-    } catch (Exception e) {
-      throw new IllegalArgumentException(
-          "Provided query was rejected by parser. Will not be installed.");
+    try (QueryParser parser = new QueryParser(query.getQueryString())) {
+      parser.parseProgram();
     }
     root.zipFromLeaves(new InPlaceAggregator<ZoneManagementInfo>() {
       @Override
@@ -137,7 +138,7 @@ public class ExampleShell {
     root = ZoneHierarchyTestUtils.officialExampleHierarchy();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = ParsingException.class)
   public void testBad0() throws Exception {
     executeQuery("&bad0", "SELECT 2 + 2 AS SELECT");
     fail();
@@ -150,6 +151,36 @@ public class ExampleShell {
     assertNotSet("/", "smth");
     assertNotSet("/uw", "smth");
     assertNotSet("/pjwstk", "smth");
+  }
+
+  @Test(expected = ParsingException.class)
+  public void testBad2() throws Exception {
+    executeQuery("&bad2", "SELECT \"haskell\" AS x'");
+    fail();
+  }
+
+  @Test
+  public void testBad3() throws Exception {
+    executeQuery("&bad3", "SELECT \"a\" + 2 AS a2");
+    assertNotSet("/", "a2");
+    assertNotSet("/uw", "a2");
+    assertNotSet("/pjwstk", "a2");
+  }
+
+  @Test
+  public void testBad4() throws Exception {
+    executeQuery("&bad4", "SELECT unfold(contacts) AS a");
+    assertNotSet("/", "a");
+    assertNotSet("/uw", "a");
+    assertNotSet("/pjwstk", "a");
+  }
+
+  @Test
+  public void testBad5() throws Exception {
+    executeQuery("&bad5", "SELECT level AS b");
+    assertNotSet("/", "b");
+    assertNotSet("/uw", "b");
+    assertNotSet("/pjwstk", "b");
   }
 
   @Test
@@ -219,11 +250,68 @@ public class ExampleShell {
     assertSet("/pjwstk", "concat_name", List(Str("whatever01")));
   }
 
+  @Test
+  public void testExample8() throws Exception {
+    executeQuery("&ex8", "SELECT sum(cardinality) AS cardinality");
+    assertSet("/", "cardinality", Int(5));
+    assertSet("/uw", "cardinality", Int(3));
+    assertSet("/pjwstk", "cardinality", Int(2));
+  }
+
+  @Test
+  public void testExample9() throws Exception {
+    executeQuery("&ex9", "SELECT to_set(random(100, unfold(contacts))) AS contacts");
+    assertSet("/", "contacts",
+        Set(Cont("PJ1"), Cont("PJ2"), Cont("UW1A"), Cont("UW1B"), Cont("UW1C"), Cont("UW2A"),
+            Cont("UW3A"), Cont("UW3B")));
+  }
+
+  @Test
+  public void testExample10() throws Exception {
+    executeQuery("&ex10", "SELECT land(cpu_usage < 0.5) AS cpu_ok");
+    assertSet("/pjwstk", "cpu_ok", Bool(true));
+    assertSet("/uw", "cpu_ok", Bool(false));
+  }
+
+  @Test
+  public void testExample11() throws Exception {
+    executeQuery("&ex11",
+        "SELECT min(name) AS min_name, to_string(first(1, name)) AS max_name ORDER BY name DESC");
+    assertSet("/", "min_name", Str("pjwstk"));
+    assertSet("/", "max_name", Str("[ uw ]"));
+  }
+
+  @Test
+  public void testExample12() throws Exception {
+    executeQuery("&ex12", "SELECT epoch() AS epoch, land(timestamp > epoch()) AS afterY2K");
+    assertSet("/", "afterY2K", Bool(true));
+    assertSet("/pjwstk", "afterY2K", Bool(true));
+    assertSet("/uw", "afterY2K", Bool(true));
+    assertSet("/", "epoch", Str("2000/01/01 00:00:00.000 CET").to().Time());
+    assertSet("/", "epoch", CATime.epoch());
+    assertSet("/pjwstk", "epoch", CATime.epoch());
+    assertSet("/uw", "epoch", CATime.epoch());
+  }
+
+  @Test
+  public void testExample13() throws Exception {
+    executeQuery("&ex13", "SELECT min(timestamp) + (max(timestamp) - epoch())/2 AS t2");
+    assertSet("/uw", "t2", Str("2019/04/16 05:31:30.000 CEST").to().Time());
+  }
+
   /*
   @Test
   public void testExample() throws Exception {
     executeQuery("&ex", "");
     assertSet("/", "", );
+  }
+  */
+
+  /*
+  @Test
+  public void testBad() throws Exception {
+    executeQuery("&bad", "");
+    assertNotSet("/", "");
   }
   */
 }

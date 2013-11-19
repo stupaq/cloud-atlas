@@ -19,7 +19,8 @@ public class CATime extends AbstractLongValue {
   private static final Calendar EPOCH;
 
   static {
-    EPOCH = Calendar.getInstance(TimeZone.getTimeZone("CET"));
+    TimeZone.setDefault(TimeZone.getTimeZone("CET"));
+    EPOCH = Calendar.getInstance(TimeZone.getDefault());
     EPOCH.set(2000, Calendar.JANUARY, 1, 0, 0, 0);
     EPOCH.set(Calendar.MILLISECOND, 0);
   }
