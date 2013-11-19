@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.interpreter.types;
+package stupaq.cloudatlas.interpreter.values;
 
 import com.google.common.base.Optional;
 

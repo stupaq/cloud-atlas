@@ -6,8 +6,8 @@ import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAList;
 import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
-import stupaq.cloudatlas.interpreter.types.RSingle;
-import stupaq.cloudatlas.interpreter.types.SemanticValue;
+import stupaq.cloudatlas.interpreter.values.RSingle;
+import stupaq.cloudatlas.interpreter.values.SemanticValue;
 
 public interface AggregatingValue<Type extends AttributeValue> {
 

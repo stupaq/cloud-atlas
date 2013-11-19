@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.interpreter.types;
+package stupaq.cloudatlas.interpreter.values;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;

@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.interpreter.types;
+package stupaq.cloudatlas.interpreter.values;
 
 import com.google.common.collect.FluentIterable;
 
@@ -11,7 +11,7 @@ import stupaq.guava.base.Optionals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
-import static stupaq.cloudatlas.interpreter.types.SemanticValueTestUtils.*;
+import static stupaq.cloudatlas.interpreter.values.SemanticValueTestUtils.*;
 
 public class RCollectionTest {
   private void testRandom(RCollection<? extends AttributeValue> collection, int sampleSize,

@@ -3,9 +3,10 @@ package stupaq.cloudatlas.interpreter;
 import com.google.common.collect.Iterables;
 
 import stupaq.cloudatlas.attribute.types.CAQuery;
-import stupaq.cloudatlas.interpreter.context.OutputContext;
-import stupaq.cloudatlas.interpreter.context.OutputContext.ZMIUpdaterOutputContext;
-import stupaq.cloudatlas.interpreter.data.AttributesTable;
+import stupaq.cloudatlas.interpreter.evaluation.context.OutputContext;
+import stupaq.cloudatlas.interpreter.evaluation.context.OutputContext.ZMIUpdaterOutputContext;
+import stupaq.cloudatlas.interpreter.evaluation.data.AttributesTable;
+import stupaq.cloudatlas.interpreter.evaluation.EvalVisitor;
 import stupaq.cloudatlas.parser.QueryLanguage.Absyn.XProgram;
 import stupaq.cloudatlas.parser.QueryParser;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;

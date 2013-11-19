@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.interpreter.context;
+package stupaq.cloudatlas.interpreter.evaluation.context;
 
 import com.google.common.base.Preconditions;
 
@@ -10,7 +10,7 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
-import stupaq.cloudatlas.interpreter.types.RSingle;
+import stupaq.cloudatlas.interpreter.values.RSingle;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
 
 public interface OutputContext {
