@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import javax.annotation.Nonnull;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -24,19 +26,20 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
     super(value);
   }
 
+  @Nonnull
   @Override
-  public Double getValue() {
-    return super.getValue();
+  public Double get() {
+    return super.get();
   }
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    setValue(in.readDouble());
+    set(in.readDouble());
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeDouble(getValue());
+    out.writeDouble(get());
   }
 
   @Override
@@ -52,7 +55,7 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
   @Override
   public int compareTo(AttributeValue o) {
     TypeUtils.assertSameType(this, o);
-    return getValue().compareTo(((CADouble) o).getValue());
+    return get().compareTo(((CADouble) o).get());
   }
 
   @Override
@@ -73,12 +76,12 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
     @Override
     public CAInteger Integer() {
-      return new CAInteger(getValue().longValue());
+      return new CAInteger(get().longValue());
     }
 
     @Override
     public CAString String() {
-      return new CAString(String.valueOf(getValue()));
+      return new CAString(String.valueOf(get()));
     }
   }
 
@@ -90,17 +93,17 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
     @Override
     public AttributeValue addTo(CADouble value) {
-      return new CADouble(value.getValue() + getValue());
+      return new CADouble(value.get() + get());
     }
 
     @Override
     public AttributeValue addTo(CAInteger value) {
-      return new CADouble(value.getValue() + getValue());
+      return new CADouble(value.get() + get());
     }
 
     @Override
     public AttributeValue negate() {
-      return new CADouble(-getValue());
+      return new CADouble(-get());
     }
 
     @Override
@@ -110,37 +113,37 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
     @Override
     public AttributeValue multiplyBy(CADouble value) {
-      return new CADouble(value.getValue() * getValue());
+      return new CADouble(value.get() * get());
     }
 
     @Override
     public AttributeValue multiplyBy(CADuration value) {
-      return new CADuration((long) (value.getValue() * getValue()));
+      return new CADuration((long) (value.get() * get()));
     }
 
     @Override
     public AttributeValue multiplyBy(CAInteger value) {
-      return new CADouble(value.getValue() * getValue());
+      return new CADouble(value.get() * get());
     }
 
     @Override
     public AttributeValue inverse() {
-      return new CADouble(1 / getValue());
+      return new CADouble(1 / get());
     }
 
     @Override
     public AttributeValue round() {
-      return new CADouble((double) Math.round(getValue()));
+      return new CADouble((double) Math.round(get()));
     }
 
     @Override
     public AttributeValue ceil() {
-      return new CADouble(Math.ceil(getValue()));
+      return new CADouble(Math.ceil(get()));
     }
 
     @Override
     public AttributeValue floor() {
-      return new CADouble(Math.floor(getValue()));
+      return new CADouble(Math.floor(get()));
     }
   }
 
@@ -152,12 +155,12 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
     @Override
     public CABoolean greaterThan(CADouble value) {
-      return new CABoolean(CADouble.this.getValue().compareTo(value.getValue()) > 0);
+      return new CABoolean(CADouble.this.get().compareTo(value.get()) > 0);
     }
 
     @Override
     public CABoolean equalsTo(CADouble value) {
-      return new CABoolean(CADouble.this.getValue().equals(value.getValue()));
+      return new CABoolean(CADouble.this.get().equals(value.get()));
     }
 
     @Override

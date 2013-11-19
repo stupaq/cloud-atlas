@@ -31,7 +31,7 @@ public class CASet<Type extends AttributeValue> extends AbstractComposedValue<Ty
 
   public CASet(Collection<Type> elements) {
     super(new HashSet<Type>());
-    getValue().addAll(elements);
+    get().addAll(elements);
     verifyInvariants();
   }
 
@@ -58,7 +58,7 @@ public class CASet<Type extends AttributeValue> extends AbstractComposedValue<Ty
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAList<Type> List() {
-      return new CAList<>(CASet.this.getValue());
+      return new CAList<>(CASet.this.get());
     }
 
     @Override
@@ -69,14 +69,14 @@ public class CASet<Type extends AttributeValue> extends AbstractComposedValue<Ty
     @Override
     public CAString String() {
       return new CAString("{ " + StringUtils
-          .join(Collections2.transform(CASet.this.getValue(), new Stringifier()), ", ") + " }");
+          .join(Collections2.transform(CASet.this.get(), new Stringifier()), ", ") + " }");
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public AttributeValue size() {
-      return new CAInteger((long) CASet.this.getValue().size());
+      return new CAInteger((long) CASet.this.get().size());
     }
   }
 

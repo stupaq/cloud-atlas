@@ -33,12 +33,12 @@ public class CAList<Type extends AttributeValue>
 
   public CAList(Iterable<Type> elements) {
     super(new ArrayList<Type>());
-    Iterables.addAll(getValue(), elements);
+    Iterables.addAll(get(), elements);
     verifyInvariants();
   }
 
   public List<Type> asImmutableList() {
-    return Collections.unmodifiableList(getValue());
+    return Collections.unmodifiableList(get());
   }
 
   @Override
@@ -70,19 +70,19 @@ public class CAList<Type extends AttributeValue>
     @Override
     public CAString String() {
       return new CAString("[ " + StringUtils
-          .join(Collections2.transform(CAList.this.getValue(), new Stringifier()), ", ") + " ]");
+          .join(Collections2.transform(CAList.this.get(), new Stringifier()), ", ") + " ]");
     }
 
     @Override
     public CASet<Type> Set() {
-      return new CASet<>(CAList.this.getValue());
+      return new CASet<>(CAList.this.get());
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public AttributeValue size() {
-      return new CAInteger((long) CAList.this.getValue().size());
+      return new CAInteger((long) CAList.this.get().size());
     }
   }
 

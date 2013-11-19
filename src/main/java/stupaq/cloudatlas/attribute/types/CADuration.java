@@ -49,13 +49,13 @@ public class CADuration extends AbstractLongValue {
 
     @Override
     public CAInteger Integer() {
-      return new CAInteger(getValue());
+      return new CAInteger(get());
     }
 
     @Override
     public CAString String() {
-      return new CAString((getValue() >= 0 ? "+" : "-") + DurationFormatUtils
-          .formatDuration(Math.abs(getValue()), "d HH:mm:ss.SSS"));
+      return new CAString((get() >= 0 ? "+" : "-") + DurationFormatUtils
+          .formatDuration(Math.abs(get()), "d HH:mm:ss.SSS"));
     }
   }
 
@@ -67,17 +67,17 @@ public class CADuration extends AbstractLongValue {
 
     @Override
     public AttributeValue addTo(CADuration value) {
-      return new CADuration(value.getValue() + getValue());
+      return new CADuration(value.get() + get());
     }
 
     @Override
     public AttributeValue addTo(CATime value) {
-      return new CATime(value.getValue() + getValue());
+      return new CATime(value.get() + get());
     }
 
     @Override
     public AttributeValue negate() {
-      return new CADuration(-getValue());
+      return new CADuration(-get());
     }
 
     @Override
@@ -87,17 +87,17 @@ public class CADuration extends AbstractLongValue {
 
     @Override
     public AttributeValue multiplyBy(CADouble value) {
-      return new CADuration((long) (value.getValue() * (double) getValue()));
+      return new CADuration((long) (value.get() * (double) get()));
     }
 
     @Override
     public AttributeValue multiplyBy(CADuration value) {
-      return new CADuration(value.getValue() * getValue());
+      return new CADuration(value.get() * get());
     }
 
     @Override
     public AttributeValue multiplyBy(CAInteger value) {
-      return new CADuration(value.getValue() * getValue());
+      return new CADuration(value.get() * get());
     }
   }
 
@@ -109,12 +109,12 @@ public class CADuration extends AbstractLongValue {
 
     @Override
     public CABoolean greaterThan(CADuration value) {
-      return new CABoolean(CADuration.this.getValue().compareTo(value.getValue()) > 0);
+      return new CABoolean(CADuration.this.get().compareTo(value.get()) > 0);
     }
 
     @Override
     public CABoolean equalsTo(CADuration value) {
-      return new CABoolean(CADuration.this.getValue().equals(value.getValue()));
+      return new CABoolean(CADuration.this.get().equals(value.get()));
     }
 
     @Override

@@ -21,10 +21,10 @@ abstract class AbstractComposedValue<Type extends AttributeValue, Composed exten
   }
 
   protected final void verifyInvariants() throws IllegalStateException {
-    for (Type elem : getValue()) {
+    for (Type elem : get()) {
       Preconditions.checkNotNull(elem, getType().getSimpleName() + " cannot contain nulls");
     }
-    TypeUtils.assertUniformCollection(getValue());
+    TypeUtils.assertUniformCollection(get());
   }
 
   @Override
@@ -34,7 +34,7 @@ abstract class AbstractComposedValue<Type extends AttributeValue, Composed exten
 
   @Override
   public final void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    getValue().clear();
+    get().clear();
     int elements = in.readInt();
     if (elements == 0) {
       return;
@@ -43,20 +43,20 @@ abstract class AbstractComposedValue<Type extends AttributeValue, Composed exten
     for (; elements > 0; elements--) {
       Type instance = TypeRegistry.newInstance(typeID);
       instance.readFields(in);
-      getValue().add(instance);
+      get().add(instance);
     }
     verifyInvariants();
   }
 
   @Override
   public final void writeFields(ObjectOutput out) throws IOException {
-    out.writeInt(getValue().size());
-    if (getValue().isEmpty()) {
+    out.writeInt(get().size());
+    if (get().isEmpty()) {
       return;
     }
-    TypeID typeID = TypeRegistry.resolveType(getValue().iterator().next().getType());
+    TypeID typeID = TypeRegistry.resolveType(get().iterator().next().getType());
     TypeID.writeInstance(out, typeID);
-    for (Type element : getValue()) {
+    for (Type element : get()) {
       element.writeFields(out);
     }
   }

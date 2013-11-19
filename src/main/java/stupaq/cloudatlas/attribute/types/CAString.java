@@ -42,12 +42,12 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    setValue(in.readUTF());
+    set(in.readUTF());
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeUTF(getValue());
+    out.writeUTF(get());
   }
 
   @Override
@@ -63,7 +63,7 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
   @Override
   public int compareTo(AttributeValue o) {
     TypeUtils.assertSameType(this, o);
-    return getValue().compareTo(((CAString) o).getValue());
+    return get().compareTo(((CAString) o).get());
   }
 
   @Override
@@ -79,22 +79,22 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CABoolean Boolean() {
-      return new CABoolean(Boolean.valueOf(getValue()));
+      return new CABoolean(Boolean.valueOf(get()));
     }
 
     @Override
     public CAContact Contact() {
-      return new CAContact(getValue());
+      return new CAContact(get());
     }
 
     @Override
     public CADouble Double() {
-      return new CADouble(Double.valueOf(getValue()));
+      return new CADouble(Double.valueOf(get()));
     }
 
     @Override
     public CADuration Duration() {
-      String str = getValue();
+      String str = get();
       try {
         if (str.charAt(0) != '+' && str.charAt(0) != '-') {
           throw new ConversionException("Expected leading sign");
@@ -114,7 +114,7 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
     @Override
     public CAInteger Integer() {
-      return new CAInteger(Long.valueOf(getValue()));
+      return new CAInteger(Long.valueOf(get()));
     }
 
     @Override
@@ -126,7 +126,7 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
     public CATime Time() {
       try {
         return new CATime(
-            new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS z").parse(getValue()).getTime());
+            new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS z").parse(get()).getTime());
       } catch (ParseException e) {
         throw new ConversionException(e);
       }
@@ -141,7 +141,7 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
     @Override
     public AttributeValue addTo(CAString value) {
-      return new CAString(value.getValue() + getValue());
+      return new CAString(value.get() + get());
     }
 
     @Override
@@ -151,12 +151,12 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
     @Override
     public AttributeValue describes(CAString value) {
-      return new CABoolean(Pattern.matches(getValue(), value.getValue()));
+      return new CABoolean(Pattern.matches(get(), value.get()));
     }
 
     @Override
     public AttributeValue size() {
-      return new CAInteger((long) CAString.this.getValue().length());
+      return new CAInteger((long) CAString.this.get().length());
     }
   }
 
@@ -168,12 +168,12 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
     @Override
     public CABoolean greaterThan(CAString value) {
-      return new CABoolean(CAString.this.getValue().compareTo(value.getValue()) > 0);
+      return new CABoolean(CAString.this.get().compareTo(value.get()) > 0);
     }
 
     @Override
     public CABoolean equalsTo(CAString value) {
-      return new CABoolean(CAString.this.getValue().equals(value.getValue()));
+      return new CABoolean(CAString.this.get().equals(value.get()));
     }
 
     @Override

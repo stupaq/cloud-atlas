@@ -35,7 +35,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
     for (Collection<Attribute> zone : subZones) {
       AttributesRow row = new AttributesRow();
       for (Attribute attribute : zone) {
-        row.put(attribute.getName(), attribute.getValue());
+        row.put(attribute.getName(), attribute.get());
         allAttributes.add(attribute.getName());
       }
       add(row);

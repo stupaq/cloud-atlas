@@ -28,17 +28,17 @@ public class CAQuery extends PrimitiveWrapper<String> implements AttributeValue 
   }
 
   public String getQueryString() {
-    return getValue();
+    return get();
   }
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    setValue(in.readUTF());
+    set(in.readUTF());
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeUTF(getValue());
+    out.writeUTF(get());
   }
 
   @Override

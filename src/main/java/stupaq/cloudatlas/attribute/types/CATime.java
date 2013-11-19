@@ -68,7 +68,7 @@ public class CATime extends AbstractLongValue {
     @Override
     public CAString String() {
       return new CAString(DateFormatUtils
-          .format(getValue(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("CET")));
+          .format(get(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("CET")));
     }
 
     @Override
@@ -85,17 +85,17 @@ public class CATime extends AbstractLongValue {
 
     @Override
     public AttributeValue addTo(CADuration value) {
-      return new CATime(value.getValue() + getValue());
+      return new CATime(value.get() + get());
     }
 
     @Override
     public AttributeValue addTo(CATime value) {
-      return new CADuration(value.getValue() + getValue());
+      return new CADuration(value.get() + get());
     }
 
     @Override
     public AttributeValue negate() {
-      return new CATime(-getValue());
+      return new CATime(-get());
     }
   }
 
@@ -107,12 +107,12 @@ public class CATime extends AbstractLongValue {
 
     @Override
     public CABoolean greaterThan(CATime value) {
-      return new CABoolean(CATime.this.getValue().compareTo(value.getValue()) > 0);
+      return new CABoolean(CATime.this.get().compareTo(value.get()) > 0);
     }
 
     @Override
     public CABoolean equalsTo(CATime value) {
-      return new CABoolean(CATime.this.getValue().equals(value.getValue()));
+      return new CABoolean(CATime.this.get().equals(value.get()));
     }
 
     @Override

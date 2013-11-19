@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import javax.annotation.Nonnull;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -24,19 +26,20 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
     super(value);
   }
 
+  @Nonnull
   @Override
-  public Boolean getValue() {
-    return super.getValue();
+  public Boolean get() {
+    return super.get();
   }
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    setValue(in.readBoolean());
+    set(in.readBoolean());
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeBoolean(getValue());
+    out.writeBoolean(get());
   }
 
   @Override
@@ -47,7 +50,7 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
   @Override
   public int compareTo(AttributeValue o) {
     TypeUtils.assertSameType(this, o);
-    return getValue().compareTo(((CABoolean) o).getValue());
+    return get().compareTo(((CABoolean) o).get());
   }
 
   @Override
@@ -85,7 +88,7 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
 
     @Override
     public AttributeValue andWith(CABoolean value) {
-      return new CABoolean(value.getValue() && getValue());
+      return new CABoolean(value.get() && get());
     }
 
     @Override
@@ -95,12 +98,12 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
 
     @Override
     public CABoolean orWith(CABoolean value) {
-      return new CABoolean(value.getValue() || getValue());
+      return new CABoolean(value.get() || get());
     }
 
     @Override
     public AttributeValue not() {
-      return new CABoolean(!getValue());
+      return new CABoolean(!get());
     }
   }
 
@@ -112,7 +115,7 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
 
     @Override
     public CABoolean equalsTo(CABoolean value) {
-      return new CABoolean(getValue().equals(value.getValue()));
+      return new CABoolean(get().equals(value.get()));
     }
   }
 }

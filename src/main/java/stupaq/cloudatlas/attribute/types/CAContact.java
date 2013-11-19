@@ -30,12 +30,12 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    setValue(in.readUTF());
+    set(in.readUTF());
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeUTF(getValue());
+    out.writeUTF(get());
   }
 
   @Override
@@ -71,7 +71,7 @@ public class CAContact extends PrimitiveWrapper<String> implements AttributeValu
 
     @Override
     public CAString String() {
-      return new CAString(getValue());
+      return new CAString(get());
     }
   }
 }

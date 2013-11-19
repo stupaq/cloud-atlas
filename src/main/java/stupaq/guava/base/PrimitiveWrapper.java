@@ -2,24 +2,27 @@ package stupaq.guava.base;
 
 import com.google.common.base.Preconditions;
 
+import javax.annotation.Nonnull;
+
 public abstract class PrimitiveWrapper<Primitive> {
+  @Nonnull
   private Primitive value;
 
-  protected PrimitiveWrapper(Primitive value) {
+  protected PrimitiveWrapper(@Nonnull Primitive value) {
     Preconditions.checkNotNull(value);
     this.value = value;
   }
 
-  protected Primitive getValue() {
+  @Nonnull
+  protected Primitive get() {
     return value;
   }
 
-  protected void setValue(Primitive value) {
+  protected void set(@Nonnull Primitive value) {
     Preconditions.checkNotNull(value);
     this.value = value;
   }
 
-  /** {@link java.lang.Object} */
   @Override
   public boolean equals(Object o) {
     return this == o || !(o == null || getClass() != o.getClass()) && value
@@ -28,7 +31,7 @@ public abstract class PrimitiveWrapper<Primitive> {
 
   @Override
   public int hashCode() {
-    return value != null ? value.hashCode() : 0;
+    return value.hashCode();
   }
 
   @Override

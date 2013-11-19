@@ -113,7 +113,7 @@ public class EvalVisitor {
           throw new EvaluationException("WHERE expression result is not a single value");
         }
         try {
-          if (!getAs(value, CABoolean.class).getValue()) {
+          if (!getAs(value, CABoolean.class).get()) {
             rows.remove();
           }
         } catch (EvaluationException e) {
@@ -327,13 +327,13 @@ public class EvalVisitor {
             return args.get(0).aggregate().count();
           case "first":
             return args.get(1).aggregate().first(
-                getAs(args.get(0).getSingle().or(null), CAInteger.class).getValue().intValue());
+                getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
           case "last":
             return args.get(1).aggregate().last(
-                getAs(args.get(0).getSingle().or(null), CAInteger.class).getValue().intValue());
+                getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
           case "random":
             return args.get(1).aggregate().random(
-                getAs(args.get(0).getSingle().or(null), CAInteger.class).getValue().intValue());
+                getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
           case "min":
             return args.get(0).aggregate().min();
           case "max":

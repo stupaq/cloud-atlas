@@ -7,33 +7,40 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import javax.annotation.Nonnull;
+
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 import stupaq.cloudatlas.serialization.TypeRegistry;
+import stupaq.guava.base.PrimitiveWrapper;
 
-public final class Attribute<Type extends AttributeValue> implements CompactSerializable {
+public final class Attribute<Type extends AttributeValue> extends PrimitiveWrapper<Optional<Type>>
+    implements CompactSerializable {
+  @Nonnull
   private final AttributeName name;
-  private Optional<Type> value;
+
+  public Attribute(@Nonnull AttributeName name, Type value) {
+    super(Optional.fromNullable(value));
+    Preconditions.checkNotNull(name, "AttributeName cannot be null");
+    this.name = name;
+  }
 
   @SerializationOnly
   public Attribute() {
+    super(Optional.<Type>absent());
     name = new AttributeName();
-    value = Optional.absent();
   }
 
-  public Attribute(AttributeName name, Type value) {
-    Preconditions.checkNotNull(name, "AttributeName cannot be null");
-    this.name = name;
-    this.value = Optional.fromNullable(value);
-  }
-
+  @Nonnull
   public AttributeName getName() {
     return name;
   }
 
-  public Optional<Type> getValue() {
-    return value;
+  @Override
+  @Nonnull
+  public Optional<Type> get() {
+    return super.get();
   }
 
   @Override
@@ -41,18 +48,18 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     name.readFields(in);
     if (in.readBoolean()) {
-      value = Optional.of((Type) TypeRegistry.readObject(in));
+      set(Optional.of((Type) TypeRegistry.readObject(in)));
     } else {
-      value = Optional.absent();
+      set(Optional.<Type>absent());
     }
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
     name.writeFields(out);
-    if (value.isPresent()) {
+    if (get().isPresent()) {
       out.writeBoolean(true);
-      TypeRegistry.writeObject(out, value.get());
+      TypeRegistry.writeObject(out, get().get());
     } else {
       out.writeBoolean(false);
     }
@@ -67,19 +74,19 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
       return false;
     }
     Attribute attribute = (Attribute) o;
-    return name.equals(attribute.name) && value.equals(attribute.value);
+    return name.equals(attribute.name) && get().equals(attribute.get());
   }
 
   @Override
   public int hashCode() {
     int result = name.hashCode();
-    result = 31 * result + value.hashCode();
+    result = 31 * result + get().hashCode();
     return result;
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public String toString() {
-    return name + " = " + CAString.valueOf(value);
+    return name + " = " + CAString.valueOf(get());
   }
 }

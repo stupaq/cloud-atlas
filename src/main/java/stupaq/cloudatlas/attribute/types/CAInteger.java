@@ -42,12 +42,12 @@ public class CAInteger extends AbstractLongValue {
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CADouble Double() {
-      return new CADouble(getValue().doubleValue());
+      return new CADouble(get().doubleValue());
     }
 
     @Override
     public CADuration Duration() {
-      return new CADuration(getValue());
+      return new CADuration(get());
     }
 
     @Override
@@ -57,7 +57,7 @@ public class CAInteger extends AbstractLongValue {
 
     @Override
     public CAString String() {
-      return new CAString(String.valueOf(getValue()));
+      return new CAString(String.valueOf(get()));
     }
   }
 
@@ -69,17 +69,17 @@ public class CAInteger extends AbstractLongValue {
 
     @Override
     public AttributeValue addTo(CADouble value) {
-      return new CADouble(value.getValue() + (double) getValue());
+      return new CADouble(value.get() + (double) get());
     }
 
     @Override
     public AttributeValue addTo(CAInteger value) {
-      return new CAInteger(value.getValue() + getValue());
+      return new CAInteger(value.get() + get());
     }
 
     @Override
     public AttributeValue negate() {
-      return new CAInteger(-getValue());
+      return new CAInteger(-get());
     }
 
     @Override
@@ -89,22 +89,22 @@ public class CAInteger extends AbstractLongValue {
 
     @Override
     public AttributeValue multiplyBy(CADouble value) {
-      return new CADouble(value.getValue() * (double) getValue());
+      return new CADouble(value.get() * (double) get());
     }
 
     @Override
     public AttributeValue multiplyBy(CADuration value) {
-      return new CADuration((long) (value.getValue() * (double) getValue()));
+      return new CADuration((long) (value.get() * (double) get()));
     }
 
     @Override
     public AttributeValue multiplyBy(CAInteger value) {
-      return new CAInteger(value.getValue() * getValue());
+      return new CAInteger(value.get() * get());
     }
 
     @Override
     public AttributeValue inverse() {
-      return new CADouble(1 / (double) getValue());
+      return new CADouble(1 / (double) get());
     }
 
     @Override
@@ -114,7 +114,7 @@ public class CAInteger extends AbstractLongValue {
 
     @Override
     public AttributeValue remainderOf(CAInteger value) {
-      return new CAInteger(value.getValue() % getValue());
+      return new CAInteger(value.get() % get());
     }
   }
 
@@ -126,12 +126,12 @@ public class CAInteger extends AbstractLongValue {
 
     @Override
     public CABoolean greaterThan(CAInteger value) {
-      return new CABoolean(CAInteger.this.getValue().compareTo(value.getValue()) > 0);
+      return new CABoolean(CAInteger.this.get().compareTo(value.get()) > 0);
     }
 
     @Override
     public CABoolean equalsTo(CAInteger value) {
-      return new CABoolean(CAInteger.this.getValue().equals(value.getValue()));
+      return new CABoolean(CAInteger.this.get().equals(value.get()));
     }
 
     @Override

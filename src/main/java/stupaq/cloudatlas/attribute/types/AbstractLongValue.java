@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import javax.annotation.Nonnull;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 import stupaq.guava.base.PrimitiveWrapper;
@@ -19,25 +21,26 @@ abstract class AbstractLongValue extends PrimitiveWrapper<Long> implements Attri
     super(value);
   }
 
+  @Nonnull
   @Override
-  public final Long getValue() {
-    return super.getValue();
+  public final Long get() {
+    return super.get();
   }
 
   @Override
   public final void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    setValue(in.readLong());
+    set(in.readLong());
   }
 
   @Override
   public final void writeFields(ObjectOutput out) throws IOException {
-    out.writeLong(getValue());
+    out.writeLong(get());
   }
 
   @Override
   public final int compareTo(AttributeValue o) {
     TypeUtils.assertSameType(this, o);
-    return getValue().compareTo(((AbstractLongValue) o).getValue());
+    return get().compareTo(((AbstractLongValue) o).get());
   }
 
   @Override

@@ -46,19 +46,19 @@ public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    getValue().clear();
+    get().clear();
     int length = in.readInt();
     for (; length > 0; length--) {
       LocalName localName = new LocalName();
       localName.readFields(in);
-      getValue().add(localName);
+      get().add(localName);
     }
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeInt(getValue().size());
-    for (LocalName localName : getValue()) {
+    out.writeInt(get().size());
+    for (LocalName localName : get()) {
       localName.writeFields(out);
     }
   }
@@ -77,9 +77,9 @@ public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
   public String toString() {
     StringBuilder builder = new StringBuilder();
     int index = 0;
-    for (LocalName localName : getValue()) {
+    for (LocalName localName : get()) {
       builder.append(localName.toString())
-          .append(index == 0 || index + 1 == getValue().size() ? "" : SEPARATOR);
+          .append(index == 0 || index + 1 == get().size() ? "" : SEPARATOR);
       index++;
     }
     return builder.toString();
@@ -87,15 +87,15 @@ public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
 
   @Override
   public Iterator<LocalName> iterator() {
-    return getValue().iterator();
+    return get().iterator();
   }
 
   public LocalName leaf() {
-    return getValue().get(leafLevel());
+    return get().get(leafLevel());
   }
 
   public int leafLevel() {
-    return getValue().size() - 1;
+    return get().size() - 1;
   }
 
   public static class Builder {
