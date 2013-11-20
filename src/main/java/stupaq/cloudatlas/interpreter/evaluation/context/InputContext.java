@@ -51,7 +51,12 @@ public class InputContext {
 
   public SemanticValue get(String attribute) {
     // Attribute value cannot start with reserved prefix
-    SemanticValue value = inputAttributes.get(AttributeName.valueOf(attribute));
+    SemanticValue value;
+    try {
+      value = inputAttributes.get(AttributeName.valueOf(attribute));
+    } catch (IllegalArgumentException e) {
+      throw new EvaluationException(e.getMessage());
+    }
     if (value == null) {
       throw new EvaluationException("Unknown attribute: " + attribute);
     }

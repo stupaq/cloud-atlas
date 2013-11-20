@@ -39,10 +39,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TCont;
-import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TDoub;
-import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TList;
-import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TStr;
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.*;
 
 public class ExampleShell {
   private static final Log LOG = LogFactory.getLog(ExampleShell.class);
@@ -244,7 +241,66 @@ public class ExampleShell {
   @Test
   public void testBad12() throws Exception {
     executeQuery("SELECT 2 AS two, 2 AS two");
+    executeQuery("SELECT (SELECT 3 AS three) AS four");
     assertNotSet("/", "two");
+    assertNotSet("/", "three");
+    assertNotSet("/", "four");
+  }
+
+  @Test
+  public void testBad13() throws Exception {
+    executeQuery("SELECT 2 AS &special, true AS control");
+    assertNotSet("/", "control");
+  }
+
+  @Test
+  public void testBad14() throws Exception {
+    executeQuery("SELECT epoch() + epoch() AS plus");
+    executeQuery("SELECT epoch() - epoch() AS minus");
+    assertNotSet("/", "plus");
+    assertSet("/", "minus", Dur(0));
+  }
+
+  @Test
+  public void testBad15() throws Exception {
+    executeQuery("SELECT first(\"baba\", name) AS names");
+    executeQuery("SELECT first(1) AS missing");
+    executeQuery("SELECT first(1, name, 3) AS extra");
+    executeQuery("SELECT first(1, name) AS ok ORDER BY name ASC NULLS LAST");
+    assertNotSet("/", "names");
+    assertNotSet("/", "missing");
+    assertNotSet("/", "extra");
+    assertSet("/", "ok", List(TStr(), Str("pjwstk")));
+  }
+
+  @Test
+  public void testBad16() throws Exception {
+    executeQuery("");
+    assertNotSet("/", "");
+  }
+
+  @Test
+  public void testBad17() throws Exception {
+    executeQuery("");
+    assertNotSet("/", "");
+  }
+
+  @Test
+  public void testBad18() throws Exception {
+    executeQuery("");
+    assertNotSet("/", "");
+  }
+
+  @Test
+  public void testBad19() throws Exception {
+    executeQuery("");
+    assertNotSet("/", "");
+  }
+
+  @Test
+  public void testBad20() throws Exception {
+    executeQuery("");
+    assertNotSet("/", "");
   }
 
   @Test
@@ -413,10 +469,30 @@ public class ExampleShell {
     assertSet("/uw", "ups_names", Set(TStr(), Str("khaki13")));
   }
 
+  @Test
+  public void testExample20() throws Exception {
+    executeQuery("SELECT first(100, is_null(has_ups)) AS ups_nulls ORDER BY name ASC");
+    assertSet("/uw", "ups_nulls", List(TBool(), Bool(false), Bool(false), Bool(true)));
+  }
+
+  @Test
+  public void testExample21() throws Exception {
+    executeQuery("SELECT (2 < 3) AND (3 > 2) AND NOT (2 > 3) AND NOT (3 < 2) AND (2 <> 3) AND "
+                 + "(2 = 2) AND (2 <= 2) AND (2 <= 3) AND (3 >= 2) AND (2 >= 2) AS test");
+    assertSet("/", "test", Bool(true));
+  }
+
+  @Test
+  public void testExample22() throws Exception {
+    executeQuery("SELECT to_set(first(1, members)) AS members ORDER BY name");
+    assertSet("/", "members",
+        Set(TSet(TSet(TCont())), Set(TSet(TCont()), Set(TCont(), Cont("PJ1")))));
+  }
+
   /*
   @Test
   public void testExample() throws Exception {
-    executeQuery("&ex", "");
+    executeQuery("");
     assertSet("/", "", );
   }
   */
@@ -424,7 +500,7 @@ public class ExampleShell {
   /*
   @Test
   public void testBad() throws Exception {
-    executeQuery("&bad", "");
+    executeQuery("");
     assertNotSet("/", "");
   }
   */

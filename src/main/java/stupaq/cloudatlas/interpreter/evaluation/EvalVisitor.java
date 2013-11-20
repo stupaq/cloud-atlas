@@ -15,6 +15,7 @@ import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
+import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
 import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.interpreter.evaluation.context.Context;
 import stupaq.cloudatlas.interpreter.evaluation.context.InputContext;
@@ -46,7 +47,7 @@ public class EvalVisitor {
   private <Type extends AttributeValue> Type expect(Class<Type> clazz, AttributeValue value) {
     Preconditions.checkNotNull(value);
     if (!clazz.isInstance(value)) {
-      throw new EvaluationException(
+      throw new TypeCheckerException(
           "Expected type: " + clazz.getSimpleName() + " got: " + value.getType());
     }
     return (Type) value;
@@ -439,7 +440,7 @@ public class EvalVisitor {
 
       public void checkUsage() {
         if (highestReferenced + 1 != size()) {
-          throw new EvaluationException("Function applied to too many arguments.");
+          throw new EvaluationException("Function applied to invalid number of arguments");
         }
       }
     }

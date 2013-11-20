@@ -22,13 +22,13 @@ public final class AttributeName extends ASCIIString implements CompactSerializa
     verifyInvariants();
   }
 
-  public static AttributeName valueOf(String str) {
+  public static AttributeName valueOf(String str) throws IllegalArgumentException {
     Preconditions.checkArgument(!str.startsWith(RESERVED_PREFIX),
         "AttributeName cannot start with reserved prefix: " + RESERVED_PREFIX);
     return new AttributeName(str);
   }
 
-  public static AttributeName valueOfReserved(String str) {
+  public static AttributeName valueOfReserved(String str) throws IllegalArgumentException {
     Preconditions.checkArgument(str.startsWith(RESERVED_PREFIX),
         "AttributeName must start with reserved prefix: " + RESERVED_PREFIX);
     return new AttributeName(str);

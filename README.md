@@ -3,6 +3,13 @@ CloudAtlas
 
 CloudAtlas is a system for managing large collections of distributed resources.
 
+Compilation and installation
+----------------------------
+
+There is not much to do at this point. To compile project run `mvn compile`,
+to build binaries `mvn package`.
+All unit and integration tests can be executed with `mvn test`.
+
 CloudAtlas query language
 -------------------------
 
