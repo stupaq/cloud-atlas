@@ -11,6 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
 import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.interpreter.typecheck.ComposedTypeInfo;
 import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
@@ -72,8 +73,9 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
         Preconditions.checkNotNull(elem, getType() + " cannot contain nulls");
       }
       for (AttributeValue elem : get()) {
-        Preconditions.checkState(elem.getType().equals(enclosingType),
-            "Collection contains elements of not matching type");
+        if (!elem.getType().equals(enclosingType)) {
+          throw new TypeCheckerException("Collection contains elements of not matching type");
+        }
       }
     }
   }

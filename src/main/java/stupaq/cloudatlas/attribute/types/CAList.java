@@ -16,7 +16,6 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefaul
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
-import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, ArrayList<Type>> {
   public CAList(TypeInfo<Type> enclosingType) {
@@ -79,7 +78,7 @@ public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, 
 
     @Override
     public CABoolean equalsTo(CAList value) {
-      return new CABoolean(isNull() ? null : equals(value));
+      return new CABoolean(isNull() ? null : CAList.this.equals(value));
     }
   }
 }

@@ -2,6 +2,7 @@ package stupaq.cloudatlas.attribute.types;
 
 import org.junit.Test;
 
+import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
 import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
 import static org.junit.Assert.assertEquals;
@@ -21,7 +22,7 @@ public class CASetTest {
     Set(TStr(), Str("string1"), Str("string2"));
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = TypeCheckerException.class)
   public void testNonuniformity() {
     Set((TypeInfo) TStr(), Str("string1"), Int(1337L));
   }
