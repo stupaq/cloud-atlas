@@ -1,7 +1,5 @@
 package stupaq.cloudatlas.interpreter.values;
 
-import com.google.common.base.Optional;
-
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -28,8 +26,7 @@ public final class RList<Type extends AttributeValue> extends AbstractAggregate<
 
   @Override
   <Arg0 extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> RList<Result> zipImplementation(
-      Iterator<Optional<Arg0>> it0, Iterator<Optional<Arg1>> it1,
-      Function2<Arg0, Arg1, Result> operation) {
+      Iterator<Arg0> it0, Iterator<Arg1> it1, Function2<Arg0, Arg1, Result> operation) {
     throw new EvaluationException(
         "Semantic value " + RList.class.getSimpleName() + ", cannot be zipped with other: "
         + SemanticValue.class.getSimpleName());

@@ -1,7 +1,5 @@
 package stupaq.cloudatlas.interpreter.values;
 
-import com.google.common.base.Optional;
-
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -27,11 +25,10 @@ public class RCollection<Type extends AttributeValue> extends AbstractAggregate<
 
   @Override
   <Arg0 extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> RCollection<Result> zipImplementation(
-      Iterator<Optional<Arg0>> it0, Iterator<Optional<Arg1>> it1,
-      Function2<Arg0, Arg1, Result> operation) {
+      Iterator<Arg0> it0, Iterator<Arg1> it1, Function2<Arg0, Arg1, Result> operation) {
     RCollection<Result> result = new RCollection<>();
     while (it0.hasNext() && it1.hasNext()) {
-      result.add(operation.applyOptional(it0.next(), it1.next()));
+      result.add(operation.apply(it0.next(), it1.next()));
     }
     return result;
   }

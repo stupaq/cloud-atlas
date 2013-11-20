@@ -1,6 +1,6 @@
 package stupaq.cloudatlas.interpreter.values;
 
-import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
@@ -12,27 +12,15 @@ import stupaq.guava.base.Function2;
 
 public final class RSingle<Type extends AttributeValue> implements SemanticValue<Type> {
   private static final AggregatingValue AGGREGATE_IMPLEMENTATION = new AggregatingValueDefault();
-  /** PACKAGE-LOCAL */
-  final Optional<Type> value;
-
-  public RSingle() {
-    this.value = Optional.absent();
-  }
+  private final Type value;
 
   public RSingle(Type value) {
-    this.value = Optional.of(value);
-  }
-
-  public RSingle(Optional<Type> value) {
+    Preconditions.checkNotNull(value);
     this.value = value;
   }
 
   public Type get() {
-    return value.get();
-  }
-
-  public Type or(Type alternative) {
-    return value.isPresent() ? value.get() : alternative;
+    return value;
   }
 
   @Override
@@ -42,13 +30,13 @@ public final class RSingle<Type extends AttributeValue> implements SemanticValue
 
   @Override
   public RSingle<CABoolean> isNull() {
-    return new RSingle<>(new CABoolean(!value.isPresent()));
+    return new RSingle<>(new CABoolean(value.isNull()));
   }
 
   @Override
   public <Result extends AttributeValue> SemanticValue<Result> map(
       Function1<Type, Result> function) {
-    return new RSingle<>(value.transform(function));
+    return new RSingle<>(function.apply(value));
   }
 
   @Override
@@ -74,7 +62,7 @@ public final class RSingle<Type extends AttributeValue> implements SemanticValue
   @Override
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RSingle<Other> first, Function2<Other, Type, Result> operation) {
-    return new RSingle<>(operation.applyOptional(first.value, value));
+    return new RSingle<>(operation.apply(first.value, value));
   }
 
   @Override

@@ -106,6 +106,28 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
   }
 
   @Override
+  public final boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    AbstractComposed that = (AbstractComposed) o;
+    return isNull == that.isNull && enclosingType.equals(that.enclosingType) && value
+        .equals(that.value);
+
+  }
+
+  @Override
+  public final int hashCode() {
+    int result = value.hashCode();
+    result = 31 * result + enclosingType.hashCode();
+    result = 31 * result + (isNull ? 1 : 0);
+    return result;
+  }
+
+  @Override
   public final String toString() {
     return to().String().toString();
   }
