@@ -357,6 +357,7 @@ public class EvalVisitor {
           case "unfold":
             return args.get(0).aggregate().unfold();
           // Utility
+          case "is_null":
           case "isnull":
             return args.get(0).isNull();
           case "now":

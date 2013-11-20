@@ -9,11 +9,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import stupaq.cloudatlas.attribute.Attribute;
@@ -43,10 +46,10 @@ public class ExampleShell {
   private static final Log LOG = LogFactory.getLog(ExampleShell.class);
   private ZoneHierarchy<ZoneManagementInfo> root;
 
-  private static Collection<Entry<AttributeName, CAQuery>> parse()
+  private static Collection<Entry<AttributeName, CAQuery>> parse(InputStream in)
       throws IOException, IllegalArgumentException, ParsingException {
     HashMap<AttributeName, CAQuery> map = new HashMap<>();
-    BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader stdin = new BufferedReader(new InputStreamReader(in));
     String line;
     while ((line = stdin.readLine()) != null && line.length() != 0) {
       line = line.trim();
@@ -74,7 +77,7 @@ public class ExampleShell {
     shell.setUp();
     Collection<Entry<AttributeName, CAQuery>> queries = Collections.emptyList();
     try {
-      queries = parse();
+      queries = parse(System.in);
       for (Entry<AttributeName, CAQuery> entry : queries) {
         shell.installQuery(entry.getKey(), entry.getValue());
       }
@@ -376,4 +379,14 @@ public class ExampleShell {
     assertNotSet("/", "");
   }
   */
+
+  @Test
+  public void testParse() throws IOException, IllegalArgumentException, ParsingException {
+    Collection<Entry<AttributeName, CAQuery>> queries = parse(new ByteArrayInputStream(
+        "&example1: SELECT 2 + 2 AS four;\n&example2: SELECT 2 + 3 AS five;".getBytes()));
+    Map<AttributeName, CAQuery> expected = new HashMap<>();
+    expected.put(AttributeName.valueOfReserved("&example1"), new CAQuery("SELECT 2 + 2 AS four"));
+    expected.put(AttributeName.valueOfReserved("&example2"), new CAQuery("SELECT 2 + 3 AS five"));
+    assertEquals(expected.entrySet(), queries);
+  }
 }
