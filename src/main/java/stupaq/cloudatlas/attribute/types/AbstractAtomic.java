@@ -5,12 +5,14 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
 /** PACKAGE-LOCAL */
+@ParametersAreNonnullByDefault
 abstract class AbstractAtomic<Type extends Comparable<Type>> implements AttributeValue {
   @Nonnull
   private Optional<Type> value;
@@ -35,6 +37,7 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
   }
 
   protected final boolean isNull(AttributeValue other) {
+    Preconditions.checkNotNull(other);
     return isNull() || other.isNull();
   }
 

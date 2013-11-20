@@ -2,6 +2,8 @@ package stupaq.cloudatlas.interpreter.typecheck;
 
 import com.google.common.base.Preconditions;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.annotation.Nonnull;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
@@ -29,6 +31,15 @@ public class ComposedTypeInfo<Atomic extends AttributeValue> extends TypeInfo<At
   @Override
   public TypeInfo<? extends AttributeValue> unfold() {
     return enclosing;
+  }
+
+  @Override
+  public Atomic nullInstance() {
+    try {
+      return type.getDeclaredConstructor(TypeInfo.class).newInstance(enclosing);
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   @Override

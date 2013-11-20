@@ -32,7 +32,8 @@ public class TypeInfo<Atomic extends AttributeValue> {
     }
   }
 
-  public Class<Atomic> get() {
+  @Deprecated
+  public final Class<Atomic> get() {
     return type;
   }
 
