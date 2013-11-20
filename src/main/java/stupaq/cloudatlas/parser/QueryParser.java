@@ -1,7 +1,5 @@
 package stupaq.cloudatlas.parser;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -15,10 +13,6 @@ public class QueryParser implements AutoCloseable {
 
   public QueryParser(String str) {
     this(new StringReader(str));
-  }
-
-  public QueryParser(InputStream inputStream) {
-    this(new InputStreamReader(inputStream));
   }
 
   public QueryParser(Reader reader) {

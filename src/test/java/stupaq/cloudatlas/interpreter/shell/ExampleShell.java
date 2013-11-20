@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
@@ -40,11 +41,17 @@ import static org.junit.Assert.fail;
 import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TCont;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TDoub;
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TList;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TStr;
 
 public class ExampleShell {
   private static final Log LOG = LogFactory.getLog(ExampleShell.class);
+  private static final AtomicInteger uniqueId = new AtomicInteger(0);
   private ZoneHierarchy<ZoneManagementInfo> root;
+
+  private static AttributeName getUniqueQueryName() {
+    return AttributeName.valueOfReserved("&unique" + uniqueId.getAndDecrement());
+  }
 
   private static Collection<Entry<AttributeName, CAQuery>> parse(InputStream in)
       throws IOException, IllegalArgumentException, ParsingException {
@@ -82,7 +89,7 @@ public class ExampleShell {
         shell.installQuery(entry.getKey(), entry.getValue());
       }
       shell.recomputeQueries();
-      System.out.println(shell.root);
+      System.out.println("Final hierarchy:\n" + shell.root);
     } catch (Exception e) {
       LOG.error("Failure ", e);
     } finally {
@@ -92,9 +99,11 @@ public class ExampleShell {
     }
   }
 
-  private void executeQuery(String name, String query) {
-    installQuery(AttributeName.valueOfReserved(name), new CAQuery(query));
+  private AttributeName executeQuery(String query) {
+    AttributeName name = getUniqueQueryName();
+    installQuery(name, new CAQuery(query));
     recomputeQueries();
+    return name;
   }
 
   private void installQuery(final AttributeName name, final CAQuery query) {
@@ -140,10 +149,6 @@ public class ExampleShell {
         .isPresent());
   }
 
-  private void dumpHierarchy() {
-    LOG.info("Final hierarchy\n" + root);
-  }
-
   @Before
   public void setUp() {
     root = ZoneHierarchyTestUtils.officialExampleHierarchy();
@@ -151,13 +156,13 @@ public class ExampleShell {
 
   @Test(expected = ParsingException.class)
   public void testBad0() throws Exception {
-    executeQuery("&bad0", "SELECT 2 + 2 AS SELECT");
+    executeQuery("SELECT 2 + 2 AS SELECT");
     fail();
   }
 
   @Test
   public void testBad1() throws Exception {
-    executeQuery("&bad1", "SELECT 2 + 2 AS smth, 3 + 3 AS smth");
+    executeQuery("SELECT 2 + 2 AS smth, 3 + 3 AS smth");
     // Queries are atomic, nothing should happen really
     assertNotSet("/", "smth");
     assertNotSet("/uw", "smth");
@@ -166,13 +171,13 @@ public class ExampleShell {
 
   @Test(expected = ParsingException.class)
   public void testBad2() throws Exception {
-    executeQuery("&bad2", "SELECT \"haskell\" AS x'");
+    executeQuery("SELECT \"haskell\" AS x'");
     fail();
   }
 
   @Test
   public void testBad3() throws Exception {
-    executeQuery("&bad3", "SELECT \"a\" + 2 AS a2");
+    executeQuery("SELECT \"a\" + 2 AS a2");
     assertNotSet("/", "a2");
     assertNotSet("/uw", "a2");
     assertNotSet("/pjwstk", "a2");
@@ -180,7 +185,7 @@ public class ExampleShell {
 
   @Test
   public void testBad4() throws Exception {
-    executeQuery("&bad4", "SELECT unfold(contacts) AS a");
+    executeQuery("SELECT unfold(contacts) AS a");
     assertNotSet("/", "a");
     assertNotSet("/uw", "a");
     assertNotSet("/pjwstk", "a");
@@ -188,7 +193,7 @@ public class ExampleShell {
 
   @Test
   public void testBad5() throws Exception {
-    executeQuery("&bad5", "SELECT level AS b");
+    executeQuery("SELECT level AS b");
     assertNotSet("/", "b");
     assertNotSet("/uw", "b");
     assertNotSet("/pjwstk", "b");
@@ -197,56 +202,67 @@ public class ExampleShell {
   @Test
   public void testBad6() throws Exception {
     // This is a type error, even though some interpreters accept this query
-    executeQuery("&bad7",
-        "SELECT (SELECT avg(cpu_usage) WHERE isnull(cpu_usage)) + \"string\" AS smth");
+    executeQuery("SELECT (SELECT avg(cpu_usage) WHERE isnull(cpu_usage)) + \"string\" AS smth");
     assertNotSet("/uw", "smth");
   }
 
   @Test
   public void testBad7() throws Exception {
-    executeQuery("&bad7", "SELECT land(lor(some_names+\"xx\" REGEXP \"*atkax*\")) AS has_beatka");
+    executeQuery("SELECT land(lor(some_names+\"xx\" REGEXP \"*atkax*\")) AS has_beatka");
     assertNotSet("/", "has_beatka");
   }
 
   @Test
   public void testBad8() throws Exception {
-    executeQuery("&bad8", "SELECT lor(land(some_names)) AS beatka");
+    executeQuery("SELECT lor(land(some_names)) AS beatka");
     assertNotSet("/", "beatka");
   }
 
   @Test
   public void testBad9() throws Exception {
-    executeQuery("&good", "SELECT (SELECT avg(cpu_usage) WHERE false) AS smth1");
+    executeQuery("SELECT (SELECT avg(cpu_usage) WHERE false) AS smth1");
     assertSet("/uw", "smth1", Doub());
     // This is a type error, even though some interpreters accept this query
-    executeQuery("&bad9", "SELECT (SELECT avg(cpu_usage) WHERE false) + \"string\" AS smth");
+    executeQuery("SELECT (SELECT avg(cpu_usage) WHERE false) + \"string\" AS smth");
     assertNotSet("/uw", "smth");
   }
 
   @Test
   public void testBad10() throws Exception {
-    executeQuery("&beatka2", "SELECT min(unfold(some_names) + \"xx\") AS smt");
+    executeQuery("SELECT min(unfold(some_names) + \"xx\") AS smt");
     assertSet("/uw", "smt", Str("agatkaxx"));
-    executeQuery("&beatka2", "SELECT min(unfold(some_names + \"xx\")) AS beatka");
+    executeQuery("SELECT min(unfold(some_names + \"xx\")) AS beatka");
     assertNotSet("/uw", "beatka");
   }
 
   @Test
+  public void testBad11() throws Exception {
+    executeQuery("SELECT (SELECT 2, 3) AS smth");
+    assertNotSet("/", "smth");
+  }
+
+  @Test
+  public void testBad12() throws Exception {
+    executeQuery("SELECT 2 AS two, 2 AS two");
+    assertNotSet("/", "two");
+  }
+
+  @Test
   public void testExample0() throws Exception {
-    executeQuery("&two_plus_two", "SELECT 2 + 2 AS two_plus_two");
+    executeQuery("SELECT 2 + 2 AS two_plus_two");
     assertSet("/", "two_plus_two", Int(4));
   }
 
   @Test
   public void testExample1() throws Exception {
-    executeQuery("&ex1", "SELECT count(members) AS members_count");
+    executeQuery("SELECT count(members) AS members_count");
     assertSet("/uw", "members_count", Int(3));
     assertNotSet("/", "members_count");
   }
 
   @Test
   public void testExample2() throws Exception {
-    executeQuery("&ex2",
+    executeQuery(
         "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY num_cores ASC NULLS FIRST, "
         + "cpu_usage DESC NULLS LAST");
     assertSet("/uw", "new_contacts", List(TCont(), Cont("UW1A"), Cont("UW1B")));
@@ -255,29 +271,28 @@ public class ExampleShell {
 
   @Test
   public void testExample2v1() throws Exception {
-    executeQuery("&ex2", "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY cpu_usage "
-                         + "DESC NULLS LAST, num_cores ASC NULLS FIRST");
+    executeQuery("SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY cpu_usage "
+                 + "DESC NULLS LAST, num_cores ASC NULLS FIRST");
     assertSet("/uw", "new_contacts", List(TCont(), Cont("UW3A"), Cont("UW3B")));
   }
 
   @Test
   public void testExample3() throws Exception {
-    executeQuery("&ex3",
-        "SELECT sum(num_cores * 2) AS ncores WHERE cpu_usage < ( SELECT avg(cpu_usage))");
+    executeQuery("SELECT sum(num_cores * 2) AS ncores WHERE cpu_usage < ( SELECT avg(cpu_usage))");
     assertSet("/pjwstk", "ncores", Int(14));
     assertNotSet("/", "ncores");
   }
 
   @Test
   public void testExample4() throws Exception {
-    executeQuery("&ex4", "SELECT count(num_cores - size(some_names)) AS sth");
+    executeQuery("SELECT count(num_cores - size(some_names)) AS sth");
     assertSet("/uw", "sth", Int(2));
     assertNotSet("/pjwstk", "sth");
   }
 
   @Test
   public void testExample5() throws Exception {
-    executeQuery("&ex5",
+    executeQuery(
         "SELECT min(sum(distinct(2*level)) + 38 * size(contacts)) AS sth WHERE num_cores < 8");
     assertSet("/uw", "sth", Int(42));
     assertNotSet("/", "sth");
@@ -285,22 +300,22 @@ public class ExampleShell {
 
   @Test
   public void testExample6() throws Exception {
-    executeQuery("&ex6", "SELECT random(10, cpu_usage * num_cores / 10) AS sth");
+    executeQuery("SELECT random(10, cpu_usage * num_cores / 10) AS sth");
     assertSet("/pjwstk", "sth", List(TDoub(), Doub(0.07), Doub(0.52)));
     assertNotSet("/", "sth");
   }
 
   @Test
   public void testExample7v2() throws Exception {
-    executeQuery("&ex7", "SELECT first(1, name) AS concat_name WHERE num_cores >= "
-                         + "(SELECT min(num_cores) ORDER BY timestamp) ORDER BY creation ASC NULLS "
-                         + "LAST");
+    executeQuery("SELECT first(1, name) AS concat_name WHERE num_cores >= "
+                 + "(SELECT min(num_cores) ORDER BY timestamp) ORDER BY creation ASC NULLS "
+                 + "LAST");
     assertSet("/pjwstk", "concat_name", List(TStr(), Str("whatever01")));
   }
 
   @Test
   public void testExample8() throws Exception {
-    executeQuery("&ex8", "SELECT sum(cardinality) AS cardinality");
+    executeQuery("SELECT sum(cardinality) AS cardinality");
     assertSet("/", "cardinality", Int(5));
     assertSet("/uw", "cardinality", Int(3));
     assertSet("/pjwstk", "cardinality", Int(2));
@@ -308,7 +323,7 @@ public class ExampleShell {
 
   @Test
   public void testExample9() throws Exception {
-    executeQuery("&ex9", "SELECT to_set(random(100, unfold(contacts))) AS contacts");
+    executeQuery("SELECT to_set(random(100, unfold(contacts))) AS contacts");
     assertSet("/", "contacts",
         Set(TCont(), Cont("PJ1"), Cont("PJ2"), Cont("UW1A"), Cont("UW1B"), Cont("UW1C"),
             Cont("UW2A"), Cont("UW3A"), Cont("UW3B")));
@@ -316,14 +331,14 @@ public class ExampleShell {
 
   @Test
   public void testExample10() throws Exception {
-    executeQuery("&ex10", "SELECT land(cpu_usage < 0.5) AS cpu_ok");
+    executeQuery("SELECT land(cpu_usage < 0.5) AS cpu_ok");
     assertSet("/pjwstk", "cpu_ok", Bool(true));
     assertSet("/uw", "cpu_ok", Bool(false));
   }
 
   @Test
   public void testExample11() throws Exception {
-    executeQuery("&ex11",
+    executeQuery(
         "SELECT min(name) AS min_name, to_string(first(1, name)) AS max_name ORDER BY name DESC");
     assertSet("/", "min_name", Str("pjwstk"));
     assertSet("/", "max_name", Str("[ uw ]"));
@@ -331,7 +346,7 @@ public class ExampleShell {
 
   @Test
   public void testExample12() throws Exception {
-    executeQuery("&ex12", "SELECT epoch() AS epoch, land(timestamp > epoch()) AS afterY2K");
+    executeQuery("SELECT epoch() AS epoch, land(timestamp > epoch()) AS afterY2K");
     assertSet("/", "afterY2K", Bool(true));
     assertSet("/pjwstk", "afterY2K", Bool(true));
     assertSet("/uw", "afterY2K", Bool(true));
@@ -343,7 +358,7 @@ public class ExampleShell {
 
   @Test
   public void testExample13() throws Exception {
-    executeQuery("&ex13", "SELECT min(timestamp) + (max(timestamp) - epoch())/2 AS t2");
+    executeQuery("SELECT min(timestamp) + (max(timestamp) - epoch())/2 AS t2");
     // The problem here is that (at least for Java) CET is not defined for dates within DST.
     // I have decided to follow the convention and dates from DST must be specified with CEST
     // time zone. Internal representation is global in the sense that it uses an offset from Unix
@@ -353,15 +368,49 @@ public class ExampleShell {
 
   @Test
   public void testExample14() throws Exception {
-    executeQuery("&bad14", "SELECT avg(cpu_usage) AS anull WHERE isnull(cpu_usage)");
+    executeQuery("SELECT avg(cpu_usage) AS anull WHERE isnull(cpu_usage)");
     assertSet("/uw", "anull", Doub());
   }
 
   @Test
   public void testExample15() throws Exception {
-    // This is a type error, even though some interpreters accept this query
-    executeQuery("&example15", "SELECT (SELECT avg(cpu_usage) WHERE false) AS smth");
+    executeQuery("SELECT (SELECT avg(cpu_usage) WHERE false) AS smth");
     assertSet("/uw", "smth", Doub());
+  }
+
+  @Test
+  public void testExample16() throws Exception {
+    installQuery(AttributeName.valueOfReserved("&ex16_1"),
+        new CAQuery("SELECT first(1, some_names) AS some_names ORDER BY name ASC"));
+    installQuery(AttributeName.valueOfReserved("&ex16_2"),
+        new CAQuery("SELECT count(distinct(unfold(some_names))) AS names_no ORDER BY name"));
+    recomputeQueries();
+    assertSet("/uw", "some_names", List(TList(TStr()), List(TStr())));
+    assertSet("/", "some_names", List(TList(TList(TStr())), List(TList(TStr()), List(TStr()))));
+    assertSet("/uw", "names_no", Int(5));
+    assertSet("/", "names_no", Int(1));
+  }
+
+  @Test
+  public void testExample17() throws Exception {
+    removeQuery(executeQuery("SELECT sum(cardinality) AS base"));
+    executeQuery("SELECT sum(cardinality) + sum(base) AS base");
+    assertSet("/", "base", Int(5));
+    assertSet("/uw", "base", Int(3));
+    assertSet("/pjwstk", "base", Int(2));
+  }
+
+  @Test
+  public void testExample18() throws Exception {
+    executeQuery("SELECT min(cpu_usage) AS min_usage, max(cpu_usage) AS max_usage");
+    assertSet("/uw", "min_usage", Doub(0.1));
+    assertSet("/uw", "max_usage", Doub(0.9));
+  }
+
+  @Test
+  public void testExample19() throws Exception {
+    executeQuery("SELECT to_set(first(100, name)) AS ups_names WHERE has_ups");
+    assertSet("/uw", "ups_names", Set(TStr(), Str("khaki13")));
   }
 
   /*

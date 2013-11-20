@@ -1,10 +1,8 @@
 package stupaq.cloudatlas.interpreter.evaluation;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +31,6 @@ import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
 public class EvalVisitor {
-  private static final Log LOG = LogFactory.getLog(EvalVisitor.class);
   private final AttributesTable originalTable;
 
   public EvalVisitor(AttributesTable originalTable) {
@@ -46,24 +43,21 @@ public class EvalVisitor {
   }
 
   @SuppressWarnings("unchecked")
-  private <Type extends AttributeValue> Type getAs(AttributeValue value, Class<Type> clazz) {
-    if (value == null) {
-      throw new EvaluationException("Expected: " + clazz.getSimpleName() + " got NULL");
-    }
-    if (clazz.isInstance(value)) {
-      return (Type) value;
-    } else {
+  private <Type extends AttributeValue> Type expect(Class<Type> clazz, AttributeValue value) {
+    Preconditions.checkNotNull(value);
+    if (!clazz.isInstance(value)) {
       throw new EvaluationException(
           "Expected type: " + clazz.getSimpleName() + " got: " + value.getType());
     }
-  }
-
-  private abstract static class AttributeValueZipper
-      extends Function2<AttributeValue, AttributeValue, AttributeValue> {
+    return (Type) value;
   }
 
   private abstract static class AttributeValueMapper
       extends Function1<AttributeValue, AttributeValue> {
+  }
+
+  private abstract static class AttributeValueZipper
+      extends Function2<AttributeValue, AttributeValue, AttributeValue> {
   }
 
   private class XProgramVisitor implements XProgram.Visitor<Void, OutputContext> {
@@ -78,7 +72,6 @@ public class EvalVisitor {
   }
 
   private class XStatementVisitor implements XStatement.Visitor<Void, OutputContext> {
-    @SuppressWarnings("unchecked")
     @Override
     public Void visit(Statement p, OutputContext outputContext) {
       AttributesTable table = new AttributesTable(originalTable);
@@ -93,7 +86,6 @@ public class EvalVisitor {
   }
 
   private class XStatementInnerVisitor implements XStatement.Visitor<RSingle, OutputContext> {
-    @SuppressWarnings("unchecked")
     @Override
     public RSingle visit(Statement p, OutputContext outputContext) {
       AttributesTable table = new AttributesTable(originalTable);
@@ -109,7 +101,6 @@ public class EvalVisitor {
   }
 
   private class XWhereClauseVisitor implements XWhereClause.Visitor<Void, AttributesTable> {
-    @SuppressWarnings("unchecked")
     @Override
     public Void visit(WhereClause p, AttributesTable table) {
       Iterator<AttributesRow> rows = table.iterator();
@@ -118,16 +109,14 @@ public class EvalVisitor {
         try {
           value = p.xexpression_.accept(new XExpressionVisitor(), new InputContext(rows.next()))
               .getSingle().get();
-        } catch (SemanticValueCastException e) {
-          throw new EvaluationException("WHERE expression result is not a single value");
-        }
-        try {
-          if (!getAs(value, CABoolean.class).getOr(false)) {
+          if (!expect(CABoolean.class, value).getOr(false)) {
             rows.remove();
           }
         } catch (EvaluationException e) {
           throw new EvaluationException(
               "WHERE expression result is not a boolean: " + e.getMessage());
+        } catch (SemanticValueCastException e) {
+          throw new EvaluationException("WHERE expression result is not a single value");
         }
       }
       return null;
@@ -337,13 +326,13 @@ public class EvalVisitor {
             return args.get(0).aggregate().count();
           case "first":
             return args.get(1).aggregate()
-                .first(getAs(args.get(0).getSingle().get(), CAInteger.class));
+                .first(expect(CAInteger.class, args.get(0).getSingle().get()));
           case "last":
             return args.get(1).aggregate()
-                .last(getAs(args.get(0).getSingle().get(), CAInteger.class));
+                .last(expect(CAInteger.class, args.get(0).getSingle().get()));
           case "random":
             return args.get(1).aggregate()
-                .random(getAs(args.get(0).getSingle().get(), CAInteger.class));
+                .random(expect(CAInteger.class, args.get(0).getSingle().get()));
           case "min":
             return args.get(0).aggregate().min();
           case "max":
