@@ -32,6 +32,7 @@ public class CATimeTest {
     assertEquals(Dur(-1000L), Time(10000L).op().add(Time(11000L).op().negate()));
     assertEquals(Dur(), Time().op().add(Time(11000L).op().negate()));
     assertEquals(Dur(), Time(10000L).op().add(Time().op().negate()));
+    assertEquals(Dur(), Time().op().add(Time().op().negate()));
   }
 
   @Test
@@ -40,9 +41,11 @@ public class CATimeTest {
     assertEquals(Bool(false), Time(2).rel().equalsTo(Time(1)));
     assertEquals(Bool(), Time(2).rel().equalsTo(Time()));
     assertEquals(Bool(), Time().rel().equalsTo(Time(1)));
+    assertEquals(Bool(), Time().rel().equalsTo(Time()));
     assertEquals(Bool(false), Time(1).rel().greaterThan(Time(1)));
     assertEquals(Bool(true), Time(2).rel().greaterThan(Time(1)));
     assertEquals(Bool(), Time(2).rel().greaterThan(Time()));
     assertEquals(Bool(), Time().rel().greaterThan(Time(1)));
+    assertEquals(Bool(), Time().rel().greaterThan(Time()));
   }
 }

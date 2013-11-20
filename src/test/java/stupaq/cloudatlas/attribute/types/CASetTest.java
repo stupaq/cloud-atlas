@@ -60,5 +60,6 @@ public class CASetTest {
         Set(TInt(), Int(1), Int(2)).rel().equalsTo(Set(TInt(), Int(2), Int(3))));
     assertEquals(Bool(), SetNull(TInt()).rel().equalsTo(Set(TInt(), Int(2))));
     assertEquals(Bool(), Set(TInt(), Int(2)).rel().equalsTo(SetNull(TInt())));
+    assertEquals(Bool(), SetNull(TInt()).rel().equalsTo(SetNull(TInt())));
   }
 }

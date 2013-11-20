@@ -62,5 +62,6 @@ public class CAListTest {
         List(TInt(), Int(3), Int(2)).rel().equalsTo(List(TInt(), Int(2), Int(3))));
     assertEquals(Bool(), ListNull(TInt()).rel().equalsTo(List(TInt(), Int(2), Int(3))));
     assertEquals(Bool(), List(TInt(), Int(3), Int(2)).rel().equalsTo(ListNull(TInt())));
+    assertEquals(Bool(), ListNull(TInt()).rel().equalsTo(ListNull(TInt())));
   }
 }

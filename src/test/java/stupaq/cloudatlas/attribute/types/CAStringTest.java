@@ -55,6 +55,7 @@ public class CAStringTest {
     assertEquals(Str("aaaa"), Str("aaaa").op().add(Str("")));
     assertEquals(Str("aaaa"), Str("aaaa").op().add(Str("")));
     assertEquals(Str(), Str().op().add(Str("")));
+    assertEquals(Str(), Str().op().add(Str()));
     assertEquals(Str(), Str("aaaa").op().add(Str()));
     // size
     assertEquals(Int(3L), Str("aaa").op().size());
@@ -64,6 +65,7 @@ public class CAStringTest {
     assertEquals(Bool(true), Str("aaaaaab").op().matches(Str("a*b")));
     assertEquals(Bool(false), Str("aaaacb").op().matches(Str("a*b")));
     assertEquals(Bool(), Str().op().matches(Str("a*b")));
+    assertEquals(Bool(), Str().op().matches(Str()));
     assertEquals(Bool(), Str("aaa").op().matches(Str()));
   }
 
@@ -75,5 +77,6 @@ public class CAStringTest {
     assertEquals(Bool(true), Str("2").rel().greaterThan(Str("1")));
     assertEquals(Bool(), Str("2").rel().greaterThan(Str()));
     assertEquals(Bool(), Str().rel().greaterThan(Str("1")));
+    assertEquals(Bool(), Str().rel().greaterThan(Str()));
   }
 }

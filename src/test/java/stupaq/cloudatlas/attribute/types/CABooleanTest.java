@@ -45,5 +45,6 @@ public class CABooleanTest {
     assertEquals(Bool(true), Bool(true).rel().equalsTo(Bool(true)));
     assertEquals(Bool(), Bool().rel().equalsTo(Bool(true)));
     assertEquals(Bool(), Bool(true).rel().equalsTo(Bool()));
+    assertEquals(Bool(), Bool().rel().equalsTo(Bool()));
   }
 }
