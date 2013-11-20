@@ -49,6 +49,11 @@ public class ExampleShell {
     BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
     String line;
     while ((line = stdin.readLine()) != null && line.length() != 0) {
+      line = line.trim();
+      if (!line.endsWith(";")) {
+        throw new ParsingException("Parse failed");
+      }
+      line = line.substring(0, line.length() - 1);
       String[] parts = line.split(":");
       if (parts.length < 2) {
         throw new ParsingException("Parse failed");
