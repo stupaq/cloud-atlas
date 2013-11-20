@@ -11,7 +11,6 @@ import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -72,32 +71,6 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
   @Override
   public abstract <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zip(
       SemanticValue<Other> second, Function2<Type, Other, Result> operation);
-
-  @Override
-  public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RCollection<Other> first, Function2<Other, Type, Result> operation) {
-    return first.zipImplementation(first.iterator(), this.iterator(), operation,
-        TypeInfoUtils.typeof2(first.getType(), getType(), operation));
-  }
-
-  @Override
-  public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RList<Other> first, Function2<Other, Type, Result> operation) {
-    return first.zipImplementation(first.iterator(), this.iterator(), operation,
-        TypeInfoUtils.typeof2(first.getType(), getType(), operation));
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RSingle<Other> first, Function2<Other, Type, Result> operation) {
-    return zipImplementation(Iterables.cycle(first.get()).iterator(), iterator(), operation,
-        TypeInfoUtils.typeof2(first.getType(), getType(), operation));
-  }
-
-  abstract <Arg0 extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> AbstractAggregate<Result> zipImplementation(
-      Iterator<Arg0> it0, Iterator<Arg1> it1, Function2<Arg0, Arg1, Result> operation,
-      TypeInfo<Result> typeInfo);
 
   @Override
   public final RSingle<Type> getSingle() throws SemanticValueCastException {

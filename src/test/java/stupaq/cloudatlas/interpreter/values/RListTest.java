@@ -2,7 +2,7 @@ package stupaq.cloudatlas.interpreter.values;
 
 import org.junit.Test;
 
-import stupaq.cloudatlas.interpreter.errors.EvaluationException;
+import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValueDefault;
 
 import static org.junit.Assert.assertEquals;
@@ -29,17 +29,41 @@ public class RListTest {
     assertEquals(L(TInt(), Int(), Int(-3)), L(TInt(), Int(), Int(3)).map(UnOp()));
   }
 
-  @Test(expected = EvaluationException.class)
-  public void testSemanticsZip() {
+  @Test(expected = TypeCheckerException.class)
+  public void testSemanticsZip0() {
     // zip
     assertEquals(L(TInt(), Int(3), Int(4)),
         L(TInt(), Int(5), Int(3)).zip(L(TInt(), Int(2), Int(-1)), BinOp()));
+  }
+
+  @Test
+  public void testSemanticsZip1() {
+    // zip
     assertEquals(L(TInt(), Int(3), Int(1)), L(TInt(), Int(5), Int(3)).zip(S(Int(2)), BinOp()));
+  }
+
+  @Test
+  public void testSemanticsZip2() {
+    // zip
     assertEquals(L(TInt(), Int(-3), Int(-1)), S(Int(2)).zip(L(TInt(), Int(5), Int(3)), BinOp()));
+  }
+
+  @Test(expected = TypeCheckerException.class)
+  public void testSemanticsZip3() {
     // zip null
     assertEquals(L(TInt(), Int(), Int()),
         L(TInt(), Int(), Int(1)).zip(L(TInt(), Int(), Int(1)), BinOp()));
+  }
+
+  @Test
+  public void testSemanticsZip4() {
+    // zip null
     assertEquals(L(TInt(), Int(), Int()), L(TInt(), Int(), Int(1)).zip(S(Int()), BinOp()));
+  }
+
+  @Test
+  public void testSemanticsZip5() {
+    // zip null
     assertEquals(L(TInt(), Int(), Int()), S(Int()).zip(L(TInt(), Int(), Int(3)), BinOp()));
   }
 

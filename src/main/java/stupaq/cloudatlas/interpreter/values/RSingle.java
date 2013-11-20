@@ -8,9 +8,10 @@ import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValueDefault;
 import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
-import stupaq.cloudatlas.interpreter.typecheck.TypeInfoUtils;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
+
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoUtils.typeof2;
 
 public final class RSingle<Type extends AttributeValue> implements SemanticValue<Type> {
   private static final AggregatingValue AGGREGATE_IMPLEMENTATION = new AggregatingValueDefault();
@@ -57,16 +58,16 @@ public final class RSingle<Type extends AttributeValue> implements SemanticValue
   @SuppressWarnings("unchecked")
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RCollection<Other> first, Function2<Other, Type, Result> operation) {
-    return first.zipImplementation(first.iterator(), Iterators.cycle(value), operation,
-        TypeInfoUtils.typeof2(first.getType(), getType(), operation));
+    return RCollection.zipImplementation(first.iterator(), Iterators.cycle(value), operation,
+        new RCollection<>(typeof2(first.getType(), getType(), operation)));
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RList<Other> first, Function2<Other, Type, Result> operation) {
-    return first.zipImplementation(first.iterator(), Iterators.cycle(value), operation,
-        TypeInfoUtils.typeof2(first.getType(), getType(), operation));
+    return RCollection.zipImplementation(first.iterator(), Iterators.cycle(value), operation,
+        new RList<>(typeof2(first.getType(), getType(), operation)));
   }
 
   @Override

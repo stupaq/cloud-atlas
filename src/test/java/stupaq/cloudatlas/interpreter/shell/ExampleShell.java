@@ -216,6 +216,14 @@ public class ExampleShell {
   }
 
   @Test
+  public void testBad10() throws Exception {
+    executeQuery("&beatka2", "SELECT min(unfold(some_names) + \"xx\") AS smt");
+    assertSet("/uw", "smt", Str("agatkaxx"));
+    executeQuery("&beatka2", "SELECT min(unfold(some_names + \"xx\")) AS beatka");
+    assertNotSet("/uw", "beatka");
+  }
+
+  @Test
   public void testExample0() throws Exception {
     executeQuery("&two_plus_two", "SELECT 2 + 2 AS two_plus_two");
     assertSet("/", "two_plus_two", Int(4));
