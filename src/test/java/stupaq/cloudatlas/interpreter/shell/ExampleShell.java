@@ -195,6 +195,25 @@ public class ExampleShell {
   }
 
   @Test
+  public void testBad7() throws Exception {
+    executeQuery("&bad7", "SELECT land(lor(some_names+\"xx\" REGEXP \"*atkax*\")) AS has_beatka");
+    assertNotSet("/", "has_beatka");
+  }
+
+  @Test
+  public void testBad8() throws Exception {
+    executeQuery("&bad8", "SELECT lor(land(some_names)) AS beatka");
+    assertNotSet("/", "beatka");
+  }
+
+  @Test
+  public void testBad9() throws Exception {
+    // This is a type error, even though some interpreters accept this query
+    executeQuery("&bad9", "SELECT (SELECT avg(cpu_usage) WHERE false) + \"string\" AS smth");
+    assertNotSet("/uw", "smth");
+  }
+
+  @Test
   public void testExample0() throws Exception {
     executeQuery("&two_plus_two", "SELECT 2 + 2 AS two_plus_two");
     assertSet("/", "two_plus_two", Int(4));
@@ -318,6 +337,13 @@ public class ExampleShell {
   public void testExample14() throws Exception {
     executeQuery("&bad14", "SELECT avg(cpu_usage) AS anull WHERE isnull(cpu_usage)");
     assertSet("/uw", "anull", Doub());
+  }
+
+  @Test
+  public void testExample15() throws Exception {
+    // This is a type error, even though some interpreters accept this query
+    executeQuery("&example15", "SELECT (SELECT avg(cpu_usage) WHERE false) AS smth");
+    assertSet("/uw", "smth", Doub());
   }
 
   /*
