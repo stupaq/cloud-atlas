@@ -31,12 +31,12 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
   }
 
   @Nonnull
-  public AttributeName name() {
+  public AttributeName getName() {
     return name;
   }
 
   @Nonnull
-  public Type value() {
+  public Type getValue() {
     return value;
   }
 

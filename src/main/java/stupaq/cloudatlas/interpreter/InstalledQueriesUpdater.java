@@ -17,7 +17,7 @@ public class InstalledQueriesUpdater extends InPlaceAggregator<ZoneManagementInf
   @Override
   public void process(Iterable<ZoneManagementInfo> children, final ZoneManagementInfo current) {
     for (Attribute attribute : current.getPrivateAttributes()) {
-      AttributeValue value = attribute.value();
+      AttributeValue value = attribute.getValue();
       if (!value.isNull() && value.getType().equals(new TypeInfo<>(CAQuery.class))) {
         CAQuery query = (CAQuery) value;
         try {

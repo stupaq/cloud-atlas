@@ -12,6 +12,7 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
 
 public class AttributesTable extends ArrayList<AttributesRow> {
@@ -30,22 +31,28 @@ public class AttributesTable extends ArrayList<AttributesRow> {
   }
 
   private void fillFrom(Iterable<Collection<Attribute>> subZones) {
-    HashMap<AttributeName, AttributeValue> allAttributes = new HashMap<>();
+    HashMap<AttributeName, TypeInfo> knownTypes = new HashMap<>();
     for (Collection<Attribute> zone : subZones) {
       AttributesRow row = new AttributesRow();
       for (Attribute attribute : zone) {
-        if (allAttributes.put(attribute.name(), attribute.value()) != null) {
-          throw new TypeCheckerException(
-              "AttributeName: " + attribute.name() + " maps to not matching types.");
+        AttributeName name = attribute.getName();
+        AttributeValue value = attribute.getValue();
+        TypeInfo known = knownTypes.get(name);
+        if (known == null) {
+          known = value.getType();
+          knownTypes.put(name, known);
         }
-        row.put(attribute.name(), attribute.value());
+        if (!known.equals(value.getType())) {
+          throw new TypeCheckerException("AttributeName: " + name + " maps to not matching types.");
+        }
+        row.put(name, attribute.getValue());
       }
       add(row);
     }
     for (AttributesRow row : this) {
-      for (Map.Entry<AttributeName, AttributeValue> entry : allAttributes.entrySet()) {
+      for (Map.Entry<AttributeName, TypeInfo> entry : knownTypes.entrySet()) {
         if (!row.containsKey(entry.getKey())) {
-          row.put(entry.getKey(), entry.getValue());
+          row.put(entry.getKey(), entry.getValue().nullInstance());
         }
       }
     }

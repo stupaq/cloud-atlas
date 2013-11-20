@@ -38,7 +38,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
   }
 
   public void updateAttribute(Attribute attribute) {
-    attributes.put(attribute.name(), attribute);
+    attributes.put(attribute.getName(), attribute);
   }
 
   public void removeAttribute(AttributeName name) {
@@ -53,7 +53,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
-        return !attribute.name().isSpecial();
+        return !attribute.getName().isSpecial();
       }
     }).toList();
   }
@@ -62,7 +62,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
-        return attribute.name().isSpecial();
+        return attribute.getName().isSpecial();
       }
     }).toList();
   }
@@ -84,7 +84,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     for (; elements > 0; --elements) {
       Attribute attribute = new Attribute();
       attribute.readFields(in);
-      attributes.put(attribute.name(), attribute);
+      attributes.put(attribute.getName(), attribute);
     }
   }
 
