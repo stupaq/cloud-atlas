@@ -10,6 +10,7 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CAQuery extends AbstractStringBacked {
@@ -32,11 +33,6 @@ public class CAQuery extends AbstractStringBacked {
   @Override
   public final int compareTo(AttributeValue o) {
     throw new UndefinedOperationException("Cannot compare: " + CAQuery.class.getSimpleName());
-  }
-
-  @Override
-  public Class<CAQuery> getType() {
-    return CAQuery.class;
   }
 
   @Override

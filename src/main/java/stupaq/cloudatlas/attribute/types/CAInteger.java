@@ -22,11 +22,6 @@ public class CAInteger extends AbstractLongBacked {
   }
 
   @Override
-  public Class<CAInteger> getType() {
-    return CAInteger.class;
-  }
-
-  @Override
   public RelationalValue rel() {
     return new RelationalImplementation();
   }

@@ -12,6 +12,8 @@ import javax.annotation.Nonnull;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
+import stupaq.cloudatlas.interpreter.typecheck.ComposedTypeInfo;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 import stupaq.cloudatlas.serialization.TypeID;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 
@@ -20,20 +22,21 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
     implements AttributeValue {
   @Nonnull
   private final Composed value;
-  // FIXME
-  private final Class<Type> enclosingType;
+  @Nonnull
+  private final TypeInfo<Type> enclosingType;
   private boolean isNull;
 
-  protected AbstractComposed(@Nonnull Composed newEmpty, Iterable<? extends Type> source) {
+  protected AbstractComposed(@Nonnull Composed newEmpty, @Nonnull TypeInfo<Type> enclosingType,
+      Iterable<? extends Type> source) {
     Preconditions.checkNotNull(newEmpty);
     Preconditions.checkArgument(newEmpty.isEmpty(), "Collection not empty");
+    Preconditions.checkNotNull(enclosingType);
     this.value = newEmpty;
+    this.enclosingType = enclosingType;
     this.isNull = source == null;
     if (source != null) {
       Iterables.addAll(get(), source);
     }
-    // FIXME
-    this.enclosingType = null;
     verifyInvariants();
   }
 
@@ -45,6 +48,16 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
   }
 
   @Override
+  public final TypeInfo<? extends AttributeValue> getType() {
+    return new ComposedTypeInfo<>(getClass(), enclosingType);
+  }
+
+  @Nonnull
+  TypeInfo<Type> getEnclosingType() {
+    return enclosingType;
+  }
+
+  @Override
   public final boolean isNull() {
     return isNull;
   }
@@ -53,17 +66,14 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
     return isNull() || value.isNull();
   }
 
-  private final void verifyInvariants() throws IllegalStateException {
+  private void verifyInvariants() throws IllegalStateException {
     if (!isNull()) {
       for (Type elem : get()) {
-        Preconditions.checkNotNull(elem, getType().getSimpleName() + " cannot contain nulls");
+        Preconditions.checkNotNull(elem, getType() + " cannot contain nulls");
       }
-      // FIXME
-      if (enclosingType != null) {
-        for (AttributeValue elem : get()) {
-          Preconditions.checkState(elem.getType() == enclosingType,
-              "Collection contains elements of not matching type");
-        }
+      for (AttributeValue elem : get()) {
+        Preconditions.checkState(elem.getType().equals(enclosingType),
+            "Collection contains elements of not matching type");
       }
     }
   }
@@ -92,7 +102,7 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
     int elements = isNull() ? -1 : get().size();
     out.writeInt(elements);
     if (elements > 0) {
-      TypeID typeID = TypeRegistry.resolveType(get().iterator().next().getType());
+      TypeID typeID = TypeRegistry.resolveType(get().iterator().next().getType().get());
       TypeID.writeInstance(out, typeID);
       for (Type element : get()) {
         element.writeFields(out);
@@ -102,7 +112,7 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
 
   @Override
   public final int compareTo(AttributeValue o) {
-    throw new UndefinedOperationException("Cannot compare: " + getType().getSimpleName());
+    throw new UndefinedOperationException("Cannot compare: " + getType());
   }
 
   @Override

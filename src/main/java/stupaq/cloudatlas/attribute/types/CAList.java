@@ -15,23 +15,19 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
 public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, ArrayList<Type>> {
-  public CAList() {
-    super(new ArrayList<Type>(), null);
+  public CAList(TypeInfo<Type> enclosingType) {
+    super(new ArrayList<Type>(), enclosingType, null);
   }
 
-  public CAList(Iterable<Type> elements) {
-    super(new ArrayList<Type>(), elements);
+  public CAList(TypeInfo<Type> enclosingType, Iterable<Type> elements) {
+    super(new ArrayList<Type>(), enclosingType, elements);
   }
 
   public List<Type> asImmutableList() {
     return Collections.unmodifiableList(get());
-  }
-
-  @Override
-  public Class<CAList> getType() {
-    return CAList.class;
   }
 
   @Override
@@ -63,7 +59,7 @@ public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, 
 
     @Override
     public CASet<Type> Set() {
-      return new CASet<>(isNull() ? null : get());
+      return new CASet<>(getEnclosingType(), isNull() ? null : get());
     }
   }
 

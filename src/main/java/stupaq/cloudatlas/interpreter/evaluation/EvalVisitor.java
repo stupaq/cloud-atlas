@@ -1,7 +1,6 @@
 package stupaq.cloudatlas.interpreter.evaluation;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.Ordering;
 
 import org.apache.commons.logging.Log;
@@ -17,6 +16,8 @@ import stupaq.cloudatlas.attribute.types.CADouble;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.attribute.types.CATime;
+import stupaq.cloudatlas.interpreter.errors.EvaluationException;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.interpreter.evaluation.context.Context;
 import stupaq.cloudatlas.interpreter.evaluation.context.InputContext;
 import stupaq.cloudatlas.interpreter.evaluation.context.OutputContext;
@@ -24,9 +25,6 @@ import stupaq.cloudatlas.interpreter.evaluation.context.OutputContext.InnerSelec
 import stupaq.cloudatlas.interpreter.evaluation.context.OutputContext.RedefinitionAwareOutputContext;
 import stupaq.cloudatlas.interpreter.evaluation.data.AttributesRow;
 import stupaq.cloudatlas.interpreter.evaluation.data.AttributesTable;
-import stupaq.cloudatlas.interpreter.errors.EvaluationException;
-import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
-import stupaq.cloudatlas.interpreter.values.RList;
 import stupaq.cloudatlas.interpreter.values.RSingle;
 import stupaq.cloudatlas.interpreter.values.SemanticValue;
 import stupaq.cloudatlas.interpreter.values.SemanticValue.SemanticValueCastException;
@@ -56,7 +54,7 @@ public class EvalVisitor {
       return (Type) value;
     } else {
       throw new EvaluationException(
-          "Expected type: " + clazz.getSimpleName() + " got: " + value.getType().getSimpleName());
+          "Expected type: " + clazz.getSimpleName() + " got: " + value.getType());
     }
   }
 
@@ -79,10 +77,25 @@ public class EvalVisitor {
     }
   }
 
-  private class XStatementVisitor implements XStatement.Visitor<SemanticValue, OutputContext> {
+  private class XStatementVisitor implements XStatement.Visitor<Void, OutputContext> {
     @SuppressWarnings("unchecked")
     @Override
-    public SemanticValue visit(Statement p, OutputContext outputContext) {
+    public Void visit(Statement p, OutputContext outputContext) {
+      AttributesTable table = new AttributesTable(originalTable);
+      p.xwhereclause_.accept(new XWhereClauseVisitor(), table);
+      p.xorderclause_.accept(new XOrderClauseVisitor(), table);
+      Context context = new Context(outputContext, new InputContext(table));
+      for (XSelectItem x : p.listxselectitem_) {
+        x.accept(new XSelectItemVisitor(), context);
+      }
+      return null;
+    }
+  }
+
+  private class XStatementInnerVisitor implements XStatement.Visitor<RSingle, OutputContext> {
+    @SuppressWarnings("unchecked")
+    @Override
+    public RSingle visit(Statement p, OutputContext outputContext) {
       AttributesTable table = new AttributesTable(originalTable);
       p.xwhereclause_.accept(new XWhereClauseVisitor(), table);
       p.xorderclause_.accept(new XOrderClauseVisitor(), table);
@@ -90,11 +103,7 @@ public class EvalVisitor {
       if (p.listxselectitem_.size() == 1) {
         return p.listxselectitem_.get(0).accept(new XSelectItemVisitor(), context);
       } else {
-        RList<AttributeValue> result = new RList<>();
-        for (XSelectItem x : p.listxselectitem_) {
-          result.add(Optional.fromNullable(x.accept(new XSelectItemVisitor(), context).or(null)));
-        }
-        return result;
+        throw new EvaluationException("Inner SELECT must return a single value");
       }
     }
   }
@@ -326,14 +335,14 @@ public class EvalVisitor {
           case "count":
             return args.get(0).aggregate().count();
           case "first":
-            return args.get(1).aggregate().first(
-                getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
+            return args.get(1).aggregate()
+                .first(getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
           case "last":
-            return args.get(1).aggregate().last(
-                getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
+            return args.get(1).aggregate()
+                .last(getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
           case "random":
-            return args.get(1).aggregate().random(
-                getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
+            return args.get(1).aggregate()
+                .random(getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
           case "min":
             return args.get(0).aggregate().min();
           case "max":
@@ -422,12 +431,7 @@ public class EvalVisitor {
 
     @Override
     public SemanticValue visit(BasicExprStmt p, InputContext context) {
-      try {
-        return p.xstatement_.accept(new XStatementVisitor(), new InnerSelectOutputContext())
-            .getSingle();
-      } catch (SemanticValueCastException e) {
-        throw new EvaluationException("Inner SELECT must return a single value");
-      }
+      return p.xstatement_.accept(new XStatementInnerVisitor(), new InnerSelectOutputContext());
     }
 
     private class ArgumentsList extends ArrayList<SemanticValue> {

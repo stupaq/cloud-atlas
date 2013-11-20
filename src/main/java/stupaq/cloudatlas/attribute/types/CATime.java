@@ -13,6 +13,7 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
 public class CATime extends AbstractLongBacked {
   private static final Calendar EPOCH;
@@ -40,11 +41,6 @@ public class CATime extends AbstractLongBacked {
   /** Returns current time. */
   public static CATime now() {
     return new CATime(new Date().getTime());
-  }
-
-  @Override
-  public Class<CATime> getType() {
-    return CATime.class;
   }
 
   @Override

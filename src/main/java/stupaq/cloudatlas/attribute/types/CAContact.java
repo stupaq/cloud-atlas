@@ -24,11 +24,6 @@ public class CAContact extends AbstractStringBacked {
   }
 
   @Override
-  public Class<CAContact> getType() {
-    return CAContact.class;
-  }
-
-  @Override
   public ConvertibleValue to() {
     return new ConvertibleImplementation();
   }

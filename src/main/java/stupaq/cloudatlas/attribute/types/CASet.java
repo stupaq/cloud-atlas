@@ -13,19 +13,15 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
 public class CASet<Type extends AttributeValue> extends AbstractComposed<Type, HashSet<Type>> {
-  public CASet() {
-    super(new HashSet<Type>(), null);
+  public CASet(TypeInfo<Type> enclosingType) {
+    super(new HashSet<Type>(), enclosingType, null);
   }
 
-  public CASet(Iterable<Type> elements) {
-    super(new HashSet<Type>(), elements);
-  }
-
-  @Override
-  public Class<CASet> getType() {
-    return CASet.class;
+  public CASet(TypeInfo<Type> enclosingType, Iterable<Type> elements) {
+    super(new HashSet<Type>(), enclosingType, elements);
   }
 
   @Override
@@ -46,7 +42,7 @@ public class CASet<Type extends AttributeValue> extends AbstractComposed<Type, H
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAList<Type> List() {
-      return new CAList<>(isNull() ? null : get());
+      return new CAList<>(getEnclosingType(), isNull() ? null : get());
     }
 
     @Override

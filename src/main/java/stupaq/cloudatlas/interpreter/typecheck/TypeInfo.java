@@ -1,5 +1,9 @@
 package stupaq.cloudatlas.interpreter.typecheck;
 
+import com.google.common.base.Preconditions;
+
+import java.util.Collection;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
@@ -10,6 +14,7 @@ public class TypeInfo<Atomic extends AttributeValue> {
   private final Class<Atomic> type;
 
   public TypeInfo(Class<Atomic> type) {
+    Preconditions.checkNotNull(type);
     this.type = type;
   }
 
@@ -19,6 +24,10 @@ public class TypeInfo<Atomic extends AttributeValue> {
     } catch (InstantiationException | IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  public Class<Atomic> get() {
+    return type;
   }
 
   @SuppressWarnings("unchecked")
@@ -42,7 +51,13 @@ public class TypeInfo<Atomic extends AttributeValue> {
     return type == aClass;
   }
 
-  public Atomic emptyInstance() {
+  public <Result extends AttributeValue & Collection<AttributeValue>> Result emptyInstance() {
     throw new TypeCheckerException("Type: " + type.getSimpleName() + " is not an aggregate.");
+  }
+
+  @Override
+  public String toString() {
+    // TODO oh God!
+    return " : " + type.getSimpleName().replace("CA", "").toLowerCase();
   }
 }

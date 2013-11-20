@@ -8,6 +8,7 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.EvaluationException;
 import stupaq.cloudatlas.interpreter.evaluation.data.AttributesRow;
 import stupaq.cloudatlas.interpreter.evaluation.data.AttributesTable;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 import stupaq.cloudatlas.interpreter.values.RCollection;
 import stupaq.cloudatlas.interpreter.values.RSingle;
 import stupaq.cloudatlas.interpreter.values.SemanticValue;
@@ -22,16 +23,19 @@ public class InputContext {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public InputContext(AttributesTable table) {
     Map<AttributeName, RCollection<AttributeValue>> columns = new HashMap<>();
     for (AttributesRow row : table) {
       for (Map.Entry<AttributeName, AttributeValue> attribute : row.entrySet()) {
-        RCollection<AttributeValue> collection = columns.get(attribute.getKey());
+        AttributeName name = attribute.getKey();
+        AttributeValue value = attribute.getValue();
+        RCollection<AttributeValue> collection = columns.get(name);
         if (collection == null) {
-          collection = new RCollection<>();
-          columns.put(attribute.getKey(), collection);
+          collection = new RCollection<>((TypeInfo<AttributeValue>) value.getType());
+          columns.put(name, collection);
         }
-        collection.add(attribute.getValue());
+        collection.add(value);
       }
     }
     inputAttributes = new HashMap<>();

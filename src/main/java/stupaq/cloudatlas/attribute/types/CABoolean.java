@@ -11,7 +11,6 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CABoolean extends AbstractAtomic<Boolean> {
   public CABoolean() {
@@ -35,11 +34,6 @@ public class CABoolean extends AbstractAtomic<Boolean> {
     if (!isNull()) {
       out.writeBoolean(get());
     }
-  }
-
-  @Override
-  public Class<CABoolean> getType() {
-    return CABoolean.class;
   }
 
   @Override

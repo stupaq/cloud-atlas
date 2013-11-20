@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
 /** PACKAGE-LOCAL */
 abstract class AbstractAtomic<Type extends Comparable<Type>> implements AttributeValue {
@@ -19,6 +20,11 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
 
   protected final Type get() {
     return value.get();
+  }
+
+  @Override
+  public final TypeInfo<? extends AttributeValue> getType() {
+    return new TypeInfo<>(getClass());
   }
 
   @Override
@@ -50,8 +56,7 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
   public int compareTo(AttributeValue other) {
     if (getType() != other.getType()) {
       throw new UndefinedOperationException(
-          "Cannot compare: " + getType().getSimpleName() + " with: " + other.getType()
-              .getSimpleName());
+          "Cannot compare: " + getType() + " with: " + other.getType());
     }
     return equals(other) ? 0 : (isNull() ? 1 : (other.isNull() ? -1 : get()
         .compareTo(((AbstractAtomic<Type>) other).get())));

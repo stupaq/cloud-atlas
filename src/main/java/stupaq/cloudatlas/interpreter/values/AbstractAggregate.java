@@ -69,21 +69,18 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       TypeInfo<Result> typeInfo);
 
   @Override
-  public abstract <Other extends AttributeValue, Result extends AttributeValue>
-  SemanticValue<Result> zip(
+  public abstract <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zip(
       SemanticValue<Other> second, Function2<Type, Other, Result> operation);
 
   @Override
-  public final <Other extends AttributeValue, Result extends AttributeValue>
-  SemanticValue<Result> zipWith(
+  public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RCollection<Other> first, Function2<Other, Type, Result> operation) {
     return first.zipImplementation(first.iterator(), this.iterator(), operation,
         first.getType().typeof2(getType(), operation));
   }
 
   @Override
-  public final <Other extends AttributeValue, Result extends AttributeValue>
-  SemanticValue<Result> zipWith(
+  public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RList<Other> first, Function2<Other, Type, Result> operation) {
     return first.zipImplementation(first.iterator(), this.iterator(), operation,
         first.getType().typeof2(getType(), operation));
@@ -91,15 +88,13 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
 
   @Override
   @SuppressWarnings("unchecked")
-  public final <Other extends AttributeValue, Result extends AttributeValue>
-  SemanticValue<Result> zipWith(
+  public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RSingle<Other> first, Function2<Other, Type, Result> operation) {
     return zipImplementation(Iterables.cycle(first.get()).iterator(), iterator(), operation,
         first.getType().typeof2(getType(), operation));
   }
 
-  abstract <Arg0 extends AttributeValue, Arg1 extends AttributeValue,
-      Result extends AttributeValue> AbstractAggregate<Result> zipImplementation(
+  abstract <Arg0 extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> AbstractAggregate<Result> zipImplementation(
       Iterator<Arg0> it0, Iterator<Arg1> it1, Function2<Arg0, Arg1, Result> operation,
       TypeInfo<Result> typeInfo);
 
@@ -177,9 +172,9 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
           presentValues().transform(new Function<FluentIterable<Type>, CAList<Type>>() {
             @Override
             public CAList<Type> apply(FluentIterable<Type> types) {
-              return new CAList<>(types.limit(size));
+              return new CAList<>(typeInfo, types.limit(size));
             }
-          }).or(new CAList<Type>()));
+          }).or(new CAList<>(typeInfo)));
     }
 
     @Override
@@ -189,16 +184,16 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
             @Override
             public CAList<Type> apply(FluentIterable<Type> types) {
               int toSkip = types.size() - size;
-              return new CAList<>(types.skip(toSkip > 0 ? toSkip : 0));
+              return new CAList<>(typeInfo, types.skip(toSkip > 0 ? toSkip : 0));
             }
-          }).or(new CAList<Type>()));
+          }).or(new CAList<>(typeInfo)));
     }
 
     @Override
     public RSingle<CAList<Type>> random(final int size) {
       Optional<FluentIterable<Type>> notNulls = presentValues();
       if (!notNulls.isPresent() || notNulls.get().isEmpty()) {
-        return new RSingle<>(new CAList<Type>());
+        return new RSingle<>(new CAList<>(typeInfo));
       }
       ArrayList<Integer> indices = new ArrayList<>();
       for (int i = 0; i < AbstractAggregate.this.size(); i++) {
@@ -209,8 +204,8 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       Collections.shuffle(indices);
       indices = FluentIterable.from(indices).limit(size).copyInto(new ArrayList<Integer>());
       Collections.sort(indices);
-      return new RSingle<>(
-          new CAList<>(FluentIterable.from(indices).transform(new Function<Integer, Type>() {
+      return new RSingle<>(new CAList<>(typeInfo,
+          FluentIterable.from(indices).transform(new Function<Integer, Type>() {
             @Override
             public Type apply(Integer integer) {
               return AbstractAggregate.this.get(integer);
@@ -279,6 +274,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       }).copyInto(new RList<>(getType()));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public SemanticValue unfold() {
       Optional<FluentIterable<Type>> notNulls = presentValues();
@@ -294,7 +290,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
                        "Cannot unfold enclosing type: " + elem.getType());
                  }
                }
-             }).copyInto(unfolded.emptyInstance());
+             }).copyInto(new RList<AttributeValue>(unfolded));
     }
   }
 }

@@ -69,7 +69,7 @@ public interface OutputContext {
       Preconditions.checkNotNull(value);
       // Attribute value cannot start with reserved prefix
       AttributeName name = AttributeName.valueOf(nameStr);
-      Attribute attribute = new Attribute<>(name, value.or(null));
+      Attribute attribute = new Attribute<>(name, value.get());
       putsLog.add(attribute);
     }
 

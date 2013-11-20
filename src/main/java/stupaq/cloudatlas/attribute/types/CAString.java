@@ -14,6 +14,7 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
 public class CAString extends AbstractStringBacked implements AttributeValue {
   public CAString() {
@@ -22,11 +23,6 @@ public class CAString extends AbstractStringBacked implements AttributeValue {
 
   public CAString(String value) {
     super(value);
-  }
-
-  @Override
-  public Class<CAString> getType() {
-    return CAString.class;
   }
 
   @Override

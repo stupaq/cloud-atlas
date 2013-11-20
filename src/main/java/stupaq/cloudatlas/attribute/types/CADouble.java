@@ -45,11 +45,6 @@ public class CADouble extends AbstractAtomic<Double> {
   }
 
   @Override
-  public Class<CADouble> getType() {
-    return CADouble.class;
-  }
-
-  @Override
   public RelationalValue rel() {
     return new RelationalImplementation();
   }
