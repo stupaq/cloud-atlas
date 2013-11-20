@@ -139,6 +139,6 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
 
   @Override
   public final String toString() {
-    return to().String().toString();
+    return (isNull() ? "NULL" : get().toString()) + getType();
   }
 }

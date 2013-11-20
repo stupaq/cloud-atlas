@@ -17,7 +17,8 @@ public class CABooleanTest {
   @Test
   public void testOperations() {
     // negation
-    assertEquals(Bool(false), Bool(true).op().not());
+    assertEquals(Bool(false),
+        Bool(true).op().not());
     assertEquals(Bool(true), Bool(true).op().not().op().not());
     // conjunction
     assertEquals(Bool(true), Bool(true).op().and(Bool(true)));

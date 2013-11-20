@@ -30,7 +30,7 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
 
   @Override
   public final boolean isNull() {
-    return value.isPresent();
+    return !value.isPresent();
   }
 
   protected final boolean isNull(AttributeValue other) {
@@ -65,6 +65,6 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
 
   @Override
   public final String toString() {
-    return isNull() ? "NULL" : to().String().toString();
+    return (isNull() ? "NULL" : get().toString()) + getType();
   }
 }

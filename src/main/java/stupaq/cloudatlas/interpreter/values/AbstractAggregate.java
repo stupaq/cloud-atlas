@@ -117,7 +117,12 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     if (isEmpty()) {
       return Optional.of(FluentIterable.from(Collections.<Type>emptyList()));
     }
-    FluentIterable<Type> notNulls = FluentIterable.from(this).filter(Predicates.notNull());
+    FluentIterable<Type> notNulls = FluentIterable.from(this).filter(new Predicate<Type>() {
+      @Override
+      public boolean apply(Type type) {
+        return !type.isNull();
+      }
+    });
     return notNulls.isEmpty() ? Optional.<FluentIterable<Type>>absent() : Optional.of(notNulls);
   }
 

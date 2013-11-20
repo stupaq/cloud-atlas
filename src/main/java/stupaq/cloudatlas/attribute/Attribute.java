@@ -10,11 +10,12 @@ import javax.annotation.Nonnull;
 
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.cloudatlas.serialization.TypeRegistry;
 
 public final class Attribute<Type extends AttributeValue> implements CompactSerializable {
   @Nonnull
   private final AttributeName name;
-  private final Type value;
+  private Type value;
 
   public Attribute(@Nonnull AttributeName name, Type value) {
     Preconditions.checkNotNull(name, "AttributeName cannot be null");
@@ -43,13 +44,13 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
   @SuppressWarnings("unchecked")
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     name.readFields(in);
-    value.readFields(in);
+    value = TypeRegistry.readObject(in);
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
     name.writeFields(out);
-    value.writeFields(out);
+    TypeRegistry.writeObject(out, value);
   }
 
   @Override
