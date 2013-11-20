@@ -18,6 +18,7 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
     this.value = Optional.fromNullable(value);
   }
 
+  @Nonnull
   protected final Type get() {
     return value.get();
   }

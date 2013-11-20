@@ -21,6 +21,10 @@ public class CAInteger extends AbstractLongBacked {
     super(value);
   }
 
+  public long getLong() {
+    return get();
+  }
+
   @Override
   public RelationalValue rel() {
     return new RelationalImplementation();

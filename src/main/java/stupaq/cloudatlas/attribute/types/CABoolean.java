@@ -21,6 +21,10 @@ public class CABoolean extends AbstractAtomic<Boolean> {
     super(value);
   }
 
+  public boolean getOr(boolean alternative) {
+    return isNull() ? alternative : get();
+  }
+
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     if (in.readBoolean()) {

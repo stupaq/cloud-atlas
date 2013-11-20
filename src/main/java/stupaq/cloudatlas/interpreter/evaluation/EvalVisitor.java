@@ -117,12 +117,12 @@ public class EvalVisitor {
         AttributeValue value;
         try {
           value = p.xexpression_.accept(new XExpressionVisitor(), new InputContext(rows.next()))
-              .getSingle().or(new CABoolean(false));
+              .getSingle().get();
         } catch (SemanticValueCastException e) {
           throw new EvaluationException("WHERE expression result is not a single value");
         }
         try {
-          if (!getAs(value, CABoolean.class).get()) {
+          if (!getAs(value, CABoolean.class).getOr(false)) {
             rows.remove();
           }
         } catch (EvaluationException e) {
@@ -166,7 +166,7 @@ public class EvalVisitor {
               try {
                 InputContext inputContext = new InputContext(row);
                 return p.xexpression_.accept(new XExpressionVisitor(), inputContext).getSingle()
-                    .or(null);
+                    .get();
               } catch (SemanticValueCastException e) {
                 throw new EvaluationException("ORDER item result is not a single value");
               }
@@ -336,13 +336,13 @@ public class EvalVisitor {
             return args.get(0).aggregate().count();
           case "first":
             return args.get(1).aggregate()
-                .first(getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
+                .first(getAs(args.get(0).getSingle().get(), CAInteger.class));
           case "last":
             return args.get(1).aggregate()
-                .last(getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
+                .last(getAs(args.get(0).getSingle().get(), CAInteger.class));
           case "random":
             return args.get(1).aggregate()
-                .random(getAs(args.get(0).getSingle().or(null), CAInteger.class).get().intValue());
+                .random(getAs(args.get(0).getSingle().get(), CAInteger.class));
           case "min":
             return args.get(0).aggregate().min();
           case "max":

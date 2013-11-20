@@ -167,30 +167,33 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     }
 
     @Override
-    public RSingle<CAList<Type>> first(final int size) {
-      return new RSingle<>(
-          presentValues().transform(new Function<FluentIterable<Type>, CAList<Type>>() {
+    public RSingle<CAList<Type>> first(final CAInteger size) {
+      return new RSingle<>(size.isNull() ? new CAList<>(typeInfo) : presentValues()
+          .transform(new Function<FluentIterable<Type>, CAList<Type>>() {
             @Override
             public CAList<Type> apply(FluentIterable<Type> types) {
-              return new CAList<>(typeInfo, types.limit(size));
+              return new CAList<>(typeInfo, types.limit((int) size.getLong()));
             }
           }).or(new CAList<>(typeInfo)));
     }
 
     @Override
-    public RSingle<CAList<Type>> last(final int size) {
-      return new RSingle<>(
-          presentValues().transform(new Function<FluentIterable<Type>, CAList<Type>>() {
+    public RSingle<CAList<Type>> last(final CAInteger size) {
+      return new RSingle<>(size.isNull() ? new CAList<>(typeInfo) : presentValues()
+          .transform(new Function<FluentIterable<Type>, CAList<Type>>() {
             @Override
             public CAList<Type> apply(FluentIterable<Type> types) {
-              int toSkip = types.size() - size;
+              int toSkip = (int) (types.size() - size.getLong());
               return new CAList<>(typeInfo, types.skip(toSkip > 0 ? toSkip : 0));
             }
           }).or(new CAList<>(typeInfo)));
     }
 
     @Override
-    public RSingle<CAList<Type>> random(final int size) {
+    public RSingle<CAList<Type>> random(final CAInteger size) {
+      if (size.isNull()) {
+        return new RSingle<>(new CAList<>(typeInfo));
+      }
       Optional<FluentIterable<Type>> notNulls = presentValues();
       if (!notNulls.isPresent() || notNulls.get().isEmpty()) {
         return new RSingle<>(new CAList<>(typeInfo));
@@ -202,7 +205,8 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
         }
       }
       Collections.shuffle(indices);
-      indices = FluentIterable.from(indices).limit(size).copyInto(new ArrayList<Integer>());
+      indices = FluentIterable.from(indices).limit((int) size.getLong())
+          .copyInto(new ArrayList<Integer>());
       Collections.sort(indices);
       return new RSingle<>(new CAList<>(typeInfo,
           FluentIterable.from(indices).transform(new Function<Integer, Type>() {

@@ -17,11 +17,11 @@ public interface AggregatingValue<Type extends AttributeValue> {
 
   public SemanticValue<CAInteger> count();
 
-  public SemanticValue<CAList<Type>> first(int size);
+  public SemanticValue<CAList<Type>> first(CAInteger size);
 
-  public SemanticValue<CAList<Type>> last(int size);
+  public SemanticValue<CAList<Type>> last(CAInteger size);
 
-  public SemanticValue<CAList<Type>> random(int size);
+  public SemanticValue<CAList<Type>> random(CAInteger size);
 
   public SemanticValue<Type> min();
 
@@ -57,17 +57,17 @@ public interface AggregatingValue<Type extends AttributeValue> {
     }
 
     @Override
-    public RSingle<CAList<Type>> first(int size) {
+    public RSingle<CAList<Type>> first(CAInteger size) {
       throw noAggregate("first(...)");
     }
 
     @Override
-    public RSingle<CAList<Type>> last(int size) {
+    public RSingle<CAList<Type>> last(CAInteger size) {
       throw noAggregate("last(...)");
     }
 
     @Override
-    public RSingle<CAList<Type>> random(int size) {
+    public RSingle<CAList<Type>> random(CAInteger size) {
       throw noAggregate("random(...)");
     }
 
