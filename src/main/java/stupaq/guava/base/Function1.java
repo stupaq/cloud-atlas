@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
 public abstract class Function1<Arg0, Result> implements Function<Arg0, Result> {
+  @Override
+  public abstract Result apply(Arg0 arg0);
 
   public Optional<Result> applyOptional(Optional<Arg0> arg0) {
     return arg0.transform(this);

@@ -3,6 +3,7 @@ package stupaq.cloudatlas.interpreter.values;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
@@ -28,6 +29,8 @@ public interface SemanticValue<Type extends AttributeValue> {
   public RSingle<Type> getSingle() throws SemanticValueCastException;
 
   public AggregatingValue aggregate();
+
+  public TypeInfo<Type> getType();
 
   public static class SemanticValueCastException extends Exception {
   }

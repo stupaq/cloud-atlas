@@ -25,20 +25,27 @@ import stupaq.cloudatlas.interpreter.errors.ConversionException;
 import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue;
 import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValueDefault;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
 abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<Type>
     implements SemanticValue<Type> {
-  private final Type nullElement;
+  @Nonnull
+  protected final TypeInfo<Type> typeInfo;
 
-  public AbstractAggregate(@Nonnull Iterable<? extends Type> elements, @Nonnull Type nullElement) {
+  public AbstractAggregate(@Nonnull Iterable<? extends Type> elements,
+      @Nonnull TypeInfo<Type> typeInfo) {
     super(new ArrayList<Type>());
-    Preconditions.checkNotNull(nullElement);
-    Preconditions.checkArgument(nullElement.isNull());
+    this.typeInfo = typeInfo;
+    Preconditions.checkNotNull(typeInfo);
     Preconditions.checkArgument(FluentIterable.from(elements).allMatch(Predicates.notNull()));
-    this.nullElement = nullElement;
     Iterables.addAll(this, elements);
+  }
+
+  @Override
+  public TypeInfo<Type> getType() {
+    return typeInfo;
   }
 
   @Override
@@ -48,16 +55,18 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       public CABoolean apply(Type type) {
         return new CABoolean(type.isNull());
       }
-    }).copyInto(this.<CABoolean>emptyInstance());
+    }).copyInto(emptyInstance(new TypeInfo<>(CABoolean.class)));
   }
 
   @Override
   public final <Result extends AttributeValue> SemanticValue<Result> map(
       Function1<Type, Result> function) {
-    return FluentIterable.from(this).transform(function).copyInto(this.<Result>emptyInstance());
+    return FluentIterable.from(this).transform(function)
+        .copyInto(this.<Result>emptyInstance(getType().typeof1(function)));
   }
 
-  protected abstract <Result extends AttributeValue> AbstractAggregate<Result> emptyInstance();
+  protected abstract <Result extends AttributeValue> AbstractAggregate<Result> emptyInstance(
+      TypeInfo<Result> typeInfo);
 
   @Override
   public abstract <Other extends AttributeValue, Result extends AttributeValue>
@@ -68,14 +77,16 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
   public final <Other extends AttributeValue, Result extends AttributeValue>
   SemanticValue<Result> zipWith(
       RCollection<Other> first, Function2<Other, Type, Result> operation) {
-    return first.zipImplementation(first.iterator(), this.iterator(), operation);
+    return first.zipImplementation(first.iterator(), this.iterator(), operation,
+        first.getType().typeof2(getType(), operation));
   }
 
   @Override
   public final <Other extends AttributeValue, Result extends AttributeValue>
   SemanticValue<Result> zipWith(
       RList<Other> first, Function2<Other, Type, Result> operation) {
-    return first.zipImplementation(first.iterator(), this.iterator(), operation);
+    return first.zipImplementation(first.iterator(), this.iterator(), operation,
+        first.getType().typeof2(getType(), operation));
   }
 
   @Override
@@ -83,12 +94,14 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
   public final <Other extends AttributeValue, Result extends AttributeValue>
   SemanticValue<Result> zipWith(
       RSingle<Other> first, Function2<Other, Type, Result> operation) {
-    return zipImplementation(Iterables.cycle(first.get()).iterator(), iterator(), operation);
+    return zipImplementation(Iterables.cycle(first.get()).iterator(), iterator(), operation,
+        first.getType().typeof2(getType(), operation));
   }
 
   abstract <Arg0 extends AttributeValue, Arg1 extends AttributeValue,
       Result extends AttributeValue> AbstractAggregate<Result> zipImplementation(
-      Iterator<Arg0> it0, Iterator<Arg1> it1, Function2<Arg0, Arg1, Result> operation);
+      Iterator<Arg0> it0, Iterator<Arg1> it1, Function2<Arg0, Arg1, Result> operation,
+      TypeInfo<Result> typeInfo);
 
   @Override
   public final RSingle<Type> getSingle() throws SemanticValueCastException {
@@ -138,7 +151,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
             @Override
             public AttributeValue apply(FluentIterable<Type> types) {
               AttributeValue sum =
-                  nullElement instanceof CAInteger ? new CAInteger(0) : new CADouble(0);
+                  getType().matches(CAInteger.class) ? new CAInteger(0) : new CADouble(0);
               for (Type elem : types) {
                 sum = sum.op().add(elem);
               }
@@ -210,9 +223,9 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       return new RSingle<>(presentValues().transform(new Function<FluentIterable<Type>, Type>() {
         @Override
         public Type apply(FluentIterable<Type> types) {
-          return types.isEmpty() ? nullElement : Collections.min(types.toList());
+          return types.isEmpty() ? getType().nullInstance() : Collections.min(types.toList());
         }
-      }).or(nullElement));
+      }).or(getType().nullInstance()));
     }
 
     @Override
@@ -220,9 +233,9 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       return new RSingle<>(presentValues().transform(new Function<FluentIterable<Type>, Type>() {
         @Override
         public Type apply(FluentIterable<Type> types) {
-          return types.isEmpty() ? nullElement : Collections.max(types.toList());
+          return types.isEmpty() ? getType().nullInstance() : Collections.max(types.toList());
         }
-      }).or(nullElement));
+      }).or(getType().nullInstance()));
     }
 
     @Override
@@ -263,14 +276,14 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
         public boolean apply(Type elem) {
           return !elem.isNull() && seen.add(elem);
         }
-      }).copyInto(new RList<Type>());
+      }).copyInto(new RList<>(getType()));
     }
 
     @Override
     public SemanticValue unfold() {
       Optional<FluentIterable<Type>> notNulls = presentValues();
-      // FIXME we have to reach for enclosingType instance here
-      return !notNulls.isPresent() ? new RSingle(nullElement) :
+      TypeInfo unfolded = typeInfo.unfold();
+      return !notNulls.isPresent() ? new RSingle(unfolded.nullInstance()) :
              notNulls.get().transformAndConcat(new Function<Type, Iterable<AttributeValue>>() {
                @Override
                public Iterable<AttributeValue> apply(Type elem) {
@@ -281,7 +294,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
                        "Cannot unfold enclosing type: " + elem.getType());
                  }
                }
-             }).copyInto(new RList<>());
+             }).copyInto(unfolded.emptyInstance());
     }
   }
 }
