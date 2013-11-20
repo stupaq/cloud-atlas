@@ -136,8 +136,10 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
 
     @Override
     public RSingle<CAList<Type>> first(final CAInteger size) {
-      return new RSingle<>(size.isNull() || nullsOnly.get() ? new CAList<>(typeInfo) :
-                           new CAList<>(typeInfo, nonNulls.get().limit((int) size.getLong())));
+      if (size.isNull() || nullsOnly.get()) {
+        return new RSingle<>(new CAList<>(typeInfo));
+      }
+      return new RSingle<>(new CAList<>(typeInfo, nonNulls.get().limit((int) size.getLong())));
     }
 
     @Override

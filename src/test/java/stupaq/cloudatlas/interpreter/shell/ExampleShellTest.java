@@ -296,7 +296,7 @@ public class ExampleShellTest {
   @Test
   public void testBad18() throws Exception {
     executeQuery("SELECT sum(has_ups) AS test1 WHERE is_null(has_ups)");
-    assertNothing("/", "test1");
+    assertNothing("/uw", "test1");
   }
 
   @Test
