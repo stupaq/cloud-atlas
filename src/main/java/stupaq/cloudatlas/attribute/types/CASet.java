@@ -4,7 +4,7 @@ import com.google.common.collect.Collections2;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
@@ -15,13 +15,14 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
-public class CASet<Type extends AttributeValue> extends AbstractComposed<Type, HashSet<Type>> {
+public class CASet<Type extends AttributeValue>
+    extends AbstractComposed<Type, LinkedHashSet<Type>> {
   public CASet(TypeInfo<Type> enclosingType) {
-    super(new HashSet<Type>(), enclosingType, null);
+    super(new LinkedHashSet<Type>(), enclosingType, null);
   }
 
   public CASet(TypeInfo<Type> enclosingType, Iterable<Type> elements) {
-    super(new HashSet<Type>(), enclosingType, elements);
+    super(new LinkedHashSet<Type>(), enclosingType, elements);
   }
 
   @Override
@@ -72,7 +73,7 @@ public class CASet<Type extends AttributeValue> extends AbstractComposed<Type, H
 
     @Override
     public CABoolean equalsTo(CASet value) {
-      return new CABoolean(isNull(value) ? null : equals(value));
+      return new CABoolean(isNull(value) ? null : CASet.this.equals(value));
     }
   }
 }

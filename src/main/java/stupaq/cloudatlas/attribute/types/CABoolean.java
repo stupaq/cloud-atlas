@@ -63,7 +63,7 @@ public class CABoolean extends AbstractAtomic<Boolean> {
 
     @Override
     public CAString String() {
-      return new CAString(isNull() ? null : String.valueOf(CABoolean.this));
+      return new CAString(isNull() ? null : String.valueOf(get()));
     }
   }
 

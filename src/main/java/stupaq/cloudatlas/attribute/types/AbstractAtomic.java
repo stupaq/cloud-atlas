@@ -55,7 +55,7 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
   @SuppressWarnings("unchecked")
   @Override
   public int compareTo(AttributeValue other) {
-    if (getType() != other.getType()) {
+    if (!getType().equals(other.getType())) {
       throw new UndefinedOperationException(
           "Cannot compare: " + getType() + " with: " + other.getType());
     }

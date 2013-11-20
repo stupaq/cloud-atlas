@@ -89,7 +89,7 @@ public interface ConvertibleValue {
   public static class Stringifier implements Function<AttributeValue, String> {
     @Override
     public String apply(AttributeValue value) {
-      return value.to().String().toString();
+      return value.to().String().getString();
     }
   }
 }

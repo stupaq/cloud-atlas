@@ -1,12 +1,9 @@
 package stupaq.cloudatlas.interpreter.values;
 
-import com.google.common.collect.FluentIterable;
-
 import org.junit.Test;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CAList;
-import stupaq.guava.base.Optionals;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -22,8 +19,7 @@ public class RCollectionTest {
     if (resultSize < 0) {
       assertEquals(S(ListNull(collection.getType())), sample);
     } else {
-      assertTrue(collection.containsAll(FluentIterable.from(sample.get().asImmutableList())
-          .transform(Optionals.<AttributeValue>optionalOf()).toList()));
+      assertTrue(collection.containsAll(sample.get().asImmutableList()));
       assertEquals(Int(resultSize), sample.get().op().size());
     }
   }
@@ -175,7 +171,7 @@ public class RCollectionTest {
     assertEquals(L(TInt(), Int(3)),
         C(TList(TInt()), ListNull(TInt()), ListNull(TInt()), List(TInt(), Int(3))).aggregate()
             .unfold());
-    assertEquals(S(ListNull(TInt())),
+    assertEquals(S(Int()),
         C(TList(TInt()), ListNull(TInt()), ListNull(TInt())).aggregate().unfold());
   }
 }

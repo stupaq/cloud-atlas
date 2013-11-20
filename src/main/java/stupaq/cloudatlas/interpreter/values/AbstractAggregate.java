@@ -157,7 +157,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
               }
               return sum;
             }
-          }).or(new CAInteger()));
+          }).or(getType().nullInstance()));
     }
 
     @Override
@@ -254,7 +254,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
               }
               return conj;
             }
-          }).or(new CABoolean(true)));
+          }).or(new CABoolean()));
     }
 
     @Override
@@ -269,7 +269,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
               }
               return alt;
             }
-          }).or(new CABoolean(false)));
+          }).or(new CABoolean()));
     }
 
     @Override

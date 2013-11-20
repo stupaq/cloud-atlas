@@ -13,7 +13,7 @@ public class CASetTest {
   @Test
   public void testAuxiliary() {
     assertEquals(Set(TSet(TInt())), Set(TSet(TInt())));
-    assertFalse(Set(TSet(TInt())).equals(Set(TSet(TInt()))));
+    assertFalse(Set(TSet(TInt())).equals(Set(TSet(TDoub()))));
   }
 
   @Test
@@ -32,7 +32,7 @@ public class CASetTest {
     assertEquals(Str("{  }"), Set(TStr()).to().String());
     assertEquals(Str("{ aaa, bb }"), Set(TStr(), Str("aaa"), Str("bb")).to().String());
     assertEquals(Str("{ { 1337 }, { aaa } }"),
-        Set(TSet(TStr()), Set(TStr(), Str("aaa")), Set(TStr(), Str("1337"))).to().String());
+        Set(TSet(TStr()), Set(TStr(), Str("1337")), Set(TStr(), Str("aaa"))).to().String());
     // -> CAList
     assertEquals(List(TInt()), Set(TInt()).to().List());
     assertEquals(List(TStr(), Str("aaa"), Str("bb")),
