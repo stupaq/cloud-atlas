@@ -7,12 +7,14 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CAInteger extends AbstractLongBacked {
-  @SerializationOnly
   public CAInteger() {
-    this(0L);
+    super(null);
+  }
+
+  public CAInteger(Integer value) {
+    super(value == null ? null : value.longValue());
   }
 
   public CAInteger(Long value) {

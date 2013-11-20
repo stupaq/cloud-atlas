@@ -1,6 +1,5 @@
 package stupaq.cloudatlas.attribute;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
@@ -9,60 +8,48 @@ import java.io.ObjectOutput;
 
 import javax.annotation.Nonnull;
 
-import stupaq.cloudatlas.attribute.types.CAString;
 import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.cloudatlas.serialization.SerializationOnly;
-import stupaq.cloudatlas.serialization.TypeRegistry;
-import stupaq.guava.base.PrimitiveWrapper;
 
-public final class Attribute<Type extends AttributeValue> extends PrimitiveWrapper<Optional<Type>>
-    implements CompactSerializable {
+public final class Attribute<Type extends AttributeValue> implements CompactSerializable {
   @Nonnull
   private final AttributeName name;
+  private final Type value;
 
   public Attribute(@Nonnull AttributeName name, Type value) {
-    super(Optional.fromNullable(value));
     Preconditions.checkNotNull(name, "AttributeName cannot be null");
+    Preconditions.checkNotNull(value, "AttributeValue cannot be null");
     this.name = name;
+    this.value = value;
   }
 
   @SerializationOnly
   public Attribute() {
-    super(Optional.<Type>absent());
     name = new AttributeName();
+    value = null;
   }
 
   @Nonnull
-  public AttributeName getName() {
+  public AttributeName name() {
     return name;
   }
 
-  @Override
   @Nonnull
-  public Optional<Type> get() {
-    return super.get();
+  public Type value() {
+    return value;
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
     name.readFields(in);
-    if (in.readBoolean()) {
-      set(Optional.of((Type) TypeRegistry.readObject(in)));
-    } else {
-      set(Optional.<Type>absent());
-    }
+    value.readFields(in);
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
     name.writeFields(out);
-    if (get().isPresent()) {
-      out.writeBoolean(true);
-      TypeRegistry.writeObject(out, get().get());
-    } else {
-      out.writeBoolean(false);
-    }
+    value.writeFields(out);
   }
 
   @Override
@@ -74,19 +61,19 @@ public final class Attribute<Type extends AttributeValue> extends PrimitiveWrapp
       return false;
     }
     Attribute attribute = (Attribute) o;
-    return name.equals(attribute.name) && get().equals(attribute.get());
+    return name.equals(attribute.name) && value.equals(attribute.value);
+
   }
 
   @Override
   public int hashCode() {
     int result = name.hashCode();
-    result = 31 * result + get().hashCode();
+    result = 31 * result + value.hashCode();
     return result;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public String toString() {
-    return name + " = " + CAString.valueOf(get());
+    return name + " = " + value;
   }
 }

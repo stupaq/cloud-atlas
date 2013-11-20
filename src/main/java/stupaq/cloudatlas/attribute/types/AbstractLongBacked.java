@@ -30,9 +30,4 @@ abstract class AbstractLongBacked extends AbstractAtomic<Long> implements Attrib
       out.writeLong(get());
     }
   }
-
-  @Override
-  public final String toString() {
-    return to().String().toString();
-  }
 }

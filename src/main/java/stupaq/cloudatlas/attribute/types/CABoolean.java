@@ -14,7 +14,6 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDe
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class CABoolean extends AbstractAtomic<Boolean> {
-  @SerializationOnly
   public CABoolean() {
     this(null);
   }

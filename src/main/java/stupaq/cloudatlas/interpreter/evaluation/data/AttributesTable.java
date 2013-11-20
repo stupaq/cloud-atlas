@@ -1,17 +1,17 @@
 package stupaq.cloudatlas.interpreter.evaluation.data;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
 
 public class AttributesTable extends ArrayList<AttributesRow> {
@@ -20,7 +20,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
   }
 
   public AttributesTable(Iterable<ZoneManagementInfo> zones) {
-    fill(FluentIterable.from(zones)
+    fillFrom(FluentIterable.from(zones)
         .transform(new Function<ZoneManagementInfo, Collection<Attribute>>() {
           @Override
           public Collection<Attribute> apply(ZoneManagementInfo managementInfo) {
@@ -29,21 +29,23 @@ public class AttributesTable extends ArrayList<AttributesRow> {
         }));
   }
 
-  @SuppressWarnings("unchecked")
-  private void fill(Iterable<Collection<Attribute>> subZones) {
-    Set<AttributeName> allAttributes = new HashSet<>();
+  private void fillFrom(Iterable<Collection<Attribute>> subZones) {
+    HashMap<AttributeName, AttributeValue> allAttributes = new HashMap<>();
     for (Collection<Attribute> zone : subZones) {
       AttributesRow row = new AttributesRow();
       for (Attribute attribute : zone) {
-        row.put(attribute.getName(), attribute.get());
-        allAttributes.add(attribute.getName());
+        if (allAttributes.put(attribute.name(), attribute.value()) != null) {
+          throw new TypeCheckerException(
+              "AttributeName: " + attribute.name() + " maps to not matching types.");
+        }
+        row.put(attribute.name(), attribute.value());
       }
       add(row);
     }
     for (AttributesRow row : this) {
-      for (AttributeName name : allAttributes) {
-        if (!row.containsKey(name)) {
-          row.put(name, Optional.<AttributeValue>absent());
+      for (Map.Entry<AttributeName, AttributeValue> entry : allAttributes.entrySet()) {
+        if (!row.containsKey(entry.getKey())) {
+          row.put(entry.getKey(), entry.getValue());
         }
       }
     }

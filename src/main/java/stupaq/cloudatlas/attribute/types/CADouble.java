@@ -14,7 +14,15 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDe
 
 public class CADouble extends AbstractAtomic<Double> {
   public CADouble() {
-    this(null);
+    super(null);
+  }
+
+  public CADouble(Integer value) {
+    super(value == null ? null : value.doubleValue());
+  }
+
+  public CADouble(Long value) {
+    super(value == null ? null : value.doubleValue());
   }
 
   public CADouble(Double value) {

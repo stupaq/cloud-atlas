@@ -120,14 +120,14 @@ public class ExampleShell {
     GlobalName globalName = GlobalName.parse(path);
     assertEquals(value,
         root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name)).get()
-            .get().get());
+            .value().get());
   }
 
   private void assertSetNull(String path, String name) {
     GlobalName globalName = GlobalName.parse(path);
     assertFalse(
         root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name)).get()
-            .get().isPresent());
+            .value().isPresent());
   }
 
   private void assertNotSet(String path, String name) {
