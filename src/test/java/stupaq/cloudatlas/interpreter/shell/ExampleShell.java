@@ -208,6 +208,8 @@ public class ExampleShell {
 
   @Test
   public void testBad9() throws Exception {
+    executeQuery("&good", "SELECT (SELECT avg(cpu_usage) WHERE false) AS smth1");
+    assertSet("/uw", "smth1", Doub());
     // This is a type error, even though some interpreters accept this query
     executeQuery("&bad9", "SELECT (SELECT avg(cpu_usage) WHERE false) + \"string\" AS smth");
     assertNotSet("/uw", "smth");

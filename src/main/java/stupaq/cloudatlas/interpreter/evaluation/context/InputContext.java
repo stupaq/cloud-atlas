@@ -26,18 +26,25 @@ public class InputContext {
   @SuppressWarnings("unchecked")
   public InputContext(AttributesTable table) {
     Map<AttributeName, RCollection<AttributeValue>> columns = new HashMap<>();
-    for (AttributesRow row : table) {
-      for (Map.Entry<AttributeName, AttributeValue> attribute : row.entrySet()) {
-        AttributeName name = attribute.getKey();
-        AttributeValue value = attribute.getValue();
-        RCollection<AttributeValue> collection = columns.get(name);
-        if (collection == null) {
-          collection = new RCollection<>((TypeInfo<AttributeValue>) value.getType());
-          columns.put(name, collection);
+    if (table.isEmpty()) {
+      for (Map.Entry<AttributeName, TypeInfo> entry : table.getTypes()) {
+        columns.put(entry.getKey(), new RCollection<AttributeValue>(entry.getValue()));
+      }
+    } else {
+      for (AttributesRow row : table) {
+        for (Map.Entry<AttributeName, AttributeValue> attribute : row.entrySet()) {
+          AttributeName name = attribute.getKey();
+          AttributeValue value = attribute.getValue();
+          RCollection<AttributeValue> collection = columns.get(name);
+          if (collection == null) {
+            collection = new RCollection<>((TypeInfo<AttributeValue>) value.getType());
+            columns.put(name, collection);
+          }
+          collection.add(value);
         }
-        collection.add(value);
       }
     }
+    assert columns.size() == table.getTypes().size();
     inputAttributes = new HashMap<>();
     inputAttributes.putAll(columns);
   }
