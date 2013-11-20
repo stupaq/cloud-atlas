@@ -41,7 +41,7 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
     verifyInvariants();
   }
 
-  protected Composed get() {
+  protected final Composed get() {
     if (isNull()) {
       throw new NullPointerException();
     }
@@ -50,11 +50,11 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
 
   @Override
   public final TypeInfo<? extends AttributeValue> getType() {
-    return new ComposedTypeInfo<>(getClass(), enclosingType);
+    return ComposedTypeInfo.of(getClass(), enclosingType);
   }
 
   @Nonnull
-  TypeInfo<Type> getEnclosingType() {
+  public final TypeInfo<Type> getEnclosingType() {
     return enclosingType;
   }
 

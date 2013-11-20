@@ -8,7 +8,7 @@ import stupaq.cloudatlas.attribute.types.CAList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
-import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.*;
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.*;
 import static stupaq.cloudatlas.interpreter.values.SemanticValueTestUtils.*;
 
 public class RCollectionTest {

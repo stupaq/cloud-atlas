@@ -8,7 +8,7 @@ import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
-import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.*;
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.*;
 
 public class CAListTest {
   @Test

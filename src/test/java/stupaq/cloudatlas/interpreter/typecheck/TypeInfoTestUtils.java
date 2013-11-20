@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.interpreter;
+package stupaq.cloudatlas.interpreter.typecheck;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CABoolean;
@@ -18,40 +18,40 @@ public class TypeInfoTestUtils {
   }
 
   public static TypeInfo<CAInteger> TInt() {
-    return new TypeInfo<>(CAInteger.class);
+    return TypeInfo.of(CAInteger.class);
   }
 
   public static TypeInfo<CADuration> TDur() {
-    return new TypeInfo<>(CADuration.class);
+    return TypeInfo.of(CADuration.class);
   }
 
   public static TypeInfo<CATime> TTime() {
-    return new TypeInfo<>(CATime.class);
+    return TypeInfo.of(CATime.class);
   }
 
   public static TypeInfo<CADouble> TDoub() {
-    return new TypeInfo<>(CADouble.class);
+    return TypeInfo.of(CADouble.class);
   }
 
   public static TypeInfo<CABoolean> TBool() {
-    return new TypeInfo<>(CABoolean.class);
+    return TypeInfo.of(CABoolean.class);
   }
 
   public static TypeInfo<CAString> TStr() {
-    return new TypeInfo<>(CAString.class);
+    return TypeInfo.of(CAString.class);
   }
 
   public static TypeInfo<CAContact> TCont() {
-    return new TypeInfo<>(CAContact.class);
+    return TypeInfo.of(CAContact.class);
   }
 
   public static <Enclosing extends AttributeValue> ComposedTypeInfo<CAList> TList(
       TypeInfo<Enclosing> enclosing) {
-    return new ComposedTypeInfo<>(CAList.class, enclosing);
+    return ComposedTypeInfo.of(CAList.class, enclosing);
   }
 
   public static <Enclosing extends AttributeValue> ComposedTypeInfo<CASet> TSet(
       TypeInfo<Enclosing> enclosing) {
-    return new ComposedTypeInfo<>(CASet.class, enclosing);
+    return ComposedTypeInfo.of(CASet.class, enclosing);
   }
 }

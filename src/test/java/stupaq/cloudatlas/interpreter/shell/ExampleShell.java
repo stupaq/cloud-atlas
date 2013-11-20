@@ -35,9 +35,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
-import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.TCont;
-import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.TDoub;
-import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.TStr;
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TCont;
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TDoub;
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TStr;
 
 public class ExampleShell {
   private static final Log LOG = LogFactory.getLog(ExampleShell.class);
@@ -212,7 +212,7 @@ public class ExampleShell {
     executeQuery("&ex2",
         "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY num_cores ASC NULLS FIRST, "
         + "cpu_usage DESC NULLS LAST");
-    assertSet("/uw", "new_contacts", List(TCont(), Cont("UW1B"), Cont("UW1A")));
+    assertSet("/uw", "new_contacts", List(TCont(), Cont("UW1A"), Cont("UW1B")));
     assertNotSet("/", "new_contacts");
   }
 

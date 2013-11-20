@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.attribute.types;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +26,7 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
 
   @Override
   public final TypeInfo<? extends AttributeValue> getType() {
-    return new TypeInfo<>(getClass());
+    return TypeInfo.of(getClass());
   }
 
   @Override
@@ -42,23 +43,23 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
   }
 
   @Override
-  public boolean equals(Object o) {
+  public final boolean equals(Object o) {
     return this == o || !(o == null || getClass() != o.getClass()) && value
         .equals(((AbstractAtomic) o).value);
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return value.hashCode();
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public int compareTo(AttributeValue other) {
     if (!getType().equals(other.getType())) {
       throw new UndefinedOperationException(
           "Cannot compare: " + getType() + " with: " + other.getType());
     }
+    Preconditions.checkState(!isNull(), "Nulls should never be directly compared");
     return equals(other) ? 0 : (isNull() ? 1 : (other.isNull() ? -1 : get()
         .compareTo(((AbstractAtomic<Type>) other).get())));
   }

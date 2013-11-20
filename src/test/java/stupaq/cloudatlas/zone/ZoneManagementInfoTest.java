@@ -1,7 +1,6 @@
 package stupaq.cloudatlas.zone;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
@@ -12,8 +11,8 @@ import stupaq.cloudatlas.serialization.TypeRegistry;
 
 import static org.junit.Assert.assertEquals;
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
-import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.TInt;
-import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.TStr;
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TInt;
+import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TStr;
 
 public class ZoneManagementInfoTest {
 
