@@ -4,9 +4,6 @@ import com.google.common.collect.Collections2;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
@@ -16,23 +13,14 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CASet<Type extends AttributeValue> extends AbstractComposedValue<Type, HashSet<Type>> {
-  @SerializationOnly
+public class CASet<Type extends AttributeValue> extends AbstractComposed<Type, HashSet<Type>> {
   public CASet() {
-    this(Collections.<Type>emptySet());
+    super(new HashSet<Type>(), null);
   }
 
-  @SafeVarargs
-  public CASet(Type... elements) {
-    this(Arrays.asList(elements));
-  }
-
-  public CASet(Collection<Type> elements) {
-    super(new HashSet<Type>());
-    get().addAll(elements);
-    verifyInvariants();
+  public CASet(Iterable<Type> elements) {
+    super(new HashSet<Type>(), elements);
   }
 
   @Override
@@ -58,7 +46,7 @@ public class CASet<Type extends AttributeValue> extends AbstractComposedValue<Ty
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAList<Type> List() {
-      return new CAList<>(CASet.this.get());
+      return new CAList<>(isNull() ? null : get());
     }
 
     @Override
@@ -68,15 +56,15 @@ public class CASet<Type extends AttributeValue> extends AbstractComposedValue<Ty
 
     @Override
     public CAString String() {
-      return new CAString("{ " + StringUtils
-          .join(Collections2.transform(CASet.this.get(), new Stringifier()), ", ") + " }");
+      return new CAString(isNull() ? null : "{ " + StringUtils
+          .join(Collections2.transform(get(), new Stringifier()), ", ") + " }");
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
-    public AttributeValue size() {
-      return new CAInteger((long) CASet.this.get().size());
+    public CAInteger size() {
+      return new CAInteger(isNull() ? null : (long) get().size());
     }
   }
 
@@ -88,7 +76,7 @@ public class CASet<Type extends AttributeValue> extends AbstractComposedValue<Ty
 
     @Override
     public CABoolean equalsTo(CASet value) {
-      return new CABoolean(CASet.this.equals(value));
+      return new CABoolean(isNull(value) ? null : equals(value));
     }
   }
 }

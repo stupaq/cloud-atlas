@@ -14,4 +14,6 @@ public interface AttributeValue extends CompactSerializable, Comparable<Attribut
   OperableValue op();
 
   RelationalValue rel();
+
+  public boolean isNull();
 }

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import javax.annotation.Nonnull;
-
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -13,33 +11,29 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.serialization.SerializationOnly;
-import stupaq.guava.base.PrimitiveWrapper;
 
-public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue {
-  @SerializationOnly
+public class CADouble extends AbstractAtomic<Double> {
   public CADouble() {
-    this(0D);
+    this(null);
   }
 
-  public CADouble(double value) {
+  public CADouble(Double value) {
     super(value);
-  }
-
-  @Nonnull
-  @Override
-  public Double get() {
-    return super.get();
   }
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    set(in.readDouble());
+    if (in.readBoolean()) {
+      set(in.readDouble());
+    }
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeDouble(get());
+    out.writeBoolean(!isNull());
+    if (!isNull()) {
+      out.writeDouble(get());
+    }
   }
 
   @Override
@@ -50,12 +44,6 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
   @Override
   public RelationalValue rel() {
     return new RelationalImplementation();
-  }
-
-  @Override
-  public int compareTo(AttributeValue o) {
-    TypeUtils.assertSameType(this, o);
-    return get().compareTo(((CADouble) o).get());
   }
 
   @Override
@@ -76,12 +64,12 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
     @Override
     public CAInteger Integer() {
-      return new CAInteger(get().longValue());
+      return new CAInteger(isNull() ? null : get().longValue());
     }
 
     @Override
     public CAString String() {
-      return new CAString(String.valueOf(get()));
+      return new CAString(isNull() ? null : String.valueOf(get()));
     }
   }
 
@@ -93,17 +81,17 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
     @Override
     public AttributeValue addTo(CADouble value) {
-      return new CADouble(value.get() + get());
+      return new CADouble(isNull(value) ? null : value.get() + get());
     }
 
     @Override
     public AttributeValue addTo(CAInteger value) {
-      return new CADouble(value.get() + get());
+      return new CADouble(isNull(value) ? null : value.get() + get());
     }
 
     @Override
     public AttributeValue negate() {
-      return new CADouble(-get());
+      return new CADouble(isNull() ? null : -get());
     }
 
     @Override
@@ -113,37 +101,37 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
     @Override
     public AttributeValue multiplyBy(CADouble value) {
-      return new CADouble(value.get() * get());
+      return new CADouble(isNull(value) ? null : value.get() * get());
     }
 
     @Override
     public AttributeValue multiplyBy(CADuration value) {
-      return new CADuration((long) (value.get() * get()));
+      return new CADuration(isNull(value) ? null : (long) (value.get() * get()));
     }
 
     @Override
     public AttributeValue multiplyBy(CAInteger value) {
-      return new CADouble(value.get() * get());
+      return new CADouble(isNull(value) ? null : value.get() * get());
     }
 
     @Override
-    public AttributeValue inverse() {
-      return new CADouble(1 / get());
+    public CADouble inverse() {
+      return new CADouble(isNull() ? null : 1 / get());
     }
 
     @Override
-    public AttributeValue round() {
-      return new CADouble((double) Math.round(get()));
+    public CADouble round() {
+      return new CADouble(isNull() ? null : (double) Math.round(get()));
     }
 
     @Override
-    public AttributeValue ceil() {
-      return new CADouble(Math.ceil(get()));
+    public CADouble ceil() {
+      return new CADouble(isNull() ? null : Math.ceil(get()));
     }
 
     @Override
-    public AttributeValue floor() {
-      return new CADouble(Math.floor(get()));
+    public CADouble floor() {
+      return new CADouble(isNull() ? null : Math.floor(get()));
     }
   }
 
@@ -155,12 +143,12 @@ public class CADouble extends PrimitiveWrapper<Double> implements AttributeValue
 
     @Override
     public CABoolean greaterThan(CADouble value) {
-      return new CABoolean(CADouble.this.get().compareTo(value.get()) > 0);
+      return new CABoolean(isNull(value) ? null : get().compareTo(value.get()) > 0);
     }
 
     @Override
     public CABoolean equalsTo(CADouble value) {
-      return new CABoolean(CADouble.this.get().equals(value.get()));
+      return new CABoolean(isNull(value) ? null : get().equals(value.get()));
     }
 
     @Override

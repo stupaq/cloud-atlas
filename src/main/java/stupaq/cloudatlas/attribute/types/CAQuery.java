@@ -1,8 +1,6 @@
 package stupaq.cloudatlas.attribute.types;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import com.google.common.base.Preconditions;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
@@ -13,18 +11,18 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefaul
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
-import stupaq.guava.base.PrimitiveWrapper;
 
-public class CAQuery extends PrimitiveWrapper<String> implements AttributeValue {
-  private static final String NOT_YET_DESERIALIZED = "";
+public class CAQuery extends AbstractStringBacked {
+  private static final String NOT_DESERIALIZED = "NOT DESERIALIZED";
 
   @SerializationOnly
   public CAQuery() {
-    super(NOT_YET_DESERIALIZED);
+    super(NOT_DESERIALIZED);
   }
 
   public CAQuery(String value) {
     super(value);
+    Preconditions.checkNotNull(value);
   }
 
   public String getQueryString() {
@@ -32,23 +30,13 @@ public class CAQuery extends PrimitiveWrapper<String> implements AttributeValue 
   }
 
   @Override
-  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    set(in.readUTF());
-  }
-
-  @Override
-  public void writeFields(ObjectOutput out) throws IOException {
-    out.writeUTF(get());
+  public final int compareTo(AttributeValue o) {
+    throw new UndefinedOperationException("Cannot compare: " + CAQuery.class.getSimpleName());
   }
 
   @Override
   public Class<CAQuery> getType() {
     return CAQuery.class;
-  }
-
-  @Override
-  public int compareTo(AttributeValue o) {
-    throw new UndefinedOperationException("Cannot compare: " + getType().getSimpleName());
   }
 
   @Override

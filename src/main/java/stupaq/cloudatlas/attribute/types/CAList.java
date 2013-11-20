@@ -1,12 +1,10 @@
 package stupaq.cloudatlas.attribute.types;
 
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,24 +15,14 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CAList<Type extends AttributeValue>
-    extends AbstractComposedValue<Type, ArrayList<Type>> implements AttributeValue {
-  @SerializationOnly
+public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, ArrayList<Type>> {
   public CAList() {
-    this(Collections.<Type>emptySet());
-  }
-
-  @SafeVarargs
-  public CAList(Type... elements) {
-    this(Arrays.asList(elements));
+    super(new ArrayList<Type>(), null);
   }
 
   public CAList(Iterable<Type> elements) {
-    super(new ArrayList<Type>());
-    Iterables.addAll(get(), elements);
-    verifyInvariants();
+    super(new ArrayList<Type>(), elements);
   }
 
   public List<Type> asImmutableList() {
@@ -69,20 +57,20 @@ public class CAList<Type extends AttributeValue>
 
     @Override
     public CAString String() {
-      return new CAString("[ " + StringUtils
-          .join(Collections2.transform(CAList.this.get(), new Stringifier()), ", ") + " ]");
+      return new CAString(isNull() ? null : "[ " + StringUtils
+          .join(Collections2.transform(get(), new Stringifier()), ", ") + " ]");
     }
 
     @Override
     public CASet<Type> Set() {
-      return new CASet<>(CAList.this.get());
+      return new CASet<>(isNull() ? null : get());
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
-    public AttributeValue size() {
-      return new CAInteger((long) CAList.this.get().size());
+    public CAInteger size() {
+      return new CAInteger(isNull() ? null : (long) get().size());
     }
   }
 
@@ -94,7 +82,7 @@ public class CAList<Type extends AttributeValue>
 
     @Override
     public CABoolean equalsTo(CAList value) {
-      return new CABoolean(CAList.this.equals(value));
+      return new CABoolean(isNull() ? null : equals(value));
     }
   }
 }

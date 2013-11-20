@@ -1,10 +1,5 @@
 package stupaq.cloudatlas.attribute.types;
 
-import com.google.common.base.Optional;
-
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -19,35 +14,14 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.serialization.SerializationOnly;
-import stupaq.guava.base.PrimitiveWrapper;
 
-public class CAString extends PrimitiveWrapper<String> implements AttributeValue {
-  private static final String NOT_YET_DESERIALIZED = "";
-  private static final AttributeValue STRING_NULL = new CAString("NULL");
-
-  @SerializationOnly
+public class CAString extends AbstractStringBacked implements AttributeValue {
   public CAString() {
-    super(NOT_YET_DESERIALIZED);
+    super(null);
   }
 
   public CAString(String value) {
     super(value);
-  }
-
-  @SuppressWarnings("unchecked")
-  public static AttributeValue valueOf(Optional<? extends AttributeValue> value) {
-    return ((Optional<AttributeValue>) value).or(STRING_NULL);
-  }
-
-  @Override
-  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    set(in.readUTF());
-  }
-
-  @Override
-  public void writeFields(ObjectOutput out) throws IOException {
-    out.writeUTF(get());
   }
 
   @Override
@@ -58,12 +32,6 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
   @Override
   public RelationalValue rel() {
     return new RelationalImplementation();
-  }
-
-  @Override
-  public int compareTo(AttributeValue o) {
-    TypeUtils.assertSameType(this, o);
-    return get().compareTo(((CAString) o).get());
   }
 
   @Override
@@ -79,42 +47,46 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CABoolean Boolean() {
-      return new CABoolean(Boolean.valueOf(get()));
+      return new CABoolean(isNull() ? null : Boolean.valueOf(get()));
     }
 
     @Override
     public CAContact Contact() {
-      return new CAContact(get());
+      return new CAContact(isNull() ? null : get());
     }
 
     @Override
     public CADouble Double() {
-      return new CADouble(Double.valueOf(get()));
+      return new CADouble(isNull() ? null : Double.valueOf(get()));
     }
 
     @Override
     public CADuration Duration() {
-      String str = get();
-      try {
-        if (str.charAt(0) != '+' && str.charAt(0) != '-') {
-          throw new ConversionException("Expected leading sign");
+      if (isNull()) {
+        return new CADuration(null);
+      } else {
+        String str = get();
+        try {
+          if (str.charAt(0) != '+' && str.charAt(0) != '-') {
+            throw new ConversionException("Expected leading sign");
+          }
+          String[] parts = str.split(" ");
+          long days = Long.parseLong(parts[0]);
+          SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
+          format.setTimeZone(TimeZone.getTimeZone("UTC"));
+          long time = format.parse(parts[1]).getTime();
+          return new CADuration(
+              (days >= 0 ? 1 : -1) * (TimeUnit.DAYS.toMillis(Math.abs(days)) + time));
+        } catch (NullPointerException | IndexOutOfBoundsException | NumberFormatException |
+            ParseException e) {
+          throw new ConversionException(e);
         }
-        String[] parts = str.split(" ");
-        long days = Long.parseLong(parts[0]);
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-        long time = format.parse(parts[1]).getTime();
-        return new CADuration(
-            (days >= 0 ? 1 : -1) * (TimeUnit.DAYS.toMillis(Math.abs(days)) + time));
-      } catch (NullPointerException | IndexOutOfBoundsException | NumberFormatException |
-          ParseException e) {
-        throw new ConversionException(e);
       }
     }
 
     @Override
     public CAInteger Integer() {
-      return new CAInteger(Long.valueOf(get()));
+      return new CAInteger(isNull() ? null : Long.valueOf(get()));
     }
 
     @Override
@@ -125,8 +97,8 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
     @Override
     public CATime Time() {
       try {
-        return new CATime(
-            new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS z").parse(get()).getTime());
+        return new CATime(isNull() ? null :
+                          new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS z").parse(get()).getTime());
       } catch (ParseException e) {
         throw new ConversionException(e);
       }
@@ -141,22 +113,22 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
     @Override
     public AttributeValue addTo(CAString value) {
-      return new CAString(value.get() + get());
+      return new CAString(isNull(value) ? null : value.get() + get());
     }
 
     @Override
-    public AttributeValue matches(AttributeValue value) {
+    public CABoolean matches(AttributeValue value) {
       return value.op().describes(CAString.this);
     }
 
     @Override
-    public AttributeValue describes(CAString value) {
-      return new CABoolean(Pattern.matches(get(), value.get()));
+    public CABoolean describes(CAString value) {
+      return new CABoolean(isNull(value) ? null : Pattern.matches(get(), value.get()));
     }
 
     @Override
-    public AttributeValue size() {
-      return new CAInteger((long) CAString.this.get().length());
+    public CAInteger size() {
+      return new CAInteger(isNull() ? null : (long) get().length());
     }
   }
 
@@ -168,12 +140,12 @@ public class CAString extends PrimitiveWrapper<String> implements AttributeValue
 
     @Override
     public CABoolean greaterThan(CAString value) {
-      return new CABoolean(CAString.this.get().compareTo(value.get()) > 0);
+      return new CABoolean(isNull(value) ? null : get().compareTo(value.get()) > 0);
     }
 
     @Override
     public CABoolean equalsTo(CAString value) {
-      return new CABoolean(CAString.this.get().equals(value.get()));
+      return new CABoolean(isNull(value) ? null : get().equals(value.get()));
     }
 
     @Override

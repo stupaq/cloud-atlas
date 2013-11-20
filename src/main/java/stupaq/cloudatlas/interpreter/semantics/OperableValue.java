@@ -12,9 +12,7 @@ import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 public interface OperableValue {
 
   /** CONJUNCTION is defined for: Boolean */
-  public AttributeValue and(AttributeValue value);
-
-  public AttributeValue andWith(CABoolean value);
+  public CABoolean and(AttributeValue value);
 
   /** ALTERNATIVE is defined for: Boolean */
   public CABoolean or(AttributeValue value);
@@ -22,7 +20,7 @@ public interface OperableValue {
   public CABoolean orWith(CABoolean value);
 
   /** CONTRADICTION is defined for: Boolean */
-  public AttributeValue not();
+  public CABoolean not();
 
   /** NEGATION is defined for: Double, Duration, Integer, Time */
   public AttributeValue negate();
@@ -40,7 +38,7 @@ public interface OperableValue {
 
   public AttributeValue addTo(CATime value);
 
-  /** MULTIPLICATION is defined for: Double, Integer */
+  /** MULTIPLICATION is defined for: Double, Integer, Duration */
   public AttributeValue multiply(AttributeValue value);
 
   public AttributeValue multiplyBy(CADouble value);
@@ -50,29 +48,29 @@ public interface OperableValue {
   public AttributeValue multiplyBy(CADuration value);
 
   /** INVERSION is defined for: Double, Integer */
-  public AttributeValue inverse();
+  public CADouble inverse();
 
   /** REMAINDER is defined for: Integer */
-  public AttributeValue modulo(AttributeValue value);
+  public CAInteger modulo(AttributeValue value);
 
-  public AttributeValue remainderOf(CAInteger value);
+  public CAInteger remainderOf(CAInteger value);
 
   /** REGEXP is defined for: String */
-  public AttributeValue matches(AttributeValue value);
+  public CABoolean matches(AttributeValue value);
 
-  public AttributeValue describes(CAString value);
+  public CABoolean describes(CAString value);
 
-  /** ROUND is defined for: Double, Integer */
-  public AttributeValue round();
+  /** ROUND is defined for: Double */
+  public CADouble round();
 
-  /** CEIL is defined for: Double, Integer */
-  public AttributeValue ceil();
+  /** CEIL is defined for: Double */
+  public CADouble ceil();
 
   /** FLOOR is defined for: Double, Integer */
-  public AttributeValue floor();
+  public CADouble floor();
 
   /** SIZE is defined for: List, Set, String */
-  public AttributeValue size();
+  public CAInteger size();
 
   public static class OperableValueDefault implements OperableValue {
 
@@ -82,18 +80,13 @@ public interface OperableValue {
     }
 
     @Override
-    public AttributeValue not() {
+    public CABoolean not() {
       return noOperation("!");
     }
 
     @Override
-    public AttributeValue and(AttributeValue value) {
-      return noOperation("&&");
-    }
-
-    @Override
-    public AttributeValue andWith(CABoolean value) {
-      return noOperation("&&");
+    public final CABoolean and(AttributeValue value) {
+      return not().op().or(value.op().not()).op().not();
     }
 
     @Override
@@ -162,47 +155,47 @@ public interface OperableValue {
     }
 
     @Override
-    public AttributeValue inverse() {
+    public CADouble inverse() {
       return noOperation("/");
     }
 
     @Override
-    public AttributeValue modulo(AttributeValue value) {
+    public CAInteger modulo(AttributeValue value) {
       return noOperation("%");
     }
 
     @Override
-    public AttributeValue remainderOf(CAInteger value) {
+    public CAInteger remainderOf(CAInteger value) {
       return noOperation("%");
     }
 
     @Override
-    public AttributeValue matches(AttributeValue value) {
+    public CABoolean matches(AttributeValue value) {
       return noOperation("REGEXP");
     }
 
     @Override
-    public AttributeValue describes(CAString value) {
+    public CABoolean describes(CAString value) {
       return noOperation("REGEXP");
     }
 
     @Override
-    public AttributeValue round() {
+    public CADouble round() {
       return noOperation("round(...)");
     }
 
     @Override
-    public AttributeValue ceil() {
+    public CADouble ceil() {
       return noOperation("ceil(...)");
     }
 
     @Override
-    public AttributeValue floor() {
+    public CADouble floor() {
       return noOperation("floor(...)");
     }
 
     @Override
-    public AttributeValue size() {
+    public CAInteger size() {
       return noOperation("size(...)");
     }
   }

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import javax.annotation.Nonnull;
-
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -14,43 +12,35 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefaul
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.serialization.SerializationOnly;
-import stupaq.guava.base.PrimitiveWrapper;
 
-public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeValue {
+public class CABoolean extends AbstractAtomic<Boolean> {
   @SerializationOnly
   public CABoolean() {
-    this(false);
+    this(null);
   }
 
-  public CABoolean(boolean value) {
+  public CABoolean(Boolean value) {
     super(value);
-  }
-
-  @Nonnull
-  @Override
-  public Boolean get() {
-    return super.get();
   }
 
   @Override
   public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    set(in.readBoolean());
+    if (in.readBoolean()) {
+      set(in.readBoolean());
+    }
   }
 
   @Override
   public void writeFields(ObjectOutput out) throws IOException {
-    out.writeBoolean(get());
+    out.writeBoolean(!isNull());
+    if (!isNull()) {
+      out.writeBoolean(get());
+    }
   }
 
   @Override
   public Class<CABoolean> getType() {
     return CABoolean.class;
-  }
-
-  @Override
-  public int compareTo(AttributeValue o) {
-    TypeUtils.assertSameType(this, o);
-    return get().compareTo(((CABoolean) o).get());
   }
 
   @Override
@@ -76,21 +66,11 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
 
     @Override
     public CAString String() {
-      return new CAString(String.valueOf(CABoolean.this));
+      return new CAString(isNull() ? null : String.valueOf(CABoolean.this));
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
-    @Override
-    public AttributeValue and(AttributeValue value) {
-      return value.op().andWith(CABoolean.this);
-    }
-
-    @Override
-    public AttributeValue andWith(CABoolean value) {
-      return new CABoolean(value.get() && get());
-    }
-
     @Override
     public CABoolean or(AttributeValue value) {
       return value.op().orWith(CABoolean.this);
@@ -98,12 +78,12 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
 
     @Override
     public CABoolean orWith(CABoolean value) {
-      return new CABoolean(value.get() || get());
+      return new CABoolean(isNull(value) ? null : value.get() || get());
     }
 
     @Override
-    public AttributeValue not() {
-      return new CABoolean(!get());
+    public CABoolean not() {
+      return new CABoolean(isNull() ? null : !get());
     }
   }
 
@@ -115,7 +95,7 @@ public class CABoolean extends PrimitiveWrapper<Boolean> implements AttributeVal
 
     @Override
     public CABoolean equalsTo(CABoolean value) {
-      return new CABoolean(get().equals(value.get()));
+      return new CABoolean(isNull(value) ? null : get().equals(value.get()));
     }
   }
 }

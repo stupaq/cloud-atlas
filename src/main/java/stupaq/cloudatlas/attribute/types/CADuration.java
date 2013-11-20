@@ -9,15 +9,13 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CADuration extends AbstractLongValue {
-  @SerializationOnly
+public class CADuration extends AbstractLongBacked {
   public CADuration() {
-    this(0L);
+    this(null);
   }
 
-  public CADuration(long value) {
+  public CADuration(Long value) {
     super(value);
   }
 
@@ -49,12 +47,12 @@ public class CADuration extends AbstractLongValue {
 
     @Override
     public CAInteger Integer() {
-      return new CAInteger(get());
+      return new CAInteger(isNull() ? null : get());
     }
 
     @Override
     public CAString String() {
-      return new CAString((get() >= 0 ? "+" : "-") + DurationFormatUtils
+      return new CAString(isNull() ? null : (get() >= 0 ? "+" : "-") + DurationFormatUtils
           .formatDuration(Math.abs(get()), "d HH:mm:ss.SSS"));
     }
   }
@@ -67,17 +65,17 @@ public class CADuration extends AbstractLongValue {
 
     @Override
     public AttributeValue addTo(CADuration value) {
-      return new CADuration(value.get() + get());
+      return new CADuration(isNull(value) ? null : value.get() + get());
     }
 
     @Override
     public AttributeValue addTo(CATime value) {
-      return new CATime(value.get() + get());
+      return new CATime(isNull(value) ? null : value.get() + get());
     }
 
     @Override
     public AttributeValue negate() {
-      return new CADuration(-get());
+      return new CADuration(isNull() ? null : -get());
     }
 
     @Override
@@ -87,17 +85,17 @@ public class CADuration extends AbstractLongValue {
 
     @Override
     public AttributeValue multiplyBy(CADouble value) {
-      return new CADuration((long) (value.get() * (double) get()));
+      return new CADuration(isNull(value) ? null : (long) (value.get() * (double) get()));
     }
 
     @Override
     public AttributeValue multiplyBy(CADuration value) {
-      return new CADuration(value.get() * get());
+      return new CADuration(isNull(value) ? null : value.get() * get());
     }
 
     @Override
     public AttributeValue multiplyBy(CAInteger value) {
-      return new CADuration(value.get() * get());
+      return new CADuration(isNull(value) ? null : value.get() * get());
     }
   }
 
@@ -109,12 +107,12 @@ public class CADuration extends AbstractLongValue {
 
     @Override
     public CABoolean greaterThan(CADuration value) {
-      return new CABoolean(CADuration.this.get().compareTo(value.get()) > 0);
+      return new CABoolean(isNull(value) ? null : get().compareTo(value.get()) > 0);
     }
 
     @Override
     public CABoolean equalsTo(CADuration value) {
-      return new CABoolean(CADuration.this.get().equals(value.get()));
+      return new CABoolean(isNull(value) ? null : get().equals(value.get()));
     }
 
     @Override

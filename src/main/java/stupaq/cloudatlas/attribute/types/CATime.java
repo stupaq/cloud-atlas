@@ -13,9 +13,8 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.serialization.SerializationOnly;
 
-public class CATime extends AbstractLongValue {
+public class CATime extends AbstractLongBacked {
   private static final Calendar EPOCH;
 
   static {
@@ -25,12 +24,11 @@ public class CATime extends AbstractLongValue {
     EPOCH.set(Calendar.MILLISECOND, 0);
   }
 
-  @SerializationOnly
   public CATime() {
-    this(0L);
+    this(null);
   }
 
-  public CATime(long value) {
+  public CATime(Long value) {
     super(value);
   }
 
@@ -67,7 +65,7 @@ public class CATime extends AbstractLongValue {
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAString String() {
-      return new CAString(DateFormatUtils
+      return new CAString(isNull() ? null : DateFormatUtils
           .format(get(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("CET")));
     }
 
@@ -85,17 +83,17 @@ public class CATime extends AbstractLongValue {
 
     @Override
     public AttributeValue addTo(CADuration value) {
-      return new CATime(value.get() + get());
+      return new CATime(isNull(value) ? null : value.get() + get());
     }
 
     @Override
     public AttributeValue addTo(CATime value) {
-      return new CADuration(value.get() + get());
+      return new CADuration(isNull(value) ? null : value.get() + get());
     }
 
     @Override
     public AttributeValue negate() {
-      return new CATime(-get());
+      return new CATime(isNull() ? null : -get());
     }
   }
 
@@ -107,12 +105,12 @@ public class CATime extends AbstractLongValue {
 
     @Override
     public CABoolean greaterThan(CATime value) {
-      return new CABoolean(CATime.this.get().compareTo(value.get()) > 0);
+      return new CABoolean(isNull(value) ? null : get().compareTo(value.get()) > 0);
     }
 
     @Override
     public CABoolean equalsTo(CATime value) {
-      return new CABoolean(CATime.this.get().equals(value.get()));
+      return new CABoolean(isNull(value) ? null : get().equals(value.get()));
     }
 
     @Override
