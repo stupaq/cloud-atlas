@@ -43,7 +43,7 @@ public class CAInteger extends AbstractLongBacked {
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CADouble Double() {
-      return new CADouble(get().doubleValue());
+      return new CADouble(isNull() ? null : get().doubleValue());
     }
 
     @Override

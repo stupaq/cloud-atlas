@@ -7,8 +7,8 @@ import stupaq.cloudatlas.interpreter.semantics.AggregatingValue.AggregatingValue
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Bool;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Int;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Bool;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Int;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TBool;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TInt;
 import static stupaq.cloudatlas.interpreter.values.SemanticValueTestUtils.*;

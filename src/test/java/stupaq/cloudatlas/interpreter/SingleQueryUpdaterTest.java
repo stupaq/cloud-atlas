@@ -8,8 +8,8 @@ import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchy;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Doub;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Int;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Doub;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Int;
 import static stupaq.cloudatlas.zone.hierarchy.ZoneHierarchyTestUtils.Attr;
 import static stupaq.cloudatlas.zone.hierarchy.ZoneHierarchyTestUtils.Name;
 import static stupaq.cloudatlas.zone.hierarchy.ZoneHierarchyTestUtils.oneLevelHierarchy;

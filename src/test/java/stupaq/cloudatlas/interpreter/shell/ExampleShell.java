@@ -34,7 +34,7 @@ import stupaq.cloudatlas.zone.hierarchy.ZoneHierarchyTestUtils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TCont;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TDoub;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TStr;

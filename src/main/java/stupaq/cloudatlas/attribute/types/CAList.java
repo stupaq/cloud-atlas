@@ -78,7 +78,7 @@ public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, 
 
     @Override
     public CABoolean equalsTo(CAList value) {
-      return new CABoolean(isNull() ? null : CAList.this.equals(value));
+      return new CABoolean(isNull(value) ? null : CAList.this.equals(value));
     }
   }
 }

@@ -7,7 +7,7 @@ import stupaq.cloudatlas.attribute.types.CAList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.*;
 import static stupaq.cloudatlas.interpreter.values.SemanticValueTestUtils.*;
 
@@ -152,16 +152,16 @@ public class RCollectionTest {
     assertEquals(L(TInt()), L(TInt(), Int(), Int(), Int(), Int()).aggregate().distinct());
     // unfold
     assertEquals(L(TInt(), Int(2), Int(3), Int(3)),
-        L(TList(TInt()), List(TInt(), Int(2), Int(3)), ListEmpty(TInt()), List(TInt(), Int(3)))
+        L(TList(TInt()), List(TInt(), Int(2), Int(3)), List(TInt()), List(TInt(), Int(3)))
             .aggregate().unfold());
     assertEquals(L(TInt(), Int(2), Int(3), Int(3)),
-        L(TSet(TInt()), Set(TInt(), Int(2), Int(3)), SetEmpty(TInt()), Set(TInt(), Int(3)))
+        L(TSet(TInt()), Set(TInt(), Int(2), Int(3)), Set(TInt()), Set(TInt(), Int(3)))
             .aggregate().unfold());
     assertEquals(L(TInt(), Int(3), Int(3), Int(3)),
-        C(TList(TInt()), List(TInt(), Int(3), Int(3)), ListEmpty(TInt()), List(TInt(), Int(3)))
+        C(TList(TInt()), List(TInt(), Int(3), Int(3)), List(TInt()), List(TInt(), Int(3)))
             .aggregate().unfold());
     assertEquals(L(TInt(), Int(3), Int(3)),
-        C(TSet(TInt()), Set(TInt(), Int(3), Int(3)), SetEmpty(TInt()), Set(TInt(), Int(3)))
+        C(TSet(TInt()), Set(TInt(), Int(3), Int(3)), Set(TInt()), Set(TInt(), Int(3)))
             .aggregate().unfold());
     assertEquals(L(TInt()), C(TList(TInt())).aggregate().unfold());
     // unfold null

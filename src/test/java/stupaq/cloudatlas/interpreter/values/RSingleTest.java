@@ -3,8 +3,8 @@ package stupaq.cloudatlas.interpreter.values;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Bool;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Int;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Bool;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Int;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TInt;
 import static stupaq.cloudatlas.interpreter.values.SemanticValueTestUtils.BinOp;
 import static stupaq.cloudatlas.interpreter.values.SemanticValueTestUtils.C;

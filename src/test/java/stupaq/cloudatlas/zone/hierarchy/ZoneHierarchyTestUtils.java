@@ -14,7 +14,7 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.zone.ZoneManagementInfo;
 import stupaq.guava.base.Function1;
 
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TCont;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TStr;
 
@@ -29,21 +29,21 @@ public final class ZoneHierarchyTestUtils {
   @SuppressWarnings("unchecked")
   public static ZoneHierarchy<ZoneManagementInfo> oneLevelHierarchy(Attribute root,
       Attribute... children) {
-    return Node(Zmi("/", V7, EP, SetEmpty(TCont()), 0, root),
+    return Node(Zmi("/", V7, EP, Set(TCont()), 0, root),
         FluentIterable.from(Arrays.asList(children))
             .transform(new Function1<Attribute, ZoneHierarchy<ZoneManagementInfo>>() {
               private int iteration = 0;
 
               @Override
               public ZoneHierarchy<ZoneManagementInfo> apply(Attribute attribute) {
-                return Node(Zmi("/uw" + iteration++, K13, EP, SetEmpty(TCont()), 0, attribute));
+                return Node(Zmi("/uw" + iteration++, K13, EP, Set(TCont()), 0, attribute));
               }
             }).toArray((Class) ZoneHierarchy.class));
   }
 
   public static ZoneHierarchy<ZoneManagementInfo> officialExampleHierarchy() {
-    return Node(Zmi("/", V7, "2012/11/09 20:10:17.342 CET", SetEmpty(TCont()), 0),
-        Node(Zmi("/uw", V7, "2012/11/09 20:8:13.123 CET", SetEmpty(TCont()), 0), Node(
+    return Node(Zmi("/", V7, "2012/11/09 20:10:17.342 CET", Set(TCont()), 0),
+        Node(Zmi("/uw", V7, "2012/11/09 20:8:13.123 CET", Set(TCont()), 0), Node(
             Zmi("/uw/violet07", V7, "2012/11/09 18:00:00.000 CET",
                 Set(TCont(), Cont("UW1A"), Cont("UW1B"), Cont("UW1C")), 1,
                 Attr("members", Set(TCont(), Cont("UW1"))),
@@ -61,8 +61,8 @@ public final class ZoneHierarchyTestUtils {
                 Set(TCont(), Cont("UW3A"), Cont("UW3B")), 1,
                 Attr("members", Set(TCont(), Cont("UW3A"))), Attr("creation", Time()),
                 Attr("cpu_usage", Doub(0.1)), Attr("num_cores", Int()), Attr("has_ups", Bool(true)),
-                Attr("some_names", ListEmpty(TStr())), Attr("expiry", Dur())))),
-        Node(Zmi("/pjwstk", W1, "2012/11/09 20:8:13.123 CET", SetEmpty(TCont()), 0), Node(
+                Attr("some_names", List(TStr())), Attr("expiry", Dur())))),
+        Node(Zmi("/pjwstk", W1, "2012/11/09 20:8:13.123 CET", Set(TCont()), 0), Node(
             Zmi("/pjwstk/whatever01", W1, "2012/11/09 21:12:00.000 CET", Set(TCont(), Cont("PJ1")),
                 1, Attr("members", Set(TCont(), Cont("PJ1"))),
                 Attr("creation", Str("2012/10/18 07:03:00.000 CET").to().Time()),

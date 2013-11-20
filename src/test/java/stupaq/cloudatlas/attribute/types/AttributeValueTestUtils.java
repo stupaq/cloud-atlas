@@ -1,13 +1,15 @@
 package stupaq.cloudatlas.attribute.types;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
-public class AttributeTypeTestUtils {
-  private AttributeTypeTestUtils() {
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+
+public class AttributeValueTestUtils {
+  private AttributeValueTestUtils() {
   }
 
   public static CAInteger Int(long value) {
@@ -76,21 +78,17 @@ public class AttributeTypeTestUtils {
     return new CAList<>(type);
   }
 
-  public static <Type extends AttributeValue> CAList<Type> ListEmpty(TypeInfo<Type> type) {
-    return new CAList<>(type, Collections.<Type>emptyList());
-  }
-
   @SafeVarargs
   public static <Type extends AttributeValue> CASet<Type> Set(TypeInfo<Type> type, Type... elems) {
     return new CASet<>(type, Arrays.asList(elems));
   }
 
-  public static <Type extends AttributeValue> CASet<Type> SetEmpty(TypeInfo<Type> type) {
-    return new CASet<>(type, Collections.<Type>emptyList());
-  }
-
   @SuppressWarnings("unused")
   public static <Type extends AttributeValue> CASet<Type> SetNull(TypeInfo<Type> type) {
     return new CASet<>(type);
+  }
+
+  public static void assertNotEquals(AttributeValue notExpected, AttributeValue actual) {
+    assertThat(notExpected, not((AttributeValue) actual));
   }
 }

@@ -10,7 +10,7 @@ import stupaq.cloudatlas.serialization.SerializationUtils;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 
 import static org.junit.Assert.assertEquals;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TInt;
 import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TStr;
 

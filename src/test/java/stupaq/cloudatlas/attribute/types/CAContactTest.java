@@ -7,8 +7,8 @@ import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDe
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Cont;
-import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.Str;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Cont;
+import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Str;
 
 public class CAContactTest {
   @Test
@@ -16,6 +16,7 @@ public class CAContactTest {
     // -> CAString
     assertEquals(Str("UW1"), Cont("UW1").to().String());
     assertEquals(Str("UW2"), Cont("UW2").to().String());
+    assertEquals(Str(), Cont().to().String());
   }
 
   @Test
