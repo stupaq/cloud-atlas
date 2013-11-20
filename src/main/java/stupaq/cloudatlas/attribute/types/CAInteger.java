@@ -64,6 +64,11 @@ public class CAInteger extends AbstractLongBacked {
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
+    public AttributeValue zero() {
+      return new CAInteger(0);
+    }
+
+    @Override
     public AttributeValue add(AttributeValue value) {
       return value.op().addTo(CAInteger.this);
     }

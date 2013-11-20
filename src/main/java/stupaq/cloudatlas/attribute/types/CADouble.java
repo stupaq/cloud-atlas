@@ -78,6 +78,11 @@ public class CADouble extends AbstractAtomic<Double> {
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
+    public AttributeValue zero() {
+      return new CADouble(0);
+    }
+
+    @Override
     public AttributeValue add(AttributeValue value) {
       return value.op().addTo(CADouble.this);
     }

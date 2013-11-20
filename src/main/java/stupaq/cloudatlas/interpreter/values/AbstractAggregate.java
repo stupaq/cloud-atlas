@@ -1,10 +1,11 @@
 package stupaq.cloudatlas.interpreter.values;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 
@@ -29,28 +30,48 @@ import stupaq.cloudatlas.interpreter.typecheck.TypeInfoUtils;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
+import static com.google.common.collect.FluentIterable.from;
+
 abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<Type>
     implements SemanticValue<Type> {
   @Nonnull
   protected final TypeInfo<Type> typeInfo;
+  private final Supplier<FluentIterable<Type>> nonNulls =
+      Suppliers.memoize(new Supplier<FluentIterable<Type>>() {
+        @Override
+        public FluentIterable<Type> get() {
+          return from(AbstractAggregate.this).filter(new Predicate<Type>() {
+            @Override
+            public boolean apply(Type type) {
+              return !type.isNull();
+            }
+          });
+        }
+      });
+  private final Supplier<Boolean> nullsOnly = Suppliers.memoize(new Supplier<Boolean>() {
+    @Override
+    public Boolean get() {
+      return nonNulls.get().isEmpty() && !AbstractAggregate.this.isEmpty();
+    }
+  });
 
   public AbstractAggregate(@Nonnull Iterable<? extends Type> elements,
       @Nonnull TypeInfo<Type> typeInfo) {
     super(new ArrayList<Type>());
     this.typeInfo = typeInfo;
     Preconditions.checkNotNull(typeInfo);
-    Preconditions.checkArgument(FluentIterable.from(elements).allMatch(Predicates.notNull()));
+    Preconditions.checkArgument(from(elements).allMatch(Predicates.notNull()));
     Iterables.addAll(this, elements);
   }
 
   @Override
-  public TypeInfo<Type> getType() {
+  public final TypeInfo<Type> getType() {
     return typeInfo;
   }
 
   @Override
   public final AbstractAggregate<CABoolean> isNull() {
-    return FluentIterable.from(this).transform(new Function<Type, CABoolean>() {
+    return from(this).transform(new Function<Type, CABoolean>() {
       @Override
       public CABoolean apply(Type type) {
         return new CABoolean(type.isNull());
@@ -61,7 +82,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
   @Override
   public final <Result extends AttributeValue> SemanticValue<Result> map(
       Function1<Type, Result> function) {
-    return FluentIterable.from(this).transform(function)
+    return from(this).transform(function)
         .copyInto(this.<Result>emptyInstance(TypeInfoUtils.typeof1(getType(), function)));
   }
 
@@ -87,95 +108,50 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     return new AggregatingImplementation();
   }
 
-  private Optional<FluentIterable<Type>> presentValues() {
-    if (isEmpty()) {
-      return Optional.of(FluentIterable.from(Collections.<Type>emptyList()));
-    }
-    FluentIterable<Type> notNulls = FluentIterable.from(this).filter(new Predicate<Type>() {
-      @Override
-      public boolean apply(Type type) {
-        return !type.isNull();
-      }
-    });
-    return notNulls.isEmpty() ? Optional.<FluentIterable<Type>>absent() : Optional.of(notNulls);
-  }
-
-  private FluentIterable<Type> iterable() {
-    return FluentIterable.from(this);
-  }
-
   /** {@link stupaq.cloudatlas.interpreter.semantics.AggregatingValue} */
   private class AggregatingImplementation extends AggregatingValueDefault<Type> {
     @Override
     public RSingle avg() {
-      return new RSingle<>(
-          presentValues().transform(new Function<FluentIterable<Type>, AttributeValue>() {
-            @Override
-            public AttributeValue apply(FluentIterable<Type> types) {
-              return types.isEmpty() ? new CADouble() :
-                     sum().get().op().multiply(count().get().op().inverse());
-            }
-          }).or(new CADouble()));
+      // Determine whether sub operations are possible
+      AttributeValue sum = sum().get();
+      CAInteger count = count().get();
+      return new RSingle<>(count.isNull() || count.getLong() == 0 ? new CADouble() :
+                           sum.op().multiply(count.op().inverse()));
     }
 
     @Override
     public RSingle sum() {
-      final AttributeValue neutral =
-          getType().equals(TypeInfo.of(CAInteger.class)) ? new CAInteger(0) : new CADouble(0);
-      return new RSingle<>(
-          presentValues().transform(new Function<FluentIterable<Type>, AttributeValue>() {
-            @Override
-            public AttributeValue apply(FluentIterable<Type> types) {
-              AttributeValue sum = neutral;
-              for (Type elem : types) {
-                sum = sum.op().add(elem);
-              }
-              return sum;
-            }
-          }).or(getType().nullInstance()));
+      // Determine whether we can sum values
+      AttributeValue sum = getType().Null().op().zero();
+      for (Type elem : nonNulls.get()) {
+        sum = sum.op().add(elem);
+      }
+      return new RSingle<>(nullsOnly.get() ? getType().Null() : sum);
     }
 
     @Override
     public RSingle<CAInteger> count() {
-      return new RSingle<>(
-          presentValues().transform(new Function<FluentIterable<Type>, CAInteger>() {
-            @Override
-            public CAInteger apply(FluentIterable<Type> types) {
-              return new CAInteger(types.size());
-            }
-          }).or(new CAInteger()));
+      return new RSingle<>(new CAInteger(nullsOnly.get() ? null : (long) nonNulls.get().size()));
     }
 
     @Override
     public RSingle<CAList<Type>> first(final CAInteger size) {
-      return new RSingle<>(size.isNull() ? new CAList<>(typeInfo) : presentValues()
-          .transform(new Function<FluentIterable<Type>, CAList<Type>>() {
-            @Override
-            public CAList<Type> apply(FluentIterable<Type> types) {
-              return new CAList<>(typeInfo, types.limit((int) size.getLong()));
-            }
-          }).or(new CAList<>(typeInfo)));
+      return new RSingle<>(size.isNull() || nullsOnly.get() ? new CAList<>(typeInfo) :
+                           new CAList<>(typeInfo, nonNulls.get().limit((int) size.getLong())));
     }
 
     @Override
     public RSingle<CAList<Type>> last(final CAInteger size) {
-      return new RSingle<>(size.isNull() ? new CAList<>(typeInfo) : presentValues()
-          .transform(new Function<FluentIterable<Type>, CAList<Type>>() {
-            @Override
-            public CAList<Type> apply(FluentIterable<Type> types) {
-              int toSkip = (int) (types.size() - size.getLong());
-              return new CAList<>(typeInfo, types.skip(toSkip > 0 ? toSkip : 0));
-            }
-          }).or(new CAList<>(typeInfo)));
+      if (size.isNull() || nullsOnly.get()) {
+        return new RSingle<>(new CAList<>(typeInfo));
+      }
+      int toSkip = (int) (nonNulls.get().size() - size.getLong());
+      return new RSingle<>(new CAList<>(typeInfo, nonNulls.get().skip(toSkip > 0 ? toSkip : 0)));
     }
 
     @Override
     public RSingle<CAList<Type>> random(final CAInteger size) {
-      if (size.isNull()) {
-        return new RSingle<>(new CAList<>(typeInfo));
-      }
-      Optional<FluentIterable<Type>> notNulls = presentValues();
-      if (!notNulls.isPresent() || notNulls.get().isEmpty()) {
+      if (size.isNull() || nullsOnly.get()) {
         return new RSingle<>(new CAList<>(typeInfo));
       }
       ArrayList<Integer> indices = new ArrayList<>();
@@ -185,11 +161,10 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
         }
       }
       Collections.shuffle(indices);
-      indices = FluentIterable.from(indices).limit((int) size.getLong())
-          .copyInto(new ArrayList<Integer>());
+      indices = from(indices).limit((int) size.getLong()).copyInto(new ArrayList<Integer>());
       Collections.sort(indices);
-      return new RSingle<>(new CAList<>(typeInfo,
-          FluentIterable.from(indices).transform(new Function<Integer, Type>() {
+      return new RSingle<>(
+          new CAList<>(typeInfo, from(indices).transform(new Function<Integer, Type>() {
             @Override
             public Type apply(Integer integer) {
               return AbstractAggregate.this.get(integer);
@@ -199,82 +174,77 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
 
     @Override
     public RSingle<Type> min() {
-      return new RSingle<>(presentValues().transform(new Function<FluentIterable<Type>, Type>() {
-        @Override
-        public Type apply(FluentIterable<Type> types) {
-          return types.isEmpty() ? getType().nullInstance() : Collections.min(types.toList());
-        }
-      }).or(getType().nullInstance()));
+      // Verify that we can compare
+      getType().Null().compareTo(getType().Null());
+      return new RSingle<>(
+          nonNulls.get().isEmpty() ? getType().Null() : Collections.min(nonNulls.get().toList()));
     }
 
     @Override
     public RSingle<Type> max() {
-      return new RSingle<>(presentValues().transform(new Function<FluentIterable<Type>, Type>() {
-        @Override
-        public Type apply(FluentIterable<Type> types) {
-          return types.isEmpty() ? getType().nullInstance() : Collections.max(types.toList());
-        }
-      }).or(getType().nullInstance()));
+      // Verify that we can compare
+      getType().Null().compareTo(getType().Null());
+      return new RSingle<>(
+          nonNulls.get().isEmpty() ? getType().Null() : Collections.max(nonNulls.get().toList()));
     }
 
     @Override
     public SemanticValue land() {
-      return new RSingle<>(
-          presentValues().transform(new Function<FluentIterable<Type>, AttributeValue>() {
-            @Override
-            public AttributeValue apply(FluentIterable<Type> types) {
-              AttributeValue conj = new CABoolean(true);
-              for (Type elem : types) {
-                conj = conj.op().and(elem);
-              }
-              return conj;
-            }
-          }).or(new CABoolean()));
+      // Verify that we can do logical operations
+      final AttributeValue neutral = new CABoolean(true).op().and(new CABoolean(true));
+      if (nullsOnly.get()) {
+        return new RSingle<>(new CABoolean());
+      }
+      AttributeValue conj = neutral;
+      for (Type elem : nonNulls.get()) {
+        conj = conj.op().and(elem);
+      }
+      return new RSingle<>(conj);
     }
 
     @Override
     public SemanticValue lor() {
-      return new RSingle<>(
-          presentValues().transform(new Function<FluentIterable<Type>, AttributeValue>() {
-            @Override
-            public AttributeValue apply(FluentIterable<Type> types) {
-              AttributeValue alt = new CABoolean(false);
-              for (Type elem : types) {
-                alt = alt.op().or(elem);
-              }
-              return alt;
-            }
-          }).or(new CABoolean()));
+      // Verify that we can do logical operations
+      final AttributeValue neutral = new CABoolean(false).op().or(new CABoolean(false));
+      if (nullsOnly.get()) {
+        return new RSingle<>(new CABoolean());
+      }
+      AttributeValue conj = neutral;
+      for (Type elem : nonNulls.get()) {
+        conj = conj.op().or(elem);
+      }
+      return new RSingle<>(conj);
     }
 
     @Override
     public RList<Type> distinct() {
       final Set<Type> seen = new HashSet<>();
-      return iterable().filter(new Predicate<Type>() {
+      return nonNulls.get().filter(new Predicate<Type>() {
         @Override
         public boolean apply(Type elem) {
           return !elem.isNull() && seen.add(elem);
         }
-      }).copyInto(new RList<>(getType()));
+      }).copyInto(new RList<>(typeInfo));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public SemanticValue unfold() {
-      Optional<FluentIterable<Type>> notNulls = presentValues();
       TypeInfo unfolded = typeInfo.unfold();
-      return !notNulls.isPresent() ? new RSingle(unfolded.nullInstance()) :
-             notNulls.get().transformAndConcat(new Function<Type, Iterable<AttributeValue>>() {
-               @Override
-               public Iterable<AttributeValue> apply(Type elem) {
-                 try {
-                   return elem.to().List().asImmutableList();
-                 } catch (ConversionException e) {
-                   throw new UndefinedOperationException(
-                       "Cannot unfold enclosing type: " + elem.getType());
-                 }
-               }
-             }).copyInto(new RList<AttributeValue>(unfolded));
+      if (nullsOnly.get()) {
+        return new RSingle(unfolded.Null());
+      }
+      return nonNulls.get().transformAndConcat(new Function<Type, Iterable<AttributeValue>>() {
+        @Override
+        public Iterable<AttributeValue> apply(Type elem) {
+          try {
+            return elem.to().List().asImmutableList();
+          } catch (ConversionException e) {
+            throw new UndefinedOperationException(
+                "Cannot unfold enclosing type: " + elem.getType());
+          }
+        }
+      }).copyInto(new RList<AttributeValue>(unfolded));
     }
   }
 }

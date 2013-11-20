@@ -21,6 +21,8 @@ public class CAIntegerTest {
 
   @Test
   public void testOperations() {
+    // zero
+    assertEquals(Int(0), Int().op().zero());
     // addition
     assertEquals(Int(3L), Int(2L).op().add(Int(1L)));
     assertEquals(Doub(3.0), Int(2L).op().add(Doub(1.0)));

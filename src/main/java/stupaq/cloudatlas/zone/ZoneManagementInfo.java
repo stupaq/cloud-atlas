@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import stupaq.cloudatlas.attribute.Attribute;
@@ -29,7 +29,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
 
   public ZoneManagementInfo(LocalName localName) {
     this.localName = localName;
-    attributes = new HashMap<>();
+    attributes = new LinkedHashMap<>();
   }
 
   @Override

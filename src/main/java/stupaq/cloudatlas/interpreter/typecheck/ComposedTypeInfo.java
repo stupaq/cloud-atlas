@@ -34,7 +34,7 @@ public class ComposedTypeInfo<Atomic extends AttributeValue> extends TypeInfo<At
   }
 
   @Override
-  public Atomic nullInstance() {
+  public Atomic Null() {
     try {
       return type.getDeclaredConstructor(TypeInfo.class).newInstance(enclosing);
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

@@ -59,7 +59,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
     for (AttributesRow row : this) {
       for (Map.Entry<AttributeName, TypeInfo> entry : inputTypes.entrySet()) {
         if (!row.containsKey(entry.getKey())) {
-          row.put(entry.getKey(), entry.getValue().nullInstance());
+          row.put(entry.getKey(), entry.getValue().Null());
         }
       }
     }

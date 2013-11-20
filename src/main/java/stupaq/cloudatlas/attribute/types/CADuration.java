@@ -9,7 +9,6 @@ import stupaq.cloudatlas.interpreter.semantics.OperableValue;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
 import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
 public class CADuration extends AbstractLongBacked {
   public CADuration() {
@@ -54,6 +53,11 @@ public class CADuration extends AbstractLongBacked {
   }
 
   private class OperableImplementation extends OperableValueDefault {
+    @Override
+    public AttributeValue zero() {
+      return new CADuration(0L);
+    }
+
     @Override
     public AttributeValue add(AttributeValue value) {
       return value.op().addTo(CADuration.this);

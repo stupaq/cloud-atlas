@@ -21,6 +21,8 @@ public class CADurationTest {
 
   @Test
   public void testOperations() {
+    // zero
+    assertEquals(Dur(0), Dur().op().zero());
     // negation
     assertEquals(Dur(1000L), Dur(-1000L).op().negate());
     assertEquals(Dur(), Dur().op().negate());

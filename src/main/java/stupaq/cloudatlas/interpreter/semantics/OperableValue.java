@@ -25,7 +25,10 @@ public interface OperableValue {
   /** NEGATION is defined for: Double, Duration, Integer, Time */
   public AttributeValue negate();
 
-  /** ADDITION is defined for: Double, Duration, Integer, String, Time */
+  /** ADDITION NEUTRAL ELEMENT is defined for: Double, Duration, Integer (where we can sum over) */
+  public AttributeValue zero();
+
+  /** ADDITION is defined for: Double, Duration, Integer, String, Time (not really) */
   public AttributeValue add(AttributeValue value);
 
   public AttributeValue addTo(CADouble value);
@@ -132,6 +135,11 @@ public interface OperableValue {
     @Override
     public AttributeValue negate() {
       return noOperation("-");
+    }
+
+    @Override
+    public AttributeValue zero() {
+      return noOperation("+0");
     }
 
     @Override

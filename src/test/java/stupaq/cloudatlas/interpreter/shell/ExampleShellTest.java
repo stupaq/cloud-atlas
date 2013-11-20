@@ -275,32 +275,50 @@ public class ExampleShellTest {
 
   @Test
   public void testBad16() throws Exception {
-    executeQuery("");
-    assertNothing("/", "");
+    executeQuery("SELECT first(1, name) AS test1 ORDER BY contacts");
+    executeQuery("SELECT min(contacts) AS test2");
+    executeQuery("SELECT to_set(first(100, distinct(unfold(contacts)))) AS test3");
+    executeQuery("SELECT min(contacts) AS test4 WHERE false");
+    assertNothing("/", "test1");
+    assertNothing("/", "test2");
+    assertValue("/uw", "test3",
+        Set(TCont(), Cont("UW1A"), Cont("UW1B"), Cont("UW1C"), Cont("UW2A"), Cont("UW3A"),
+            Cont("UW3B")));
+    assertNothing("/uw", "test4");
   }
 
   @Test
   public void testBad17() throws Exception {
-    executeQuery("");
-    assertNothing("/", "");
+    executeQuery("SELECT avg(name) AS test1 WHERE false");
+    assertNothing("/uw", "test1");
   }
 
   @Test
   public void testBad18() throws Exception {
-    executeQuery("");
-    assertNothing("/", "");
+    executeQuery("SELECT sum(has_ups) AS test1 WHERE is_null(has_ups)");
+    assertNothing("/", "test1");
   }
 
   @Test
   public void testBad19() throws Exception {
-    executeQuery("");
-    assertNothing("/", "");
+    executeQuery("SELECT avg(timestamp) AS test1");
+    executeQuery("SELECT avg(timestamp) AS test2 WHERE false");
+    assertNothing("/", "test1");
+    assertNothing("/", "test2");
   }
 
   @Test
   public void testBad20() throws Exception {
-    executeQuery("");
-    assertNothing("/", "");
+    executeQuery("SELECT first(1, contacts + cardinality) AS test1 WHERE false");
+    executeQuery("SELECT count(cardinality) AS test2 WHERE false");
+    assertNothing("/", "test1");
+    assertValue("/", "test2", Int(0));
+  }
+
+  @Test
+  public void testBad21() throws Exception {
+    executeQuery("SELECT first(1, unfold(name)) AS test1 WHERE false");
+    assertNothing("/", "test1");
   }
 
   @Test
@@ -487,6 +505,12 @@ public class ExampleShellTest {
     executeQuery("SELECT to_set(first(1, members)) AS members ORDER BY name");
     assertValue("/", "members",
         Set(TSet(TSet(TCont())), Set(TSet(TCont()), Set(TCont(), Cont("PJ1")))));
+  }
+
+  @Test
+  public void testExample23() throws Exception {
+    executeQuery("SELECT avg(epoch() - epoch()) AS test1");
+    assertNothing("/", "test1");
   }
 
   /*

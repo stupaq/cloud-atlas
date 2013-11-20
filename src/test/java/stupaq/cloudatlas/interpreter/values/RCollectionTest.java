@@ -65,10 +65,12 @@ public class RCollectionTest {
   public void testAggregators() {
     // avg
     assertEquals(S(Doub(4)), C(TInt(), Int(2), Int(6)).aggregate().avg());
+    assertEquals(S(Doub(4)), C(TDoub(), Doub(2), Doub(6)).aggregate().avg());
+    assertEquals(S(Dur(4)), C(TDur(), Dur(2), Dur(6)).aggregate().avg());
     // avg null
     assertEquals(S(Doub(2)), C(TDoub(), Doub(), Doub(2)).aggregate().avg());
     assertEquals(S(Doub()), C(TDoub(), Doub(), Doub()).aggregate().avg());
-    assertEquals(S(Doub()), C(TStr()).aggregate().avg());
+    assertEquals(S(Doub()), C(TDoub()).aggregate().avg());
     // sum
     assertEquals(S(Int(8)), C(TInt(), Int(2), Int(6)).aggregate().sum());
     assertEquals(S(Doub(8)), C(TDoub(), Doub(2), Doub(6)).aggregate().sum());
@@ -155,14 +157,14 @@ public class RCollectionTest {
         L(TList(TInt()), List(TInt(), Int(2), Int(3)), List(TInt()), List(TInt(), Int(3)))
             .aggregate().unfold());
     assertEquals(L(TInt(), Int(2), Int(3), Int(3)),
-        L(TSet(TInt()), Set(TInt(), Int(2), Int(3)), Set(TInt()), Set(TInt(), Int(3)))
-            .aggregate().unfold());
+        L(TSet(TInt()), Set(TInt(), Int(2), Int(3)), Set(TInt()), Set(TInt(), Int(3))).aggregate()
+            .unfold());
     assertEquals(L(TInt(), Int(3), Int(3), Int(3)),
         C(TList(TInt()), List(TInt(), Int(3), Int(3)), List(TInt()), List(TInt(), Int(3)))
             .aggregate().unfold());
     assertEquals(L(TInt(), Int(3), Int(3)),
-        C(TSet(TInt()), Set(TInt(), Int(3), Int(3)), Set(TInt()), Set(TInt(), Int(3)))
-            .aggregate().unfold());
+        C(TSet(TInt()), Set(TInt(), Int(3), Int(3)), Set(TInt()), Set(TInt(), Int(3))).aggregate()
+            .unfold());
     assertEquals(L(TInt()), C(TList(TInt())).aggregate().unfold());
     // unfold null
     assertEquals(L(TInt(), Int(3), Int(3), Int(3)),

@@ -21,6 +21,8 @@ public class CADoubleTest {
 
   @Test
   public void testOperations() {
+    // zero
+    assertEquals(Doub(0), Doub().op().zero());
     // addition
     assertEquals(Doub(3.0), Doub(2.0).op().add(Doub(1.0)));
     assertEquals(Doub(3.0), Int(2L).op().add(Doub(1.0)));

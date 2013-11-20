@@ -62,7 +62,6 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
       throw new UndefinedOperationException(
           "Cannot compare: " + getType() + " with: " + other.getType());
     }
-    Preconditions.checkState(!isNull(), "Nulls should never be directly compared");
     return equals(other) ? 0 : (isNull() ? 1 : (other.isNull() ? -1 : get()
         .compareTo(((AbstractAtomic<Type>) other).get())));
   }

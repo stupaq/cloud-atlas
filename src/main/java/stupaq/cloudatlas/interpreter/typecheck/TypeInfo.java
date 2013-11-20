@@ -24,7 +24,7 @@ public class TypeInfo<Atomic extends AttributeValue> {
     return new TypeInfo<>(type);
   }
 
-  public Atomic nullInstance() {
+  public Atomic Null() {
     try {
       return type.newInstance();
     } catch (InstantiationException | IllegalAccessException e) {
