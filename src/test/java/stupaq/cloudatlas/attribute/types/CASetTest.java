@@ -2,42 +2,57 @@ package stupaq.cloudatlas.attribute.types;
 
 import org.junit.Test;
 
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
+import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.*;
 
 public class CASetTest {
   @Test
+  public void testAuxiliary() {
+    assertEquals(Set(TSet(TInt())), Set(TSet(TInt())));
+    assertFalse(Set(TSet(TInt())).equals(Set(TSet(TInt()))));
+  }
+
+  @Test
   public void testUniformity() {
-    Set(Str("string1"), Str("string2"));
+    Set(TStr(), Str("string1"), Str("string2"));
   }
 
   @Test(expected = IllegalStateException.class)
   public void testNonuniformity() {
-    Set(Str("string1"), Int(1337L));
+    Set((TypeInfo) TStr(), Str("string1"), Int(1337L));
   }
 
   @Test
   public void testConversions() {
     // -> CAString
-    assertEquals(Str("{  }"), Set().to().String());
-    assertEquals(Str("{ aaa, bb }"), Set(Str("aaa"), Str("bb")).to().String());
-    assertEquals(Str("{ { 1337 }, { aaa } }"), Set(Set(Str("aaa")), Set(Int(1337L))).to().String());
+    assertEquals(Str("{  }"), Set(TStr()).to().String());
+    assertEquals(Str("{ aaa, bb }"), Set(TStr(), Str("aaa"), Str("bb")).to().String());
+    assertEquals(Str("{ { 1337 }, { aaa } }"),
+        Set(TSet(TStr()), Set(TStr(), Str("aaa")), Set(TStr(), Str("1337"))).to().String());
     // -> CAList
-    assertEquals(List(), Set().to().List());
-    assertEquals(List(Str("aaa"), Str("bb")), Set(Str("aaa"), Str("bb")).to().List());
-    assertEquals(List(Str("aaa")), Set(Str("aaa")).to().List());
-    assertEquals(List(List(Int(337L))), Set(List(Int(337L))).to().List());
+    assertEquals(List(TInt()), Set(TInt()).to().List());
+    assertEquals(List(TStr(), Str("aaa"), Str("bb")),
+        Set(TStr(), Str("aaa"), Str("bb")).to().List());
+    assertEquals(List(TStr(), Str("aaa")), Set(TStr(), Str("aaa")).to().List());
+    assertEquals(List(TList(TInt()), List(TInt(), Int(337L))),
+        Set(TList(TInt()), List(TInt(), Int(337L))).to().List());
   }
 
   @Test
   public void testOperations() {
-    assertEquals(Int(0L), Set().op().size());
-    assertEquals(Int(2L), Set(Bool(true), Bool(false), Bool(true)).op().size());
+    assertEquals(Int(0L), Set(TInt()).op().size());
+    assertEquals(Int(2L), Set(TBool(), Bool(true), Bool(false), Bool(true)).op().size());
   }
 
   @Test
   public void testRelational() {
-    assertEquals(Bool(true), Set(Int(2), Int(3)).rel().equalsTo(Set(Int(3), Int(2))));
-    assertEquals(Bool(false), Set(Int(1), Int(2)).rel().equalsTo(Set(Int(2), Int(3))));
+    assertEquals(Bool(true),
+        Set(TInt(), Int(2), Int(3)).rel().equalsTo(Set(TInt(), Int(3), Int(2))));
+    assertEquals(Bool(false),
+        Set(TInt(), Int(1), Int(2)).rel().equalsTo(Set(TInt(), Int(2), Int(3))));
   }
 }

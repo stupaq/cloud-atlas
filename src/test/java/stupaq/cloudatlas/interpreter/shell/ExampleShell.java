@@ -35,6 +35,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static stupaq.cloudatlas.attribute.types.AttributeTypeTestUtils.*;
+import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.TCont;
+import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.TDoub;
+import static stupaq.cloudatlas.interpreter.TypeInfoTestUtils.TStr;
 
 public class ExampleShell {
   private static final Log LOG = LogFactory.getLog(ExampleShell.class);
@@ -120,14 +123,7 @@ public class ExampleShell {
     GlobalName globalName = GlobalName.parse(path);
     assertEquals(value,
         root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name)).get()
-            .value().get());
-  }
-
-  private void assertSetNull(String path, String name) {
-    GlobalName globalName = GlobalName.parse(path);
-    assertFalse(
-        root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name)).get()
-            .value().isPresent());
+            .value());
   }
 
   private void assertNotSet(String path, String name) {
@@ -216,7 +212,7 @@ public class ExampleShell {
     executeQuery("&ex2",
         "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY num_cores ASC NULLS FIRST, "
         + "cpu_usage DESC NULLS LAST");
-    assertSet("/uw", "new_contacts", List(Cont("UW1B"), Cont("UW1A")));
+    assertSet("/uw", "new_contacts", List(TCont(), Cont("UW1B"), Cont("UW1A")));
     assertNotSet("/", "new_contacts");
   }
 
@@ -224,7 +220,7 @@ public class ExampleShell {
   public void testExample2v1() throws Exception {
     executeQuery("&ex2", "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY cpu_usage "
                          + "DESC NULLS LAST, num_cores ASC NULLS FIRST");
-    assertSet("/uw", "new_contacts", List(Cont("UW3A"), Cont("UW3B")));
+    assertSet("/uw", "new_contacts", List(TCont(), Cont("UW3A"), Cont("UW3B")));
   }
 
   @Test
@@ -253,7 +249,7 @@ public class ExampleShell {
   @Test
   public void testExample6() throws Exception {
     executeQuery("&ex6", "SELECT random(10, cpu_usage * num_cores / 10) AS sth");
-    assertSet("/pjwstk", "sth", List(Doub(0.07), Doub(0.52)));
+    assertSet("/pjwstk", "sth", List(TDoub(), Doub(0.07), Doub(0.52)));
     assertNotSet("/", "sth");
   }
 
@@ -262,7 +258,7 @@ public class ExampleShell {
     executeQuery("&ex7", "SELECT first(1, name) AS concat_name WHERE num_cores >= "
                          + "(SELECT min(num_cores) ORDER BY timestamp) ORDER BY creation ASC NULLS "
                          + "LAST");
-    assertSet("/pjwstk", "concat_name", List(Str("whatever01")));
+    assertSet("/pjwstk", "concat_name", List(TStr(), Str("whatever01")));
   }
 
   @Test
@@ -277,8 +273,8 @@ public class ExampleShell {
   public void testExample9() throws Exception {
     executeQuery("&ex9", "SELECT to_set(random(100, unfold(contacts))) AS contacts");
     assertSet("/", "contacts",
-        Set(Cont("PJ1"), Cont("PJ2"), Cont("UW1A"), Cont("UW1B"), Cont("UW1C"), Cont("UW2A"),
-            Cont("UW3A"), Cont("UW3B")));
+        Set(TCont(), Cont("PJ1"), Cont("PJ2"), Cont("UW1A"), Cont("UW1B"), Cont("UW1C"),
+            Cont("UW2A"), Cont("UW3A"), Cont("UW3B")));
   }
 
   @Test
@@ -321,7 +317,7 @@ public class ExampleShell {
   @Test
   public void testExample14() throws Exception {
     executeQuery("&bad14", "SELECT avg(cpu_usage) AS anull WHERE isnull(cpu_usage)");
-    assertSetNull("/uw", "anull");
+    assertSet("/uw", "anull", Doub());
   }
 
   /*

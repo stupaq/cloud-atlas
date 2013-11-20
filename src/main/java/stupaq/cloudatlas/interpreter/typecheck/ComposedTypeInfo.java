@@ -22,4 +22,18 @@ public class ComposedTypeInfo<Atomic extends AttributeValue> extends TypeInfo<At
   public String toString() {
     return super.toString() + enclosing.toString();
   }
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o || !(o == null || getClass() != o.getClass()) && super.equals(o) && enclosing
+        .equals(((ComposedTypeInfo) o).enclosing);
+
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + enclosing.hashCode();
+    return result;
+  }
 }

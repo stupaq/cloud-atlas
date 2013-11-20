@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CAInteger;
 import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
@@ -11,9 +13,10 @@ import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
 public class TypeInfo<Atomic extends AttributeValue> {
+  @Nonnull
   private final Class<Atomic> type;
 
-  public TypeInfo(Class<Atomic> type) {
+  public TypeInfo(@Nonnull Class<Atomic> type) {
     Preconditions.checkNotNull(type);
     this.type = type;
   }
@@ -59,5 +62,17 @@ public class TypeInfo<Atomic extends AttributeValue> {
   public String toString() {
     // TODO oh God!
     return " : " + type.getSimpleName().replace("CA", "").toLowerCase();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o || !(o == null || getClass() != o.getClass()) && type
+        .equals(((TypeInfo) o).type);
+
+  }
+
+  @Override
+  public int hashCode() {
+    return type.hashCode();
   }
 }

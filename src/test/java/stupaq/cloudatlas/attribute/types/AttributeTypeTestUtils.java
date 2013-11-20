@@ -1,15 +1,10 @@
 package stupaq.cloudatlas.attribute.types;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CABoolean;
-import stupaq.cloudatlas.attribute.types.CAContact;
-import stupaq.cloudatlas.attribute.types.CADouble;
-import stupaq.cloudatlas.attribute.types.CADuration;
-import stupaq.cloudatlas.attribute.types.CAInteger;
-import stupaq.cloudatlas.attribute.types.CAList;
-import stupaq.cloudatlas.attribute.types.CASet;
-import stupaq.cloudatlas.attribute.types.CAString;
-import stupaq.cloudatlas.attribute.types.CATime;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 
 public class AttributeTypeTestUtils {
   private AttributeTypeTestUtils() {
@@ -20,7 +15,7 @@ public class AttributeTypeTestUtils {
   }
 
   public static CAInteger Int() {
-    return null;
+    return new CAInteger();
   }
 
   public static CADuration Dur(long value) {
@@ -28,7 +23,7 @@ public class AttributeTypeTestUtils {
   }
 
   public static CADuration Dur() {
-    return null;
+    return new CADuration();
   }
 
   public static CATime Time(long value) {
@@ -36,7 +31,7 @@ public class AttributeTypeTestUtils {
   }
 
   public static CATime Time() {
-    return null;
+    return new CATime();
   }
 
   public static CADouble Doub(double value) {
@@ -44,7 +39,7 @@ public class AttributeTypeTestUtils {
   }
 
   public static CADouble Doub() {
-    return null;
+    return new CADouble();
   }
 
   public static CABoolean Bool(boolean value) {
@@ -52,7 +47,7 @@ public class AttributeTypeTestUtils {
   }
 
   public static CABoolean Bool() {
-    return null;
+    return new CABoolean();
   }
 
   public static CAString Str(String value) {
@@ -60,7 +55,7 @@ public class AttributeTypeTestUtils {
   }
 
   public static CAString Str() {
-    return null;
+    return new CAString();
   }
 
   public static CAContact Cont(String value) {
@@ -68,30 +63,34 @@ public class AttributeTypeTestUtils {
   }
 
   public static CAContact Cont() {
-    return null;
+    return new CAContact();
   }
 
-  public static <Type extends AttributeValue> CAList<Type> List(Type... elems) {
-    return new CAList<>(elems);
+  @SafeVarargs
+  public static <Type extends AttributeValue> CAList<Type> List(TypeInfo<Type> type,
+      Type... elems) {
+    return new CAList<>(type, Arrays.asList(elems));
   }
 
-  public static <Type extends AttributeValue> CAList<Type> ListNull() {
-    return null;
+  public static <Type extends AttributeValue> CAList<Type> ListNull(TypeInfo<Type> type) {
+    return new CAList<>(type);
   }
 
-  public static <Type extends AttributeValue> CAList<Type> ListEmpty(Type elem) {
-    return new CAList<>();
+  public static <Type extends AttributeValue> CAList<Type> ListEmpty(TypeInfo<Type> type) {
+    return new CAList<>(type, Collections.<Type>emptyList());
   }
 
-  public static <Type extends AttributeValue> CASet<Type> Set(Type... elems) {
-    return new CASet<>(elems);
+  @SafeVarargs
+  public static <Type extends AttributeValue> CASet<Type> Set(TypeInfo<Type> type, Type... elems) {
+    return new CASet<>(type, Arrays.asList(elems));
   }
 
-  public static <Type extends AttributeValue> CASet<Type> SetNull() {
-    return new CASet<>();
+  public static <Type extends AttributeValue> CASet<Type> SetEmpty(TypeInfo<Type> type) {
+    return new CASet<>(type, Collections.<Type>emptyList());
   }
 
-  public static <Type extends AttributeValue> CASet<Type> SetEmpty(Type elem) {
-    return new CASet<>();
+  @SuppressWarnings("unused")
+  public static <Type extends AttributeValue> CASet<Type> SetNull(TypeInfo<Type> type) {
+    return new CASet<>(type);
   }
 }

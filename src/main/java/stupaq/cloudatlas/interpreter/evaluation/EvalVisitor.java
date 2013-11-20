@@ -165,8 +165,9 @@ public class EvalVisitor {
             public AttributeValue apply(AttributesRow row) {
               try {
                 InputContext inputContext = new InputContext(row);
-                return p.xexpression_.accept(new XExpressionVisitor(), inputContext).getSingle()
-                    .get();
+                AttributeValue value =
+                    p.xexpression_.accept(new XExpressionVisitor(), inputContext).getSingle().get();
+                return value.isNull() ? null : value;
               } catch (SemanticValueCastException e) {
                 throw new EvaluationException("ORDER item result is not a single value");
               }

@@ -1,9 +1,12 @@
 package stupaq.cloudatlas.interpreter.values;
 
-import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
+
+import java.util.Arrays;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CAInteger;
+import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
@@ -40,14 +43,16 @@ public class SemanticValueTestUtils {
   }
 
   public static <Type extends AttributeValue> RSingle<Type> S(Type elem) {
-    return new RSingle<>(Optional.fromNullable(elem));
+    return new RSingle<>(elem);
   }
 
-  public static <Type extends AttributeValue> RList<Type> L(Type... elems) {
-    return new RList<>(elems);
+  public static <Type extends AttributeValue> RList<Type> L(TypeInfo<Type> typeInfo,
+      Type... elems) {
+    return FluentIterable.from(Arrays.asList(elems)).copyInto(new RList<>(typeInfo));
   }
 
-  public static <Type extends AttributeValue> RCollection<Type> C(Type... elems) {
-    return new RCollection<>(elems);
+  public static <Type extends AttributeValue> RCollection<Type> C(TypeInfo<Type> typeInfo,
+      Type... elems) {
+    return FluentIterable.from(Arrays.asList(elems)).copyInto(new RCollection<>(typeInfo));
   }
 }
