@@ -193,11 +193,11 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     @Override
     public SemanticValue land() {
       // Verify that we can do logical operations
-      final AttributeValue neutral = new CABoolean(true).op().and(new CABoolean(true));
+      getType().Null().op().and(getType().Null());
       if (nullsOnly.get()) {
         return new RSingle<>(new CABoolean());
       }
-      AttributeValue conj = neutral;
+      AttributeValue conj = new CABoolean(true);
       for (Type elem : nonNulls.get()) {
         conj = conj.op().and(elem);
       }
@@ -207,11 +207,11 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     @Override
     public SemanticValue lor() {
       // Verify that we can do logical operations
-      final AttributeValue neutral = new CABoolean(false).op().or(new CABoolean(false));
+      getType().Null().op().or(getType().Null());
       if (nullsOnly.get()) {
         return new RSingle<>(new CABoolean());
       }
-      AttributeValue conj = neutral;
+      AttributeValue conj = new CABoolean(false);
       for (Type elem : nonNulls.get()) {
         conj = conj.op().or(elem);
       }

@@ -5,6 +5,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
 import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
 import stupaq.cloudatlas.interpreter.semantics.OperableValue;
@@ -38,6 +39,11 @@ public class CABoolean extends AbstractAtomic<Boolean> {
     if (!isNull()) {
       out.writeBoolean(get());
     }
+  }
+
+  @Override
+  public int compareTo(AttributeValue other) {
+    throw new UndefinedOperationException("Cannot compare: " + getType());
   }
 
   @Override

@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.types.CAList;
+import stupaq.cloudatlas.interpreter.errors.InterpreterException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -175,5 +176,221 @@ public class RCollectionTest {
             .unfold());
     assertEquals(S(Int()),
         C(TList(TInt()), ListNull(TInt()), ListNull(TInt())).aggregate().unfold());
+  }
+
+  // Prohibited aggregations
+  @Test(expected = InterpreterException.class)
+  public void testBadAvgBool() {
+    C(TBool()).aggregate().avg();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadAvgCont() {
+    C(TCont()).aggregate().avg();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadAvgList() {
+    C(TList(TInt())).aggregate().avg();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadAvgSet() {
+    C(TSet(TInt())).aggregate().avg();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadAvgStr() {
+    C(TStr()).aggregate().avg();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadAvgTime() {
+    C(TTime()).aggregate().avg();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadSumBool() {
+    C(TBool()).aggregate().sum();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadSumCont() {
+    C(TCont()).aggregate().sum();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadSumList() {
+    C(TList(TInt())).aggregate().sum();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadSumSet() {
+    C(TSet(TInt())).aggregate().sum();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadSumStr() {
+    C(TStr()).aggregate().sum();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadSumTime() {
+    C(TTime()).aggregate().sum();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadMinBool() {
+    C(TBool()).aggregate().min();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadMinCont() {
+    C(TCont()).aggregate().min();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadMinList() {
+    C(TList(TInt())).aggregate().min();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadMinSet() {
+    C(TSet(TInt())).aggregate().min();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadMaxBool() {
+    C(TBool()).aggregate().max();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadMaxCont() {
+    C(TCont()).aggregate().max();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadMaxList() {
+    C(TList(TInt())).aggregate().max();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadMaxSet() {
+    C(TSet(TInt())).aggregate().max();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLandCont() {
+    C(TCont()).aggregate().land();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLandDoub() {
+    C(TDoub()).aggregate().land();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLandDur() {
+    C(TDur()).aggregate().land();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLandInt() {
+    C(TInt()).aggregate().land();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLandList() {
+    C(TList(TInt())).aggregate().land();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLandSet() {
+    C(TSet(TInt())).aggregate().land();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLandStr() {
+    C(TStr()).aggregate().land();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLandTime() {
+    C(TTime()).aggregate().land();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLorCont() {
+    C(TCont()).aggregate().lor();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLorDoub() {
+    C(TDoub()).aggregate().lor();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLorDur() {
+    C(TDur()).aggregate().lor();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLorInt() {
+    C(TInt()).aggregate().lor();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLorList() {
+    C(TList(TInt())).aggregate().lor();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLorSet() {
+    C(TSet(TInt())).aggregate().lor();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLorStr() {
+    C(TStr()).aggregate().lor();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadLorTime() {
+    C(TTime()).aggregate().lor();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadUnfoldBool() {
+    C(TBool()).aggregate().unfold();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadUnfoldCont() {
+    C(TCont()).aggregate().unfold();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadUnfoldDoub() {
+    C(TDoub()).aggregate().unfold();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadUnfoldDur() {
+    C(TDur()).aggregate().unfold();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadUnfoldInt() {
+    C(TInt()).aggregate().unfold();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadUnfoldStr() {
+    C(TStr()).aggregate().unfold();
+  }
+
+  @Test(expected = InterpreterException.class)
+  public void testBadUnfoldTime() {
+    C(TTime()).aggregate().unfold();
   }
 }
