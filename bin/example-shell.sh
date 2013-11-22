@@ -2,4 +2,4 @@
 
 PACKAGE_PREFIX="stupaq.cloudatlas."
 
-java -cp "target/*" "${PACKAGE_PREFIX}interpreter.shell.ExampleShellTest" $@
+java -cp "target/*" "${PACKAGE_PREFIX}module.zonemanager.shell.ExampleShellTest" $@
