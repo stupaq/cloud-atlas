@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
-import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
+import stupaq.cloudatlas.query.errors.UndefinedOperationException;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 
 /** PACKAGE-LOCAL */
 @ParametersAreNonnullByDefault

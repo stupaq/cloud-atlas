@@ -2,13 +2,13 @@ package stupaq.cloudatlas.attribute.types;
 
 import org.junit.Test;
 
-import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
-import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
+import stupaq.cloudatlas.query.errors.TypeCheckerException;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.*;
+import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.*;
 
 public class CASetTest {
   @Test

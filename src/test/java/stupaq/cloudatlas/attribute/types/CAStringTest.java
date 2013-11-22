@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.interpreter.typecheck.TypeInfoTestUtils.TStr;
+import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TStr;
 
 public class CAStringTest {
   @Test

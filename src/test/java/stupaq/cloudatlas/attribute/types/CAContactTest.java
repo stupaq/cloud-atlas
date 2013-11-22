@@ -2,8 +2,8 @@ package stupaq.cloudatlas.attribute.types;
 
 import org.junit.Test;
 
-import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
-import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

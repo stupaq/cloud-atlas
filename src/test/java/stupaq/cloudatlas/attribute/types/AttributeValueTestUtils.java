@@ -3,7 +3,7 @@ package stupaq.cloudatlas.attribute.types;
 import java.util.Arrays;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;

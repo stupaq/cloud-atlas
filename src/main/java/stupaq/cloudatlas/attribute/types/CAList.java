@@ -9,13 +9,13 @@ import java.util.Collections;
 import java.util.List;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue;
-import stupaq.cloudatlas.interpreter.semantics.ConvertibleValue.ConvertibleValueDefault;
-import stupaq.cloudatlas.interpreter.semantics.OperableValue;
-import stupaq.cloudatlas.interpreter.semantics.OperableValue.OperableValueDefault;
-import stupaq.cloudatlas.interpreter.semantics.RelationalValue;
-import stupaq.cloudatlas.interpreter.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
+import stupaq.cloudatlas.query.semantics.ConvertibleValue;
+import stupaq.cloudatlas.query.semantics.ConvertibleValue.ConvertibleValueDefault;
+import stupaq.cloudatlas.query.semantics.OperableValue;
+import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
+import stupaq.cloudatlas.query.semantics.RelationalValue;
+import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 
 public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, ArrayList<Type>> {
   public CAList(TypeInfo<Type> enclosingType) {

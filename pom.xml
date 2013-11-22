@@ -14,8 +14,8 @@
         <parser.root-dir>${basedir}/src/main/java</parser.root-dir>
         <parser.grammar-name>QueryLanguage</parser.grammar-name>
         <parser.grammar-file>${basedir}/src/${parser.grammar-name}.cf</parser.grammar-file>
-        <parser.package-name>stupaq.cloudatlas.parser</parser.package-name>
-        <parser.package-dir>${parser.root-dir}/stupaq/cloudatlas/parser</parser.package-dir>
+        <parser.package-name>stupaq.cloudatlas.query.parser</parser.package-name>
+        <parser.package-dir>${parser.root-dir}/stupaq/cloudatlas/query/parser</parser.package-dir>
         <parser.patch-file>${basedir}/src/${parser.grammar-name}.diff</parser.patch-file>
         <parser.code-dir>${parser.package-dir}/${parser.grammar-name}</parser.code-dir>
         <parser.jlex-file>${parser.code-dir}/Yylex</parser.jlex-file>

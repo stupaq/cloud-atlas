@@ -11,10 +11,10 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.interpreter.errors.TypeCheckerException;
-import stupaq.cloudatlas.interpreter.errors.UndefinedOperationException;
-import stupaq.cloudatlas.interpreter.typecheck.ComposedTypeInfo;
-import stupaq.cloudatlas.interpreter.typecheck.TypeInfo;
+import stupaq.cloudatlas.query.errors.TypeCheckerException;
+import stupaq.cloudatlas.query.errors.UndefinedOperationException;
+import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.serialization.TypeID;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 
