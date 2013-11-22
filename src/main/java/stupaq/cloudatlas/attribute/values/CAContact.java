@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;

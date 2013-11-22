@@ -1,10 +1,10 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Bool;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Str;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Bool;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Str;
 
 public class CABooleanTest {
   @Test

@@ -1,12 +1,12 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Bool;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Dur;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Str;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Time;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Bool;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Dur;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Str;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Time;
 
 public class CATimeTest {
   @Test

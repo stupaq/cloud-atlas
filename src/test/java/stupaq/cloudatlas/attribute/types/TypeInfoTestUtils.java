@@ -1,15 +1,15 @@
-package stupaq.cloudatlas.query.typecheck;
+package stupaq.cloudatlas.attribute.types;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CABoolean;
-import stupaq.cloudatlas.attribute.types.CAContact;
-import stupaq.cloudatlas.attribute.types.CADouble;
-import stupaq.cloudatlas.attribute.types.CADuration;
-import stupaq.cloudatlas.attribute.types.CAInteger;
-import stupaq.cloudatlas.attribute.types.CAList;
-import stupaq.cloudatlas.attribute.types.CASet;
-import stupaq.cloudatlas.attribute.types.CAString;
-import stupaq.cloudatlas.attribute.types.CATime;
+import stupaq.cloudatlas.attribute.values.CABoolean;
+import stupaq.cloudatlas.attribute.values.CAContact;
+import stupaq.cloudatlas.attribute.values.CADouble;
+import stupaq.cloudatlas.attribute.values.CADuration;
+import stupaq.cloudatlas.attribute.values.CAInteger;
+import stupaq.cloudatlas.attribute.values.CAList;
+import stupaq.cloudatlas.attribute.values.CASet;
+import stupaq.cloudatlas.attribute.values.CAString;
+import stupaq.cloudatlas.attribute.values.CATime;
 
 public class TypeInfoTestUtils {
   private TypeInfoTestUtils() {

@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -13,8 +13,8 @@ import javax.annotation.Nonnull;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
-import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.attribute.types.ComposedTypeInfo;
+import stupaq.cloudatlas.attribute.types.TypeInfo;
 import stupaq.cloudatlas.serialization.TypeID;
 import stupaq.cloudatlas.serialization.TypeRegistry;
 

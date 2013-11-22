@@ -1,9 +1,9 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;
 
 public class CAIntegerTest {
   @Test

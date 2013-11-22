@@ -8,7 +8,7 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.EvaluationException;
 import stupaq.cloudatlas.query.evaluation.data.AttributesRow;
 import stupaq.cloudatlas.query.evaluation.data.AttributesTable;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.attribute.types.TypeInfo;
 import stupaq.cloudatlas.query.semantics.values.RColumn;
 import stupaq.cloudatlas.query.semantics.values.RSingle;
 import stupaq.cloudatlas.query.semantics.values.SemanticValue;

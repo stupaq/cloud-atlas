@@ -9,11 +9,11 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CABoolean;
-import stupaq.cloudatlas.attribute.types.CADouble;
-import stupaq.cloudatlas.attribute.types.CAInteger;
-import stupaq.cloudatlas.attribute.types.CAString;
-import stupaq.cloudatlas.attribute.types.CATime;
+import stupaq.cloudatlas.attribute.values.CABoolean;
+import stupaq.cloudatlas.attribute.values.CADouble;
+import stupaq.cloudatlas.attribute.values.CAInteger;
+import stupaq.cloudatlas.attribute.values.CAString;
+import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.query.errors.EvaluationException;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;

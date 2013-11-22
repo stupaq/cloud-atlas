@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.attribute.types.TypeInfo;
 
 /** PACKAGE-LOCAL */
 @ParametersAreNonnullByDefault

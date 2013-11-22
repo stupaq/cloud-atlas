@@ -1,9 +1,9 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import java.util.Arrays;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.attribute.types.TypeInfo;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;

@@ -17,15 +17,15 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CABoolean;
-import stupaq.cloudatlas.attribute.types.CADouble;
-import stupaq.cloudatlas.attribute.types.CAInteger;
-import stupaq.cloudatlas.attribute.types.CAList;
+import stupaq.cloudatlas.attribute.values.CABoolean;
+import stupaq.cloudatlas.attribute.values.CADouble;
+import stupaq.cloudatlas.attribute.values.CAInteger;
+import stupaq.cloudatlas.attribute.values.CAList;
 import stupaq.cloudatlas.query.errors.ConversionException;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 import stupaq.cloudatlas.query.semantics.AggregatingValue;
 import stupaq.cloudatlas.query.semantics.AggregatingValue.AggregatingValueDefault;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.attribute.types.TypeInfo;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 

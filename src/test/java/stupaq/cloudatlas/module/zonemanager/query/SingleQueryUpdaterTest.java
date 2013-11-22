@@ -2,14 +2,14 @@ package stupaq.cloudatlas.module.zonemanager.query;
 
 import org.junit.Test;
 
-import stupaq.cloudatlas.attribute.types.CAQuery;
+import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchy;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Doub;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Int;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Doub;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Int;
 import static stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchyTestUtils.Attr;
 import static stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchyTestUtils.Name;
 import static stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchyTestUtils.oneLevelHierarchy;

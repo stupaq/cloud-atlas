@@ -8,12 +8,11 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.serialization.SerializationUtils;
 import stupaq.cloudatlas.serialization.TypeRegistry;
-import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
 
 import static org.junit.Assert.assertEquals;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TInt;
-import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TStr;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;
+import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.TInt;
+import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.TStr;
 
 public class ZoneManagementInfoTest {
 

@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CAQuery;
-import stupaq.cloudatlas.attribute.types.CATime;
+import stupaq.cloudatlas.attribute.values.CAQuery;
+import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.module.zonemanager.query.InstalledQueriesUpdater;
 import stupaq.cloudatlas.query.errors.ParsingException;
 import stupaq.cloudatlas.naming.GlobalName;
@@ -38,8 +38,8 @@ import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchyTestUtils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.*;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;
+import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.*;
 
 public class ExampleShellTest {
   private static final Log LOG = LogFactory.getLog(ExampleShellTest.class);

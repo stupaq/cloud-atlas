@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import stupaq.cloudatlas.serialization.CompactSerializable;
-import stupaq.guava.base.PrimitiveWrapper;
+import stupaq.guava.base.ForwardingWrapper;
 
 import static stupaq.cloudatlas.naming.LocalName.getNotRoot;
 import static stupaq.cloudatlas.naming.LocalName.getRoot;
 
-public class GlobalName extends PrimitiveWrapper<ArrayList<LocalName>>
+public class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
     implements CompactSerializable, Iterable<LocalName> {
   public static final String SEPARATOR = "/";
 

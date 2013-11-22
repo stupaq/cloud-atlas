@@ -1,12 +1,12 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Bool;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Doub;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Int;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Str;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Bool;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Doub;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Int;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Str;
 
 public class CADoubleTest {
   @Test

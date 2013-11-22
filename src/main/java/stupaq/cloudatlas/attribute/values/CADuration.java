@@ -1,4 +1,6 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
+
+import org.apache.commons.lang.time.DurationFormatUtils;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
@@ -8,21 +10,13 @@ import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
 
-public class CAInteger extends AbstractLongBacked {
-  public CAInteger() {
-    super(null);
+public class CADuration extends AbstractLongBacked {
+  public CADuration() {
+    this(null);
   }
 
-  public CAInteger(Integer value) {
-    super(value == null ? null : value.longValue());
-  }
-
-  public CAInteger(Long value) {
+  public CADuration(Long value) {
     super(value);
-  }
-
-  public long getLong() {
-    return get();
   }
 
   @Override
@@ -42,107 +36,88 @@ public class CAInteger extends AbstractLongBacked {
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
-    public CADouble Double() {
-      return new CADouble(isNull() ? null : get().doubleValue());
-    }
-
-    @Override
     public CADuration Duration() {
-      return new CADuration(isNull() ? null : get());
+      return CADuration.this;
     }
 
     @Override
     public CAInteger Integer() {
-      return CAInteger.this;
+      return new CAInteger(isNull() ? null : get());
     }
 
     @Override
     public CAString String() {
-      return new CAString(isNull() ? null : String.valueOf(get()));
+      return new CAString(isNull() ? null : (get() >= 0 ? "+" : "-") + DurationFormatUtils
+          .formatDuration(Math.abs(get()), "d HH:mm:ss.SSS"));
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public AttributeValue zero() {
-      return new CAInteger(0);
+      return new CADuration(0L);
     }
 
     @Override
     public AttributeValue add(AttributeValue value) {
-      return value.op().addTo(CAInteger.this);
+      return value.op().addTo(CADuration.this);
     }
 
     @Override
-    public AttributeValue addTo(CADouble value) {
-      return new CADouble(isNull(value) ? null : value.get() + (double) get());
+    public AttributeValue addTo(CADuration value) {
+      return new CADuration(isNull(value) ? null : value.get() + get());
     }
 
     @Override
-    public AttributeValue addTo(CAInteger value) {
-      return new CAInteger(isNull(value) ? null : value.get() + get());
+    public AttributeValue addTo(CATime value) {
+      return new CATime(isNull(value) ? null : value.get() + get());
     }
 
     @Override
     public AttributeValue negate() {
-      return new CAInteger(isNull() ? null : -get());
+      return new CADuration(isNull() ? null : -get());
     }
 
     @Override
     public AttributeValue multiply(AttributeValue value) {
-      return value.op().multiplyBy(CAInteger.this);
+      return value.op().multiplyBy(CADuration.this);
     }
 
     @Override
     public AttributeValue multiplyBy(CADouble value) {
-      return new CADouble(isNull(value) ? null : value.get() * (double) get());
-    }
-
-    @Override
-    public AttributeValue multiplyBy(CADuration value) {
       return new CADuration(isNull(value) ? null : (long) (value.get() * (double) get()));
     }
 
     @Override
+    public AttributeValue multiplyBy(CADuration value) {
+      return new CADuration(isNull(value) ? null : value.get() * get());
+    }
+
+    @Override
     public AttributeValue multiplyBy(CAInteger value) {
-      return new CAInteger(isNull(value) ? null : value.get() * get());
-    }
-
-    @Override
-    public CADouble inverse() {
-      return new CADouble(isNull() ? null : 1 / (double) get());
-    }
-
-    @Override
-    public CAInteger modulo(AttributeValue value) {
-      return value.op().remainderOf(CAInteger.this);
-    }
-
-    @Override
-    public CAInteger remainderOf(CAInteger value) {
-      return new CAInteger(isNull(value) ? null : value.get() % get());
+      return new CADuration(isNull(value) ? null : value.get() * get());
     }
   }
 
   private class RelationalImplementation extends RelationalValueDefault {
     @Override
     public CABoolean lesserThan(AttributeValue value) {
-      return value.rel().greaterThan(CAInteger.this);
+      return value.rel().greaterThan(CADuration.this);
     }
 
     @Override
-    public CABoolean greaterThan(CAInteger value) {
+    public CABoolean greaterThan(CADuration value) {
       return new CABoolean(isNull(value) ? null : get().compareTo(value.get()) > 0);
     }
 
     @Override
-    public CABoolean equalsTo(CAInteger value) {
+    public CABoolean equalsTo(CADuration value) {
       return new CABoolean(isNull(value) ? null : get().equals(value.get()));
     }
 
     @Override
     public CABoolean equalsTo(AttributeValue value) {
-      return value.rel().equalsTo(CAInteger.this);
+      return value.rel().equalsTo(CADuration.this);
     }
   }
 }

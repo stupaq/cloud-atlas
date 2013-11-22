@@ -5,9 +5,9 @@ import org.apache.commons.logging.LogFactory;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CAQuery;
+import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.query.errors.InterpreterException;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.attribute.types.TypeInfo;
 import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
 

@@ -1,14 +1,14 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import org.junit.Test;
 
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.attribute.types.TypeInfo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.*;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;
+import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.*;
 
 public class CAListTest {
   @Test

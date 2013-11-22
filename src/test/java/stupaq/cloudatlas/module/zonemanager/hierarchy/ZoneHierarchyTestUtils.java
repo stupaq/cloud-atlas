@@ -7,16 +7,16 @@ import java.util.Arrays;
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CAContact;
-import stupaq.cloudatlas.attribute.types.CASet;
-import stupaq.cloudatlas.attribute.types.CATime;
+import stupaq.cloudatlas.attribute.values.CAContact;
+import stupaq.cloudatlas.attribute.values.CASet;
+import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
 import stupaq.guava.base.Function1;
 
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TCont;
-import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TStr;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;
+import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.TCont;
+import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.TStr;
 
 public final class ZoneHierarchyTestUtils {
   private static final String EP = CATime.epoch().to().String().toString();

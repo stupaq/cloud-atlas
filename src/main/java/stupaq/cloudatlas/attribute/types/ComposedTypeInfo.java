@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.query.typecheck;
+package stupaq.cloudatlas.attribute.types;
 
 import com.google.common.base.Preconditions;
 
@@ -7,8 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import javax.annotation.Nonnull;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CAList;
-import stupaq.cloudatlas.attribute.types.CASet;
+import stupaq.cloudatlas.attribute.values.CAList;
+import stupaq.cloudatlas.attribute.values.CASet;
 
 public class ComposedTypeInfo<Atomic extends AttributeValue> extends TypeInfo<Atomic> {
   @Nonnull

@@ -3,13 +3,13 @@ package stupaq.cloudatlas.query.semantics.values;
 import org.junit.Test;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CAList;
+import stupaq.cloudatlas.attribute.values.CAList;
 import stupaq.cloudatlas.query.errors.InterpreterException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.*;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;
+import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.*;
 import static stupaq.cloudatlas.query.semantics.values.SemanticValueTestUtils.*;
 
 public class RColumnTest {

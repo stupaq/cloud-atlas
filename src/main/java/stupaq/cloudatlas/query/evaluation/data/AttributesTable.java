@@ -12,7 +12,7 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.attribute.types.TypeInfo;
 
 public class AttributesTable extends ArrayList<AttributesRow> {
   private HashMap<AttributeName, TypeInfo> inputTypes = null;

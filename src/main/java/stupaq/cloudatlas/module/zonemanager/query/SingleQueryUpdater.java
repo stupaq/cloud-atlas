@@ -7,7 +7,7 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.attribute.types.CAQuery;
+import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.query.errors.ParsingException;
 import stupaq.cloudatlas.query.interpreter.EvalVisitor;
 import stupaq.cloudatlas.query.evaluation.context.OutputContext;

@@ -4,14 +4,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CABoolean;
+import stupaq.cloudatlas.attribute.values.CABoolean;
 import stupaq.cloudatlas.query.semantics.AggregatingValue;
 import stupaq.cloudatlas.query.semantics.AggregatingValue.AggregatingValueDefault;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.attribute.types.TypeInfo;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
-import static stupaq.cloudatlas.query.typecheck.TypeInfo.typeof2;
+import static stupaq.cloudatlas.attribute.types.TypeInfo.typeof2;
 
 public final class RSingle<Type extends AttributeValue> implements SemanticValue<Type> {
   private static final AggregatingValue AGGREGATE_IMPLEMENTATION = new AggregatingValueDefault();

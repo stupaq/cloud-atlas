@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

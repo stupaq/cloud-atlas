@@ -2,7 +2,7 @@ package stupaq.cloudatlas.naming;
 
 import com.google.common.base.Preconditions;
 
-import stupaq.cloudatlas.serialization.ASCIIString;
+import stupaq.guava.base.ASCIIString;
 import stupaq.cloudatlas.serialization.SerializationOnly;
 
 public class LocalName extends ASCIIString {

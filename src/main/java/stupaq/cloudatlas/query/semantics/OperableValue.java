@@ -1,12 +1,12 @@
 package stupaq.cloudatlas.query.semantics;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CABoolean;
-import stupaq.cloudatlas.attribute.types.CADouble;
-import stupaq.cloudatlas.attribute.types.CADuration;
-import stupaq.cloudatlas.attribute.types.CAInteger;
-import stupaq.cloudatlas.attribute.types.CAString;
-import stupaq.cloudatlas.attribute.types.CATime;
+import stupaq.cloudatlas.attribute.values.CABoolean;
+import stupaq.cloudatlas.attribute.values.CADouble;
+import stupaq.cloudatlas.attribute.values.CADuration;
+import stupaq.cloudatlas.attribute.values.CAInteger;
+import stupaq.cloudatlas.attribute.values.CAString;
+import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 
 public interface OperableValue {

@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.attribute.values;
 
 import org.junit.Test;
 
@@ -7,8 +7,8 @@ import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Cont;
-import static stupaq.cloudatlas.attribute.types.AttributeValueTestUtils.Str;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Cont;
+import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Str;
 
 public class CAContactTest {
   @Test

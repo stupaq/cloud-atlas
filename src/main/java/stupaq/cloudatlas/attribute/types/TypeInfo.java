@@ -1,12 +1,12 @@
-package stupaq.cloudatlas.query.typecheck;
+package stupaq.cloudatlas.attribute.types;
 
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
-import stupaq.cloudatlas.attribute.types.CAList;
-import stupaq.cloudatlas.attribute.types.CASet;
+import stupaq.cloudatlas.attribute.values.CAList;
+import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;

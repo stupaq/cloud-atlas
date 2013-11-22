@@ -4,11 +4,14 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 
-public abstract class PrimitiveWrapper<Primitive> {
-  @Nonnull
-  private Primitive value;
+/**
+ * General purpose class that simplifies extending final classes by forwarding {@link
+ * #equals(Object)}, {@link #hashCode()} and {@link #toString()}.
+ */
+public abstract class ForwardingWrapper<Primitive> {
+  @Nonnull private Primitive value;
 
-  protected PrimitiveWrapper(@Nonnull Primitive value) {
+  protected ForwardingWrapper(@Nonnull Primitive value) {
     Preconditions.checkNotNull(value);
     this.value = value;
   }
@@ -25,8 +28,9 @@ public abstract class PrimitiveWrapper<Primitive> {
 
   @Override
   public boolean equals(Object o) {
-    return this == o || !(o == null || getClass() != o.getClass()) && value
-        .equals(((PrimitiveWrapper) o).value);
+    return this == o ||
+        o instanceof ForwardingWrapper && value.equals(((ForwardingWrapper) o).value);
+
   }
 
   @Override
