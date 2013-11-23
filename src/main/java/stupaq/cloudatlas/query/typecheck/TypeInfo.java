@@ -7,6 +7,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAList;
@@ -16,10 +17,13 @@ import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.TypeRegistry;
+import stupaq.guava.base.ForwardingWrapper;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
-public class TypeInfo<Atomic extends AttributeValue> implements CompactSerializable {
+@Immutable
+public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<Class<Atomic>>
+    implements CompactSerializable {
   public static final CompactSerializer<TypeInfo> SERIALIZER = new CompactSerializer<TypeInfo>() {
     @SuppressWarnings("unchecked")
     @Override
@@ -32,12 +36,9 @@ public class TypeInfo<Atomic extends AttributeValue> implements CompactSerializa
       TypeRegistry.writeObject(out, object.aNull());
     }
   };
-  @Nonnull
-  protected final Class<Atomic> type;
 
   protected TypeInfo(@Nonnull Class<Atomic> type) {
-    Preconditions.checkNotNull(type);
-    this.type = type;
+    super(type);
   }
 
   public static <Atomic extends AttributeValue> TypeInfo<Atomic> of(@Nonnull Class<Atomic> type) {
@@ -60,15 +61,10 @@ public class TypeInfo<Atomic extends AttributeValue> implements CompactSerializa
 
   public Atomic aNull() {
     try {
-      return type.newInstance();
+      return get().newInstance();
     } catch (InstantiationException | IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
-  }
-
-  @Deprecated
-  public final Class<Atomic> get() {
-    return type;
   }
 
   @SuppressWarnings("unchecked")
@@ -79,19 +75,7 @@ public class TypeInfo<Atomic extends AttributeValue> implements CompactSerializa
   @Override
   public String toString() {
     // TODO oh God!
-    return " : " + type.getSimpleName().replace("CA", "").toLowerCase();
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    return this == o ||
-        !(o == null || getClass() != o.getClass()) && type.equals(((TypeInfo) o).type);
-
-  }
-
-  @Override
-  public int hashCode() {
-    return type.hashCode();
+    return " : " + get().getSimpleName().replace("CA", "").toLowerCase();
   }
 
   @Override

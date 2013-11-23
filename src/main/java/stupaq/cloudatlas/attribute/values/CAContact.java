@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
@@ -16,7 +18,8 @@ import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.CompactSerializers;
 
-public class CAContact extends AbstractAtomic<String> {
+@Immutable
+public final class CAContact extends AbstractAtomic<String> {
   public static final CompactSerializer<CAContact> SERIALIZER = new CompactSerializer<CAContact>() {
     @Override
     public CAContact readInstance(ObjectInput in) throws IOException {

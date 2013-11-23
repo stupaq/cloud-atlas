@@ -9,6 +9,8 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.ConversionException;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
@@ -21,7 +23,8 @@ import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.CompactSerializers;
 
-public class CAString extends AbstractAtomic<String> {
+@Immutable
+public final class CAString extends AbstractAtomic<String> {
   public static final CompactSerializer<CAString> SERIALIZER = new CompactSerializer<CAString>() {
     @Override
     public CAString readInstance(ObjectInput in) throws IOException {

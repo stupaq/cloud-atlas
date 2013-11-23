@@ -6,12 +6,15 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
-import stupaq.compact.TypeDescriptor;
 import stupaq.compact.CompactSerializers;
+import stupaq.compact.TypeDescriptor;
 import stupaq.guava.base.ASCIIString;
 
+@Immutable
 public final class LocalName extends ASCIIString implements CompactSerializable {
   public static final CompactSerializer<LocalName> SERIALIZER = new CompactSerializer<LocalName>() {
     @Override

@@ -26,7 +26,7 @@ public abstract class ForwardingWrapper<Primitive> {
   @Override
   public boolean equals(Object o) {
     return this == o ||
-        o instanceof ForwardingWrapper && value.equals(((ForwardingWrapper) o).value);
+        !(o == null || getClass() != o.getClass()) && value.equals(((ForwardingWrapper) o).value);
 
   }
 

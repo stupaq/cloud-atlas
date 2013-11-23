@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -20,7 +22,8 @@ import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.CompactSerializers;
 
-public class CATime extends AbstractAtomic<Long> {
+@Immutable
+public final class CATime extends AbstractAtomic<Long> {
   public static final CompactSerializer<CATime> SERIALIZER = new CompactSerializer<CATime>() {
     @Override
     public CATime readInstance(ObjectInput in) throws IOException {

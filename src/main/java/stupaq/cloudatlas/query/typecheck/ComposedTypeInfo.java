@@ -8,6 +8,7 @@ import java.io.ObjectOutput;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAList;
@@ -15,20 +16,23 @@ import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 
+@Immutable
 public class ComposedTypeInfo<Atomic extends AttributeValue> extends TypeInfo<Atomic> {
-  public static final CompactSerializer<TypeInfo> SERIALIZER = new CompactSerializer<TypeInfo>() {
-    @Override
-    public TypeInfo readInstance(ObjectInput in) throws IOException {
-      return new ComposedTypeInfo(in.readBoolean() ? CAList.class : CASet.class,
-          TypeInfo.SERIALIZER.readInstance(in));
-    }
+  public static final CompactSerializer<ComposedTypeInfo> SERIALIZER =
+      new CompactSerializer<ComposedTypeInfo>() {
+        @SuppressWarnings("unchecked")
+        @Override
+        public ComposedTypeInfo readInstance(ObjectInput in) throws IOException {
+          return new ComposedTypeInfo<>(in.readBoolean() ? CAList.class : CASet.class,
+              TypeInfo.SERIALIZER.readInstance(in));
+        }
 
-    @Override
-    public void writeInstance(ObjectOutput out, TypeInfo object) throws IOException {
-      out.writeBoolean(object.get() == CAList.class);
-      TypeInfo.SERIALIZER.writeInstance(out, object);
-    }
-  };
+        @Override
+        public void writeInstance(ObjectOutput out, ComposedTypeInfo object) throws IOException {
+          out.writeBoolean(object.get() == CAList.class);
+          TypeInfo.SERIALIZER.writeInstance(out, object);
+        }
+      };
   @Nonnull private final TypeInfo<? extends AttributeValue> enclosing;
 
   protected ComposedTypeInfo(Class<Atomic> type,
@@ -53,7 +57,7 @@ public class ComposedTypeInfo<Atomic extends AttributeValue> extends TypeInfo<At
   @Override
   public Atomic aNull() {
     try {
-      return type.getDeclaredConstructor(TypeInfo.class).newInstance(enclosing);
+      return get().getDeclaredConstructor(TypeInfo.class).newInstance(enclosing);
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
         NoSuchMethodException e) {
       throw new IllegalStateException(e);

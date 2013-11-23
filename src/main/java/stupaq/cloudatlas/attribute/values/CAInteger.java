@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -12,10 +14,11 @@ import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.compact.CompactSerializer;
-import stupaq.compact.TypeDescriptor;
 import stupaq.compact.CompactSerializers;
+import stupaq.compact.TypeDescriptor;
 
-public class CAInteger extends AbstractAtomic<Long> {
+@Immutable
+public final class CAInteger extends AbstractAtomic<Long> {
   public static final CompactSerializer<CAInteger> SERIALIZER = new CompactSerializer<CAInteger>() {
     @Override
     public CAInteger readInstance(ObjectInput in) throws IOException {

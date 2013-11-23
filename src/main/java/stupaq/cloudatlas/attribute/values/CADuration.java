@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -17,7 +19,8 @@ import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.CompactSerializers;
 
-public class CADuration extends AbstractAtomic<Long> {
+@Immutable
+public final class CADuration extends AbstractAtomic<Long> {
   public static final CompactSerializer<CADuration> SERIALIZER =
       new CompactSerializer<CADuration>() {
         @Override

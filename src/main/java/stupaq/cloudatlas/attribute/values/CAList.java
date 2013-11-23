@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
@@ -20,6 +21,7 @@ import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.compact.TypeDescriptor;
 
+@Immutable
 public final class CAList<Type extends AttributeValue> extends AbstractComposed<Type> {
   public static final Serializer<AttributeValue, CAList<AttributeValue>> SERIALIZER =
       new Serializer<AttributeValue, CAList<AttributeValue>>() {

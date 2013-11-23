@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import java.util.LinkedHashSet;
 
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
@@ -18,6 +19,7 @@ import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.compact.TypeDescriptor;
 
+@Immutable
 public final class CASet<Type extends AttributeValue> extends AbstractComposed<Type> {
   public static final Serializer<AttributeValue, CASet<AttributeValue>> SERIALIZER =
       new Serializer<AttributeValue, CASet<AttributeValue>>() {

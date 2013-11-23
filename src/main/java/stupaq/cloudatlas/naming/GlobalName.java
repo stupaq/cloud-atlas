@@ -6,19 +6,22 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.guava.base.ForwardingWrapper;
 
 import static stupaq.cloudatlas.naming.LocalName.getNotRoot;
 import static stupaq.cloudatlas.naming.LocalName.getRoot;
 
-public class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
+@Immutable
+public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
     implements Iterable<LocalName> {
-  private GlobalName(ArrayList<LocalName> localNames) {
+  public static final String SEPARATOR = "/";
+
+  protected GlobalName(ArrayList<LocalName> localNames) {
     super(localNames);
     Preconditions.checkArgument(!localNames.isEmpty(), "Global name cannot be empty");
   }
-
-  public static final String SEPARATOR = "/";
 
   public static Builder builder() {
     return new Builder();
