@@ -2,27 +2,23 @@ package stupaq.cloudatlas.naming;
 
 import com.google.common.base.Preconditions;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import stupaq.cloudatlas.serialization.CompactSerializable;
 import stupaq.guava.base.ForwardingWrapper;
 
 import static stupaq.cloudatlas.naming.LocalName.getNotRoot;
 import static stupaq.cloudatlas.naming.LocalName.getRoot;
 
 public class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
-    implements CompactSerializable, Iterable<LocalName> {
-  public static final String SEPARATOR = "/";
-
+    implements Iterable<LocalName> {
   private GlobalName(ArrayList<LocalName> localNames) {
     super(localNames);
     Preconditions.checkArgument(!localNames.isEmpty(), "Global name cannot be empty");
   }
+
+  public static final String SEPARATOR = "/";
 
   public static Builder builder() {
     return new Builder();
@@ -41,25 +37,6 @@ public class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
         builder.child(getNotRoot(chunk));
       }
       return builder.build();
-    }
-  }
-
-  @Override
-  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    get().clear();
-    int length = in.readInt();
-    for (; length > 0; length--) {
-      LocalName localName = new LocalName();
-      localName.readFields(in);
-      get().add(localName);
-    }
-  }
-
-  @Override
-  public void writeFields(ObjectOutput out) throws IOException {
-    out.writeInt(get().size());
-    for (LocalName localName : get()) {
-      localName.writeFields(out);
     }
   }
 
@@ -99,11 +76,11 @@ public class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
   }
 
   public static class Builder {
-    private ArrayDeque<LocalName> chunks = new ArrayDeque<>();
-    private boolean finalized = false;
-
     private Builder() {
     }
+
+    private ArrayDeque<LocalName> chunks = new ArrayDeque<>();
+    private boolean finalized = false;
 
     private void checkBuilder() {
       Preconditions.checkState(chunks != null, "Builder already used");
@@ -128,11 +105,9 @@ public class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
     public GlobalName build() {
       checkBuilder();
       Preconditions.checkState(finalized, "Global name must start at root");
-      try {
-        return new GlobalName(new ArrayList<>(chunks));
-      } finally {
-        chunks = null;
-      }
+      ArrayList<LocalName> chunks = new ArrayList<>(this.chunks);
+      this.chunks = null;
+      return new GlobalName(chunks);
     }
   }
 }

@@ -3,7 +3,7 @@ package stupaq.cloudatlas.query.semantics.values;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CABoolean;
 import stupaq.cloudatlas.query.semantics.AggregatingValue;
-import stupaq.cloudatlas.attribute.types.TypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 

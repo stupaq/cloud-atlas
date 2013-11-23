@@ -1,5 +1,9 @@
 package stupaq.cloudatlas.attribute.values;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -7,8 +11,23 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.CompactSerializers;
 
-public class CAInteger extends AbstractLongBacked {
+public class CAInteger extends AbstractAtomic<Long> {
+  public static final CompactSerializer<CAInteger> SERIALIZER = new CompactSerializer<CAInteger>() {
+    @Override
+    public CAInteger readInstance(ObjectInput in) throws IOException {
+      return new CAInteger(CompactSerializers.Long.readInstance(in));
+    }
+
+    @Override
+    public void writeInstance(ObjectOutput out, CAInteger object) throws IOException {
+      CompactSerializers.Long.writeInstance(out, object.orNull());
+    }
+  };
+
   public CAInteger() {
     super(null);
   }
@@ -38,6 +57,11 @@ public class CAInteger extends AbstractLongBacked {
   @Override
   public OperableValue op() {
     return new OperableImplementation();
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.CAInteger;
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {

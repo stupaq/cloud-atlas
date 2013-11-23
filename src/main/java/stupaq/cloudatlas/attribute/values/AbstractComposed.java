@@ -1,55 +1,57 @@
 package stupaq.cloudatlas.attribute.values;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
-import stupaq.cloudatlas.attribute.types.ComposedTypeInfo;
-import stupaq.cloudatlas.attribute.types.TypeInfo;
-import stupaq.cloudatlas.serialization.TypeID;
-import stupaq.cloudatlas.serialization.TypeRegistry;
+import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeRegistry;
+import stupaq.guava.syntax.Fluent;
 
 /** PACKAGE-LOCAL */
-abstract class AbstractComposed<Type extends AttributeValue, Composed extends Collection<Type>>
-    implements AttributeValue {
-  @Nonnull
-  private final Composed value;
-  @Nonnull
-  private final TypeInfo<Type> enclosingType;
-  private boolean isNull;
+abstract class AbstractComposed<Type extends AttributeValue> implements AttributeValue {
+  @Nonnull private final Collection<Type> value;
+  @Nonnull private final TypeInfo<Type> enclosingType;
+  private final boolean isNull;
 
-  protected AbstractComposed(@Nonnull Composed newEmpty, @Nonnull TypeInfo<Type> enclosingType,
-      Iterable<? extends Type> source) {
+  protected AbstractComposed(@Nonnull Collection<Type> newEmpty,
+      @Nonnull TypeInfo<Type> enclosingType, @Nullable Iterable<? extends Type> elements) {
     Preconditions.checkNotNull(newEmpty);
     Preconditions.checkArgument(newEmpty.isEmpty(), "Collection not empty");
     Preconditions.checkNotNull(enclosingType);
     this.value = newEmpty;
     this.enclosingType = enclosingType;
-    this.isNull = source == null;
-    if (source != null) {
-      Iterables.addAll(get(), source);
+    this.isNull = elements == null;
+    if (elements != null) {
+      for (Type elem : elements) {
+        Preconditions.checkNotNull(elem, type() + " cannot contain nulls");
+        if (!enclosingType.equals(elem.type())) {
+          throw new TypeCheckerException("Collection contains elements of not matching type");
+        }
+        get().add(elem);
+      }
     }
-    verifyInvariants();
   }
 
-  protected final Composed get() {
-    if (isNull()) {
-      throw new NullPointerException();
-    }
-    return value;
+  protected final Collection<Type> get() {
+    return isNull() ? Fluent.<Collection<Type>>raiseNPE() : value;
   }
 
   @Override
-  public final TypeInfo<? extends AttributeValue> getType() {
+  public final TypeInfo<? extends AttributeValue> type() {
     return ComposedTypeInfo.of(getClass(), enclosingType);
   }
 
@@ -67,54 +69,9 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
     return isNull() || value.isNull();
   }
 
-  private void verifyInvariants() throws IllegalStateException {
-    if (!isNull()) {
-      for (Type elem : get()) {
-        Preconditions.checkNotNull(elem, getType() + " cannot contain nulls");
-      }
-      for (AttributeValue elem : get()) {
-        if (!elem.getType().equals(enclosingType)) {
-          throw new TypeCheckerException("Collection contains elements of not matching type");
-        }
-      }
-    }
-  }
-
-  @Override
-  public final void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    int elements = in.readInt();
-    if (elements < 0) {
-      isNull = true;
-    } else if (elements == 0) {
-      get().clear();
-    } else {
-      get().clear();
-      TypeID typeID = TypeID.readInstance(in);
-      for (; elements > 0; elements--) {
-        Type instance = TypeRegistry.newInstance(typeID);
-        instance.readFields(in);
-        get().add(instance);
-      }
-      verifyInvariants();
-    }
-  }
-
-  @Override
-  public final void writeFields(ObjectOutput out) throws IOException {
-    int elements = isNull() ? -1 : get().size();
-    out.writeInt(elements);
-    if (elements > 0) {
-      TypeID typeID = TypeRegistry.resolveType(get().iterator().next().getType().get());
-      TypeID.writeInstance(out, typeID);
-      for (Type element : get()) {
-        element.writeFields(out);
-      }
-    }
-  }
-
   @Override
   public final int compareTo(AttributeValue o) {
-    throw new UndefinedOperationException("Cannot compare: " + getType());
+    throw new UndefinedOperationException("Cannot compare: " + type());
   }
 
   @Override
@@ -126,8 +83,8 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
       return false;
     }
     AbstractComposed that = (AbstractComposed) o;
-    return isNull == that.isNull && enclosingType.equals(that.enclosingType) && value
-        .equals(that.value);
+    return isNull == that.isNull && enclosingType.equals(that.enclosingType) &&
+        value.equals(that.value);
 
   }
 
@@ -141,6 +98,47 @@ abstract class AbstractComposed<Type extends AttributeValue, Composed extends Co
 
   @Override
   public final String toString() {
-    return (isNull() ? "NULL" : get().toString()) + getType();
+    return (isNull() ? "NULL" : get().toString()) + type();
+  }
+
+  protected abstract static class Serializer<Type extends AttributeValue, Actual extends AbstractComposed<Type>>
+      implements CompactSerializer<Actual> {
+
+    protected abstract Actual newInstance(TypeInfo<Type> enclosingType,
+        @Nullable Iterable<Type> elements);
+
+    @Override
+    public final Actual readInstance(ObjectInput in) throws IOException {
+      // This can be either TypeInfo or ComposedTypeInfo, we have to use dynamic dispatch here
+      TypeInfo<Type> enclosingType = TypeRegistry.readObject(in);
+      int size = in.readInt();
+      if (size > 0) {
+        CompactSerializer<Type> serializer =
+            TypeRegistry.resolveOrThrow(enclosingType.aNull().descriptor());
+        ArrayList<Type> elements = new ArrayList<>();
+        for (; size > 0; size--) {
+          elements.add(serializer.readInstance(in));
+        }
+        return newInstance(enclosingType, elements);
+      } else {
+        return newInstance(enclosingType, size == 0 ? Collections.<Type>emptyList() : null);
+      }
+    }
+
+    @Override
+    public final void writeInstance(ObjectOutput out, Actual object) throws IOException {
+      TypeInfo<?> enclosingType = object.getEnclosingType();
+      // This can be either TypeInfo or ComposedTypeInfo, we have to use dynamic dispatch here
+      TypeRegistry.writeObject(out, enclosingType);
+      int elements = object.isNull() ? -1 : object.get().size();
+      out.writeInt(elements);
+      if (elements > 0) {
+        CompactSerializer<AttributeValue> serializer =
+            TypeRegistry.resolveOrThrow(enclosingType.aNull().descriptor());
+        for (AttributeValue element : object.get()) {
+          serializer.writeInstance(out, element);
+        }
+      }
+    }
   }
 }

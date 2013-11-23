@@ -11,8 +11,23 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.CompactSerializers;
 
 public class CADouble extends AbstractAtomic<Double> {
+  public static final CompactSerializer<CADouble> SERIALIZER = new CompactSerializer<CADouble>() {
+    @Override
+    public CADouble readInstance(ObjectInput in) throws IOException {
+      return new CADouble(CompactSerializers.Double.readInstance(in));
+    }
+
+    @Override
+    public void writeInstance(ObjectOutput out, CADouble object) throws IOException {
+      CompactSerializers.Double.writeInstance(out, object.orNull());
+    }
+  };
+
   public CADouble() {
     super(null);
   }
@@ -30,21 +45,6 @@ public class CADouble extends AbstractAtomic<Double> {
   }
 
   @Override
-  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    if (in.readBoolean()) {
-      set(in.readDouble());
-    }
-  }
-
-  @Override
-  public void writeFields(ObjectOutput out) throws IOException {
-    out.writeBoolean(!isNull());
-    if (!isNull()) {
-      out.writeDouble(get());
-    }
-  }
-
-  @Override
   public RelationalValue rel() {
     return new RelationalImplementation();
   }
@@ -57,6 +57,11 @@ public class CADouble extends AbstractAtomic<Double> {
   @Override
   public OperableValue op() {
     return new OperableImplementation();
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.CADouble;
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {

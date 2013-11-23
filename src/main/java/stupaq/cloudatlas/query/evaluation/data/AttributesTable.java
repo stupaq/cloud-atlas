@@ -12,7 +12,7 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
-import stupaq.cloudatlas.attribute.types.TypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 
 public class AttributesTable extends ArrayList<AttributesRow> {
   private HashMap<AttributeName, TypeInfo> inputTypes = null;
@@ -32,10 +32,10 @@ public class AttributesTable extends ArrayList<AttributesRow> {
         AttributeValue value = attribute.getValue();
         TypeInfo known = inputTypes.get(name);
         if (known == null) {
-          known = value.getType();
+          known = value.type();
           inputTypes.put(name, known);
         }
-        if (!known.equals(value.getType())) {
+        if (!known.equals(value.type())) {
           throw new TypeCheckerException("AttributeName: " + name + " maps to not matching types.");
         }
         row.put(name, attribute.getValue());
@@ -45,7 +45,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
     for (AttributesRow row : this) {
       for (Map.Entry<AttributeName, TypeInfo> entry : inputTypes.entrySet()) {
         if (!row.containsKey(entry.getKey())) {
-          row.put(entry.getKey(), entry.getValue().Null());
+          row.put(entry.getKey(), entry.getValue().aNull());
         }
       }
     }

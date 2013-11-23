@@ -48,7 +48,7 @@ public class EvalVisitor {
     Preconditions.checkNotNull(value);
     if (!clazz.isInstance(value)) {
       throw new TypeCheckerException(
-          "Expected type: " + clazz.getSimpleName() + " got: " + value.getType());
+          "Expected type: " + clazz.getSimpleName() + " got: " + value.type());
     }
     return (Type) value;
   }

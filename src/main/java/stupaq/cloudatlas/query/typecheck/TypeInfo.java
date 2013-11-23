@@ -1,6 +1,10 @@
-package stupaq.cloudatlas.attribute.types;
+package stupaq.cloudatlas.query.typecheck;
 
 import com.google.common.base.Preconditions;
+
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import javax.annotation.Nonnull;
 
@@ -8,10 +12,26 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAList;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
+import stupaq.compact.CompactSerializable;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.TypeRegistry;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
-public class TypeInfo<Atomic extends AttributeValue> {
+public class TypeInfo<Atomic extends AttributeValue> implements CompactSerializable {
+  public static final CompactSerializer<TypeInfo> SERIALIZER = new CompactSerializer<TypeInfo>() {
+    @SuppressWarnings("unchecked")
+    @Override
+    public TypeInfo readInstance(ObjectInput in) throws IOException {
+      return new TypeInfo(TypeRegistry.readObject(in).getClass());
+    }
+
+    @Override
+    public void writeInstance(ObjectOutput out, TypeInfo object) throws IOException {
+      TypeRegistry.writeObject(out, object.aNull());
+    }
+  };
   @Nonnull
   protected final Class<Atomic> type;
 
@@ -29,16 +49,16 @@ public class TypeInfo<Atomic extends AttributeValue> {
   @SuppressWarnings("unchecked")
   public static <Atomic extends AttributeValue, Result extends AttributeValue> TypeInfo<Result> typeof1(
       TypeInfo<Atomic> that, Function1<Atomic, Result> function) {
-    return (TypeInfo<Result>) function.apply(that.Null()).getType();
+    return (TypeInfo<Result>) function.apply(that.aNull()).type();
   }
 
   @SuppressWarnings("unchecked")
   public static <Atomic extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> TypeInfo<Result> typeof2(
       TypeInfo<Atomic> that, TypeInfo<Arg1> other, Function2<Atomic, Arg1, Result> function) {
-    return (TypeInfo<Result>) function.apply(that.Null(), other.Null()).getType();
+    return (TypeInfo<Result>) function.apply(that.aNull(), other.aNull()).type();
   }
 
-  public Atomic Null() {
+  public Atomic aNull() {
     try {
       return type.newInstance();
     } catch (InstantiationException | IllegalAccessException e) {
@@ -64,13 +84,18 @@ public class TypeInfo<Atomic extends AttributeValue> {
 
   @Override
   public boolean equals(Object o) {
-    return this == o || !(o == null || getClass() != o.getClass()) && type
-        .equals(((TypeInfo) o).type);
+    return this == o ||
+        !(o == null || getClass() != o.getClass()) && type.equals(((TypeInfo) o).type);
 
   }
 
   @Override
   public int hashCode() {
     return type.hashCode();
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.TypeInfo;
   }
 }

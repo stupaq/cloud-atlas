@@ -2,18 +2,31 @@ package stupaq.cloudatlas.naming;
 
 import com.google.common.base.Preconditions;
 
-import stupaq.guava.base.ASCIIString;
-import stupaq.cloudatlas.serialization.SerializationOnly;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
-public class LocalName extends ASCIIString {
+import stupaq.compact.CompactSerializable;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.CompactSerializers;
+import stupaq.guava.base.ASCIIString;
+
+public final class LocalName extends ASCIIString implements CompactSerializable {
+  public static final CompactSerializer<LocalName> SERIALIZER = new CompactSerializer<LocalName>() {
+    @Override
+    public LocalName readInstance(ObjectInput in) throws IOException {
+      return new LocalName(CompactSerializers.ASCIIString.readInstance(in).toString());
+    }
+
+    @Override
+    public void writeInstance(ObjectOutput out, LocalName object) throws IOException {
+      CompactSerializers.ASCIIString.writeInstance(out, object);
+    }
+  };
   private static final String ROOT_STRING = "/";
 
-  @SerializationOnly
-  public LocalName() {
-    super(ROOT_STRING);
-  }
-
-  private LocalName(String string) {
+  protected LocalName(String string) {
     super(string);
     Preconditions.checkNotNull(string, "Local name cannot be null");
   }
@@ -38,5 +51,10 @@ public class LocalName extends ASCIIString {
   public String toString() {
     String result = super.toString();
     return result == null ? ROOT_STRING : result;
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.LocalName;
   }
 }

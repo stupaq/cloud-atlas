@@ -12,8 +12,23 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.CompactSerializers;
 
 public class CABoolean extends AbstractAtomic<Boolean> {
+  public static final CompactSerializer<CABoolean> SERIALIZER = new CompactSerializer<CABoolean>() {
+    @Override
+    public CABoolean readInstance(ObjectInput in) throws IOException {
+      return new CABoolean(CompactSerializers.Boolean.readInstance(in));
+    }
+
+    @Override
+    public void writeInstance(ObjectOutput out, CABoolean object) throws IOException {
+      CompactSerializers.Boolean.writeInstance(out, object.orNull());
+    }
+  };
+
   public CABoolean() {
     this(null);
   }
@@ -27,23 +42,8 @@ public class CABoolean extends AbstractAtomic<Boolean> {
   }
 
   @Override
-  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    if (in.readBoolean()) {
-      set(in.readBoolean());
-    }
-  }
-
-  @Override
-  public void writeFields(ObjectOutput out) throws IOException {
-    out.writeBoolean(!isNull());
-    if (!isNull()) {
-      out.writeBoolean(get());
-    }
-  }
-
-  @Override
   public int compareTo(AttributeValue other) {
-    throw new UndefinedOperationException("Cannot compare: " + getType());
+    throw new UndefinedOperationException("Cannot compare: " + type());
   }
 
   @Override
@@ -59,6 +59,11 @@ public class CABoolean extends AbstractAtomic<Boolean> {
   @Override
   public RelationalValue rel() {
     return new RelationalImplementation();
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.CABoolean;
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {

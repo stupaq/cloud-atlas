@@ -5,17 +5,14 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
-import stupaq.cloudatlas.attribute.types.TypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 
 /** PACKAGE-LOCAL */
-@ParametersAreNonnullByDefault
 abstract class AbstractAtomic<Type extends Comparable<Type>> implements AttributeValue {
-  @Nonnull
-  private Optional<Type> value;
+  @Nonnull private Optional<Type> value;
 
   protected AbstractAtomic(@Nullable Type value) {
     this.value = Optional.fromNullable(value);
@@ -26,8 +23,13 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
     return value.get();
   }
 
+  @Nullable
+  protected final Type orNull() {
+    return value.orNull();
+  }
+
   @Override
-  public final TypeInfo<? extends AttributeValue> getType() {
+  public final TypeInfo<? extends AttributeValue> type() {
     return TypeInfo.of(getClass());
   }
 
@@ -47,8 +49,8 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
 
   @Override
   public final boolean equals(Object o) {
-    return this == o || !(o == null || getClass() != o.getClass()) && value
-        .equals(((AbstractAtomic) o).value);
+    return this == o ||
+        !(o == null || getClass() != o.getClass()) && value.equals(((AbstractAtomic) o).value);
   }
 
   @Override
@@ -56,18 +58,18 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
     return value.hashCode();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public int compareTo(AttributeValue other) {
-    if (!getType().equals(other.getType())) {
-      throw new UndefinedOperationException(
-          "Cannot compare: " + getType() + " with: " + other.getType());
+    if (!type().equals(other.type())) {
+      throw new UndefinedOperationException("Cannot compare: " + type() + " with: " + other.type());
     }
-    return equals(other) ? 0 : (isNull() ? 1 : (other.isNull() ? -1 : get()
-        .compareTo(((AbstractAtomic<Type>) other).get())));
+    return equals(other) ? 0 : (isNull() ? 1 :
+        (other.isNull() ? -1 : get().compareTo(((AbstractAtomic<Type>) other).get())));
   }
 
   @Override
   public final String toString() {
-    return (isNull() ? "NULL" : get().toString()) + getType();
+    return (isNull() ? "NULL" : get().toString()) + type();
   }
 }

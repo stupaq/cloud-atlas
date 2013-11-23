@@ -7,27 +7,37 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
-import stupaq.cloudatlas.serialization.CompactSerializable;
-import stupaq.cloudatlas.serialization.SerializationOnly;
-import stupaq.cloudatlas.serialization.TypeRegistry;
+import stupaq.compact.CompactSerializable;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.TypeRegistry;
 
+@Immutable
 public final class Attribute<Type extends AttributeValue> implements CompactSerializable {
-  @Nonnull
-  private final AttributeName name;
-  private Type value;
+  public static final CompactSerializer<Attribute> SERIALIZER = new CompactSerializer<Attribute>() {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Attribute readInstance(ObjectInput in) throws IOException {
+      return new Attribute(AttributeName.SERIALIZER.readInstance(in),
+          (AttributeValue) TypeRegistry.readObject(in));
+    }
 
-  public Attribute(@Nonnull AttributeName name, Type value) {
+    @Override
+    public void writeInstance(ObjectOutput out, Attribute object) throws IOException {
+      AttributeName.SERIALIZER.writeInstance(out, object.name);
+      TypeRegistry.writeObject(out, object.value);
+    }
+  };
+  @Nonnull private final AttributeName name;
+  @Nonnull private final Type value;
+
+  public Attribute(@Nonnull AttributeName name, @Nonnull Type value) {
     Preconditions.checkNotNull(name, "AttributeName cannot be null");
     Preconditions.checkNotNull(value, "AttributeValue cannot be null");
     this.name = name;
     this.value = value;
-  }
-
-  @SerializationOnly
-  public Attribute() {
-    name = new AttributeName();
-    value = null;
   }
 
   @Nonnull
@@ -38,19 +48,6 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
   @Nonnull
   public Type getValue() {
     return value;
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    name.readFields(in);
-    value = TypeRegistry.readObject(in);
-  }
-
-  @Override
-  public void writeFields(ObjectOutput out) throws IOException {
-    name.writeFields(out);
-    TypeRegistry.writeObject(out, value);
   }
 
   @Override
@@ -76,5 +73,10 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
   @Override
   public String toString() {
     return name + " = " + value;
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.Attribute;
   }
 }

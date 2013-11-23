@@ -2,6 +2,10 @@ package stupaq.cloudatlas.attribute.values;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -9,8 +13,24 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.CompactSerializers;
 
-public class CADuration extends AbstractLongBacked {
+public class CADuration extends AbstractAtomic<Long> {
+  public static final CompactSerializer<CADuration> SERIALIZER =
+      new CompactSerializer<CADuration>() {
+        @Override
+        public CADuration readInstance(ObjectInput in) throws IOException {
+          return new CADuration(CompactSerializers.Long.readInstance(in));
+        }
+
+        @Override
+        public void writeInstance(ObjectOutput out, CADuration object) throws IOException {
+          CompactSerializers.Long.writeInstance(out, object.orNull());
+        }
+      };
+
   public CADuration() {
     this(null);
   }
@@ -34,6 +54,11 @@ public class CADuration extends AbstractLongBacked {
     return new OperableImplementation();
   }
 
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.CADuration;
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CADuration Duration() {
@@ -47,8 +72,8 @@ public class CADuration extends AbstractLongBacked {
 
     @Override
     public CAString String() {
-      return new CAString(isNull() ? null : (get() >= 0 ? "+" : "-") + DurationFormatUtils
-          .formatDuration(Math.abs(get()), "d HH:mm:ss.SSS"));
+      return new CAString(isNull() ? null : (get() >= 0 ? "+" : "-") +
+          DurationFormatUtils.formatDuration(Math.abs(get()), "d HH:mm:ss.SSS"));
     }
   }
 

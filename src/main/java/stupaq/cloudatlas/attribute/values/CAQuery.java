@@ -2,6 +2,10 @@ package stupaq.cloudatlas.attribute.values;
 
 import com.google.common.base.Preconditions;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
@@ -10,15 +14,22 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.CompactSerializers;
 
-public class CAQuery extends AbstractStringBacked {
-  private static final String NOT_DESERIALIZED = "NOT DESERIALIZED";
+public class CAQuery extends AbstractAtomic<String> {
+  public static final CompactSerializer<CAQuery> SERIALIZER = new CompactSerializer<CAQuery>() {
+    @Override
+    public CAQuery readInstance(ObjectInput in) throws IOException {
+      return new CAQuery(CompactSerializers.String.readInstance(in));
+    }
 
-  @SerializationOnly
-  public CAQuery() {
-    super(NOT_DESERIALIZED);
-  }
+    @Override
+    public void writeInstance(ObjectOutput out, CAQuery object) throws IOException {
+      CompactSerializers.String.writeInstance(out, object.orNull());
+    }
+  };
 
   public CAQuery(String value) {
     super(value);
@@ -47,5 +58,10 @@ public class CAQuery extends AbstractStringBacked {
   @Override
   public RelationalValue rel() {
     return new RelationalValueDefault();
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.CAQuery;
   }
 }

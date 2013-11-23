@@ -15,8 +15,8 @@ import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
 import stupaq.guava.base.Function1;
 
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.TCont;
-import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.TStr;
+import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TCont;
+import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TStr;
 
 public final class ZoneHierarchyTestUtils {
   private static final String EP = CATime.epoch().to().String().toString();

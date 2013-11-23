@@ -6,6 +6,8 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.LinkedHashSet;
 
+import javax.annotation.Nullable;
+
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue.ConvertibleValueDefault;
@@ -13,10 +15,19 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.attribute.types.TypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.compact.TypeDescriptor;
 
-public class CASet<Type extends AttributeValue>
-    extends AbstractComposed<Type, LinkedHashSet<Type>> {
+public final class CASet<Type extends AttributeValue> extends AbstractComposed<Type> {
+  public static final Serializer<AttributeValue, CASet<AttributeValue>> SERIALIZER =
+      new Serializer<AttributeValue, CASet<AttributeValue>>() {
+        @Override
+        protected CASet<AttributeValue> newInstance(TypeInfo<AttributeValue> enclosingType,
+            @Nullable Iterable<AttributeValue> elements) {
+          return new CASet<>(enclosingType, elements);
+        }
+      };
+
   public CASet(TypeInfo<Type> enclosingType) {
     super(new LinkedHashSet<Type>(), enclosingType, null);
   }
@@ -40,6 +51,11 @@ public class CASet<Type extends AttributeValue>
     return new RelationalImplementation();
   }
 
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.CASet;
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAList<Type> List() {
@@ -53,8 +69,8 @@ public class CASet<Type extends AttributeValue>
 
     @Override
     public CAString String() {
-      return new CAString(isNull() ? null : "{ " + StringUtils
-          .join(Collections2.transform(get(), new Stringifier()), ", ") + " }");
+      return new CAString(isNull() ? null :
+          "{ " + StringUtils.join(Collections2.transform(get(), new Stringifier()), ", ") + " }");
     }
   }
 

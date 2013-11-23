@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Bool;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Int;
-import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.TInt;
+import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TInt;
 import static stupaq.cloudatlas.query.semantics.values.SemanticValueTestUtils.BinOp;
 import static stupaq.cloudatlas.query.semantics.values.SemanticValueTestUtils.C;
 import static stupaq.cloudatlas.query.semantics.values.SemanticValueTestUtils.S;

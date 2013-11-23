@@ -9,9 +9,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Bool;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Int;
-import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.TBool;
-import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.TInt;
 import static stupaq.cloudatlas.query.semantics.values.SemanticValueTestUtils.*;
+import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TBool;
+import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TInt;
 
 public class RListTest {
   @Test

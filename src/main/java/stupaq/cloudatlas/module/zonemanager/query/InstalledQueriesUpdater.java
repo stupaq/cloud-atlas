@@ -7,7 +7,7 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.query.errors.InterpreterException;
-import stupaq.cloudatlas.attribute.types.TypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
 
@@ -19,7 +19,7 @@ public class InstalledQueriesUpdater extends InPlaceAggregator<ZoneManagementInf
   public void process(Iterable<ZoneManagementInfo> children, final ZoneManagementInfo current) {
     for (Attribute attribute : current.getPrivateAttributes()) {
       AttributeValue value = attribute.getValue();
-      if (!value.isNull() && value.getType().equals(TypeInfo.of(CAQuery.class))) {
+      if (!value.isNull() && value.type().equals(TypeInfo.of(CAQuery.class))) {
         CAQuery query = (CAQuery) value;
         try {
           new SingleQueryUpdater(query).process(children, current);

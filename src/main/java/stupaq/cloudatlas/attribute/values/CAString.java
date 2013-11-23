@@ -1,5 +1,8 @@
 package stupaq.cloudatlas.attribute.values;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -14,8 +17,23 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.CompactSerializers;
 
-public class CAString extends AbstractStringBacked implements AttributeValue {
+public class CAString extends AbstractAtomic<String> {
+  public static final CompactSerializer<CAString> SERIALIZER = new CompactSerializer<CAString>() {
+    @Override
+    public CAString readInstance(ObjectInput in) throws IOException {
+      return new CAString(CompactSerializers.String.readInstance(in));
+    }
+
+    @Override
+    public void writeInstance(ObjectOutput out, CAString object) throws IOException {
+      CompactSerializers.String.writeInstance(out, object.orNull());
+    }
+  };
+
   public CAString() {
     super(null);
   }
@@ -41,6 +59,11 @@ public class CAString extends AbstractStringBacked implements AttributeValue {
 
   public String getString() {
     return get();
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.CAString;
   }
 
   private class ConvertibleImplementation extends ConvertibleValueDefault {
@@ -97,7 +120,7 @@ public class CAString extends AbstractStringBacked implements AttributeValue {
     public CATime Time() {
       try {
         return new CATime(isNull() ? null :
-                          new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS z").parse(get()).getTime());
+            new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS z").parse(get()).getTime());
       } catch (ParseException e) {
         throw new ConversionException(e);
       }

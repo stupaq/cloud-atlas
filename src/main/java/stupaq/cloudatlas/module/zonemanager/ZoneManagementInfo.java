@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.module.zonemanager;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
@@ -15,17 +16,35 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.cloudatlas.naming.LocalName;
-import stupaq.cloudatlas.serialization.CompactSerializable;
-import stupaq.cloudatlas.serialization.SerializationOnly;
+import stupaq.compact.CompactSerializable;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
 
 public final class ZoneManagementInfo implements CompactSerializable, Hierarchical {
+  public static final CompactSerializer<ZoneManagementInfo> SERIALIZER =
+      new CompactSerializer<ZoneManagementInfo>() {
+        @Override
+        public ZoneManagementInfo readInstance(ObjectInput in) throws IOException {
+          ZoneManagementInfo zmi = new ZoneManagementInfo(LocalName.SERIALIZER.readInstance(in));
+          int elements = in.readInt();
+          Preconditions.checkState(elements >= 0);
+          for (; elements > 0; --elements) {
+            zmi.updateAttribute(Attribute.SERIALIZER.readInstance(in));
+          }
+          return zmi;
+        }
+
+        @Override
+        public void writeInstance(ObjectOutput out, ZoneManagementInfo object) throws IOException {
+          LocalName.SERIALIZER.writeInstance(out, object.localName());
+          out.writeInt(object.attributes.size());
+          for (Attribute attribute : object.attributes.values()) {
+            Attribute.SERIALIZER.writeInstance(out, attribute);
+          }
+        }
+      };
   private final LocalName localName;
   private final Map<AttributeName, Attribute> attributes;
-
-  @SerializationOnly
-  public ZoneManagementInfo() {
-    this(new LocalName());
-  }
 
   public ZoneManagementInfo(LocalName localName) {
     this.localName = localName;
@@ -68,31 +87,11 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
   }
 
   @Override
-  public void writeFields(ObjectOutput out) throws IOException {
-    localName.writeFields(out);
-    out.writeInt(attributes.size());
-    for (Attribute Attribute : attributes.values()) {
-      Attribute.writeFields(out);
-    }
-  }
-
-  @Override
-  public void readFields(ObjectInput in) throws IOException, ClassNotFoundException {
-    localName.readFields(in);
-    int elements = in.readInt();
-    attributes.clear();
-    for (; elements > 0; --elements) {
-      Attribute attribute = new Attribute();
-      attribute.readFields(in);
-      attributes.put(attribute.getName(), attribute);
-    }
-  }
-
-  @Override
   public boolean equals(Object o) {
     ZoneManagementInfo that = (ZoneManagementInfo) o;
-    return this == o || !(o == null || getClass() != o.getClass()) && attributes
-        .equals(that.attributes) && localName.equals(that.localName);
+    return this == o ||
+        !(o == null || getClass() != o.getClass()) && attributes.equals(that.attributes) &&
+            localName.equals(that.localName);
 
   }
 
@@ -112,5 +111,10 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
       skip = false;
     }
     return builder.toString();
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.ZoneManagementInfo;
   }
 }

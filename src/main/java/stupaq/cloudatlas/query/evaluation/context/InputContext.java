@@ -8,7 +8,7 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.EvaluationException;
 import stupaq.cloudatlas.query.evaluation.data.AttributesRow;
 import stupaq.cloudatlas.query.evaluation.data.AttributesTable;
-import stupaq.cloudatlas.attribute.types.TypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.query.semantics.values.RColumn;
 import stupaq.cloudatlas.query.semantics.values.RSingle;
 import stupaq.cloudatlas.query.semantics.values.SemanticValue;
@@ -37,7 +37,7 @@ public class InputContext {
           AttributeValue value = attribute.getValue();
           RColumn collection = columns.get(name);
           if (collection == null) {
-            collection = new RColumn<>((TypeInfo<AttributeValue>) value.getType());
+            collection = new RColumn<>((TypeInfo<AttributeValue>) value.type());
             columns.put(name, collection);
           }
           collection.add(value);

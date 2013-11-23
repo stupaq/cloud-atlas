@@ -2,6 +2,9 @@ package stupaq.cloudatlas.attribute.values;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -13,8 +16,22 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.CompactSerializers;
 
-public class CATime extends AbstractLongBacked {
+public class CATime extends AbstractAtomic<Long> {
+  public static final CompactSerializer<CATime> SERIALIZER = new CompactSerializer<CATime>() {
+    @Override
+    public CATime readInstance(ObjectInput in) throws IOException {
+      return new CATime(CompactSerializers.Long.readInstance(in));
+    }
+
+    @Override
+    public void writeInstance(ObjectOutput out, CATime object) throws IOException {
+      CompactSerializers.Long.writeInstance(out, object.orNull());
+    }
+  };
   private static final Calendar EPOCH;
 
   static {
@@ -57,11 +74,16 @@ public class CATime extends AbstractLongBacked {
     return new OperableImplementation();
   }
 
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.CATime;
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAString String() {
-      return new CAString(isNull() ? null : DateFormatUtils
-          .format(get(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("CET")));
+      return new CAString(isNull() ? null :
+          DateFormatUtils.format(get(), "yyyy/MM/dd HH:mm:ss.SSS z", TimeZone.getTimeZone("CET")));
     }
 
     @Override

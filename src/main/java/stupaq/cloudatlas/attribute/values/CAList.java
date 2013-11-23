@@ -5,8 +5,10 @@ import com.google.common.collect.Collections2;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+
+import javax.annotation.Nullable;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.semantics.ConvertibleValue;
@@ -15,9 +17,19 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
-import stupaq.cloudatlas.attribute.types.TypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.compact.TypeDescriptor;
 
-public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, ArrayList<Type>> {
+public final class CAList<Type extends AttributeValue> extends AbstractComposed<Type> {
+  public static final Serializer<AttributeValue, CAList<AttributeValue>> SERIALIZER =
+      new Serializer<AttributeValue, CAList<AttributeValue>>() {
+        @Override
+        protected CAList<AttributeValue> newInstance(TypeInfo<AttributeValue> enclosingType,
+            @Nullable Iterable<AttributeValue> elements) {
+          return new CAList<>(enclosingType, elements);
+        }
+      };
+
   public CAList(TypeInfo<Type> enclosingType) {
     super(new ArrayList<Type>(), enclosingType, null);
   }
@@ -26,8 +38,8 @@ public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, 
     super(new ArrayList<Type>(), enclosingType, elements);
   }
 
-  public List<Type> asImmutableList() {
-    return Collections.unmodifiableList(get());
+  public Collection<Type> asCollection() {
+    return Collections.unmodifiableCollection(get());
   }
 
   @Override
@@ -45,6 +57,11 @@ public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, 
     return new OperableImplementation();
   }
 
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.CAList;
+  }
+
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAList<Type> List() {
@@ -53,8 +70,8 @@ public class CAList<Type extends AttributeValue> extends AbstractComposed<Type, 
 
     @Override
     public CAString String() {
-      return new CAString(isNull() ? null : "[ " + StringUtils
-          .join(Collections2.transform(get(), new Stringifier()), ", ") + " ]");
+      return new CAString(isNull() ? null :
+          "[ " + StringUtils.join(Collections2.transform(get(), new Stringifier()), ", ") + " ]");
     }
 
     @Override

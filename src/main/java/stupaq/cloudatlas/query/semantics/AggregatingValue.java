@@ -2,7 +2,6 @@ package stupaq.cloudatlas.query.semantics;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CABoolean;
-import stupaq.cloudatlas.attribute.values.CADouble;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CAList;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
@@ -11,7 +10,7 @@ import stupaq.cloudatlas.query.semantics.values.SemanticValue;
 
 public interface AggregatingValue<Type extends AttributeValue> {
 
-  public SemanticValue<CADouble> avg();
+  public SemanticValue avg();
 
   public SemanticValue<Type> sum();
 
@@ -47,7 +46,7 @@ public interface AggregatingValue<Type extends AttributeValue> {
     }
 
     @Override
-    public RSingle sum() {
+    public RSingle<Type> sum() {
       throw noAggregate("sum(...)");
     }
 
@@ -82,12 +81,12 @@ public interface AggregatingValue<Type extends AttributeValue> {
     }
 
     @Override
-    public SemanticValue land() {
+    public RSingle<CABoolean> land() {
       throw noAggregate("land(...)");
     }
 
     @Override
-    public SemanticValue lor() {
+    public RSingle<CABoolean> lor() {
       throw noAggregate("lor(...)");
     }
 

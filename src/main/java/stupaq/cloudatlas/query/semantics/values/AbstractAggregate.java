@@ -25,7 +25,7 @@ import stupaq.cloudatlas.query.errors.ConversionException;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 import stupaq.cloudatlas.query.semantics.AggregatingValue;
 import stupaq.cloudatlas.query.semantics.AggregatingValue.AggregatingValueDefault;
-import stupaq.cloudatlas.attribute.types.TypeInfo;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 
@@ -115,17 +115,17 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       AttributeValue sum = sum().get();
       CAInteger count = count().get();
       return new RSingle<>(count.isNull() || count.getLong() == 0 ? new CADouble() :
-                           sum.op().multiply(count.op().inverse()));
+          sum.op().multiply(count.op().inverse()));
     }
 
     @Override
     public RSingle sum() {
       // Determine whether we can sum values
-      AttributeValue sum = getType().Null().op().zero();
+      AttributeValue sum = getType().aNull().op().zero();
       for (Type elem : nonNulls.get()) {
         sum = sum.op().add(elem);
       }
-      return new RSingle<>(nullsOnly.get() ? getType().Null() : sum);
+      return new RSingle<>(nullsOnly.get() ? getType().aNull() : sum);
     }
 
     @Override
@@ -164,8 +164,8 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       Collections.shuffle(indices);
       indices = from(indices).limit((int) size.getLong()).copyInto(new ArrayList<Integer>());
       Collections.sort(indices);
-      return new RSingle<>(
-          new CAList<>(typeInfo, from(indices).transform(new Function<Integer, Type>() {
+      return new RSingle<>(new CAList<>(typeInfo,
+          from(indices).transform(new Function<Integer, Type>() {
             @Override
             public Type apply(Integer integer) {
               return AbstractAggregate.this.get(integer);
@@ -176,27 +176,27 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     @Override
     public RSingle<Type> min() {
       // Verify that we can compare
-      getType().Null().compareTo(getType().Null());
+      getType().aNull().compareTo(getType().aNull());
       return new RSingle<>(
-          nonNulls.get().isEmpty() ? getType().Null() : Collections.min(nonNulls.get().toList()));
+          nonNulls.get().isEmpty() ? getType().aNull() : Collections.min(nonNulls.get().toList()));
     }
 
     @Override
     public RSingle<Type> max() {
       // Verify that we can compare
-      getType().Null().compareTo(getType().Null());
+      getType().aNull().compareTo(getType().aNull());
       return new RSingle<>(
-          nonNulls.get().isEmpty() ? getType().Null() : Collections.max(nonNulls.get().toList()));
+          nonNulls.get().isEmpty() ? getType().aNull() : Collections.max(nonNulls.get().toList()));
     }
 
     @Override
-    public SemanticValue land() {
+    public RSingle<CABoolean> land() {
       // Verify that we can do logical operations
-      getType().Null().op().and(getType().Null());
+      getType().aNull().op().and(getType().aNull());
       if (nullsOnly.get()) {
         return new RSingle<>(new CABoolean());
       }
-      AttributeValue conj = new CABoolean(true);
+      CABoolean conj = new CABoolean(true);
       for (Type elem : nonNulls.get()) {
         conj = conj.op().and(elem);
       }
@@ -204,13 +204,13 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     }
 
     @Override
-    public SemanticValue lor() {
+    public RSingle<CABoolean> lor() {
       // Verify that we can do logical operations
-      getType().Null().op().or(getType().Null());
+      getType().aNull().op().or(getType().aNull());
       if (nullsOnly.get()) {
         return new RSingle<>(new CABoolean());
       }
-      AttributeValue conj = new CABoolean(false);
+      CABoolean conj = new CABoolean(false);
       for (Type elem : nonNulls.get()) {
         conj = conj.op().or(elem);
       }
@@ -233,16 +233,15 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     public SemanticValue unfold() {
       TypeInfo unfolded = typeInfo.unfold();
       if (nullsOnly.get()) {
-        return new RSingle(unfolded.Null());
+        return new RSingle(unfolded.aNull());
       }
       return nonNulls.get().transformAndConcat(new Function<Type, Iterable<AttributeValue>>() {
         @Override
         public Iterable<AttributeValue> apply(Type elem) {
           try {
-            return elem.to().List().asImmutableList();
+            return elem.to().List().asCollection();
           } catch (ConversionException e) {
-            throw new UndefinedOperationException(
-                "Cannot unfold enclosing type: " + elem.getType());
+            throw new UndefinedOperationException("Cannot unfold enclosing type: " + elem.type());
           }
         }
       }).copyInto(new RList<AttributeValue>(unfolded));

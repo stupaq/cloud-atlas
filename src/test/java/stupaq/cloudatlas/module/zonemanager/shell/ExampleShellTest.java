@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;
-import static stupaq.cloudatlas.attribute.types.TypeInfoTestUtils.*;
+import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.*;
 
 public class ExampleShellTest {
   private static final Log LOG = LogFactory.getLog(ExampleShellTest.class);

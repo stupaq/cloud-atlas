@@ -4,22 +4,38 @@ import com.google.common.base.Preconditions;
 
 import java.io.IOException;
 import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+
+import stupaq.compact.CompactSerializable;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
+import stupaq.compact.CompactSerializers;
 import stupaq.guava.base.ASCIIString;
-import stupaq.cloudatlas.serialization.CompactSerializable;
-import stupaq.cloudatlas.serialization.SerializationOnly;
 
+@Immutable
 public final class AttributeName extends ASCIIString implements CompactSerializable {
+  public static final CompactSerializer<AttributeName> SERIALIZER =
+      new CompactSerializer<AttributeName>() {
+        @Override
+        public AttributeName readInstance(ObjectInput in) throws IOException {
+          return new AttributeName(CompactSerializers.ASCIIString.readInstance(in).toString());
+        }
+
+        @Override
+        public void writeInstance(ObjectOutput out, AttributeName object) throws IOException {
+          CompactSerializers.ASCIIString.writeInstance(out, object);
+        }
+      };
   private static final String RESERVED_PREFIX = "&";
 
-  @SerializationOnly
-  public AttributeName() {
-    super(null);
-  }
-
-  private AttributeName(String name) {
+  protected AttributeName(@Nonnull String name) {
     super(name);
-    verifyInvariants();
+    Preconditions.checkState(!toString().isEmpty(), "AttributeName cannot be empty");
+    Preconditions.checkState(toString().trim().equals(toString()),
+        "AttributeName cannot have leading or trailing whitespaces");
   }
 
   public static AttributeName valueOf(String str) throws IllegalArgumentException {
@@ -38,16 +54,8 @@ public final class AttributeName extends ASCIIString implements CompactSerializa
     return toString().startsWith(RESERVED_PREFIX);
   }
 
-  private void verifyInvariants() throws NullPointerException, IllegalStateException {
-    Preconditions.checkNotNull(toString(), "AttributeName cannot be null");
-    Preconditions.checkState(!toString().isEmpty(), "AttributeName cannot be empty");
-    Preconditions.checkState(toString().trim().equals(toString()),
-        "AttributeName cannot have leading or trailing whitespaces");
-  }
-
   @Override
-  public void readFields(ObjectInput in) throws IOException {
-    super.readFields(in);
-    verifyInvariants();
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.AttributeName;
   }
 }
