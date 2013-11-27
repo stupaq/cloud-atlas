@@ -2,12 +2,18 @@ package stupaq.cloudatlas.naming;
 
 import com.google.common.base.Preconditions;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.annotation.concurrent.Immutable;
 
+import stupaq.compact.CompactSerializable;
+import stupaq.compact.CompactSerializer;
+import stupaq.compact.TypeDescriptor;
 import stupaq.guava.base.ForwardingWrapper;
 
 import static stupaq.cloudatlas.naming.LocalName.getNotRoot;
@@ -15,8 +21,29 @@ import static stupaq.cloudatlas.naming.LocalName.getRoot;
 
 @Immutable
 public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
-    implements Iterable<LocalName> {
+    implements CompactSerializable, Iterable<LocalName> {
   public static final String SEPARATOR = "/";
+  public static final CompactSerializer<GlobalName> SERIALIZER =
+      new CompactSerializer<GlobalName>() {
+        @Override
+        public GlobalName readInstance(ObjectInput in) throws IOException {
+          int elements = in.readInt();
+          Preconditions.checkState(elements >= 0);
+          ArrayList<LocalName> chunks = new ArrayList<>();
+          for (; elements > 0; --elements) {
+            chunks.add(LocalName.SERIALIZER.readInstance(in));
+          }
+          return new GlobalName(chunks);
+        }
+
+        @Override
+        public void writeInstance(ObjectOutput out, GlobalName object) throws IOException {
+          out.writeInt(object.get().size());
+          for (LocalName localName : object.get()) {
+            LocalName.SERIALIZER.writeInstance(out, localName);
+          }
+        }
+      };
 
   protected GlobalName(ArrayList<LocalName> localNames) {
     super(localNames);
@@ -76,6 +103,11 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
 
   public int leafLevel() {
     return get().size() - 1;
+  }
+
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.GlobalName;
   }
 
   public static class Builder {

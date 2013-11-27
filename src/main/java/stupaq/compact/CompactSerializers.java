@@ -54,7 +54,7 @@ public final class CompactSerializers {
 
     @Override
     public void writeInstance(ObjectOutput out, @Nullable Boolean object) throws IOException {
-      out.writeBoolean(object == null);
+      out.writeBoolean(object != null);
       if (object != null) {
         out.writeBoolean(object);
       }
@@ -69,7 +69,7 @@ public final class CompactSerializers {
 
     @Override
     public void writeInstance(ObjectOutput out, @Nullable Long object) throws IOException {
-      out.writeBoolean(object == null);
+      out.writeBoolean(object != null);
       if (object != null) {
         out.writeLong(object);
       }
@@ -84,7 +84,7 @@ public final class CompactSerializers {
 
     @Override
     public void writeInstance(ObjectOutput out, @Nullable String object) throws IOException {
-      out.writeBoolean(object == null);
+      out.writeBoolean(object != null);
       if (object != null) {
         out.writeUTF(object);
       }
@@ -99,7 +99,7 @@ public final class CompactSerializers {
 
     @Override
     public void writeInstance(ObjectOutput out, @Nullable Double object) throws IOException {
-      out.writeBoolean(object == null);
+      out.writeBoolean(object != null);
       if (object != null) {
         out.writeDouble(object);
       }

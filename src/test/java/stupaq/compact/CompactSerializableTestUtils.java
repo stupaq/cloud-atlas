@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public final class SerializationUtils {
-  private SerializationUtils() {
+public final class CompactSerializableTestUtils {
+  private CompactSerializableTestUtils() {
   }
 
   public static <Type extends CompactSerializable> Type clone(Type object) throws IOException {

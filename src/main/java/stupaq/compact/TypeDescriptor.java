@@ -23,14 +23,17 @@ public enum TypeDescriptor {
   TypeInfo,
   ComposedTypeInfo,
   ZoneManagementInfo,
-  LocalName;
+  LocalName,
+  GlobalName,
+  AttributesUpdateMessage;
 
   static {
     assert TypeDescriptor.values().length < Byte.MAX_VALUE;
   }
 
   public static TypeDescriptor readInstance(DataInput in) throws IOException {
-    return TypeDescriptor.values()[in.readByte()];
+    int ordinal = in.readByte();
+    return TypeDescriptor.values()[ordinal];
   }
 
   public static void writeInstance(DataOutput out, TypeDescriptor type) throws IOException {

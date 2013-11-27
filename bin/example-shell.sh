@@ -1,5 +1,5 @@
 #!/bin/sh
 
-PACKAGE_PREFIX="stupaq.cloudatlas."
+source "$(dirname $0)/config.sh"
 
-java -cp "target/*" "${PACKAGE_PREFIX}module.zonemanager.shell.ExampleShellTest" $@
+java "${PACKAGE_PREFIX}module.zonemanager.shell.ExampleShellTest" "$@"

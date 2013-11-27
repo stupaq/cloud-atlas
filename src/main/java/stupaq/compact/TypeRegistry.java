@@ -5,7 +5,8 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -13,7 +14,8 @@ public class TypeRegistry {
   private TypeRegistry() {
   }
 
-  private static final HashMap<TypeDescriptor, CompactSerializer> serializers = new HashMap<>();
+  private static final Map<TypeDescriptor, CompactSerializer> serializers =
+      new EnumMap<>(TypeDescriptor.class);
 
   @SuppressWarnings("unchecked")
   public static <Type> CompactSerializer<Type> resolve(@Nonnull TypeDescriptor descriptor)
@@ -52,6 +54,7 @@ public class TypeRegistry {
 
   public static <Type extends CompactSerializable> void writeObject(ObjectOutput out, Type object)
       throws IOException {
+    TypeDescriptor.writeInstance(out, object.descriptor());
     TypeRegistry.<Type>resolveOrThrow(object.descriptor()).writeInstance(out, object);
   }
 

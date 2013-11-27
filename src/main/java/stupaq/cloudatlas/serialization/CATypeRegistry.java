@@ -14,7 +14,9 @@ import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.attribute.values.CATime;
+import stupaq.cloudatlas.bus.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
@@ -50,7 +52,10 @@ public class CATypeRegistry {
     register(TypeDescriptor.ComposedTypeInfo, ComposedTypeInfo.SERIALIZER);
     // ZoneManagementInfo
     register(TypeDescriptor.ZoneManagementInfo, ZoneManagementInfo.SERIALIZER);
-    // LocalName
+    // .naming package
     register(TypeDescriptor.LocalName, LocalName.SERIALIZER);
+    register(TypeDescriptor.GlobalName, GlobalName.SERIALIZER);
+    // ? extends Message
+    register(TypeDescriptor.AttributesUpdateMessage, AttributesUpdateMessage.SERIALIZER);
   }
 }
