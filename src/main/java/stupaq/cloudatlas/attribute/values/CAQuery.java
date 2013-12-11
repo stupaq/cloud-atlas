@@ -17,8 +17,8 @@ import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.compact.CompactSerializer;
-import stupaq.compact.TypeDescriptor;
 import stupaq.compact.CompactSerializers;
+import stupaq.compact.TypeDescriptor;
 
 @Immutable
 public final class CAQuery extends AbstractAtomic<String> {
@@ -50,7 +50,7 @@ public final class CAQuery extends AbstractAtomic<String> {
 
   @Override
   public ConvertibleValue to() {
-    return new ConvertibleValueDefault();
+    return new ConvertibleImplementation();
   }
 
   @Override
@@ -66,5 +66,12 @@ public final class CAQuery extends AbstractAtomic<String> {
   @Override
   public TypeDescriptor descriptor() {
     return TypeDescriptor.CAQuery;
+  }
+
+  private class ConvertibleImplementation extends ConvertibleValueDefault {
+    @Override
+    public CAString String() {
+      return new CAString(isNull() ? null : getQueryString());
+    }
   }
 }

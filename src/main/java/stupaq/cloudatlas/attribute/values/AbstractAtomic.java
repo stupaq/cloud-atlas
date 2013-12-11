@@ -70,6 +70,6 @@ abstract class AbstractAtomic<Type extends Comparable<Type>> implements Attribut
 
   @Override
   public final String toString() {
-    return (isNull() ? "NULL" : get().toString()) + type();
+    return (isNull() ? "NULL" : to().String().getString()) + type();
   }
 }
