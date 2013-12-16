@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "$(dirname $0)/config.sh"
+source "$(dirname $0)/ca-commons.sh"
 
 RMI_POLICY_SERVER="$(mktemp /tmp/server.policy.XXXXXX)"
 cat > "$RMI_POLICY_SERVER" << EOF
