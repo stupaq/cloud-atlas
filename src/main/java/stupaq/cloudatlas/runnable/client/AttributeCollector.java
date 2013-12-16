@@ -17,7 +17,7 @@ import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.bus.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.module.rmiserver.RMIServer;
-import stupaq.cloudatlas.module.rmiserver.protocol.AttributeCollectionProtocol;
+import stupaq.cloudatlas.module.rmiserver.protocol.LocalClientRMIProtocol;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.serialization.CATypeRegistry;
 import stupaq.compact.SerializableWrapper;
@@ -25,12 +25,12 @@ import stupaq.compact.SerializableWrapper;
 public class AttributeCollector {
   private static final Log LOG = LogFactory.getLog(AttributeCollector.class);
 
-  private static AttributeCollectionProtocol createClient(String host)
+  private static LocalClientRMIProtocol createClient(String host)
       throws RemoteException, NotBoundException {
     try {
       Registry registry = LocateRegistry.getRegistry(host);
-      return (AttributeCollectionProtocol) registry
-          .lookup(RMIServer.exportedName(AttributeCollectionProtocol.class));
+      return (LocalClientRMIProtocol) registry
+          .lookup(RMIServer.exportedName(LocalClientRMIProtocol.class));
     } catch (Exception e) {
       LOG.fatal("Failed to create client", e);
       throw e;
@@ -57,7 +57,7 @@ public class AttributeCollector {
       // Prepare message
       AttributesUpdateMessage message = new AttributesUpdateMessage(zone, attributes, false);
       // Send
-      createClient(host).collect(new SerializableWrapper<>(message));
+      createClient(host).updateAttributes(new SerializableWrapper<>(message));
     } catch (Exception e) {
       LOG.fatal("Exception in main() thread", e);
       System.exit(-1);

@@ -1,13 +1,16 @@
 package stupaq.compact;
 
+import com.google.common.base.Preconditions;
+
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
-import stupaq.compact.CompactSerializer;
 import stupaq.guava.base.ASCIIString;
 
 public final class CompactSerializers {
@@ -105,4 +108,28 @@ public final class CompactSerializers {
       }
     }
   };
+
+  public static <Element> CompactSerializer<List<Element>> List(
+      final CompactSerializer<Element> elementSerializer) {
+    return new CompactSerializer<List<Element>>() {
+      @Override
+      public List<Element> readInstance(ObjectInput in) throws IOException {
+        int elements = in.readInt();
+        Preconditions.checkState(elements >= 0);
+        ArrayList<Element> list = new ArrayList<>(elements);
+        for (; elements > 0; --elements) {
+          list.add(elementSerializer.readInstance(in));
+        }
+        return list;
+      }
+
+      @Override
+      public void writeInstance(ObjectOutput out, List<Element> object) throws IOException {
+        out.writeInt(object.size());
+        for (Element attribute : object) {
+          elementSerializer.writeInstance(out, attribute);
+        }
+      }
+    };
+  }
 }

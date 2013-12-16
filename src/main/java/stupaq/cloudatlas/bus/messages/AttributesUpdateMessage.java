@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +13,7 @@ import javax.annotation.concurrent.Immutable;
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.compact.CompactSerializer;
+import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
 @Immutable
@@ -23,12 +23,8 @@ public final class AttributesUpdateMessage extends Message implements Iterable<A
         @Override
         public AttributesUpdateMessage readInstance(ObjectInput in) throws IOException {
           GlobalName zoneName = GlobalName.SERIALIZER.readInstance(in);
-          int elements = in.readInt();
-          Preconditions.checkState(elements >= 0);
-          ArrayList<Attribute> attributes = new ArrayList<>();
-          for (; elements > 0; --elements) {
-            attributes.add(Attribute.SERIALIZER.readInstance(in));
-          }
+          List<Attribute> attributes =
+              CompactSerializers.List(Attribute.SERIALIZER).readInstance(in);
           boolean override = in.readBoolean();
           return new AttributesUpdateMessage(zoneName, attributes, override);
         }
@@ -37,10 +33,7 @@ public final class AttributesUpdateMessage extends Message implements Iterable<A
         public void writeInstance(ObjectOutput out, AttributesUpdateMessage object)
             throws IOException {
           GlobalName.SERIALIZER.writeInstance(out, object.zone);
-          out.writeInt(object.attributes.size());
-          for (Attribute attribute : object.attributes) {
-            Attribute.SERIALIZER.writeInstance(out, attribute);
-          }
+          CompactSerializers.List(Attribute.SERIALIZER).writeInstance(out, object.attributes);
           out.writeBoolean(object.override);
         }
       };

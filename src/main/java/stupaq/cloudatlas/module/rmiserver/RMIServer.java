@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stupaq.cloudatlas.module.Module;
-import stupaq.cloudatlas.module.rmiserver.handler.AttributeCollectionHandler;
+import stupaq.cloudatlas.module.rmiserver.handler.LocalClientRMIHandler;
 
 public class RMIServer implements Module {
   private static final Log LOG = LogFactory.getLog(RMIServer.class);
@@ -28,7 +28,7 @@ public class RMIServer implements Module {
 
   public RMIServer() throws RemoteException {
     this.registry = LocateRegistry.getRegistry();
-    bind(new AttributeCollectionHandler());
+    bind(new LocalClientRMIHandler());
   }
 
   private void bind(Remote handler) throws RemoteException {
