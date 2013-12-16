@@ -5,16 +5,13 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
-import stupaq.compact.CompactSerializable;
-import stupaq.compact.TypeRegistry;
-
-public final class SerializableWrapper<Type extends CompactSerializable> implements Serializable {
+public final class SerializableWrapper<Type extends CompactSerializable>
+    implements java.io.Serializable {
   private static final long serialVersionUID = 1L;
   private transient Type object;
 
-  public SerializableWrapper(Type object) {
+  protected SerializableWrapper(Type object) {
     this.object = object;
   }
 
@@ -29,5 +26,10 @@ public final class SerializableWrapper<Type extends CompactSerializable> impleme
 
   public Type get() {
     return object;
+  }
+
+  public static <Serializable extends CompactSerializable> SerializableWrapper<Serializable> wrap(
+      Serializable object) {
+    return new SerializableWrapper<>(object);
   }
 }

@@ -5,9 +5,9 @@ import org.apache.commons.logging.LogFactory;
 
 import java.rmi.RemoteException;
 
-import stupaq.cloudatlas.bus.messages.AttributesUpdateMessage;
-import stupaq.cloudatlas.bus.messages.FallbackContactsMessage;
-import stupaq.cloudatlas.bus.messages.ZoneReportMessage;
+import stupaq.cloudatlas.bus.messages.AttributesUpdateRequest;
+import stupaq.cloudatlas.bus.messages.FallbackContactsRequest;
+import stupaq.cloudatlas.bus.messages.ZoneReportResponse;
 import stupaq.cloudatlas.module.rmiserver.protocol.LocalClientRMIProtocol;
 import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.naming.GlobalName;
@@ -17,7 +17,7 @@ public class LocalClientRMIHandler implements LocalClientRMIProtocol {
   private static final Log LOG = LogFactory.getLog(LocalClientRMIHandler.class);
 
   @Override
-  public void updateAttributes(SerializableWrapper<AttributesUpdateMessage> message) {
+  public void updateAttributes(SerializableWrapper<AttributesUpdateRequest> message) {
     if (LOG.isInfoEnabled()) {
       LOG.info("Received attributes update: " + message.get());
     }
@@ -35,7 +35,7 @@ public class LocalClientRMIHandler implements LocalClientRMIProtocol {
   }
 
   @Override
-  public void setFallbackContacts(SerializableWrapper<FallbackContactsMessage> message)
+  public void setFallbackContacts(SerializableWrapper<FallbackContactsRequest> message)
       throws RemoteException {
     if (LOG.isInfoEnabled()) {
       LOG.info("Received request to set fallback contacts: " + message.get());
@@ -44,7 +44,7 @@ public class LocalClientRMIHandler implements LocalClientRMIProtocol {
   }
 
   @Override
-  public SerializableWrapper<ZoneReportMessage> getKnownZones() {
+  public SerializableWrapper<ZoneReportResponse> getKnownZones() {
     if (LOG.isInfoEnabled()) {
       LOG.info("Received zone report request");
     }

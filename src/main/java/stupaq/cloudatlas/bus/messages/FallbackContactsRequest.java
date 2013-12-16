@@ -14,30 +14,30 @@ import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
 @Immutable
-public class FallbackContactsMessage extends Message implements Iterable<CAContact> {
-  public static final CompactSerializer<FallbackContactsMessage> SERIALIZER =
-      new CompactSerializer<FallbackContactsMessage>() {
+public class FallbackContactsRequest extends Message implements Iterable<CAContact> {
+  public static final CompactSerializer<FallbackContactsRequest> SERIALIZER =
+      new CompactSerializer<FallbackContactsRequest>() {
         @Override
-        public FallbackContactsMessage readInstance(ObjectInput in) throws IOException {
-          return new FallbackContactsMessage(CompactSerializers.List(CAContact.SERIALIZER)
+        public FallbackContactsRequest readInstance(ObjectInput in) throws IOException {
+          return new FallbackContactsRequest(CompactSerializers.List(CAContact.SERIALIZER)
               .readInstance(in));
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, FallbackContactsMessage object)
+        public void writeInstance(ObjectOutput out, FallbackContactsRequest object)
             throws IOException {
           CompactSerializers.List(CAContact.SERIALIZER).writeInstance(out, object.contacts);
         }
       };
   private final List<CAContact> contacts;
 
-  public FallbackContactsMessage(List<CAContact> contacts) {
+  public FallbackContactsRequest(List<CAContact> contacts) {
     this.contacts = contacts;
   }
 
   @Override
   public TypeDescriptor descriptor() {
-    return TypeDescriptor.FallbackContactsMessage;
+    return TypeDescriptor.FallbackContactsRequest;
   }
 
   @Override

@@ -17,20 +17,20 @@ import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
 @Immutable
-public final class AttributesUpdateMessage extends Message implements Iterable<Attribute> {
-  public static final CompactSerializer<AttributesUpdateMessage> SERIALIZER =
-      new CompactSerializer<AttributesUpdateMessage>() {
+public final class AttributesUpdateRequest extends Message implements Iterable<Attribute> {
+  public static final CompactSerializer<AttributesUpdateRequest> SERIALIZER =
+      new CompactSerializer<AttributesUpdateRequest>() {
         @Override
-        public AttributesUpdateMessage readInstance(ObjectInput in) throws IOException {
+        public AttributesUpdateRequest readInstance(ObjectInput in) throws IOException {
           GlobalName zoneName = GlobalName.SERIALIZER.readInstance(in);
           List<Attribute> attributes =
               CompactSerializers.List(Attribute.SERIALIZER).readInstance(in);
           boolean override = in.readBoolean();
-          return new AttributesUpdateMessage(zoneName, attributes, override);
+          return new AttributesUpdateRequest(zoneName, attributes, override);
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, AttributesUpdateMessage object)
+        public void writeInstance(ObjectOutput out, AttributesUpdateRequest object)
             throws IOException {
           GlobalName.SERIALIZER.writeInstance(out, object.zone);
           CompactSerializers.List(Attribute.SERIALIZER).writeInstance(out, object.attributes);
@@ -41,7 +41,7 @@ public final class AttributesUpdateMessage extends Message implements Iterable<A
   private final List<Attribute> attributes;
   private final transient boolean override;
 
-  public AttributesUpdateMessage(GlobalName zone, List<Attribute> attributes, boolean override) {
+  public AttributesUpdateRequest(GlobalName zone, List<Attribute> attributes, boolean override) {
     Preconditions.checkNotNull(zone);
     Preconditions.checkNotNull(attributes);
     this.zone = zone;
@@ -51,7 +51,7 @@ public final class AttributesUpdateMessage extends Message implements Iterable<A
 
   @Override
   public TypeDescriptor descriptor() {
-    return TypeDescriptor.AttributesUpdateMessage;
+    return TypeDescriptor.AttributesUpdateRequest;
   }
 
   public GlobalName getZone() {
@@ -75,7 +75,7 @@ public final class AttributesUpdateMessage extends Message implements Iterable<A
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AttributesUpdateMessage that = (AttributesUpdateMessage) o;
+    AttributesUpdateRequest that = (AttributesUpdateRequest) o;
     return override == that.override && attributes.equals(that.attributes) &&
         zone.equals(that.zone);
 
@@ -91,7 +91,7 @@ public final class AttributesUpdateMessage extends Message implements Iterable<A
 
   @Override
   public String toString() {
-    return "AttributesUpdateMessage{" +
+    return "AttributesUpdateRequest{" +
         "zone=" + zone +
         ", attributes=" + attributes +
         ", override=" + override +

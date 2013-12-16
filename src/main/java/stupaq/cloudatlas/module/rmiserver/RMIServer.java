@@ -24,7 +24,7 @@ public class RMIServer implements Module {
   }
 
   private final Registry registry;
-  private List<Remote> stubs = new ArrayList<>();
+  private final List<Remote> stubs = new ArrayList<>();
 
   public RMIServer() throws RemoteException {
     this.registry = LocateRegistry.getRegistry();

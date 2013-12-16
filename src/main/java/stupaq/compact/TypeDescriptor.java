@@ -25,9 +25,9 @@ public enum TypeDescriptor {
   ZoneManagementInfo,
   LocalName,
   GlobalName,
-  AttributesUpdateMessage,
-  FallbackContactsMessage,
-  ZoneReportMessage;
+  AttributesUpdateRequest,
+  FallbackContactsRequest,
+  ZoneReportResponse;
 
   static {
     assert TypeDescriptor.values().length < Byte.MAX_VALUE;

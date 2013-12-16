@@ -13,4 +13,4 @@ trap "rm -f $RMI_POLICY_CLIENT" EXIT
 java \
     -Djava.security.policy="$RMI_POLICY_CLIENT" \
     -Djava.rmi.server.codebase="$RMI_CODEBASE" \
-    "${PACKAGE_PREFIX}runnable.client.AttributeCollector" "$@"
+    "${PACKAGE_PREFIX}runnable.client.CAAttributesCollector" "$@"

@@ -11,29 +11,29 @@ import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
-public class ZoneReportMessage extends Message implements Iterable<GlobalName> {
-  public static final CompactSerializer<ZoneReportMessage> SERIALIZER =
-      new CompactSerializer<ZoneReportMessage>() {
+public class ZoneReportResponse extends Message implements Iterable<GlobalName> {
+  public static final CompactSerializer<ZoneReportResponse> SERIALIZER =
+      new CompactSerializer<ZoneReportResponse>() {
         @Override
-        public ZoneReportMessage readInstance(ObjectInput in) throws IOException {
-          return new ZoneReportMessage(CompactSerializers.List(GlobalName.SERIALIZER)
+        public ZoneReportResponse readInstance(ObjectInput in) throws IOException {
+          return new ZoneReportResponse(CompactSerializers.List(GlobalName.SERIALIZER)
               .readInstance(in));
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, ZoneReportMessage object) throws IOException {
+        public void writeInstance(ObjectOutput out, ZoneReportResponse object) throws IOException {
           CompactSerializers.List(GlobalName.SERIALIZER).writeInstance(out, object.zones);
         }
       };
   private final List<GlobalName> zones;
 
-  public ZoneReportMessage(List<GlobalName> zones) {
+  public ZoneReportResponse(List<GlobalName> zones) {
     this.zones = zones;
   }
 
   @Override
   public TypeDescriptor descriptor() {
-    return TypeDescriptor.ZoneReportMessage;
+    return TypeDescriptor.ZoneReportResponse;
   }
 
   @Override

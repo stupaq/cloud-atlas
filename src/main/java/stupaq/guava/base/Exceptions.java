@@ -2,6 +2,8 @@ package stupaq.guava.base;
 
 import org.apache.commons.logging.Log;
 
+import java.util.concurrent.Executor;
+
 import javax.annotation.Nullable;
 
 public final class Exceptions {
