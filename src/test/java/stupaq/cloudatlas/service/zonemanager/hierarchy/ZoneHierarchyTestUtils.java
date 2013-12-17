@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.module.zonemanager.hierarchy;
+package stupaq.cloudatlas.service.zonemanager.hierarchy;
 
 import com.google.common.collect.FluentIterable;
 
@@ -11,7 +11,7 @@ import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
 import stupaq.guava.base.Function1;
 
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;

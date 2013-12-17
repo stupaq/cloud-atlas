@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.module.zonemanager;
+package stupaq.cloudatlas.service.zonemanager;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeName;
-import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
+import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;

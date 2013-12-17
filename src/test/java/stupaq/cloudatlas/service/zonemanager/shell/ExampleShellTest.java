@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.module.zonemanager.shell;
+package stupaq.cloudatlas.service.zonemanager.shell;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -25,15 +25,15 @@ import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.attribute.values.CATime;
-import stupaq.cloudatlas.module.zonemanager.query.InstalledQueriesUpdater;
+import stupaq.cloudatlas.service.zonemanager.query.InstalledQueriesUpdater;
 import stupaq.cloudatlas.query.errors.ParsingException;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.parser.QueryParser;
-import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
-import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchy;
-import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
-import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchy.InPlaceMapper;
-import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchyTestUtils;
+import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy;
+import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
+import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy.InPlaceMapper;
+import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchyTestUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.module;
+package stupaq.cloudatlas.service;
 
 import com.google.common.util.concurrent.ForwardingListeningExecutorService;
 import com.google.common.util.concurrent.ListeningExecutorService;

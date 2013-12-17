@@ -1,9 +1,9 @@
-package stupaq.cloudatlas.runnable.client;
+package stupaq.cloudatlas.service.collector;
 
 import java.util.Arrays;
 import java.util.List;
 
-interface CAAttributesCollectorConfigKeys {
+interface AttributesCollectorConfigKeys {
   // Runtime configuration section
   static final String PREFIX = "collector";
   // Runtime configuration entries

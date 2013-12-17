@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.Arrays;
 
-import stupaq.cloudatlas.module.rmiserver.RMIServer;
+import stupaq.cloudatlas.service.rmiserver.RMIServer;
 
 @SuppressWarnings("unused")
 public final class CAAgentProcess extends AbstractIdleService {

@@ -17,7 +17,7 @@ import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.bus.messages.AttributesUpdateRequest;
 import stupaq.cloudatlas.bus.messages.FallbackContactsRequest;
 import stupaq.cloudatlas.bus.messages.ZoneReportResponse;
-import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;

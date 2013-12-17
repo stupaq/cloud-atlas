@@ -20,8 +20,9 @@ import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import stupaq.cloudatlas.module.rmiserver.RMIServer;
-import stupaq.cloudatlas.module.rmiserver.protocol.LocalClientRMIProtocol;
+import stupaq.cloudatlas.service.collector.AttributesCollector;
+import stupaq.cloudatlas.service.rmiserver.RMIServer;
+import stupaq.cloudatlas.service.rmiserver.protocol.LocalClientRMIProtocol;
 import stupaq.cloudatlas.naming.GlobalName;
 
 @SuppressWarnings("unused")
@@ -66,7 +67,7 @@ public class CALocalClientProcess extends AbstractIdleService {
     executor = Executors.newSingleThreadScheduledExecutor();
     // Create and start all services
     manager =
-        new ServiceManager(Arrays.asList(new CAAttributesCollector(zone, configuration, client, executor)));
+        new ServiceManager(Arrays.asList(new AttributesCollector(zone, configuration, client, executor)));
     manager.startAsync().awaitHealthy();
   }
 

@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.module.zonemanager.hierarchy;
+package stupaq.cloudatlas.service.zonemanager.hierarchy;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -16,7 +16,7 @@ import java.util.Set;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.naming.LocallyNameable;
-import stupaq.cloudatlas.module.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
+import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 

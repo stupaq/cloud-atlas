@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.module.zonemanager.query;
+package stupaq.cloudatlas.service.zonemanager.query;
 
 import com.google.common.base.Preconditions;
 
@@ -11,7 +11,7 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.EvaluationException;
 import stupaq.cloudatlas.query.evaluation.context.OutputContext;
 import stupaq.cloudatlas.query.semantics.values.RSingle;
-import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
 
 /** PACKAGE-LOCAL */
 class ZMIUpdaterOutputContext implements OutputContext {

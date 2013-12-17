@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.runnable.client;
+package stupaq.cloudatlas.service.collector;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 
@@ -24,20 +24,20 @@ import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.bus.messages.AttributesUpdateRequest;
-import stupaq.cloudatlas.module.rmiserver.protocol.LocalClientRMIProtocol;
+import stupaq.cloudatlas.service.rmiserver.protocol.LocalClientRMIProtocol;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.compact.SerializableWrapper;
 
-public class CAAttributesCollector extends AbstractScheduledService
-    implements CAAttributesCollectorConfigKeys {
-  private static final Log LOG = LogFactory.getLog(CAAttributesCollector.class);
+public class AttributesCollector extends AbstractScheduledService
+    implements AttributesCollectorConfigKeys {
+  private static final Log LOG = LogFactory.getLog(AttributesCollector.class);
   private final GlobalName zone;
   private final Configuration configuration;
   private final ScheduledExecutorService executor;
   private final LocalClientRMIProtocol client;
 
-  public CAAttributesCollector(GlobalName zone, FileConfiguration configuration,
+  public AttributesCollector(GlobalName zone, FileConfiguration configuration,
       LocalClientRMIProtocol client, ScheduledExecutorService executor)
       throws NotBoundException, RemoteException {
     this.zone = zone;

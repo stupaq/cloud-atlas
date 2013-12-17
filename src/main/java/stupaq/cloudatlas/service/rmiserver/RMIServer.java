@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.module.rmiserver;
+package stupaq.cloudatlas.service.rmiserver;
 
 import com.google.common.util.concurrent.AbstractIdleService;
 
@@ -13,7 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import stupaq.cloudatlas.module.rmiserver.handler.LocalClientRMIHandler;
+import stupaq.cloudatlas.service.rmiserver.handler.LocalClientRMIHandler;
 
 public class RMIServer extends AbstractIdleService {
   private static final Log LOG = LogFactory.getLog(RMIServer.class);

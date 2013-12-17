@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.module.rmiserver.protocol;
+package stupaq.cloudatlas.service.rmiserver.protocol;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 import stupaq.cloudatlas.bus.messages.AttributesUpdateRequest;
 import stupaq.cloudatlas.bus.messages.FallbackContactsRequest;
 import stupaq.cloudatlas.bus.messages.ZoneReportResponse;
-import stupaq.cloudatlas.module.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.compact.SerializableWrapper;
 
