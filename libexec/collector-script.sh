@@ -25,4 +25,9 @@ echo "kernel_ver=`uname -r`"
 # logged_users
 echo "logged_users=`w -h | cut -d' ' -f1 | sort | uniq | wc -l`"
 # dns_names
-# FIXME
+hostname -A &>/dev/null
+if [[ $? -eq 0 ]]; then
+  echo "dns_names=`hostname -A | sed 's/ *$//g' | tr ' ' ','`"
+else
+  echo "dns_names=`hostname -f | sed 's/ *$//g' | tr ' ' ','`"
+fi
