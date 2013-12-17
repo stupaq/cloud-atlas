@@ -1,4 +1,4 @@
-package stupaq.guava.util.concurrent;
+package stupaq.commons.util.concurrent;
 
 import com.google.common.util.concurrent.ForwardingListeningExecutorService;
 import com.google.common.util.concurrent.ListeningExecutorService;

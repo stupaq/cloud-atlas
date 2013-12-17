@@ -12,7 +12,7 @@ import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
-import stupaq.guava.base.ASCIIString;
+import stupaq.commons.base.ASCIIString;
 
 @Immutable
 public final class LocalName extends ASCIIString implements CompactSerializable {

@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.reflect.Reflection;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
-import stupaq.guava.util.concurrent.AsynchronousInvoker;
+import stupaq.commons.util.concurrent.AsynchronousInvoker;
 
 public final class MessageBus {
   private final EventBus internalBus = new EventBus();

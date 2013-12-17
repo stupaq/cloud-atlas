@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
-import stupaq.guava.base.Function2;
+import stupaq.commons.base.Function2;
 
 import static stupaq.cloudatlas.query.typecheck.TypeInfo.typeof2;
 

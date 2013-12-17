@@ -1,4 +1,4 @@
-package stupaq.guava.base;
+package stupaq.commons.base;
 
 import org.apache.commons.logging.Log;
 

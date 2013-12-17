@@ -8,8 +8,8 @@ import stupaq.cloudatlas.attribute.values.CABoolean;
 import stupaq.cloudatlas.query.semantics.AggregatingValue;
 import stupaq.cloudatlas.query.semantics.AggregatingValue.AggregatingValueDefault;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
-import stupaq.guava.base.Function1;
-import stupaq.guava.base.Function2;
+import stupaq.commons.base.Function1;
+import stupaq.commons.base.Function2;
 
 import static stupaq.cloudatlas.query.typecheck.TypeInfo.typeof2;
 

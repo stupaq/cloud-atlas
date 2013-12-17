@@ -12,7 +12,7 @@ import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
-import stupaq.guava.base.Function1;
+import stupaq.commons.base.Function1;
 
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.*;
 import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TCont;

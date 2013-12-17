@@ -1,4 +1,4 @@
-package stupaq.guava.base;
+package stupaq.commons.base;
 
 import com.google.common.base.Optional;
 

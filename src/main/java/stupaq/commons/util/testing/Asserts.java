@@ -1,4 +1,4 @@
-package stupaq.guava.util.testing;
+package stupaq.commons.util.testing;
 
 import static org.junit.Assert.assertEquals;
 

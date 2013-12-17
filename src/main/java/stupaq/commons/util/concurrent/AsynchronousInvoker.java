@@ -1,4 +1,4 @@
-package stupaq.guava.util.concurrent;
+package stupaq.commons.util.concurrent;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListeningExecutorService;

@@ -17,8 +17,8 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.naming.LocallyNameable;
 import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
-import stupaq.guava.base.Function1;
-import stupaq.guava.base.Function2;
+import stupaq.commons.base.Function1;
+import stupaq.commons.base.Function2;
 
 public final class ZoneHierarchy<Payload extends Hierarchical> {
   private final HashMap<LocalName, ZoneHierarchy<Payload>> childZones = new HashMap<>();

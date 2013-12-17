@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import stupaq.guava.base.ASCIIString;
+import stupaq.commons.base.ASCIIString;
 
 public final class CompactSerializers {
   private CompactSerializers() {

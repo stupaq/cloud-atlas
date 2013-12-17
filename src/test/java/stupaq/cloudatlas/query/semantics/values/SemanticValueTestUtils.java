@@ -7,8 +7,8 @@ import java.util.Arrays;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
-import stupaq.guava.base.Function1;
-import stupaq.guava.base.Function2;
+import stupaq.commons.base.Function1;
+import stupaq.commons.base.Function2;
 
 public class SemanticValueTestUtils {
   private SemanticValueTestUtils() {

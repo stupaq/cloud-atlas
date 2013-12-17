@@ -28,8 +28,8 @@ import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.*;
 import stupaq.cloudatlas.query.semantics.values.RSingle;
 import stupaq.cloudatlas.query.semantics.values.SemanticValue;
 import stupaq.cloudatlas.query.semantics.values.SemanticValue.SemanticValueCastException;
-import stupaq.guava.base.Function1;
-import stupaq.guava.base.Function2;
+import stupaq.commons.base.Function1;
+import stupaq.commons.base.Function2;
 
 public class EvalVisitor {
   private final AttributesTable originalTable;

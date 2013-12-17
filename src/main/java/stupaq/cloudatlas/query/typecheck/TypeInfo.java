@@ -17,9 +17,9 @@ import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.TypeRegistry;
-import stupaq.guava.base.ForwardingWrapper;
-import stupaq.guava.base.Function1;
-import stupaq.guava.base.Function2;
+import stupaq.commons.base.ForwardingWrapper;
+import stupaq.commons.base.Function1;
+import stupaq.commons.base.Function2;
 
 @Immutable
 public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<Class<Atomic>>
