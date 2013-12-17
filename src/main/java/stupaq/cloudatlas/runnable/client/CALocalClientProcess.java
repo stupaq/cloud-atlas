@@ -66,7 +66,7 @@ public class CALocalClientProcess extends AbstractIdleService {
     executor = Executors.newSingleThreadScheduledExecutor();
     // Create and start all services
     manager =
-        new ServiceManager(Arrays.asList(new CAAttributesCollector(zone, configuration, client)));
+        new ServiceManager(Arrays.asList(new CAAttributesCollector(zone, configuration, client, executor)));
     manager.startAsync().awaitHealthy();
   }
 

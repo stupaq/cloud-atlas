@@ -14,6 +14,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
@@ -33,13 +34,39 @@ public class CAAttributesCollector extends AbstractScheduledService
   private static final Log LOG = LogFactory.getLog(CAAttributesCollector.class);
   private final GlobalName zone;
   private final Configuration configuration;
+  private final ScheduledExecutorService executor;
   private final LocalClientRMIProtocol client;
 
   public CAAttributesCollector(GlobalName zone, FileConfiguration configuration,
-      LocalClientRMIProtocol client) throws NotBoundException, RemoteException {
+      LocalClientRMIProtocol client, ScheduledExecutorService executor)
+      throws NotBoundException, RemoteException {
     this.zone = zone;
     this.client = client;
     this.configuration = configuration;
+    this.executor = executor;
+  }
+
+  @Override
+  protected void runOneIteration() throws IOException {
+    List<Attribute> attributes = collectAttributes();
+    AttributesUpdateRequest message = new AttributesUpdateRequest(zone, attributes, false);
+    client.updateAttributes(SerializableWrapper.wrap(message));
+  }
+
+  @Override
+  protected Scheduler scheduler() {
+    return new CustomScheduler() {
+      @Override
+      protected Schedule getNextSchedule() throws Exception {
+        return new Schedule(configuration.getLong(PUSH_INTERVAL, PUSH_INTERVAL_DEFAULT),
+            TimeUnit.MILLISECONDS);
+      }
+    };
+  }
+
+  @Override
+  protected ScheduledExecutorService executor() {
+    return executor;
   }
 
   private List<Attribute> collectAttributes() throws IOException {
@@ -88,23 +115,5 @@ public class CAAttributesCollector extends AbstractScheduledService
       LOG.fatal("Interrupter while executing collection script");
       throw new IOException(e);
     }
-  }
-
-  @Override
-  protected void runOneIteration() throws IOException {
-    List<Attribute> attributes = collectAttributes();
-    AttributesUpdateRequest message = new AttributesUpdateRequest(zone, attributes, false);
-    client.updateAttributes(SerializableWrapper.wrap(message));
-  }
-
-  @Override
-  protected Scheduler scheduler() {
-    return new CustomScheduler() {
-      @Override
-      protected Schedule getNextSchedule() throws Exception {
-        return new Schedule(configuration.getLong(PUSH_INTERVAL, PUSH_INTERVAL_DEFAULT),
-            TimeUnit.MILLISECONDS);
-      }
-    };
   }
 }
