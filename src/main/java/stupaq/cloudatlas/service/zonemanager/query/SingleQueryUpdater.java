@@ -9,13 +9,13 @@ import java.util.Collection;
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.query.errors.ParsingException;
-import stupaq.cloudatlas.query.interpreter.EvalVisitor;
 import stupaq.cloudatlas.query.evaluation.context.OutputContext;
 import stupaq.cloudatlas.query.evaluation.data.AttributesTable;
+import stupaq.cloudatlas.query.interpreter.EvalVisitor;
 import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XProgram;
 import stupaq.cloudatlas.query.parser.QueryParser;
-import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
 import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
 
 public class SingleQueryUpdater extends InPlaceAggregator<ZoneManagementInfo> {
   private final XProgram program;

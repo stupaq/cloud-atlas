@@ -19,7 +19,7 @@ import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeRegistry;
-import stupaq.guava.syntax.Fluent;
+import stupaq.guava.lang.Fluent;
 
 /** PACKAGE-LOCAL */
 abstract class AbstractComposed<Type extends AttributeValue> implements AttributeValue {

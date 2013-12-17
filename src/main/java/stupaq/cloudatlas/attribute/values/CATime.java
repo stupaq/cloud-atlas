@@ -19,8 +19,8 @@ import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
 import stupaq.compact.CompactSerializer;
-import stupaq.compact.TypeDescriptor;
 import stupaq.compact.CompactSerializers;
+import stupaq.compact.TypeDescriptor;
 
 @Immutable
 public final class CATime extends AbstractAtomic<Long> {

@@ -11,8 +11,8 @@ import javax.annotation.concurrent.Immutable;
 
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
-import stupaq.compact.TypeDescriptor;
 import stupaq.compact.CompactSerializers;
+import stupaq.compact.TypeDescriptor;
 import stupaq.guava.base.ASCIIString;
 
 @Immutable

@@ -24,10 +24,10 @@ import stupaq.cloudatlas.query.evaluation.context.OutputContext.InnerSelectOutpu
 import stupaq.cloudatlas.query.evaluation.context.OutputContext.RedefinitionAwareOutputContext;
 import stupaq.cloudatlas.query.evaluation.data.AttributesRow;
 import stupaq.cloudatlas.query.evaluation.data.AttributesTable;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.*;
 import stupaq.cloudatlas.query.semantics.values.RSingle;
 import stupaq.cloudatlas.query.semantics.values.SemanticValue;
 import stupaq.cloudatlas.query.semantics.values.SemanticValue.SemanticValueCastException;
-import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.*;
 import stupaq.guava.base.Function1;
 import stupaq.guava.base.Function2;
 

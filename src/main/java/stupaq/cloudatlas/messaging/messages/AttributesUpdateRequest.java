@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.bus.messages;
+package stupaq.cloudatlas.messaging.messages;
 
 import com.google.common.base.Preconditions;
 
@@ -11,6 +11,7 @@ import java.util.List;
 import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.Attribute;
+import stupaq.cloudatlas.messaging.Message;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;

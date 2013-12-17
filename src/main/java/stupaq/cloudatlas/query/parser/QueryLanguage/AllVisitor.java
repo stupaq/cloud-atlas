@@ -1,7 +1,5 @@
 package stupaq.cloudatlas.query.parser.QueryLanguage;
 
-import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.*;
-
 /** BNFC-Generated All Visitor */
 public interface AllVisitor<R,A> extends
   stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XProgram.Visitor<R,A>,

@@ -1,5 +1,18 @@
 package stupaq.cloudatlas.query.parser.QueryLanguage;
-import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.*;
+
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XArithOpAdd;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XArithOpMultiply;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XBoolConst;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XExpression;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XNullsOption;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XOrderClause;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XOrderItem;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XOrderOption;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XProgram;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XRelOp;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XSelectItem;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XStatement;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XWhereClause;
 /*** BNFC-Generated Visitor Design Pattern Skeleton. ***/
 /* This implements the common visitor design pattern.
    Tests show it to be slightly less efficient than the

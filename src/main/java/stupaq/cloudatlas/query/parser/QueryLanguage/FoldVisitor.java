@@ -1,9 +1,9 @@
 package stupaq.cloudatlas.query.parser.QueryLanguage;
 
-import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XExpression;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XOrderItem;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XSelectItem;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XStatement;
 
 /** BNFC-Generated Fold Visitor */
 public abstract class FoldVisitor<R,A> implements AllVisitor<R,A> {

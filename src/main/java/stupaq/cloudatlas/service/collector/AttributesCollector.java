@@ -23,10 +23,10 @@ import stupaq.cloudatlas.attribute.values.CADouble;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
-import stupaq.cloudatlas.bus.messages.AttributesUpdateRequest;
-import stupaq.cloudatlas.service.rmiserver.protocol.LocalClientRMIProtocol;
+import stupaq.cloudatlas.messaging.messages.AttributesUpdateRequest;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.service.rmiserver.protocol.LocalClientRMIProtocol;
 import stupaq.compact.SerializableWrapper;
 
 public class AttributesCollector extends AbstractScheduledService

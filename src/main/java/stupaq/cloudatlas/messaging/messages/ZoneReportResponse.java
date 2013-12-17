@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.bus.messages;
+package stupaq.cloudatlas.messaging.messages;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -6,6 +6,7 @@ import java.io.ObjectOutput;
 import java.util.Iterator;
 import java.util.List;
 
+import stupaq.cloudatlas.messaging.Message;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;

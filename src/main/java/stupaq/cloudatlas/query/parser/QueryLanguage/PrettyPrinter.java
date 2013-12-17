@@ -1,5 +1,9 @@
 package stupaq.cloudatlas.query.parser.QueryLanguage;
-import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.*;
+
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XExpression;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XOrderItem;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XSelectItem;
+import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XStatement;
 
 public class PrettyPrinter
 {

@@ -1,4 +1,4 @@
-package stupaq.guava.syntax;
+package stupaq.guava.lang;
 
 public final class Fluent {
   private Fluent() {

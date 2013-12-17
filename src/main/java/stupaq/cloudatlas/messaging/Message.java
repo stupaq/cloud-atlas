@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.bus.messages;
+package stupaq.cloudatlas.messaging;
 
 import javax.annotation.concurrent.Immutable;
 

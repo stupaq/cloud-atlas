@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.bus.messages;
+package stupaq.cloudatlas.messaging.messages;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.values.CAContact;
+import stupaq.cloudatlas.messaging.Message;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;

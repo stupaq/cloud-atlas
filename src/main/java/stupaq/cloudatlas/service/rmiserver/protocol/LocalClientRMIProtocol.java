@@ -3,11 +3,11 @@ package stupaq.cloudatlas.service.rmiserver.protocol;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import stupaq.cloudatlas.bus.messages.AttributesUpdateRequest;
-import stupaq.cloudatlas.bus.messages.FallbackContactsRequest;
-import stupaq.cloudatlas.bus.messages.ZoneReportResponse;
-import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.messaging.messages.AttributesUpdateRequest;
+import stupaq.cloudatlas.messaging.messages.FallbackContactsRequest;
+import stupaq.cloudatlas.messaging.messages.ZoneReportResponse;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
 import stupaq.compact.SerializableWrapper;
 
 public interface LocalClientRMIProtocol extends Remote {

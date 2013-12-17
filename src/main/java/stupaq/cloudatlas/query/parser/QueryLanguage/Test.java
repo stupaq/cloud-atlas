@@ -1,8 +1,7 @@
 package stupaq.cloudatlas.query.parser.QueryLanguage;
-import java_cup.runtime.*;
-import stupaq.cloudatlas.query.parser.QueryLanguage.*;
-import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.*;
-import java.io.*;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 public class Test
 {

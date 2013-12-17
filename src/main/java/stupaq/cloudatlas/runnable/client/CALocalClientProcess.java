@@ -20,10 +20,10 @@ import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.service.collector.AttributesCollector;
 import stupaq.cloudatlas.service.rmiserver.RMIServer;
 import stupaq.cloudatlas.service.rmiserver.protocol.LocalClientRMIProtocol;
-import stupaq.cloudatlas.naming.GlobalName;
 
 @SuppressWarnings("unused")
 public class CALocalClientProcess extends AbstractIdleService {
