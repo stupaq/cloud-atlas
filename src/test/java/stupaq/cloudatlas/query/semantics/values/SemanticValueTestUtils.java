@@ -46,13 +46,14 @@ public class SemanticValueTestUtils {
     return new RSingle<>(elem);
   }
 
+  @SafeVarargs
   public static <Type extends AttributeValue> RList<Type> L(TypeInfo<Type> typeInfo,
       Type... elems) {
     return FluentIterable.from(Arrays.asList(elems)).copyInto(new RList<>(typeInfo));
   }
 
-  public static <Type extends AttributeValue> RColumn C(TypeInfo<Type> typeInfo,
-      Type... elems) {
-    return FluentIterable.from(Arrays.asList(elems)).copyInto(new RColumn(typeInfo));
+  @SafeVarargs
+  public static <Type extends AttributeValue> RColumn C(TypeInfo<Type> typeInfo, Type... elems) {
+    return FluentIterable.from(Arrays.asList(elems)).copyInto(new RColumn<>(typeInfo));
   }
 }

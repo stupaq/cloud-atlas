@@ -118,6 +118,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
           sum.op().multiply(count.op().inverse()));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public RSingle sum() {
       // Determine whether we can sum values
@@ -134,7 +135,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     }
 
     @Override
-    public RSingle<CAList<Type>> first(final CAInteger size) {
+    public RSingle<CAList<Type>> first(CAInteger size) {
       if (size.isNull() || nullsOnly.get()) {
         return new RSingle<>(new CAList<>(typeInfo));
       }
@@ -142,7 +143,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     }
 
     @Override
-    public RSingle<CAList<Type>> last(final CAInteger size) {
+    public RSingle<CAList<Type>> last(CAInteger size) {
       if (size.isNull() || nullsOnly.get()) {
         return new RSingle<>(new CAList<>(typeInfo));
       }
@@ -151,7 +152,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
     }
 
     @Override
-    public RSingle<CAList<Type>> random(final CAInteger size) {
+    public RSingle<CAList<Type>> random(CAInteger size) {
       if (size.isNull() || nullsOnly.get()) {
         return new RSingle<>(new CAList<>(typeInfo));
       }
@@ -164,8 +165,8 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
       Collections.shuffle(indices);
       indices = from(indices).limit((int) size.getLong()).copyInto(new ArrayList<Integer>());
       Collections.sort(indices);
-      return new RSingle<>(new CAList<>(typeInfo,
-          from(indices).transform(new Function<Integer, Type>() {
+      return new RSingle<>(
+          new CAList<>(typeInfo, from(indices).transform(new Function<Integer, Type>() {
             @Override
             public Type apply(Integer integer) {
               return AbstractAggregate.this.get(integer);
