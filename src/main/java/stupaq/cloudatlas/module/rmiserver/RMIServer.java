@@ -1,5 +1,7 @@
 package stupaq.cloudatlas.module.rmiserver;
 
+import com.google.common.util.concurrent.AbstractIdleService;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -11,10 +13,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import stupaq.cloudatlas.module.Module;
 import stupaq.cloudatlas.module.rmiserver.handler.LocalClientRMIHandler;
 
-public class RMIServer implements Module {
+public class RMIServer extends AbstractIdleService {
   private static final Log LOG = LogFactory.getLog(RMIServer.class);
 
   static {
@@ -23,27 +24,17 @@ public class RMIServer implements Module {
     }
   }
 
-  private final Registry registry;
   private final List<Remote> stubs = new ArrayList<>();
+  private Registry registry;
 
-  public RMIServer() throws RemoteException {
-    this.registry = LocateRegistry.getRegistry();
+  @Override
+  protected void startUp() throws Exception {
+    registry = LocateRegistry.getRegistry();
     bind(new LocalClientRMIHandler());
   }
 
-  private void bind(Remote handler) throws RemoteException {
-    try {
-      Remote stub = UnicastRemoteObject.exportObject(handler, 0);
-      registry.rebind(exportedName(handler.getClass()), stub);
-      stubs.add(stub);
-    } catch (Exception e) {
-      LOG.fatal("Encountered exception during setup", e);
-      throw e;
-    }
-  }
-
   @Override
-  public void close() {
+  protected void shutDown() throws Exception {
     for (Remote stub : stubs) {
       try {
         UnicastRemoteObject.unexportObject(stub, true);
@@ -51,6 +42,12 @@ public class RMIServer implements Module {
         // Ignored
       }
     }
+  }
+
+  private void bind(Remote handler) throws RemoteException {
+    Remote stub = UnicastRemoteObject.exportObject(handler, 0);
+    registry.rebind(exportedName(handler.getClass()), stub);
+    stubs.add(stub);
   }
 
   public static String exportedName(Class<? extends Remote> clazz) {
