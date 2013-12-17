@@ -17,9 +17,9 @@ import stupaq.cloudatlas.query.errors.TypeCheckerException;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.commons.lang.Fluent;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeRegistry;
-import stupaq.commons.lang.Fluent;
 
 /** PACKAGE-LOCAL */
 abstract class AbstractComposed<Type extends AttributeValue> implements AttributeValue {

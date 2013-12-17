@@ -11,10 +11,10 @@ import java.util.Iterator;
 
 import javax.annotation.concurrent.Immutable;
 
+import stupaq.commons.base.ForwardingWrapper;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
-import stupaq.commons.base.ForwardingWrapper;
 
 import static stupaq.cloudatlas.naming.LocalName.getNotRoot;
 import static stupaq.cloudatlas.naming.LocalName.getRoot;

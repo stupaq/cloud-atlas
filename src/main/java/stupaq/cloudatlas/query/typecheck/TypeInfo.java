@@ -13,13 +13,13 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAList;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
+import stupaq.commons.base.ForwardingWrapper;
+import stupaq.commons.base.Function1;
+import stupaq.commons.base.Function2;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.TypeRegistry;
-import stupaq.commons.base.ForwardingWrapper;
-import stupaq.commons.base.Function1;
-import stupaq.commons.base.Function2;
 
 @Immutable
 public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<Class<Atomic>>

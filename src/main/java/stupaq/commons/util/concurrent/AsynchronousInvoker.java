@@ -12,12 +12,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
+import javax.annotation.Nonnull;
+
 public class AsynchronousInvoker implements InvocationHandler {
   private final Object listener;
   private final ListeningExecutorService executor;
 
-  public AsynchronousInvoker(Object listener, ListeningExecutorService executor) {
-    this.listener = listener;
+  public AsynchronousInvoker(@Nonnull Object delegate, @Nonnull ListeningExecutorService executor) {
+    Preconditions.checkNotNull(delegate);
+    Preconditions.checkNotNull(executor);
+    this.listener = delegate;
     this.executor = executor;
   }
 
@@ -35,16 +39,16 @@ public class AsynchronousInvoker implements InvocationHandler {
       }
     };
     if (method.isAnnotationPresent(DirectInvocation.class)) {
-      callable.call();
+      return callable.call();
     } else if (method.isAnnotationPresent(DeferredInvocation.class)) {
       // Nothing else makes sense as we cannot guarantee any value at the time when we submit a task
       Preconditions.checkState(method.getReturnType() == void.class);
       executor.submit(callable);
+      return null;
     } else {
       throw new IllegalStateException(
           AsynchronousInvoker.class.getSimpleName() + " cannot decide invocation mode.");
     }
-    return null;
   }
 
   @Retention(value = RetentionPolicy.RUNTIME)
