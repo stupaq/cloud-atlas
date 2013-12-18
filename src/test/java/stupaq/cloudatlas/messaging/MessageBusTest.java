@@ -91,7 +91,7 @@ public class MessageBusTest {
     }
 
     @Override
-    public Class<?> getInterface() {
+    public Class<?> contract() {
       return TestListener1Contract.class;
     }
   }

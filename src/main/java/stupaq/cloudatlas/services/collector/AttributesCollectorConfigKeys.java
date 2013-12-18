@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.service.collector;
+package stupaq.cloudatlas.services.collector;
 
 import java.util.Arrays;
 import java.util.List;

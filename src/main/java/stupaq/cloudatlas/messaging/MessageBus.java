@@ -10,7 +10,7 @@ public final class MessageBus {
 
   public void register(MessageListener listener) {
     Object proxy = Reflection
-        .newProxy(listener.getInterface(), new AsynchronousInvoker(listener, listener.executor()));
+        .newProxy(listener.contract(), new AsynchronousInvoker(listener, listener.executor()));
     internalBus.register(proxy);
   }
 

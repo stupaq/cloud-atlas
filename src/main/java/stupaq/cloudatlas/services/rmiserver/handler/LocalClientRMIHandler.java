@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.service.rmiserver.handler;
+package stupaq.cloudatlas.services.rmiserver.handler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,8 +9,8 @@ import stupaq.cloudatlas.messaging.messages.AttributesUpdateRequest;
 import stupaq.cloudatlas.messaging.messages.FallbackContactsRequest;
 import stupaq.cloudatlas.messaging.messages.ZoneReportResponse;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.service.rmiserver.protocol.LocalClientRMIProtocol;
-import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientRMIProtocol;
+import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.compact.SerializableWrapper;
 
 public class LocalClientRMIHandler implements LocalClientRMIProtocol {

@@ -1,18 +1,18 @@
-package stupaq.cloudatlas.service.zonemanager.query;
+package stupaq.cloudatlas.services.zonemanager.query;
 
 import org.junit.Test;
 
 import stupaq.cloudatlas.attribute.values.CAQuery;
-import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
-import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy;
+import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Doub;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Int;
-import static stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchyTestUtils.Attr;
-import static stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchyTestUtils.Name;
-import static stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchyTestUtils.oneLevelHierarchy;
+import static stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchyTestUtils.Attr;
+import static stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchyTestUtils.Name;
+import static stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchyTestUtils.oneLevelHierarchy;
 
 public class SingleQueryUpdaterTest {
   @Test

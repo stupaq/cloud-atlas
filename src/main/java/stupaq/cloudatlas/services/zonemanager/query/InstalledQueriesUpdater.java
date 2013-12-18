@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.service.zonemanager.query;
+package stupaq.cloudatlas.services.zonemanager.query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,8 +8,8 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.query.errors.InterpreterException;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
-import stupaq.cloudatlas.service.zonemanager.ZoneManagementInfo;
-import stupaq.cloudatlas.service.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
+import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
 
 public class InstalledQueriesUpdater extends InPlaceAggregator<ZoneManagementInfo> {
   private static final Log LOG = LogFactory.getLog(InstalledQueriesUpdater.class);

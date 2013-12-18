@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.service.zonemanager.hierarchy;
+package stupaq.cloudatlas.services.zonemanager.hierarchy;
 
 import org.junit.Test;
 

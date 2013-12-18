@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.service.collector;
+package stupaq.cloudatlas.services.collector;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 
@@ -26,7 +26,7 @@ import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.messaging.messages.AttributesUpdateRequest;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
-import stupaq.cloudatlas.service.rmiserver.protocol.LocalClientRMIProtocol;
+import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientRMIProtocol;
 import stupaq.compact.SerializableWrapper;
 
 public class AttributesCollector extends AbstractScheduledService
