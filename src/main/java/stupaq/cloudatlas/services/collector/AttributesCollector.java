@@ -23,10 +23,10 @@ import stupaq.cloudatlas.attribute.values.CADouble;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
-import stupaq.cloudatlas.messaging.messages.AttributesUpdateRequest;
+import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
-import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientRMIProtocol;
+import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.compact.SerializableWrapper;
 
 public class AttributesCollector extends AbstractScheduledService
@@ -35,10 +35,10 @@ public class AttributesCollector extends AbstractScheduledService
   private final GlobalName zone;
   private final Configuration configuration;
   private final ScheduledExecutorService executor;
-  private final LocalClientRMIProtocol client;
+  private final LocalClientProtocol client;
 
   public AttributesCollector(GlobalName zone, FileConfiguration configuration,
-      LocalClientRMIProtocol client, ScheduledExecutorService executor)
+      LocalClientProtocol client, ScheduledExecutorService executor)
       throws NotBoundException, RemoteException {
     this.zone = zone;
     this.client = client;
@@ -49,7 +49,7 @@ public class AttributesCollector extends AbstractScheduledService
   @Override
   protected void runOneIteration() throws IOException {
     List<Attribute> attributes = collectAttributes();
-    AttributesUpdateRequest message = new AttributesUpdateRequest(zone, attributes, false);
+    AttributesUpdateMessage message = new AttributesUpdateMessage(zone, attributes, false);
     client.updateAttributes(SerializableWrapper.wrap(message));
   }
 

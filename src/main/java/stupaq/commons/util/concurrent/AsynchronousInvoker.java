@@ -31,16 +31,19 @@ public class AsynchronousInvoker implements InvocationHandler {
       @Override
       public Object call() throws Exception {
         try {
+          method.setAccessible(true);
           return method.invoke(listener, args);
         } catch (InvocationTargetException e) {
           throw e.getTargetException() instanceof Exception ? (Exception) e.getTargetException() :
               e;
+        } finally {
+          method.setAccessible(false);
         }
       }
     };
     if (method.isAnnotationPresent(DirectInvocation.class)) {
       return callable.call();
-    } else if (method.isAnnotationPresent(DeferredInvocation.class)) {
+    } else if (method.isAnnotationPresent(ScheduledInvocation.class)) {
       // Nothing else makes sense as we cannot guarantee any value at the time when we submit a task
       Preconditions.checkState(method.getReturnType() == void.class);
       executor.submit(callable);
@@ -58,6 +61,6 @@ public class AsynchronousInvoker implements InvocationHandler {
 
   @Retention(value = RetentionPolicy.RUNTIME)
   @Target(value = ElementType.METHOD)
-  public static @interface DeferredInvocation {
+  public static @interface ScheduledInvocation {
   }
 }

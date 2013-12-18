@@ -146,7 +146,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     return super.equals(obj);
   }
 
-  private void appendTo(final StringBuilder builder) {
+  private void appendTo(StringBuilder builder) {
     builder.append(globalName()).append('\n');
     builder.append(payload.toString()).append("\n\n");
     for (ZoneHierarchy<Payload> child : childZones.values()) {
@@ -156,7 +156,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
 
   @Override
   public String toString() {
-    final StringBuilder result = new StringBuilder();
+    StringBuilder result = new StringBuilder();
     appendTo(result);
     return result.toString();
   }

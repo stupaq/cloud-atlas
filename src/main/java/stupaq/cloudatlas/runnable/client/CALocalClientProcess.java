@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.collector.AttributesCollector;
 import stupaq.cloudatlas.services.rmiserver.RMIServer;
-import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientRMIProtocol;
+import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 
 @SuppressWarnings("unused")
 public class CALocalClientProcess extends AbstractIdleService {
@@ -33,7 +33,7 @@ public class CALocalClientProcess extends AbstractIdleService {
   private final String host;
   private final GlobalName zone;
   private File configSource;
-  private LocalClientRMIProtocol client;
+  private LocalClientProtocol client;
   private ScheduledExecutorService executor;
   private ServiceManager manager;
 
@@ -61,8 +61,8 @@ public class CALocalClientProcess extends AbstractIdleService {
     }
     // Establish RMI connection that will be shared by all services
     Registry registry = LocateRegistry.getRegistry(host);
-    client = (LocalClientRMIProtocol) registry
-        .lookup(RMIServer.exportedName(LocalClientRMIProtocol.class));
+    client = (LocalClientProtocol) registry
+        .lookup(RMIServer.exportedName(LocalClientProtocol.class));
     // Create shared executor
     executor = Executors.newSingleThreadScheduledExecutor();
     // Create and start all services

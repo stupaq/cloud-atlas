@@ -14,9 +14,9 @@ import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.attribute.values.CATime;
-import stupaq.cloudatlas.messaging.messages.AttributesUpdateRequest;
-import stupaq.cloudatlas.messaging.messages.FallbackContactsRequest;
-import stupaq.cloudatlas.messaging.messages.ZoneReportResponse;
+import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
+import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
+import stupaq.cloudatlas.messaging.messages.KnownZonesResponse;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
@@ -55,8 +55,8 @@ public class CATypeRegistry {
     register(TypeDescriptor.LocalName, LocalName.SERIALIZER);
     register(TypeDescriptor.GlobalName, GlobalName.SERIALIZER);
     // ? extends Message
-    register(TypeDescriptor.AttributesUpdateRequest, AttributesUpdateRequest.SERIALIZER);
-    register(TypeDescriptor.FallbackContactsRequest, FallbackContactsRequest.SERIALIZER);
-    register(TypeDescriptor.ZoneReportResponse, ZoneReportResponse.SERIALIZER);
+    register(TypeDescriptor.AttributesUpdateRequest, AttributesUpdateMessage.SERIALIZER);
+    register(TypeDescriptor.FallbackContactsRequest, FallbackContactsMessage.SERIALIZER);
+    register(TypeDescriptor.ZoneReportResponse, KnownZonesResponse.SERIALIZER);
   }
 }

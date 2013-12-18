@@ -10,29 +10,31 @@ import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.messaging.Message;
+import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
 @Immutable
-public class FallbackContactsRequest extends Message implements Iterable<CAContact> {
-  public static final CompactSerializer<FallbackContactsRequest> SERIALIZER =
-      new CompactSerializer<FallbackContactsRequest>() {
+public class FallbackContactsMessage extends Message
+    implements CompactSerializable, Iterable<CAContact> {
+  public static final CompactSerializer<FallbackContactsMessage> SERIALIZER =
+      new CompactSerializer<FallbackContactsMessage>() {
         @Override
-        public FallbackContactsRequest readInstance(ObjectInput in) throws IOException {
-          return new FallbackContactsRequest(CompactSerializers.List(CAContact.SERIALIZER)
-              .readInstance(in));
+        public FallbackContactsMessage readInstance(ObjectInput in) throws IOException {
+          return new FallbackContactsMessage(
+              CompactSerializers.List(CAContact.SERIALIZER).readInstance(in));
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, FallbackContactsRequest object)
+        public void writeInstance(ObjectOutput out, FallbackContactsMessage object)
             throws IOException {
           CompactSerializers.List(CAContact.SERIALIZER).writeInstance(out, object.contacts);
         }
       };
   private final List<CAContact> contacts;
 
-  public FallbackContactsRequest(List<CAContact> contacts) {
+  public FallbackContactsMessage(List<CAContact> contacts) {
     this.contacts = contacts;
   }
 

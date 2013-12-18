@@ -6,29 +6,31 @@ import java.io.ObjectOutput;
 import java.util.Iterator;
 import java.util.List;
 
-import stupaq.cloudatlas.messaging.Message;
+import stupaq.cloudatlas.messaging.Response;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
-public class ZoneReportResponse extends Message implements Iterable<GlobalName> {
-  public static final CompactSerializer<ZoneReportResponse> SERIALIZER =
-      new CompactSerializer<ZoneReportResponse>() {
+public class KnownZonesResponse extends Response<KnownZonesRequest>
+    implements CompactSerializable, Iterable<GlobalName> {
+  public static final CompactSerializer<KnownZonesResponse> SERIALIZER =
+      new CompactSerializer<KnownZonesResponse>() {
         @Override
-        public ZoneReportResponse readInstance(ObjectInput in) throws IOException {
-          return new ZoneReportResponse(CompactSerializers.List(GlobalName.SERIALIZER)
-              .readInstance(in));
+        public KnownZonesResponse readInstance(ObjectInput in) throws IOException {
+          return new KnownZonesResponse(
+              CompactSerializers.List(GlobalName.SERIALIZER).readInstance(in));
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, ZoneReportResponse object) throws IOException {
+        public void writeInstance(ObjectOutput out, KnownZonesResponse object) throws IOException {
           CompactSerializers.List(GlobalName.SERIALIZER).writeInstance(out, object.zones);
         }
       };
   private final List<GlobalName> zones;
 
-  public ZoneReportResponse(List<GlobalName> zones) {
+  public KnownZonesResponse(List<GlobalName> zones) {
     this.zones = zones;
   }
 

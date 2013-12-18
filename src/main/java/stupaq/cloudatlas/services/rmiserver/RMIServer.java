@@ -13,7 +13,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import stupaq.cloudatlas.services.rmiserver.handler.LocalClientRMIHandler;
+import stupaq.cloudatlas.messaging.MessageBus;
+import stupaq.cloudatlas.services.rmiserver.handler.LocalClientHandler;
 
 public class RMIServer extends AbstractIdleService {
   private static final Log LOG = LogFactory.getLog(RMIServer.class);
@@ -25,12 +26,17 @@ public class RMIServer extends AbstractIdleService {
   }
 
   private final List<Remote> stubs = new ArrayList<>();
+  private final MessageBus bus;
   private Registry registry;
 
+  public RMIServer(MessageBus bus) {
+    this.bus = bus;
+  }
+
   @Override
-  protected void startUp() throws Exception {
+  protected void startUp() throws RemoteException {
     registry = LocateRegistry.getRegistry();
-    bind(new LocalClientRMIHandler());
+    bind(new LocalClientHandler(bus));
   }
 
   @Override

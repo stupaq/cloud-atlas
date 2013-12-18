@@ -109,6 +109,21 @@ public final class CompactSerializers {
     }
   };
 
+  public static <Type> CompactSerializer<Type> ConstantSingleton(final Type instance) {
+    return new CompactSerializer<Type>() {
+      @Override
+      public Type readInstance(ObjectInput in) throws IOException {
+        // Do nothing
+        return instance;
+      }
+
+      @Override
+      public void writeInstance(ObjectOutput out, Type object) throws IOException {
+        // Do nothing
+      }
+    };
+  }
+
   public static <Element> CompactSerializer<List<Element>> List(
       final CompactSerializer<Element> elementSerializer) {
     return new CompactSerializer<List<Element>>() {

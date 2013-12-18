@@ -12,9 +12,9 @@ import org.junit.Test;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import stupaq.commons.util.concurrent.AsynchronousInvoker.DeferredInvocation;
+import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
+import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
-import stupaq.compact.TypeDescriptor;
 
 import static stupaq.commons.util.testing.Asserts.assertLasts;
 import static stupaq.commons.util.testing.Asserts.assertLastsLess;
@@ -51,30 +51,27 @@ public class MessageBusTest {
     assertLastsLess(TIME_SCALE / 10, start);
   }
 
-  public interface TestListener1Contract {
+  private interface TestListener1Contract {
     @Subscribe
     @DirectInvocation
     public void handle1(TestMessage1 message);
 
     @Subscribe
-    @DeferredInvocation
+    @ScheduledInvocation
     public void handle2(TestMessage2 message);
   }
 
-  public static abstract class TestMessage extends Message {
-    @Override
-    public TypeDescriptor descriptor() {
-      return null;
+  private static class TestMessage1 extends Message {
+  }
+
+  private static class TestMessage2 extends Message {
+  }
+
+  private class TestListener1 extends AbstractMessageListener implements TestListener1Contract {
+    protected TestListener1() {
+      super(singleThreaded, TestListener1Contract.class);
     }
-  }
 
-  public static class TestMessage1 extends TestMessage {
-  }
-
-  public static class TestMessage2 extends TestMessage {
-  }
-
-  public class TestListener1 implements TestListener1Contract, MessageListener {
     @Override
     public void handle1(TestMessage1 message) {
       Uninterruptibles.sleepUninterruptibly(TIME_SCALE, TimeUnit.MILLISECONDS);
@@ -83,16 +80,6 @@ public class MessageBusTest {
     @Override
     public void handle2(TestMessage2 message) {
       Uninterruptibles.sleepUninterruptibly(TIME_SCALE, TimeUnit.MILLISECONDS);
-    }
-
-    @Override
-    public ListeningExecutorService executor() {
-      return singleThreaded;
-    }
-
-    @Override
-    public Class<?> contract() {
-      return TestListener1Contract.class;
     }
   }
 }
