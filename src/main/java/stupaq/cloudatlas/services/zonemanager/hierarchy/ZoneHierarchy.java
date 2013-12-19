@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Maps;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
@@ -21,7 +22,7 @@ import stupaq.commons.base.Function1;
 import stupaq.commons.base.Function2;
 
 public final class ZoneHierarchy<Payload extends Hierarchical> {
-  private final HashMap<LocalName, ZoneHierarchy<Payload>> childZones = new HashMap<>();
+  private final HashMap<LocalName, ZoneHierarchy<Payload>> childZones = Maps.newHashMap();
   private Payload payload;
   private ZoneHierarchy<Payload> parentZone;
 
@@ -63,11 +64,15 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
   }
 
   public Optional<ZoneHierarchy<Payload>> find(GlobalName globalName) {
+    return find(resolveRelative(globalName));
+  }
+
+  private Iterator<LocalName> resolveRelative(GlobalName globalName) {
     Preconditions.checkState(parentZone == null && localName().equals(LocalName.getRoot()),
         "Resolving global name from non-root");
     Iterator<LocalName> suffix = globalName.iterator();
     assert suffix.next().equals(LocalName.getRoot());
-    return find(suffix);
+    return suffix;
   }
 
   public FluentIterable<ZoneHierarchy<Payload>> findLeaves() {
@@ -117,6 +122,23 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     parentZone.childZones.put(payload.localName(), this);
   }
 
+  public Payload insert(GlobalName globalName, Inserter<Payload> inserter) {
+    inserter.descend(LocalName.getRoot());
+    return insert(resolveRelative(globalName), inserter);
+  }
+
+  public Payload insert(Iterator<LocalName> relative, Inserter<Payload> inserter) {
+    LocalName local = relative.next();
+    ZoneHierarchy<Payload> child = childZones.get(local);
+    if (child == null) {
+      child = new ZoneHierarchy<>(inserter.create(local));
+      childZones.put(local, child);
+    } else {
+      inserter.descend(local);
+    }
+    return relative.hasNext() ? child.insert(relative, inserter) : child.getPayload();
+  }
+
   public Payload getPayload() {
     return payload;
   }
@@ -134,16 +156,6 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
 
   private LocalName localName() {
     return payload.localName();
-  }
-
-  @Override
-  public final int hashCode() {
-    return super.hashCode();
-  }
-
-  @Override
-  public final boolean equals(Object obj) {
-    return super.equals(obj);
   }
 
   private void appendTo(StringBuilder builder) {
@@ -191,5 +203,12 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     }
 
     protected abstract void process(Payload payload);
+  }
+
+  public static abstract class Inserter<Payload extends Hierarchical> {
+    public void descend(LocalName root) {
+    }
+
+    public abstract Payload create(LocalName local);
   }
 }

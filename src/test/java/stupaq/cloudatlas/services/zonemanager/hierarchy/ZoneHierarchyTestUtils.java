@@ -19,12 +19,12 @@ import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TCont;
 import static stupaq.cloudatlas.query.typecheck.TypeInfoTestUtils.TStr;
 
 public final class ZoneHierarchyTestUtils {
+  private ZoneHierarchyTestUtils() {
+  }
+
   private static final String EP = CATime.epoch().to().String().toString();
   private static final String V7 = "/uw/violet07", K31 = "/uw/khaki31", K13 = "/uw/khaki13", W1 =
       "/pjwstk/whatever01", W2 = "/pjwstk/whatever02";
-
-  private ZoneHierarchyTestUtils() {
-  }
 
   @SuppressWarnings("unchecked")
   public static ZoneHierarchy<ZoneManagementInfo> oneLevelHierarchy(Attribute root,
@@ -77,7 +77,7 @@ public final class ZoneHierarchyTestUtils {
 
   public static ZoneManagementInfo addAttrs(ZoneManagementInfo zmi, Attribute... attributes) {
     for (Attribute attribute : attributes) {
-      zmi.updateAttribute(attribute);
+      zmi.recomputedAttribute(attribute);
     }
     return zmi;
   }

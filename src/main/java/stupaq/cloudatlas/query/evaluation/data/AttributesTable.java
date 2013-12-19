@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.query.evaluation.data;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
 
   public AttributesTable(Iterable<Iterable<Attribute>> subZones) {
     Preconditions.checkState(inputTypes == null, "Table already filled");
-    inputTypes = new HashMap<>();
+    inputTypes = Maps.newHashMap();
     for (Iterable<Attribute> zone : subZones) {
       AttributesRow row = new AttributesRow();
       for (Attribute attribute : zone) {

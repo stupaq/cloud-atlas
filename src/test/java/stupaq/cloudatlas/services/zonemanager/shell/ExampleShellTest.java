@@ -2,6 +2,7 @@ package stupaq.cloudatlas.services.zonemanager.shell;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,15 +26,15 @@ import stupaq.cloudatlas.attribute.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.attribute.values.CATime;
-import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
-import stupaq.cloudatlas.query.errors.ParsingException;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.query.errors.ParsingException;
 import stupaq.cloudatlas.query.parser.QueryParser;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceMapper;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchyTestUtils;
+import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -113,7 +114,7 @@ public class ExampleShellTest {
       protected void process(Iterable<ZoneManagementInfo> children,
           ZoneManagementInfo managementInfo) {
         if (!Iterables.isEmpty(children)) {
-          managementInfo.updateAttribute(new Attribute<>(name, query));
+          managementInfo.recomputedAttribute(new Attribute<>(name, query));
         }
       }
     });
@@ -337,16 +338,16 @@ public class ExampleShellTest {
   @Test
   public void testExample2() throws Exception {
     executeQuery(
-        "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY num_cores ASC NULLS FIRST, "
-        + "cpu_usage DESC NULLS LAST");
+        "SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY num_cores ASC NULLS FIRST, " +
+            "cpu_usage DESC NULLS LAST");
     assertValue("/uw", "new_contacts", List(TCont(), Cont("UW1A"), Cont("UW1B")));
     assertNothing("/", "new_contacts");
   }
 
   @Test
   public void testExample2v1() throws Exception {
-    executeQuery("SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY cpu_usage "
-                 + "DESC NULLS LAST, num_cores ASC NULLS FIRST");
+    executeQuery("SELECT first(2, unfold(contacts)) AS new_contacts ORDER BY cpu_usage " +
+        "DESC NULLS LAST, num_cores ASC NULLS FIRST");
     assertValue("/uw", "new_contacts", List(TCont(), Cont("UW3A"), Cont("UW3B")));
   }
 
@@ -381,9 +382,8 @@ public class ExampleShellTest {
 
   @Test
   public void testExample7v2() throws Exception {
-    executeQuery("SELECT first(1, name) AS concat_name WHERE num_cores >= "
-                 + "(SELECT min(num_cores) ORDER BY timestamp) ORDER BY creation ASC NULLS "
-                 + "LAST");
+    executeQuery("SELECT first(1, name) AS concat_name WHERE num_cores >= " +
+        "(SELECT min(num_cores) ORDER BY timestamp) ORDER BY creation ASC NULLS " + "LAST");
     assertValue("/pjwstk", "concat_name", List(TStr(), Str("whatever01")));
   }
 
@@ -495,8 +495,8 @@ public class ExampleShellTest {
 
   @Test
   public void testExample21() throws Exception {
-    executeQuery("SELECT (2 < 3) AND (3 > 2) AND NOT (2 > 3) AND NOT (3 < 2) AND (2 <> 3) AND "
-                 + "(2 = 2) AND (2 <= 2) AND (2 <= 3) AND (3 >= 2) AND (2 >= 2) AS test");
+    executeQuery("SELECT (2 < 3) AND (3 > 2) AND NOT (2 > 3) AND NOT (3 < 2) AND (2 <> 3) AND " +
+        "(2 = 2) AND (2 <= 2) AND (2 <= 3) AND (3 >= 2) AND (2 >= 2) AS test");
     assertValue("/", "test", Bool(true));
   }
 
@@ -533,7 +533,7 @@ public class ExampleShellTest {
   public void testParse() throws IOException, IllegalArgumentException, ParsingException {
     Collection<Entry<AttributeName, CAQuery>> queries = parse(new ByteArrayInputStream(
         "&example1: SELECT 2 + 2 AS four;\n&example2: SELECT 2 + 3 AS five;".getBytes()));
-    Map<AttributeName, CAQuery> expected = new HashMap<>();
+    Map<AttributeName, CAQuery> expected = Maps.newHashMap();
     expected.put(AttributeName.valueOfReserved("&example1"), new CAQuery("SELECT 2 + 2 AS four"));
     expected.put(AttributeName.valueOfReserved("&example2"), new CAQuery("SELECT 2 + 3 AS five"));
     assertEquals(expected.entrySet(), queries);

@@ -12,9 +12,10 @@ public abstract class Response<RequestType extends Request> extends Message {
     return request;
   }
 
-  public void attach(RequestType request) {
+  public Response<RequestType> attach(RequestType request) {
     Preconditions.checkNotNull(request);
     Preconditions.checkState(this.request == null);
     this.request = request;
+    return this;
   }
 }

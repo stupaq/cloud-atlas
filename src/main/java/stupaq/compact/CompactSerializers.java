@@ -7,6 +7,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -140,6 +141,21 @@ public final class CompactSerializers {
 
       @Override
       public void writeInstance(ObjectOutput out, List<Element> object) throws IOException {
+        Collection(elementSerializer).writeInstance(out, object);
+      }
+    };
+  }
+
+  public static <Element> CompactSerializer<Collection<Element>> Collection(
+      final CompactSerializer<Element> elementSerializer) {
+    return new CompactSerializer<Collection<Element>>() {
+      @Override
+      public Collection<Element> readInstance(ObjectInput in) throws IOException {
+        return List(elementSerializer).readInstance(in);
+      }
+
+      @Override
+      public void writeInstance(ObjectOutput out, Collection<Element> object) throws IOException {
         out.writeInt(object.size());
         for (Element attribute : object) {
           elementSerializer.writeInstance(out, attribute);

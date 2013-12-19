@@ -2,9 +2,12 @@ package stupaq.cloudatlas.messaging.messages;
 
 import com.google.common.util.concurrent.SettableFuture;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.cloudatlas.messaging.Request;
 import stupaq.cloudatlas.naming.GlobalName;
 
+@Immutable
 public class DumpZoneRequest extends Request<SettableFuture<DumpZoneResponse>> {
   private final GlobalName zone;
 

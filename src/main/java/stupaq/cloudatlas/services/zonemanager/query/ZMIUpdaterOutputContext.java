@@ -41,7 +41,7 @@ class ZMIUpdaterOutputContext implements OutputContext {
   @Override
   public void commit() {
     for (Attribute attribute : putsLog) {
-      destination.updateAttribute(attribute);
+      destination.recomputedAttribute(attribute);
     }
     putsLog.clear();
   }

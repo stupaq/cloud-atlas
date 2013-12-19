@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.query.evaluation.context;
 
-import java.util.HashMap;
+import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 import stupaq.cloudatlas.attribute.AttributeName;
@@ -17,7 +18,7 @@ public class InputContext {
   private final Map<AttributeName, SemanticValue> inputAttributes;
 
   public InputContext(AttributesRow row) {
-    inputAttributes = new HashMap<>();
+    inputAttributes = Maps.newHashMap();
     for (Map.Entry<AttributeName, AttributeValue> attribute : row.entrySet()) {
       inputAttributes.put(attribute.getKey(), new RSingle<>(attribute.getValue()));
     }
@@ -25,7 +26,7 @@ public class InputContext {
 
   @SuppressWarnings("unchecked")
   public InputContext(AttributesTable table) {
-    Map<AttributeName, RColumn> columns = new HashMap<>();
+    Map<AttributeName, RColumn> columns = Maps.newHashMap();
     if (table.isEmpty()) {
       for (Map.Entry<AttributeName, TypeInfo> entry : table.getTypes()) {
         columns.put(entry.getKey(), new RColumn(entry.getValue()));
@@ -45,7 +46,7 @@ public class InputContext {
       }
     }
     assert columns.size() == table.getTypes().size();
-    inputAttributes = new HashMap<>();
+    inputAttributes = Maps.newHashMap();
     inputAttributes.putAll(columns);
   }
 

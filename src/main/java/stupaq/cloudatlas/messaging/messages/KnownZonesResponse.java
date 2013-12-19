@@ -6,6 +6,8 @@ import java.io.ObjectOutput;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.cloudatlas.messaging.Response;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.compact.CompactSerializable;
@@ -13,6 +15,7 @@ import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
+@Immutable
 public class KnownZonesResponse extends Response<KnownZonesRequest>
     implements CompactSerializable, Iterable<GlobalName> {
   public static final CompactSerializer<KnownZonesResponse> SERIALIZER =

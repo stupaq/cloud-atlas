@@ -1,10 +1,13 @@
 package stupaq.cloudatlas.attribute;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -13,6 +16,8 @@ import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.TypeRegistry;
+
+import static stupaq.compact.CompactSerializers.Collection;
 
 @Immutable
 public final class Attribute<Type extends AttributeValue> implements CompactSerializable {
@@ -30,6 +35,23 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
       TypeRegistry.writeObject(out, object.value);
     }
   };
+  public static final CompactSerializer<Map<AttributeName, Attribute>> MAP_SERIALIZER =
+      new CompactSerializer<Map<AttributeName, Attribute>>() {
+        @Override
+        public Map<AttributeName, Attribute> readInstance(ObjectInput in) throws IOException {
+          HashMap<AttributeName, Attribute> map = Maps.newHashMap();
+          for (Attribute attribute : Collection(SERIALIZER).readInstance(in)) {
+            map.put(attribute.getName(), attribute);
+          }
+          return map;
+        }
+
+        @Override
+        public void writeInstance(ObjectOutput out, Map<AttributeName, Attribute> map)
+            throws IOException {
+          Collection(SERIALIZER).writeInstance(out, map.values());
+        }
+      };
   @Nonnull private final AttributeName name;
   @Nonnull private final Type value;
 

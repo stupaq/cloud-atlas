@@ -12,9 +12,10 @@ public abstract class Request<ContextType> extends Message {
     return context;
   }
 
-  public void attach(ContextType context) {
+  public Request<ContextType> attach(ContextType context) {
     Preconditions.checkNotNull(context);
     Preconditions.checkState(this.context == null);
     this.context = context;
+    return this;
   }
 }

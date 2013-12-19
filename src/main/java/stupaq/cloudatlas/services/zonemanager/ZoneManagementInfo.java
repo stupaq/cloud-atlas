@@ -1,15 +1,15 @@
 package stupaq.cloudatlas.services.zonemanager;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import stupaq.cloudatlas.attribute.Attribute;
@@ -25,30 +25,26 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
       new CompactSerializer<ZoneManagementInfo>() {
         @Override
         public ZoneManagementInfo readInstance(ObjectInput in) throws IOException {
-          ZoneManagementInfo zmi = new ZoneManagementInfo(LocalName.SERIALIZER.readInstance(in));
-          int elements = in.readInt();
-          Preconditions.checkState(elements >= 0);
-          for (; elements > 0; --elements) {
-            zmi.updateAttribute(Attribute.SERIALIZER.readInstance(in));
-          }
-          return zmi;
+          return new ZoneManagementInfo(LocalName.SERIALIZER.readInstance(in),
+              Attribute.MAP_SERIALIZER.readInstance(in));
         }
 
         @Override
         public void writeInstance(ObjectOutput out, ZoneManagementInfo object) throws IOException {
-          LocalName.SERIALIZER.writeInstance(out, object.localName());
-          out.writeInt(object.attributes.size());
-          for (Attribute attribute : object.attributes.values()) {
-            Attribute.SERIALIZER.writeInstance(out, attribute);
-          }
+          LocalName.SERIALIZER.writeInstance(out, object.localName);
+          Attribute.MAP_SERIALIZER.writeInstance(out, object.attributes);
         }
       };
   private final LocalName localName;
   private final Map<AttributeName, Attribute> attributes;
 
   public ZoneManagementInfo(LocalName localName) {
+    this(localName, Maps.<AttributeName, Attribute>newHashMap());
+  }
+
+  public ZoneManagementInfo(LocalName localName, Map<AttributeName, Attribute> attributes) {
     this.localName = localName;
-    attributes = new LinkedHashMap<>();
+    this.attributes = attributes;
   }
 
   @Override
@@ -56,7 +52,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     return localName;
   }
 
-  public void updateAttribute(Attribute attribute) {
+  public void recomputedAttribute(Attribute attribute) {
     attributes.put(attribute.getName(), attribute);
   }
 
@@ -86,13 +82,16 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     }).toList();
   }
 
+  public ZoneManagementInfo export() {
+    return new ZoneManagementInfo(localName, new HashMap<>(attributes));
+  }
+
   @Override
   public boolean equals(Object o) {
     ZoneManagementInfo that = (ZoneManagementInfo) o;
     return this == o ||
         !(o == null || getClass() != o.getClass()) && attributes.equals(that.attributes) &&
             localName.equals(that.localName);
-
   }
 
   @Override

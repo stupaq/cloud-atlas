@@ -3,6 +3,9 @@ package stupaq.commons.util.concurrent;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,6 +18,7 @@ import java.util.concurrent.Callable;
 import javax.annotation.Nonnull;
 
 public class AsynchronousInvoker implements InvocationHandler {
+  private static final Log LOG = LogFactory.getLog(AsynchronousInvoker.class);
   private final Object listener;
   private final ListeningExecutorService executor;
 
@@ -27,6 +31,8 @@ public class AsynchronousInvoker implements InvocationHandler {
 
   @Override
   public Object invoke(Object proxy, final Method method, final Object[] args) throws Exception {
+    // Response (if any) will be sent asynchronously
+    Preconditions.checkState(method.getReturnType() == void.class);
     Callable<Object> callable = new Callable<Object>() {
       @Override
       public Object call() throws Exception {
@@ -34,8 +40,9 @@ public class AsynchronousInvoker implements InvocationHandler {
           method.setAccessible(true);
           return method.invoke(listener, args);
         } catch (InvocationTargetException e) {
-          throw e.getTargetException() instanceof Exception ? (Exception) e.getTargetException() :
-              e;
+          LOG.error("Invoker serving " + listener.getClass() + " call failed",
+              e.getTargetException());
+          throw e.getCause() instanceof Exception ? (Exception) e.getCause() : e;
         } finally {
           method.setAccessible(false);
         }
@@ -45,7 +52,6 @@ public class AsynchronousInvoker implements InvocationHandler {
       return callable.call();
     } else if (method.isAnnotationPresent(ScheduledInvocation.class)) {
       // Nothing else makes sense as we cannot guarantee any value at the time when we submit a task
-      Preconditions.checkState(method.getReturnType() == void.class);
       executor.submit(callable);
       return null;
     } else {
