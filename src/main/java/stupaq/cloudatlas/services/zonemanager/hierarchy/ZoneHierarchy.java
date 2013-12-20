@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import stupaq.compact.CompactSerializer;
 
 import static stupaq.compact.CompactSerializers.Collection;
 
-public final class ZoneHierarchy<Payload extends Hierarchical> {
+public final class ZoneHierarchy<Payload extends Hierarchical> implements Serializable {
   private final HashMap<LocalName, ZoneHierarchy<Payload>> childZones = Maps.newHashMap();
   private Payload payload;
   private ZoneHierarchy<Payload> parentZone;
@@ -191,6 +192,25 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     StringBuilder result = new StringBuilder();
     appendTo(result);
     return result.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ZoneHierarchy that = (ZoneHierarchy) o;
+    return childZones.equals(that.childZones) && payload.equals(that.payload);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = childZones.hashCode();
+    result = 31 * result + payload.hashCode();
+    return result;
   }
 
   public static <Payload extends Hierarchical & CompactSerializable> CompactSerializer<ZoneHierarchy<Payload>> Serializer(

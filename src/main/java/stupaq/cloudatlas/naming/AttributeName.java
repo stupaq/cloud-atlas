@@ -13,6 +13,7 @@ import javax.annotation.concurrent.Immutable;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
+import stupaq.compact.SerializationConstructor;
 import stupaq.compact.TypeDescriptor;
 
 @Immutable
@@ -30,6 +31,10 @@ public final class AttributeName extends CAIdentifier implements CompactSerializ
         }
       };
   public static final String RESERVED_PREFIX = "&";
+
+  @SerializationConstructor
+  protected AttributeName() {
+  }
 
   protected AttributeName(@Nonnull String name) {
     super(name);

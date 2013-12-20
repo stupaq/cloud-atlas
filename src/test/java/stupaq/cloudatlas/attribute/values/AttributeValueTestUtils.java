@@ -89,6 +89,6 @@ public class AttributeValueTestUtils {
   }
 
   public static void assertNotEquals(AttributeValue notExpected, AttributeValue actual) {
-    assertThat(notExpected, not((AttributeValue) actual));
+    assertThat(notExpected, not(actual));
   }
 }

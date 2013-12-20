@@ -11,7 +11,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
@@ -119,19 +118,19 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
     @Override
     public void dumpValues(EntitiesValuesRequest request) {
-      List<AttributeValue> values = new ArrayList<>();
+      List<Attribute> attributes = new ArrayList<>();
       for (EntityName entity : request) {
         Optional<ZoneManagementInfo> zmi = hierarchy.getPayload(entity.zone);
         if (zmi.isPresent()) {
           Optional<Attribute> attribute = zmi.get().getAttribute(entity.attributeName);
           if (attribute.isPresent()) {
-            values.add(attribute.get().getValue());
+            attributes.add(attribute.get());
             continue;
           }
         }
-        values.add(null);
+        attributes.add(null);
       }
-      bus.post(new EntitiesValuesResponse(values).attach(request));
+      bus.post(new EntitiesValuesResponse(attributes).attach(request));
     }
 
     @Override

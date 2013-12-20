@@ -5,7 +5,10 @@ import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,13 +18,15 @@ import javax.annotation.concurrent.Immutable;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
+import stupaq.compact.SerializationConstructor;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.TypeRegistry;
 
 import static stupaq.compact.CompactSerializers.Collection;
 
 @Immutable
-public final class Attribute<Type extends AttributeValue> implements CompactSerializable {
+public final class Attribute<Type extends AttributeValue>
+    implements CompactSerializable, Serializable {
   public static final CompactSerializer<Attribute> SERIALIZER = new CompactSerializer<Attribute>() {
     @SuppressWarnings("unchecked")
     @Override
@@ -54,13 +59,28 @@ public final class Attribute<Type extends AttributeValue> implements CompactSeri
         }
       };
   @Nonnull private final AttributeName name;
-  @Nonnull private final Type value;
+  @Nonnull private transient Type value;
+
+  @SerializationConstructor
+  public Attribute() {
+    name = null;
+  }
 
   public Attribute(@Nonnull AttributeName name, @Nonnull Type value) {
     Preconditions.checkNotNull(name, "AttributeName cannot be null");
     Preconditions.checkNotNull(value, "AttributeValue cannot be null");
     this.name = name;
     this.value = value;
+  }
+
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.defaultWriteObject();
+    TypeRegistry.writeObject(out, value);
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    value = TypeRegistry.readObject(in);
   }
 
   @Nonnull

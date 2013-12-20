@@ -5,9 +5,9 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-public final class SerializableWrapper<Type extends CompactSerializable>
-    implements java.io.Serializable {
+public final class SerializableWrapper<Type extends CompactSerializable> implements Serializable {
   private static final long serialVersionUID = 1L;
   private transient Type object;
 

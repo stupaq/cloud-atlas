@@ -6,8 +6,14 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import stupaq.compact.SerializationConstructor;
+
 @Immutable
 public class ASCIIString extends ForwardingWrapper<String> {
+  @SerializationConstructor
+  protected ASCIIString() {
+  }
+
   public ASCIIString(@Nonnull ASCIIString string) {
     super(string.get());
   }

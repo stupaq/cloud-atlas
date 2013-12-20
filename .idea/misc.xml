@@ -2,10 +2,12 @@
 <project version="4">
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
-    <list size="3">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="com.google.common.eventbus.Subscribe" />
       <item index="1" class="java.lang.String" itemvalue="org.junit.BeforeClass" />
       <item index="2" class="java.lang.String" itemvalue="stupaq.cloudatlas.serialization.SerializationOnly" />
+      <item index="3" class="java.lang.String" itemvalue="stupaq.compact.DeserializationConstructor" />
+      <item index="4" class="java.lang.String" itemvalue="stupaq.compact.SerializationConstructor" />
     </list>
   </component>
   <component name="MavenProjectsManager">

@@ -3,7 +3,6 @@ package stupaq.cloudatlas.serialization;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.values.CABoolean;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CADouble;
@@ -14,13 +13,12 @@ import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.attribute.values.CATime;
-import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
-import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
-import stupaq.cloudatlas.messaging.messages.KnownZonesResponse;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.compact.TypeDescriptor;
 
 import static stupaq.compact.TypeRegistry.register;
@@ -54,9 +52,8 @@ public class CATypeRegistry {
     // .naming package
     register(TypeDescriptor.LocalName, LocalName.SERIALIZER);
     register(TypeDescriptor.GlobalName, GlobalName.SERIALIZER);
+    // ZMI
+    register(TypeDescriptor.ZoneManagementInfo, ZoneManagementInfo.SERIALIZER);
     // ? extends Message
-    register(TypeDescriptor.AttributesUpdateRequest, AttributesUpdateMessage.SERIALIZER);
-    register(TypeDescriptor.FallbackContactsRequest, FallbackContactsMessage.SERIALIZER);
-    register(TypeDescriptor.ZoneReportResponse, KnownZonesResponse.SERIALIZER);
   }
 }

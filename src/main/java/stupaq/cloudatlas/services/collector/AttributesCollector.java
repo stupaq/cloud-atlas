@@ -17,17 +17,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.values.CADouble;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.configuration.CAConfiguration;
-import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
-import stupaq.compact.SerializableWrapper;
 
 public class AttributesCollector extends AbstractScheduledService
     implements AttributesCollectorConfigKeys {
@@ -48,9 +46,7 @@ public class AttributesCollector extends AbstractScheduledService
 
   @Override
   protected void runOneIteration() throws IOException {
-    List<Attribute> attributes = collectAttributes();
-    AttributesUpdateMessage message = new AttributesUpdateMessage(zone, attributes, false);
-    client.updateAttributes(SerializableWrapper.wrap(message));
+    client.updateAttributes(zone, collectAttributes(), false);
   }
 
   @Override

@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,7 @@ import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 
-public final class ZoneManagementInfo implements CompactSerializable, Hierarchical {
+public final class ZoneManagementInfo implements CompactSerializable, Hierarchical, Serializable {
   public static final CompactSerializer<ZoneManagementInfo> SERIALIZER =
       new CompactSerializer<ZoneManagementInfo>() {
         @Override
@@ -89,6 +90,20 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     return new ZoneManagementInfo(localName, new HashMap<>(attributes));
   }
 
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.ZoneManagementInfo;
+  }
+
+  public void settableAttributes(Iterable<Attribute> attributes, boolean eraseOthers) {
+    if (eraseOthers) {
+      settable.clear();
+    }
+    for (Attribute attribute : attributes) {
+      settable.put(attribute.getName(), attribute);
+    }
+  }
+
   // FIXME
   @Override
   public String toString() {
@@ -102,16 +117,24 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
   }
 
   @Override
-  public TypeDescriptor descriptor() {
-    return TypeDescriptor.ZoneManagementInfo;
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ZoneManagementInfo that = (ZoneManagementInfo) o;
+    return attributes.equals(that.attributes) && localName.equals(that.localName) &&
+        settable.equals(that.settable);
+
   }
 
-  public void settableAttributes(Iterable<Attribute> attributes, boolean eraseOthers) {
-    if (eraseOthers) {
-      settable.clear();
-    }
-    for (Attribute attribute : attributes) {
-      settable.put(attribute.getName(), attribute);
-    }
+  @Override
+  public int hashCode() {
+    int result = localName.hashCode();
+    result = 31 * result + attributes.hashCode();
+    result = 31 * result + settable.hashCode();
+    return result;
   }
 }

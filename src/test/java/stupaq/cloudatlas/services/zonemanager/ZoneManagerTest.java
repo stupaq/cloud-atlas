@@ -36,10 +36,4 @@ public class ZoneManagerTest {
   public void testKnownZones() throws Exception {
     // FIXME
   }
-
-  private static interface TestListener extends MessageListener {
-    @Subscribe
-    @DirectInvocation
-    public void knownZones(KnownZonesResponse response);
-  }
 }

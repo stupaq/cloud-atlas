@@ -1,8 +1,18 @@
 package stupaq.cloudatlas.naming;
 
-public class EntityName {
+import java.io.Serializable;
+
+import stupaq.compact.SerializationConstructor;
+
+public class EntityName implements Serializable {
   public final GlobalName zone;
   public final AttributeName attributeName;
+
+  @SerializationConstructor
+  protected EntityName() {
+    zone = null;
+    attributeName = null;
+  }
 
   public EntityName(GlobalName zone, AttributeName attributeName) {
     this.zone = zone;

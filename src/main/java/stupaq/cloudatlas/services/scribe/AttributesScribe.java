@@ -8,15 +8,12 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.configuration.CAConfiguration;
-import stupaq.cloudatlas.messaging.messages.EntitiesValuesRequest;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.cloudatlas.services.scribe.RecordsManager.Records;
 import stupaq.cloudatlas.time.Clock;
-
-import static stupaq.compact.SerializableWrapper.wrap;
 
 public class AttributesScribe extends AbstractScheduledService
     implements AttributesScribeConfigKeys {
@@ -37,13 +34,12 @@ public class AttributesScribe extends AbstractScheduledService
   @Override
   protected void runOneIteration() throws IOException {
     List<EntityName> entitiesList = configuration.getEntities(ENTITIES);
-    Iterator<AttributeValue> values =
-        client.getValues(wrap(new EntitiesValuesRequest(entitiesList))).get().iterator();
+    Iterator<Attribute> values = client.getValues(entitiesList).iterator();
     Iterator<EntityName> entities = entitiesList.iterator();
     long timestamp = clock.getTime();
     while (entities.hasNext() && entities.hasNext()) {
       try (Records log = recordsManager.forEntity(entities.next())) {
-        log.record(timestamp, values.next());
+        log.record(timestamp, values.next().getValue());
       }
     }
   }

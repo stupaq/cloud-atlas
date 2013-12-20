@@ -1,30 +1,35 @@
 package stupaq.cloudatlas.services.rmiserver.handler;
 
+import com.google.common.base.Function;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import stupaq.cloudatlas.attribute.Attribute;
+import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.Request;
 import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.DumpZoneRequest;
 import stupaq.cloudatlas.messaging.messages.EntitiesValuesRequest;
-import stupaq.cloudatlas.messaging.messages.EntitiesValuesResponse;
 import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
 import stupaq.cloudatlas.messaging.messages.KnownZonesRequest;
-import stupaq.cloudatlas.messaging.messages.KnownZonesResponse;
+import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
 import stupaq.compact.SerializableWrapper;
 
-import static stupaq.compact.SerializableWrapper.wrap;
+import static com.google.common.collect.FluentIterable.from;
 
 public class LocalClientHandler implements LocalClientProtocol {
   private final MessageBus bus;
@@ -36,37 +41,42 @@ public class LocalClientHandler implements LocalClientProtocol {
   }
 
   @Override
-  public void updateAttributes(SerializableWrapper<AttributesUpdateMessage> message) {
-    bus.post(message.get());
-  }
-
-  @Override
-  public SerializableWrapper<ZoneManagementInfo> getAttributes(
-      SerializableWrapper<GlobalName> globalName) throws RemoteException {
-    DumpZoneRequest request = new DumpZoneRequest(globalName.get());
-    bus.post(request);
-    return wrap(awaitResult(request).getZmi());
-  }
-
-  @Override
-  public SerializableWrapper<EntitiesValuesResponse> getValues(
-      SerializableWrapper<EntitiesValuesRequest> request) throws RemoteException {
-    request.get().attach(SettableFuture.<EntitiesValuesResponse>create());
-    bus.post(request.get());
-    return wrap(awaitResult(request.get()));
-  }
-
-  @Override
-  public void setFallbackContacts(SerializableWrapper<FallbackContactsMessage> message)
+  public void updateAttributes(GlobalName zone, List<Attribute> attributes, boolean override)
       throws RemoteException {
-    bus.post(message.get());
+    bus.post(new AttributesUpdateMessage(zone, attributes, override));
   }
 
   @Override
-  public SerializableWrapper<KnownZonesResponse> getKnownZones() throws RemoteException {
+  public void setFallbackContacts(List<SerializableWrapper<CAContact>> contacts)
+      throws RemoteException {
+    bus.post(new FallbackContactsMessage(
+        from(contacts).transform(new Function<SerializableWrapper<CAContact>, CAContact>() {
+          @Override
+          public CAContact apply(SerializableWrapper<CAContact> contact) {
+            return contact.get();
+          }
+        }).toList()));
+  }
+
+  @Override
+  public ZoneManagementInfo getAttributes(GlobalName globalName) throws RemoteException {
+    DumpZoneRequest request = new DumpZoneRequest(globalName);
+    bus.post(request);
+    return awaitResult(request).getZmi();
+  }
+
+  @Override
+  public List<Attribute> getValues(List<EntityName> entities) throws RemoteException {
+    EntitiesValuesRequest request = new EntitiesValuesRequest(entities);
+    bus.post(request);
+    return awaitResult(request).getList();
+  }
+
+  @Override
+  public ZoneHierarchy<LocalName> getKnownZones() throws RemoteException {
     KnownZonesRequest request = new KnownZonesRequest();
     bus.post(request);
-    return wrap(awaitResult(request));
+    return awaitResult(request).getZones();
   }
 
   private <Result> Result awaitResult(Request<SettableFuture<Result>> request)

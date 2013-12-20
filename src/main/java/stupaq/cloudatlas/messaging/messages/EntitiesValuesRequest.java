@@ -7,24 +7,18 @@ import java.util.List;
 
 import stupaq.cloudatlas.messaging.Request;
 import stupaq.cloudatlas.naming.EntityName;
-import stupaq.compact.CompactSerializable;
-import stupaq.compact.TypeDescriptor;
 
 public class EntitiesValuesRequest extends Request<SettableFuture<EntitiesValuesResponse>>
-    implements Iterable<EntityName>, CompactSerializable {
+    implements Iterable<EntityName> {
   private final List<EntityName> entities;
 
   public EntitiesValuesRequest(List<EntityName> entities) {
     this.entities = entities;
+    attach(SettableFuture.<EntitiesValuesResponse>create());
   }
 
   @Override
   public Iterator<EntityName> iterator() {
     return entities.iterator();
-  }
-
-  @Override
-  public TypeDescriptor descriptor() {
-    return TypeDescriptor.EntitiesValuesRequest;
   }
 }

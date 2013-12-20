@@ -2,16 +2,25 @@ package stupaq.commons.base;
 
 import com.google.common.base.Preconditions;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+
+import stupaq.compact.SerializationConstructor;
 
 /**
  * General purpose class that simplifies extending final classes by forwarding {@link
  * #equals(Object)}, {@link #hashCode()} and {@link #toString()}.
  */
 @Immutable
-public abstract class ForwardingWrapper<Primitive> {
+public abstract class ForwardingWrapper<Primitive> implements Serializable {
   @Nonnull private final Primitive value;
+
+  @SerializationConstructor
+  protected ForwardingWrapper() {
+    value = null;
+  }
 
   protected ForwardingWrapper(@Nonnull Primitive value) {
     Preconditions.checkNotNull(value);

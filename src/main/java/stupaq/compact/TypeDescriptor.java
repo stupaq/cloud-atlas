@@ -29,14 +29,10 @@ public enum TypeDescriptor {
   // .naming package
   LocalName,
   GlobalName,
+  // ZMI
   ZoneManagementInfo,
   // ? extends Message
-  AttributesUpdateRequest,
-  FallbackContactsRequest,
-  ZoneReportResponse,
-  ZoneReportRequest,
-  EntitiesValuesResponse,
-  EntitiesValuesRequest;
+  ;
 
   static {
     assert TypeDescriptor.values().length < Byte.MAX_VALUE;
