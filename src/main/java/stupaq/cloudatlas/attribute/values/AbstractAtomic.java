@@ -3,16 +3,25 @@ package stupaq.cloudatlas.attribute.values;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.compact.SerializationConstructor;
 
 /** PACKAGE-LOCAL */
-abstract class AbstractAtomic<Type extends Comparable<Type>> implements AttributeValue {
+abstract class AbstractAtomic<Type extends Comparable<Type>>
+    implements AttributeValue, Serializable {
   @Nonnull private Optional<Type> value;
+
+  @SerializationConstructor
+  protected AbstractAtomic() {
+    value = null;
+  }
 
   protected AbstractAtomic(@Nullable Type value) {
     this.value = Optional.fromNullable(value);

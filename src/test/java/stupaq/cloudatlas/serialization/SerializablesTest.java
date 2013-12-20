@@ -9,6 +9,7 @@ import java.util.Arrays;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CABoolean;
+import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CAList;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.EntityName;
@@ -32,6 +33,7 @@ public class SerializablesTest {
     AttributeName attributeName = AttributeName.valueOf("attribute");
     Attribute<CAList<CABoolean>> listAttribute = new Attribute<>(attributeName,
         new CAList<>(TypeInfo.of(CABoolean.class), Arrays.asList(new CABoolean(true))));
+    CAContact contact = new CAContact("Some contact");
     ZoneManagementInfo zmi = new ZoneManagementInfo(LocalName.getNotRoot("warsaw"));
     zmi.recomputedAttribute(listAttribute);
     EntityName entity = new EntityName(globalName, attributeName);
@@ -41,6 +43,7 @@ public class SerializablesTest {
     // Try to serialize
     assertSerializable(globalName);
     assertSerializable(listAttribute);
+    assertSerializable(contact);
     assertSerializable(zmi);
     assertSerializable(entity);
     assertSerializable(localName);

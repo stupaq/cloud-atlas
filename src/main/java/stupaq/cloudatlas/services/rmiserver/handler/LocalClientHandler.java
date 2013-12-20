@@ -1,6 +1,5 @@
 package stupaq.cloudatlas.services.rmiserver.handler;
 
-import com.google.common.base.Function;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
@@ -27,9 +26,6 @@ import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
-import stupaq.compact.SerializableWrapper;
-
-import static com.google.common.collect.FluentIterable.from;
 
 public class LocalClientHandler implements LocalClientProtocol {
   private final MessageBus bus;
@@ -47,15 +43,8 @@ public class LocalClientHandler implements LocalClientProtocol {
   }
 
   @Override
-  public void setFallbackContacts(List<SerializableWrapper<CAContact>> contacts)
-      throws RemoteException {
-    bus.post(new FallbackContactsMessage(
-        from(contacts).transform(new Function<SerializableWrapper<CAContact>, CAContact>() {
-          @Override
-          public CAContact apply(SerializableWrapper<CAContact> contact) {
-            return contact.get();
-          }
-        }).toList()));
+  public void setFallbackContacts(List<CAContact> contacts) throws RemoteException {
+    bus.post(new FallbackContactsMessage(contacts));
   }
 
   @Override

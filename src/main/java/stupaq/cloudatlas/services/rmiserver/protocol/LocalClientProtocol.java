@@ -11,15 +11,13 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
-import stupaq.compact.SerializableWrapper;
 
 public interface LocalClientProtocol extends Remote {
 
   public void updateAttributes(GlobalName zone, List<Attribute> attributes, boolean override)
       throws RemoteException;
 
-  public void setFallbackContacts(List<SerializableWrapper<CAContact>> attributes)
-      throws RemoteException;
+  public void setFallbackContacts(List<CAContact> attributes) throws RemoteException;
 
   public ZoneManagementInfo getAttributes(GlobalName globalName) throws RemoteException;
 
