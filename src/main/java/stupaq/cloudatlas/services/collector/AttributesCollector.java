@@ -2,7 +2,6 @@ package stupaq.cloudatlas.services.collector;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
@@ -23,6 +22,7 @@ import stupaq.cloudatlas.attribute.values.CADouble;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
+import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
@@ -33,11 +33,11 @@ public class AttributesCollector extends AbstractScheduledService
     implements AttributesCollectorConfigKeys {
   private static final Log LOG = LogFactory.getLog(AttributesCollector.class);
   private final GlobalName zone;
-  private final Configuration configuration;
+  private final CAConfiguration configuration;
   private final ScheduledExecutorService executor;
   private final LocalClientProtocol client;
 
-  public AttributesCollector(GlobalName zone, FileConfiguration configuration,
+  public AttributesCollector(GlobalName zone, CAConfiguration configuration,
       LocalClientProtocol client, ScheduledExecutorService executor)
       throws NotBoundException, RemoteException {
     this.zone = zone;

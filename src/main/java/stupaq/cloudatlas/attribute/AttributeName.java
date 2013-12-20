@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.attribute;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
@@ -29,13 +30,16 @@ public final class AttributeName extends ASCIIString implements CompactSerializa
           CompactSerializers.ASCIIString.writeInstance(out, object);
         }
       };
-  private static final String RESERVED_PREFIX = "&";
+  public static final String RESERVED_PREFIX = "&";
+  public static final CharSequence FORBIDDEN = "~!@#$%^*";
 
   protected AttributeName(@Nonnull String name) {
     super(name);
     Preconditions.checkState(!toString().isEmpty(), "AttributeName cannot be empty");
     Preconditions.checkState(toString().trim().equals(toString()),
         "AttributeName cannot have leading or trailing whitespaces");
+    Preconditions.checkState(CharMatcher.anyOf(FORBIDDEN).negate().matchesAllOf(toString()),
+        "Forbidden characters in AttributeName");
   }
 
   public static AttributeName valueOf(String str) throws IllegalArgumentException {

@@ -38,8 +38,4 @@ public class KnownZonesResponse extends Response<KnownZonesRequest> implements C
   public TypeDescriptor descriptor() {
     return TypeDescriptor.ZoneReportResponse;
   }
-
-  public ZoneHierarchy<LocalName> getZones() {
-    return zones;
-  }
 }

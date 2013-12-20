@@ -125,6 +125,23 @@ public final class CompactSerializers {
     };
   }
 
+  public static <Type> CompactSerializer<Type> Nullable(final CompactSerializer<Type> serializer) {
+    return new CompactSerializer<Type>() {
+      @Override
+      public Type readInstance(ObjectInput in) throws IOException {
+        return in.readBoolean() ? serializer.readInstance(in) : null;
+      }
+
+      @Override
+      public void writeInstance(ObjectOutput out, Type object) throws IOException {
+        out.writeBoolean(object != null);
+        if (object != null) {
+          serializer.writeInstance(out, object);
+        }
+      }
+    };
+  }
+
   public static <Element> CompactSerializer<List<Element>> List(
       final CompactSerializer<Element> elementSerializer) {
     return new CompactSerializer<List<Element>>() {

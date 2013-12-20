@@ -2,37 +2,34 @@ package stupaq.cloudatlas.runnable.client;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AbstractIdleService;
+import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ServiceManager;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.FileConfiguration;
-import org.apache.commons.configuration.HierarchicalINIConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Arrays;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
+import stupaq.cloudatlas.configuration.CAConfiguration;
+import stupaq.cloudatlas.configuration.ConfigurationDiscovery;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.collector.AttributesCollector;
 import stupaq.cloudatlas.services.rmiserver.RMIServer;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
+import stupaq.cloudatlas.services.scribe.AttributesScribe;
+import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
 @SuppressWarnings("unused")
 public class CALocalClientProcess extends AbstractIdleService {
   private static final Log LOG = LogFactory.getLog(CALocalClientProcess.class);
-  private static final String CONFIGURATION_EXTENSION = ".ini";
-  private static final String CONFIGURATION_DEFAULT_DIRECTORY = "config/";
   private final String host;
   private final GlobalName zone;
-  private File configSource;
   private LocalClientProtocol client;
   private ScheduledExecutorService executor;
   private ServiceManager manager;
@@ -41,33 +38,23 @@ public class CALocalClientProcess extends AbstractIdleService {
     Preconditions.checkArgument(args.length >= 2, "Missing arguments: leaf zone, agent host");
     zone = GlobalName.parse(args[0]);
     host = args[1];
-    configSource = new File(args.length > 2 ? args[2] : CONFIGURATION_DEFAULT_DIRECTORY);
   }
 
   @Override
   protected void startUp() throws NotBoundException, RemoteException {
     // Find and load configuration
-    if (configSource.isDirectory()) {
-      configSource = new File(configSource,
-          CALocalClientProcess.class.getSimpleName() + CONFIGURATION_EXTENSION);
-    }
-    FileConfiguration configuration;
-    try {
-      configuration = new HierarchicalINIConfiguration(configSource);
-      configuration.setReloadingStrategy(new FileChangedReloadingStrategy());
-    } catch (ConfigurationException e) {
-      LOG.warn("Failed loading configuration, defaulting to empty one", e);
-      configuration = new HierarchicalINIConfiguration();
-    }
+    CAConfiguration configuration = ConfigurationDiscovery.forLocalClient();
     // Establish RMI connection that will be shared by all services
     Registry registry = LocateRegistry.getRegistry(host);
-    client = (LocalClientProtocol) registry
-        .lookup(RMIServer.exportedName(LocalClientProtocol.class));
+    client =
+        (LocalClientProtocol) registry.lookup(RMIServer.exportedName(LocalClientProtocol.class));
     // Create shared executor
-    executor = Executors.newSingleThreadScheduledExecutor();
+    executor = new SingleThreadedExecutor();
     // Create and start all services
-    manager =
-        new ServiceManager(Arrays.asList(new AttributesCollector(zone, configuration, client, executor)));
+    List<Service> services = new ArrayList<>();
+    services.add(new AttributesCollector(zone, configuration, client, executor));
+    services.add(new AttributesScribe(configuration, client, executor));
+    manager = new ServiceManager(services);
     manager.startAsync().awaitHealthy();
   }
 

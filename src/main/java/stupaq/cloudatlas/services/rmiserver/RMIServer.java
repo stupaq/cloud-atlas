@@ -13,6 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.services.rmiserver.handler.LocalClientHandler;
 
@@ -29,8 +30,8 @@ public class RMIServer extends AbstractIdleService {
   private final MessageBus bus;
   private Registry registry;
 
-  public RMIServer(MessageBus bus) {
-    this.bus = bus;
+  public RMIServer(BootstrapConfiguration config) {
+    this.bus = config.getBus();
   }
 
   @Override

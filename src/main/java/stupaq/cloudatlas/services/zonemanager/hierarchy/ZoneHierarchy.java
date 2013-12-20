@@ -74,6 +74,11 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     return find(resolveRelative(globalName));
   }
 
+  public Optional<Payload> getPayload(GlobalName globalName) {
+    Optional<ZoneHierarchy<Payload>> zone = find(globalName);
+    return Optional.fromNullable(zone.isPresent() ? zone.get().getPayload() : null);
+  }
+
   private Iterator<LocalName> resolveRelative(GlobalName globalName) {
     Preconditions.checkState(parentZone == null && localName().equals(LocalName.getRoot()),
         "Resolving global name from non-root");
