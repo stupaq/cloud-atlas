@@ -9,9 +9,9 @@ import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.query.errors.InterpreterException;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
-import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
 
-public class InstalledQueriesUpdater extends InPlaceAggregator<ZoneManagementInfo> {
+public class InstalledQueriesUpdater extends InPlaceSynthesizer<ZoneManagementInfo> {
   private static final Log LOG = LogFactory.getLog(InstalledQueriesUpdater.class);
 
   @SuppressWarnings("unchecked")

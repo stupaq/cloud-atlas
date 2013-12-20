@@ -37,12 +37,13 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
       };
   private final LocalName localName;
   private final Map<AttributeName, Attribute> attributes;
+  private final Map<AttributeName, Attribute> settable = Maps.newHashMap();
 
   public ZoneManagementInfo(LocalName localName) {
     this(localName, Maps.<AttributeName, Attribute>newHashMap());
   }
 
-  public ZoneManagementInfo(LocalName localName, Map<AttributeName, Attribute> attributes) {
+  protected ZoneManagementInfo(LocalName localName, Map<AttributeName, Attribute> attributes) {
     this.localName = localName;
     this.attributes = attributes;
   }
@@ -64,6 +65,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     return Optional.fromNullable(attributes.get(name));
   }
 
+  // FIXME
   public Collection<Attribute> getPublicAttributes() {
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
@@ -73,6 +75,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     }).toList();
   }
 
+  // FIXME
   public Collection<Attribute> getPrivateAttributes() {
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
@@ -84,21 +87,6 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
 
   public ZoneManagementInfo export() {
     return new ZoneManagementInfo(localName, new HashMap<>(attributes));
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    ZoneManagementInfo that = (ZoneManagementInfo) o;
-    return this == o ||
-        !(o == null || getClass() != o.getClass()) && attributes.equals(that.attributes) &&
-            localName.equals(that.localName);
-  }
-
-  @Override
-  public int hashCode() {
-    int result = localName.hashCode();
-    result = 31 * result + attributes.hashCode();
-    return result;
   }
 
   @Override
@@ -115,5 +103,14 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
   @Override
   public TypeDescriptor descriptor() {
     return TypeDescriptor.ZoneManagementInfo;
+  }
+
+  public void settableAttributes(Iterable<Attribute> attributes, boolean eraseOthers) {
+    if (eraseOthers) {
+      settable.clear();
+    }
+    for (Attribute attribute : attributes) {
+      settable.put(attribute.getName(), attribute);
+    }
   }
 }

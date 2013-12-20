@@ -87,7 +87,7 @@ public final class ZoneHierarchyTestUtils {
       ZoneHierarchy<ZoneManagementInfo>... children) {
     ZoneHierarchy<ZoneManagementInfo> rootNode = new ZoneHierarchy<>(root);
     for (ZoneHierarchy<ZoneManagementInfo> child : children) {
-      child.rootAt(rootNode);
+      child.attachTo(rootNode);
     }
     return rootNode;
   }

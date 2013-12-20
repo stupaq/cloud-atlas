@@ -6,7 +6,6 @@ import com.google.common.util.concurrent.AbstractScheduledService;
 
 import org.apache.commons.configuration.Configuration;
 
-import java.util.Collections;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +21,7 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Inserter;
+import stupaq.commons.base.Function1;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
@@ -97,7 +97,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     @Override
     public void updateAttributes(AttributesUpdateMessage update) {
       Preconditions.checkArgument(agentsName.equals(update.getZone()));
-      // FIXME
+      agentsZmi.settableAttributes(update, update.isOverride());
     }
 
     @Override
@@ -107,8 +107,12 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
     @Override
     public void knownZones(KnownZonesRequest request) {
-      // FIXME
-      bus.post(new KnownZonesResponse(Collections.<GlobalName>emptyList()).attach(request));
+      bus.post(new KnownZonesResponse(hierarchy.map(new Function1<ZoneManagementInfo, LocalName>() {
+        @Override
+        public LocalName apply(ZoneManagementInfo zoneManagementInfo) {
+          return zoneManagementInfo.localName();
+        }
+      })).attach(request));
     }
   }
 }

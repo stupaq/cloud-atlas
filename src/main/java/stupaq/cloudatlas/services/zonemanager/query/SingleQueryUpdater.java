@@ -15,9 +15,9 @@ import stupaq.cloudatlas.query.interpreter.EvalVisitor;
 import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.XProgram;
 import stupaq.cloudatlas.query.parser.QueryParser;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
-import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
 
-public class SingleQueryUpdater extends InPlaceAggregator<ZoneManagementInfo> {
+public class SingleQueryUpdater extends InPlaceSynthesizer<ZoneManagementInfo> {
   private final XProgram program;
 
   public SingleQueryUpdater(CAQuery query) throws ParsingException {

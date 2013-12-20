@@ -31,8 +31,8 @@ import stupaq.cloudatlas.query.errors.ParsingException;
 import stupaq.cloudatlas.query.parser.QueryParser;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
-import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceAggregator;
-import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceMapper;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceModifier;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchyTestUtils;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
 
@@ -109,7 +109,7 @@ public class ExampleShellTest {
     try (QueryParser parser = new QueryParser(query.getQueryString())) {
       parser.parseProgram();
     }
-    root.zipFromLeaves(new InPlaceAggregator<ZoneManagementInfo>() {
+    root.synthesizeFromLeaves(new InPlaceSynthesizer<ZoneManagementInfo>() {
       @Override
       protected void process(Iterable<ZoneManagementInfo> children,
           ZoneManagementInfo managementInfo) {
@@ -122,7 +122,7 @@ public class ExampleShellTest {
 
   private void removeQuery(final AttributeName name) {
     Preconditions.checkArgument(name.isSpecial());
-    root.mapAll(new InPlaceMapper<ZoneManagementInfo>() {
+    root.modifyAll(new InPlaceModifier<ZoneManagementInfo>() {
       @Override
       protected void process(ZoneManagementInfo managementInfo) {
         managementInfo.removeAttribute(name);
@@ -131,7 +131,7 @@ public class ExampleShellTest {
   }
 
   private void recomputeQueries() {
-    root.zipFromLeaves(new InstalledQueriesUpdater());
+    root.synthesizeFromLeaves(new InstalledQueriesUpdater());
   }
 
   private void assertValue(String path, String name, AttributeValue value) {

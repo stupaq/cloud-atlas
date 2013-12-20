@@ -24,7 +24,7 @@ public class SingleQueryUpdaterTest {
     assertEquals(Attr("attr", Int(1)), rootZmi.getAttribute(Name("attr")).get());
     assertFalse(rootZmi.getAttribute(Name("attr_")).isPresent());
     CAQuery query = new CAQuery("SELECT to_integer(avg(attr)) AS attr, avg(attr) AS attr_");
-    root.zipFromLeaves(new SingleQueryUpdater(query));
+    root.synthesizeFromLeaves(new SingleQueryUpdater(query));
     assertEquals(Attr("attr", Int(4)), rootZmi.getAttribute(Name("attr")).get());
     assertEquals(Attr("attr_", Doub(4.25)), rootZmi.getAttribute(Name("attr_")).get());
   }

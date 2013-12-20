@@ -6,6 +6,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +23,10 @@ import stupaq.cloudatlas.naming.LocallyNameable;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.commons.base.Function1;
 import stupaq.commons.base.Function2;
+import stupaq.compact.CompactSerializable;
+import stupaq.compact.CompactSerializer;
+
+import static stupaq.compact.CompactSerializers.Collection;
 
 public final class ZoneHierarchy<Payload extends Hierarchical> {
   private final HashMap<LocalName, ZoneHierarchy<Payload>> childZones = Maps.newHashMap();
@@ -32,7 +39,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     this.parentZone = null;
   }
 
-  public void walkUp(Aggregator<Payload> action) {
+  public void walkUp(Synthesizer<Payload> action) {
     ZoneHierarchy<Payload> current = this;
     while (current != null) {
       current.payload = action.apply(current.childZonesPayloads(), current.payload);
@@ -85,35 +92,43 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
         });
   }
 
-  public void map(Mapper<Payload> action) {
+  public void modify(Modifier<Payload> action) {
     this.payload = action.apply(this.payload);
   }
 
-  public void mapAll(Mapper<Payload> action) {
-    this.map(action);
+  public void modifyAll(Modifier<Payload> action) {
+    this.modify(action);
     for (ZoneHierarchy<Payload> child : childZones.values()) {
-      child.mapAll(action);
+      child.modifyAll(action);
     }
   }
 
-  public void zip(Aggregator<Payload> action) {
+  public void synthesize(Synthesizer<Payload> action) {
     this.payload = action.apply(this.childZonesPayloads(), this.payload);
   }
 
-  public void zipFromLeaves(Aggregator<Payload> action) {
+  public void synthesizeFromLeaves(Synthesizer<Payload> action) {
     Set<ZoneHierarchy<Payload>> added = new HashSet<>();
     Queue<ZoneHierarchy<Payload>> queue =
         findLeaves().copyInto(new ArrayDeque<ZoneHierarchy<Payload>>());
     while (!queue.isEmpty()) {
       ZoneHierarchy<Payload> current = queue.remove();
-      current.zip(action);
+      current.synthesize(action);
       if (current != this && current.parentZone != null && added.add(current.parentZone)) {
         queue.add(current.parentZone);
       }
     }
   }
 
-  public void rootAt(ZoneHierarchy<Payload> parent) {
+  public <Result extends Hierarchical> ZoneHierarchy<Result> map(Function1<Payload, Result> fun) {
+    ZoneHierarchy<Result> node = new ZoneHierarchy<>(fun.apply(getPayload()));
+    for (ZoneHierarchy<Payload> child : childZones.values()) {
+      child.map(fun).attachTo(node);
+    }
+    return node;
+  }
+
+  public void attachTo(ZoneHierarchy<Payload> parent) {
     Preconditions.checkNotNull(parent);
     if (parentZone != null) {
       parentZone.childZones.remove(payload.localName());
@@ -132,7 +147,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     ZoneHierarchy<Payload> child = childZones.get(local);
     if (child == null) {
       child = new ZoneHierarchy<>(inserter.create(local));
-      childZones.put(local, child);
+      child.attachTo(this);
     } else {
       inserter.descend(local);
     }
@@ -145,7 +160,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
 
   public GlobalName globalName() {
     final GlobalName.Builder builder = GlobalName.builder();
-    walkUp(new InPlaceAggregator<Payload>() {
+    walkUp(new InPlaceSynthesizer<Payload>() {
       @Override
       protected void process(Iterable<Payload> payloads, Payload payload) {
         builder.parent(payload.localName());
@@ -173,15 +188,37 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     return result.toString();
   }
 
+  public static <Payload extends Hierarchical & CompactSerializable> CompactSerializer<ZoneHierarchy<Payload>> Serializer(
+      final CompactSerializer<Payload> payloadSerializer) {
+    return new CompactSerializer<ZoneHierarchy<Payload>>() {
+      @Override
+      public ZoneHierarchy<Payload> readInstance(ObjectInput in) throws IOException {
+        ZoneHierarchy<Payload> node = new ZoneHierarchy<>(payloadSerializer.readInstance(in));
+        for (ZoneHierarchy<Payload> zone : Collection(this).readInstance(in)) {
+          zone.attachTo(node);
+        }
+        return node;
+      }
+
+      @Override
+      public void writeInstance(ObjectOutput out, ZoneHierarchy<Payload> object)
+          throws IOException {
+        // ZoneHierarchy forms a tree, we are good to go with usual serialization schema
+        payloadSerializer.writeInstance(out, object.payload);
+        Collection(this).writeInstance(out, object.childZones.values());
+      }
+    };
+  }
+
   public static interface Hierarchical extends LocallyNameable {
   }
 
-  public static abstract class Aggregator<Payload extends Hierarchical>
+  public static abstract class Synthesizer<Payload extends Hierarchical>
       extends Function2<Iterable<Payload>, Payload, Payload> {
   }
 
-  public static abstract class InPlaceAggregator<Payload extends Hierarchical>
-      extends Aggregator<Payload> {
+  public static abstract class InPlaceSynthesizer<Payload extends Hierarchical>
+      extends Synthesizer<Payload> {
     @Override
     public Payload apply(Iterable<Payload> payloads, Payload payload) {
       process(payloads, payload);
@@ -191,11 +228,12 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
     protected abstract void process(Iterable<Payload> payloads, Payload payload);
   }
 
-  public static abstract class Mapper<Payload extends Hierarchical>
+  public static abstract class Modifier<Payload extends Hierarchical>
       extends Function1<Payload, Payload> {
   }
 
-  public static abstract class InPlaceMapper<Payload extends Hierarchical> extends Mapper<Payload> {
+  public static abstract class InPlaceModifier<Payload extends Hierarchical>
+      extends Modifier<Payload> {
     @Override
     public Payload apply(Payload payload) {
       process(payload);
@@ -206,7 +244,8 @@ public final class ZoneHierarchy<Payload extends Hierarchical> {
   }
 
   public static abstract class Inserter<Payload extends Hierarchical> {
-    public void descend(LocalName root) {
+    public void descend(@SuppressWarnings("unused") LocalName root) {
+      // Do nothing
     }
 
     public abstract Payload create(LocalName local);
