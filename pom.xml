@@ -13,7 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- custom -->
+        <!-- parser -->
         <parser.root-dir>${basedir}/src/main/java</parser.root-dir>
         <parser.grammar-name>QueryLanguage</parser.grammar-name>
         <parser.grammar-file>${basedir}/src/${parser.grammar-name}.cf</parser.grammar-file>
@@ -27,15 +27,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>15.0</version>
+            <version>16.0-rc1</version>
         </dependency>
 
         <dependency>
@@ -51,9 +45,9 @@
         </dependency>
 
         <dependency>
-            <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-            <artifactId>java-cup</artifactId>
-            <version>0.11a</version>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
 
         <dependency>
@@ -66,6 +60,12 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+            <artifactId>java-cup</artifactId>
+            <version>0.11a</version>
         </dependency>
     </dependencies>
 
