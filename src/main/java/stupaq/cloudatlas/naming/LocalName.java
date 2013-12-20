@@ -12,12 +12,10 @@ import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchic
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
-import stupaq.compact.SerializationConstructor;
 import stupaq.compact.TypeDescriptor;
 
 @Immutable
-public final class LocalName extends CAIdentifier
-    implements CompactSerializable, Hierarchical {
+public final class LocalName extends CAIdentifier implements CompactSerializable, Hierarchical {
   public static final CompactSerializer<LocalName> SERIALIZER = new CompactSerializer<LocalName>() {
     @Override
     public LocalName readInstance(ObjectInput in) throws IOException {
@@ -30,10 +28,6 @@ public final class LocalName extends CAIdentifier
     }
   };
   private static final String ROOT_STRING = "/";
-
-  @SerializationConstructor
-  protected LocalName() {
-  }
 
   protected LocalName(String string) {
     super(string);

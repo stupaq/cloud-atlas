@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.CONSTRUCTOR})
-public @interface SerializationConstructor {
+public @interface DeserializationConstructor {
 }

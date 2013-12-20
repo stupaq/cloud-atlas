@@ -22,7 +22,6 @@ import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 
 public final class ZoneManagementInfo implements CompactSerializable, Hierarchical, Serializable {
-  private static final long serialVersionUID = 1L;
   public static final CompactSerializer<ZoneManagementInfo> SERIALIZER =
       new CompactSerializer<ZoneManagementInfo>() {
         @Override
@@ -34,20 +33,20 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
         @Override
         public void writeInstance(ObjectOutput out, ZoneManagementInfo object) throws IOException {
           LocalName.SERIALIZER.writeInstance(out, object.localName);
-          Attribute.MAP_SERIALIZER.writeInstance(out, object.attributes);
+          Attribute.MAP_SERIALIZER.writeInstance(out, object.collected);
         }
       };
+  private static final long serialVersionUID = 1L;
   private final LocalName localName;
-  private final Map<AttributeName, Attribute> attributes;
-  private final Map<AttributeName, Attribute> settable = Maps.newHashMap();
+  private final Map<AttributeName, Attribute> collected;
 
   public ZoneManagementInfo(LocalName localName) {
     this(localName, Maps.<AttributeName, Attribute>newHashMap());
   }
 
-  protected ZoneManagementInfo(LocalName localName, Map<AttributeName, Attribute> attributes) {
+  protected ZoneManagementInfo(LocalName localName, Map<AttributeName, Attribute> collected) {
     this.localName = localName;
-    this.attributes = attributes;
+    this.collected = collected;
   }
 
   @Override
@@ -55,21 +54,39 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     return localName;
   }
 
+  @Override
+  public TypeDescriptor descriptor() {
+    return TypeDescriptor.ZoneManagementInfo;
+  }
+
+  public ZoneManagementInfo export() {
+    return new ZoneManagementInfo(localName, new HashMap<>(collected));
+  }
+
+  public void settableAttributes(Iterable<Attribute> collected, boolean eraseOthers) {
+    if (eraseOthers) {
+      this.collected.clear();
+    }
+    for (Attribute attribute : collected) {
+      this.collected.put(attribute.getName(), attribute);
+    }
+  }
+
   public void recomputedAttribute(Attribute attribute) {
-    attributes.put(attribute.getName(), attribute);
+    collected.put(attribute.getName(), attribute);
   }
 
   public void removeAttribute(AttributeName name) {
-    attributes.remove(name);
+    collected.remove(name);
   }
 
   public Optional<Attribute> getAttribute(AttributeName name) {
-    return Optional.fromNullable(attributes.get(name));
+    return Optional.fromNullable(collected.get(name));
   }
 
   // FIXME
   public Collection<Attribute> getPublicAttributes() {
-    return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
+    return FluentIterable.from(collected.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
         return !attribute.getName().isSpecial();
@@ -79,7 +96,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
 
   // FIXME
   public Collection<Attribute> getPrivateAttributes() {
-    return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
+    return FluentIterable.from(collected.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
         return attribute.getName().isSpecial();
@@ -87,30 +104,12 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     }).toList();
   }
 
-  public ZoneManagementInfo export() {
-    return new ZoneManagementInfo(localName, new HashMap<>(attributes));
-  }
-
-  @Override
-  public TypeDescriptor descriptor() {
-    return TypeDescriptor.ZoneManagementInfo;
-  }
-
-  public void settableAttributes(Iterable<Attribute> attributes, boolean eraseOthers) {
-    if (eraseOthers) {
-      settable.clear();
-    }
-    for (Attribute attribute : attributes) {
-      settable.put(attribute.getName(), attribute);
-    }
-  }
-
   // FIXME
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
     boolean skip = true;
-    for (Attribute attribute : attributes.values()) {
+    for (Attribute attribute : collected.values()) {
       builder.append(skip ? "" : "\n").append(attribute.toString());
       skip = false;
     }
@@ -126,16 +125,16 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
       return false;
     }
     ZoneManagementInfo that = (ZoneManagementInfo) o;
-    return attributes.equals(that.attributes) && localName.equals(that.localName) &&
-        settable.equals(that.settable);
+    return collected.equals(that.collected) && localName.equals(that.localName) &&
+        collected.equals(that.collected);
 
   }
 
   @Override
   public int hashCode() {
     int result = localName.hashCode();
-    result = 31 * result + attributes.hashCode();
-    result = 31 * result + settable.hashCode();
+    result = 31 * result + collected.hashCode();
+    result = 31 * result + collected.hashCode();
     return result;
   }
 }

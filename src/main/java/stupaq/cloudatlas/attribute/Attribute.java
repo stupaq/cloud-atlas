@@ -18,7 +18,6 @@ import javax.annotation.concurrent.Immutable;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
-import stupaq.compact.SerializationConstructor;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.TypeRegistry;
 
@@ -61,11 +60,6 @@ public final class Attribute<Type extends AttributeValue>
   private static final long serialVersionUID = 1L;
   @Nonnull private final AttributeName name;
   @Nonnull private transient Type value;
-
-  @SerializationConstructor
-  public Attribute() {
-    name = null;
-  }
 
   public Attribute(@Nonnull AttributeName name, @Nonnull Type value) {
     Preconditions.checkNotNull(name, "AttributeName cannot be null");

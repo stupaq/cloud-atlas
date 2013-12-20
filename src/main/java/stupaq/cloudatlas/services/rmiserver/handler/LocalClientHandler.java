@@ -92,6 +92,7 @@ public class LocalClientHandler implements LocalClientProtocol {
       super(MoreExecutors.sameThreadExecutor(), HandlerContract.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void handleResponse(LocalClientResponse response) {
       response.request().context().set(response);

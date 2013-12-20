@@ -6,12 +6,12 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 
 import stupaq.commons.base.ASCIIString;
-import stupaq.compact.SerializationConstructor;
+import stupaq.compact.DeserializationConstructor;
 
 public class CAIdentifier extends ASCIIString {
   public static final CharSequence FORBIDDEN = "`~!@#$%^*(){}[]+=|\\:;'\"<,>.?";
 
-  @SerializationConstructor
+  @DeserializationConstructor
   protected CAIdentifier() {
   }
 
