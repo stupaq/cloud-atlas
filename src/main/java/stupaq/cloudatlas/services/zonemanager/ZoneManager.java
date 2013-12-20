@@ -110,7 +110,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     public void updateAttributes(AttributesUpdateMessage update) {
       Preconditions.checkArgument(agentsName.equals(update.getZone()));
       if (update.isOverride()) {
-        agentsZmi.clear();
+        agentsZmi.clearPrime();
       }
       for (Attribute attribute : update) {
         agentsZmi.setPrime(attribute);

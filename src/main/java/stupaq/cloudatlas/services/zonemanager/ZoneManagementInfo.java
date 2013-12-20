@@ -11,7 +11,9 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import stupaq.cloudatlas.attribute.Attribute;
@@ -91,10 +93,14 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     return TypeDescriptor.ZoneManagementInfo;
   }
 
-  public void clear() {
+  public void clearPrime() {
     ensureCopied();
-    attributes.clear();
-    computed.clear();
+    Iterator<Entry<AttributeName, Attribute>> entry = attributes.entrySet().iterator();
+    while (entry.hasNext()) {
+      if (!computed.contains(entry.next().getKey())) {
+        entry.remove();
+      }
+    }
   }
 
   public void clearComputed() {
