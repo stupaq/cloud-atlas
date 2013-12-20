@@ -70,6 +70,16 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
     }
   }
 
+  public GlobalName parent() {
+    ArrayList<LocalName> chunks = new ArrayList<>(get());
+    chunks.remove(chunks.size() - 1);
+    return new GlobalName(chunks);
+  }
+
+  public LocalName child() {
+    return get().get(get().size() - 1);
+  }
+
   @Override
   public boolean equals(Object o) {
     return o instanceof GlobalName && super.equals(o);

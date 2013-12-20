@@ -1,7 +1,5 @@
 package stupaq.cloudatlas.naming;
 
-import com.google.common.base.Preconditions;
-
 public class EntityName {
   public final GlobalName zone;
   public final AttributeName attributeName;
@@ -12,9 +10,8 @@ public class EntityName {
   }
 
   public static EntityName parse(String str) {
-    String[] parts = str.split(GlobalName.SEPARATOR);
-    Preconditions.checkArgument(parts.length == 2);
-    return new EntityName(GlobalName.parse(parts[0]), AttributeName.valueOf(parts[1]));
+    GlobalName entity = GlobalName.parse(str);
+    return new EntityName(entity.parent(), AttributeName.valueOf(entity.child().toString()));
   }
 
   @Override
