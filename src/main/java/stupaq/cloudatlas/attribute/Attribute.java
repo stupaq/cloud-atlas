@@ -58,6 +58,7 @@ public final class Attribute<Type extends AttributeValue>
           Collection(SERIALIZER).writeInstance(out, map.values());
         }
       };
+  private static final long serialVersionUID = 1L;
   @Nonnull private final AttributeName name;
   @Nonnull private transient Type value;
 

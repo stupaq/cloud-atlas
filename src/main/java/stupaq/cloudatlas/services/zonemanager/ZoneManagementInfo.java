@@ -22,6 +22,7 @@ import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 
 public final class ZoneManagementInfo implements CompactSerializable, Hierarchical, Serializable {
+  private static final long serialVersionUID = 1L;
   public static final CompactSerializer<ZoneManagementInfo> SERIALIZER =
       new CompactSerializer<ZoneManagementInfo>() {
         @Override

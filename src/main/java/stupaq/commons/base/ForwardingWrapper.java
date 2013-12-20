@@ -15,6 +15,7 @@ import stupaq.compact.SerializationConstructor;
  */
 @Immutable
 public abstract class ForwardingWrapper<Primitive> implements Serializable {
+  private static final long serialVersionUID = 1L;
   @Nonnull private final Primitive value;
 
   @SerializationConstructor

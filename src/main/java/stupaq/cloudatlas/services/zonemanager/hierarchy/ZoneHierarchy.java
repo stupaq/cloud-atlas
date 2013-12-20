@@ -30,6 +30,7 @@ import stupaq.compact.CompactSerializer;
 import static stupaq.compact.CompactSerializers.Collection;
 
 public final class ZoneHierarchy<Payload extends Hierarchical> implements Serializable {
+  private static final long serialVersionUID = 1L;
   private final HashMap<LocalName, ZoneHierarchy<Payload>> childZones = Maps.newHashMap();
   private Payload payload;
   private ZoneHierarchy<Payload> parentZone;

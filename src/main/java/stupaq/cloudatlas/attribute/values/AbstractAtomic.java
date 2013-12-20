@@ -16,6 +16,7 @@ import stupaq.compact.SerializationConstructor;
 /** PACKAGE-LOCAL */
 abstract class AbstractAtomic<Type extends Comparable<Type>>
     implements AttributeValue, Serializable {
+  private static final long serialVersionUID = 1L;
   @Nonnull private Optional<Type> value;
 
   @SerializationConstructor
