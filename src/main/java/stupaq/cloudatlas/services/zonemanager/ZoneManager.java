@@ -27,6 +27,7 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Inserter;
+import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
 import stupaq.commons.base.Function1;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
@@ -71,9 +72,8 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
   @Override
   protected void runOneIteration() throws Exception {
-    // FIXME clear computed
-    // FIXME recompute parameters
-    // FIXME update timestamps
+    hierarchy.synthesize(new InstalledQueriesUpdater());
+    // TODO adjust timestamps
   }
 
   @Override

@@ -5,9 +5,14 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.common.util.concurrent.Uninterruptibles;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAContact;
@@ -28,6 +33,7 @@ import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
 
 public class LocalClientHandler implements LocalClientProtocol {
+  private static final Log LOG = LogFactory.getLog(LocalClientHandler.class);
   private final MessageBus bus;
 
   public LocalClientHandler(MessageBus bus) {
@@ -71,8 +77,13 @@ public class LocalClientHandler implements LocalClientProtocol {
   private <Result> Result awaitResult(Request<SettableFuture<Result>> request)
       throws RemoteException {
     try {
-      return Uninterruptibles.getUninterruptibly(request.context());
+      // If ZoneManager is not responding for a minute, then something is badly broken,
+      // holding a bunch of threads (RMI callers) won't help for sure.
+      return Uninterruptibles.getUninterruptibly(request.context(), 1, TimeUnit.MINUTES);
     } catch (ExecutionException e) {
+      throw new RemoteException(e.getMessage());
+    } catch (TimeoutException e) {
+      LOG.error("RMI call timed out waiting for response", e);
       throw new RemoteException(e.getMessage());
     }
   }

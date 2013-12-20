@@ -53,6 +53,7 @@ public class RecordsManager implements AttributesScribeConfigKeys, AutoCloseable
 
     public void record(long timestamp, AttributeValue value) {
       writer.println(timestamp + "\t" + value);
+      writer.flush();
     }
 
     @Override

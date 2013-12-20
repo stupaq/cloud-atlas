@@ -25,13 +25,13 @@ public class SingleQueryUpdater extends InPlaceSynthesizer<ZoneManagementInfo> {
   }
 
   @Override
-  public void process(Iterable<ZoneManagementInfo> children, final ZoneManagementInfo current) {
+  public void process(Iterable<ZoneManagementInfo> children, ZoneManagementInfo current) {
     if (!Iterables.isEmpty(children)) {
       AttributesTable table = new AttributesTable(FluentIterable.from(children)
           .transform(new Function<ZoneManagementInfo, Iterable<Attribute>>() {
             @Override
             public Collection<Attribute> apply(ZoneManagementInfo managementInfo) {
-              return managementInfo.getPublicAttributes();
+              return managementInfo.accessibleAttributes().toList();
             }
           }));
       // Run query for non-leaf zones

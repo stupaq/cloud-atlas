@@ -14,10 +14,10 @@ import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSyn
 public class InstalledQueriesUpdater extends InPlaceSynthesizer<ZoneManagementInfo> {
   private static final Log LOG = LogFactory.getLog(InstalledQueriesUpdater.class);
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void process(Iterable<ZoneManagementInfo> children, final ZoneManagementInfo current) {
-    for (Attribute attribute : current.getPrivateAttributes()) {
+  public void process(Iterable<ZoneManagementInfo> children, ZoneManagementInfo current) {
+    current.clearComputed();
+    for (Attribute attribute : current.specialAttributes()) {
       AttributeValue value = attribute.getValue();
       if (!value.isNull() && value.type().equals(TypeInfo.of(CAQuery.class))) {
         CAQuery query = (CAQuery) value;
@@ -25,9 +25,9 @@ public class InstalledQueriesUpdater extends InPlaceSynthesizer<ZoneManagementIn
           new SingleQueryUpdater(query).process(children, current);
         } catch (InterpreterException e) {
           LOG.error(
-              "In local context: " + current.localName() + ", while processing query: " + query
-              + ", encountered exception: " + e.getMessage() + ", exception type: " + e.getClass()
-                  .getSimpleName());
+              "In local context: " + current.localName() + ", while processing query: " + query +
+                  ", encountered exception: " + e.getMessage() + ", exception type: " +
+                  e.getClass().getSimpleName());
         } catch (Exception e) {
           LOG.fatal(
               "In local context: " + current.localName() + ", while processing query: " + query, e);

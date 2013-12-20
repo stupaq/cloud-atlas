@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -137,24 +136,22 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     return computed.contains(name);
   }
 
-  // FIXME
-  public Collection<Attribute> getPublicAttributes() {
+  public FluentIterable<Attribute> accessibleAttributes() {
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
         return !attribute.getName().isSpecial();
       }
-    }).toList();
+    });
   }
 
-  // FIXME
-  public Collection<Attribute> getPrivateAttributes() {
+  public FluentIterable<Attribute> specialAttributes() {
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
         return attribute.getName().isSpecial();
       }
-    }).toList();
+    });
   }
 
   @Override
