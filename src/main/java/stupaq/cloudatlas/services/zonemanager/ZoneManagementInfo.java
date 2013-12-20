@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.attribute.AttributeName;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.compact.CompactSerializable;

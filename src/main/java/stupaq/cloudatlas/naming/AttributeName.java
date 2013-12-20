@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.attribute;
+package stupaq.cloudatlas.naming;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
@@ -10,14 +10,13 @@ import java.io.ObjectOutput;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import stupaq.commons.base.ASCIIString;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
 @Immutable
-public final class AttributeName extends ASCIIString implements CompactSerializable {
+public final class AttributeName extends CAIdentifier implements CompactSerializable {
   public static final CompactSerializer<AttributeName> SERIALIZER =
       new CompactSerializer<AttributeName>() {
         @Override
@@ -31,15 +30,14 @@ public final class AttributeName extends ASCIIString implements CompactSerializa
         }
       };
   public static final String RESERVED_PREFIX = "&";
-  public static final CharSequence FORBIDDEN = "~!@#$%^*";
 
   protected AttributeName(@Nonnull String name) {
     super(name);
     Preconditions.checkState(!toString().isEmpty(), "AttributeName cannot be empty");
     Preconditions.checkState(toString().trim().equals(toString()),
         "AttributeName cannot have leading or trailing whitespaces");
-    Preconditions.checkState(CharMatcher.anyOf(FORBIDDEN).negate().matchesAllOf(toString()),
-        "Forbidden characters in AttributeName");
+    Preconditions.checkState(!CharMatcher.anyOf(GlobalName.SEPARATOR).matchesAnyOf(toString()),
+        "AttributeName cannot contain GlobalName separator");
   }
 
   public static AttributeName valueOf(String str) throws IllegalArgumentException {

@@ -14,15 +14,15 @@ public class ASCIIString extends ForwardingWrapper<String> {
 
   public ASCIIString(@Nonnull String value) {
     super(value);
-    Preconditions
-        .checkState(isASCIIString(get()), "ASCII String cannot contain non-ASCII characters");
+    verifyInvariants();
   }
 
   public ASCIIString(@Nonnull byte[] value) {
     this(new String(value));
   }
 
-  public static boolean isASCIIString(String str) {
-    return str == null || str.length() < Short.MAX_VALUE && CharMatcher.ASCII.matchesAllOf(str);
+  private void verifyInvariants() throws IllegalStateException {
+    Preconditions.checkState(get().length() < Short.MAX_VALUE);
+    Preconditions.checkState(CharMatcher.ASCII.matchesAllOf(get()));
   }
 }

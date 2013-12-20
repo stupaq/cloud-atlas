@@ -13,7 +13,6 @@ import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.Request;
 import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.DumpZoneRequest;
-import stupaq.cloudatlas.messaging.messages.DumpZoneResponse;
 import stupaq.cloudatlas.messaging.messages.EntitiesValuesRequest;
 import stupaq.cloudatlas.messaging.messages.EntitiesValuesResponse;
 import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
@@ -46,11 +45,7 @@ public class LocalClientHandler implements LocalClientProtocol {
       SerializableWrapper<GlobalName> globalName) throws RemoteException {
     DumpZoneRequest request = new DumpZoneRequest(globalName.get());
     bus.post(request);
-    try {
-      return wrap(Uninterruptibles.getUninterruptibly(request.context()).getZmi());
-    } catch (ExecutionException e) {
-      throw new RemoteException(e.getMessage());
-    }
+    return wrap(awaitResult(request).getZmi());
   }
 
   @Override
@@ -58,11 +53,7 @@ public class LocalClientHandler implements LocalClientProtocol {
       SerializableWrapper<EntitiesValuesRequest> request) throws RemoteException {
     request.get().attach(SettableFuture.<EntitiesValuesResponse>create());
     bus.post(request.get());
-    try {
-      return wrap(Uninterruptibles.getUninterruptibly(request.get().context()));
-    } catch (ExecutionException e) {
-      throw new RemoteException(e.getMessage());
-    }
+    return wrap(awaitResult(request.get()));
   }
 
   @Override
@@ -87,18 +78,14 @@ public class LocalClientHandler implements LocalClientProtocol {
     }
   }
 
+  public static interface LocalClientResponse {
+    Request<? extends SettableFuture> request();
+  }
+
   private static interface HandlerContract {
     @Subscribe
     @DirectInvocation
-    public void handleResponse(DumpZoneResponse response);
-
-    @Subscribe
-    @DirectInvocation
-    public void handleResponse(KnownZonesResponse response);
-
-    @Subscribe
-    @DirectInvocation
-    void handleResponse(EntitiesValuesResponse response);
+    public void handleResponse(LocalClientResponse response);
   }
 
   private static class HandlerListener extends AbstractMessageListener implements HandlerContract {
@@ -107,17 +94,7 @@ public class LocalClientHandler implements LocalClientProtocol {
     }
 
     @Override
-    public void handleResponse(DumpZoneResponse response) {
-      response.request().context().set(response);
-    }
-
-    @Override
-    public void handleResponse(KnownZonesResponse response) {
-      response.request().context().set(response);
-    }
-
-    @Override
-    public void handleResponse(EntitiesValuesResponse response) {
+    public void handleResponse(LocalClientResponse response) {
       response.request().context().set(response);
     }
   }

@@ -3,7 +3,7 @@ package stupaq.cloudatlas.serialization;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.attribute.AttributeName;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.values.CABoolean;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CADouble;

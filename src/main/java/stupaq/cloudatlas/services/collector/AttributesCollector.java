@@ -17,7 +17,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.attribute.AttributeName;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.values.CADouble;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;

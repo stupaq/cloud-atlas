@@ -23,9 +23,9 @@ import stupaq.cloudatlas.messaging.messages.EntitiesValuesRequest;
 import stupaq.cloudatlas.messaging.messages.EntitiesValuesResponse;
 import stupaq.cloudatlas.messaging.messages.KnownZonesRequest;
 import stupaq.cloudatlas.messaging.messages.KnownZonesResponse;
+import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
-import stupaq.cloudatlas.services.scribe.Entity;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Inserter;
 import stupaq.commons.base.Function1;
@@ -120,7 +120,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     @Override
     public void dumpValues(EntitiesValuesRequest request) {
       List<AttributeValue> values = new ArrayList<>();
-      for (Entity entity : request) {
+      for (EntityName entity : request) {
         Optional<ZoneManagementInfo> zmi = hierarchy.getPayload(entity.zone);
         if (zmi.isPresent()) {
           Optional<Attribute> attribute = zmi.get().getAttribute(entity.attributeName);

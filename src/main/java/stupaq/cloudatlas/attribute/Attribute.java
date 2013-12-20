@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;

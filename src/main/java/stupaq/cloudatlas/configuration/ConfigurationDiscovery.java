@@ -6,6 +6,8 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.runnable.agent.CAAgentProcess;
 import stupaq.cloudatlas.runnable.client.CALocalClientProcess;
 
+import static java.lang.System.getenv;
+
 public class ConfigurationDiscovery implements EnvironmentConfigKeys {
   private ConfigurationDiscovery() {
   }
@@ -31,10 +33,6 @@ public class ConfigurationDiscovery implements EnvironmentConfigKeys {
   }
 
   private static File findDir() {
-    File dir = new File(System.getenv(CONFIG_DIR));
-    if (!dir.isDirectory()) {
-      dir = new File(System.getenv(CONFIG_DIR_DEFAULT));
-    }
-    return dir;
+    return new File(getenv(CONFIG_DIR) == null ? CONFIG_DIR_DEFAULT : getenv(CONFIG_DIR));
   }
 }

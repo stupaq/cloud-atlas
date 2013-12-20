@@ -8,13 +8,15 @@ import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.messaging.Response;
 import stupaq.cloudatlas.naming.LocalName;
+import stupaq.cloudatlas.services.rmiserver.handler.LocalClientHandler.LocalClientResponse;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 
 @Immutable
-public class KnownZonesResponse extends Response<KnownZonesRequest> implements CompactSerializable {
+public class KnownZonesResponse extends Response<KnownZonesRequest>
+    implements CompactSerializable, LocalClientResponse {
   public static final CompactSerializer<KnownZonesResponse> SERIALIZER =
       new CompactSerializer<KnownZonesResponse>() {
         @Override

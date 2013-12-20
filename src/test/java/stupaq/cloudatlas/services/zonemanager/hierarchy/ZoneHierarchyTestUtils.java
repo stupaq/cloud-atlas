@@ -5,7 +5,7 @@ import com.google.common.collect.FluentIterable;
 import java.util.Arrays;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.attribute.AttributeName;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CASet;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.attribute.AttributeName;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.EvaluationException;
 import stupaq.cloudatlas.query.evaluation.context.OutputContext;

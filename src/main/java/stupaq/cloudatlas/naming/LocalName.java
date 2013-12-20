@@ -9,14 +9,13 @@ import java.io.ObjectOutput;
 import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
-import stupaq.commons.base.ASCIIString;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
 @Immutable
-public final class LocalName extends ASCIIString implements CompactSerializable, Hierarchical {
+public final class LocalName extends CAIdentifier implements CompactSerializable, Hierarchical {
   public static final CompactSerializer<LocalName> SERIALIZER = new CompactSerializer<LocalName>() {
     @Override
     public LocalName readInstance(ObjectInput in) throws IOException {

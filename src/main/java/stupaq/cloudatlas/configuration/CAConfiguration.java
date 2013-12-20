@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import stupaq.cloudatlas.services.scribe.Entity;
+import stupaq.cloudatlas.naming.EntityName;
 
 public class CAConfiguration extends DataConfiguration {
   private static final Log LOG = LogFactory.getLog(CAConfiguration.class);
@@ -38,10 +38,10 @@ public class CAConfiguration extends DataConfiguration {
     }
   }
 
-  public List<Entity> getEntities(String key) {
-    List<Entity> entities = new ArrayList<>();
+  public List<EntityName> getEntities(String key) {
+    List<EntityName> entities = new ArrayList<>();
     for (String str : getStringArray(key)) {
-      entities.add(Entity.parse(str));
+      entities.add(EntityName.parse(str));
     }
     return entities;
   }

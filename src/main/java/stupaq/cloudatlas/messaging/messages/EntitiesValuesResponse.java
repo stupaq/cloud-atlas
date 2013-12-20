@@ -5,11 +5,12 @@ import java.util.List;
 
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.messaging.Response;
+import stupaq.cloudatlas.services.rmiserver.handler.LocalClientHandler.LocalClientResponse;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.TypeDescriptor;
 
 public class EntitiesValuesResponse extends Response<EntitiesValuesRequest>
-    implements Iterable<AttributeValue>, CompactSerializable {
+    implements Iterable<AttributeValue>, CompactSerializable, LocalClientResponse {
   private final List<AttributeValue> values;
 
   public EntitiesValuesResponse(List<AttributeValue> values) {
