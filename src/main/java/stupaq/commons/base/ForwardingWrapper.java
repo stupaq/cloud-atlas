@@ -7,7 +7,7 @@ import java.io.Serializable;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import stupaq.compact.DeserializationConstructor;
+import stupaq.compact.SerializableImplementation;
 
 /**
  * General purpose class that simplifies extending final classes by forwarding {@link
@@ -18,7 +18,7 @@ public abstract class ForwardingWrapper<Primitive> implements Serializable {
   private static final long serialVersionUID = 1L;
   @Nonnull private final Primitive value;
 
-  @DeserializationConstructor
+  @SerializableImplementation
   protected ForwardingWrapper() {
     value = null;
   }

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.query.errors.EvaluationException;
 import stupaq.cloudatlas.query.evaluation.context.OutputContext;
 import stupaq.cloudatlas.query.semantics.values.RSingle;
@@ -41,7 +41,7 @@ class ZMIUpdaterOutputContext implements OutputContext {
   @Override
   public void commit() {
     for (Attribute attribute : putsLog) {
-      destination.recomputedAttribute(attribute);
+      destination.setComputed(attribute);
     }
     putsLog.clear();
   }

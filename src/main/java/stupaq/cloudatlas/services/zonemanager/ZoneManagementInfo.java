@@ -4,24 +4,28 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import java.io.IOException;
 import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
+import stupaq.commons.util.concurrent.LazyCopy;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
+import stupaq.compact.SerializableImplementation;
 import stupaq.compact.TypeDescriptor;
 
-public final class ZoneManagementInfo implements CompactSerializable, Hierarchical, Serializable {
+public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
+    implements CompactSerializable, Hierarchical {
   public static final CompactSerializer<ZoneManagementInfo> SERIALIZER =
       new CompactSerializer<ZoneManagementInfo>() {
         @Override
@@ -33,20 +37,48 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
         @Override
         public void writeInstance(ObjectOutput out, ZoneManagementInfo object) throws IOException {
           LocalName.SERIALIZER.writeInstance(out, object.localName);
-          Attribute.MAP_SERIALIZER.writeInstance(out, object.collected);
+          Attribute.MAP_SERIALIZER.writeInstance(out, object.attributes);
         }
       };
   private static final long serialVersionUID = 1L;
   private final LocalName localName;
-  private final Map<AttributeName, Attribute> collected;
+  private Map<AttributeName, Attribute> attributes;
+  private transient Set<AttributeName> computed;
 
   public ZoneManagementInfo(LocalName localName) {
     this(localName, Maps.<AttributeName, Attribute>newHashMap());
   }
 
-  protected ZoneManagementInfo(LocalName localName, Map<AttributeName, Attribute> collected) {
+  public ZoneManagementInfo(LocalName localName, Map<AttributeName, Attribute> attributes) {
     this.localName = localName;
-    this.collected = collected;
+    this.attributes = attributes;
+    computed = Sets.newHashSet();
+  }
+
+  @LazyCopyConstructor
+  protected ZoneManagementInfo(LocalName localName, Map<AttributeName, Attribute> attributes,
+      Set<AttributeName> computed) {
+    super(false);
+    this.localName = localName;
+    this.attributes = attributes;
+    this.computed = computed;
+  }
+
+  @SerializableImplementation
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    computed = Sets.newHashSet();
+  }
+
+  @Override
+  protected void deepCopy() {
+    attributes = Maps.newHashMap(attributes);
+    computed = Sets.newHashSet(computed);
+  }
+
+  @Override
+  public ZoneManagementInfo export() {
+    return new ZoneManagementInfo(localName, attributes, computed);
   }
 
   @Override
@@ -59,34 +91,49 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     return TypeDescriptor.ZoneManagementInfo;
   }
 
-  public ZoneManagementInfo export() {
-    return new ZoneManagementInfo(localName, new HashMap<>(collected));
+  public void clear() {
+    ensureCopied();
+    attributes.clear();
+    computed.clear();
   }
 
-  public void settableAttributes(Iterable<Attribute> collected, boolean eraseOthers) {
-    if (eraseOthers) {
-      this.collected.clear();
+  public void clearComputed() {
+    ensureCopied();
+    for (AttributeName name : computed) {
+      attributes.remove(name);
     }
-    for (Attribute attribute : collected) {
-      this.collected.put(attribute.getName(), attribute);
-    }
+    computed.clear();
   }
 
-  public void recomputedAttribute(Attribute attribute) {
-    collected.put(attribute.getName(), attribute);
+  public void setPrime(Attribute attribute) {
+    ensureCopied();
+    attributes.put(attribute.getName(), attribute);
+    computed.remove(attribute.getName());
   }
 
-  public void removeAttribute(AttributeName name) {
-    collected.remove(name);
+  public void setComputed(Attribute attribute) {
+    ensureCopied();
+    attributes.put(attribute.getName(), attribute);
+    computed.add(attribute.getName());
   }
 
-  public Optional<Attribute> getAttribute(AttributeName name) {
-    return Optional.fromNullable(collected.get(name));
+  public void remove(AttributeName name) {
+    ensureCopied();
+    attributes.remove(name);
+    computed.remove(name);
+  }
+
+  public Optional<Attribute> get(AttributeName name) {
+    return Optional.fromNullable(attributes.get(name));
+  }
+
+  public boolean isComputed(AttributeName name) {
+    return computed.contains(name);
   }
 
   // FIXME
   public Collection<Attribute> getPublicAttributes() {
-    return FluentIterable.from(collected.values()).filter(new Predicate<Attribute>() {
+    return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
         return !attribute.getName().isSpecial();
@@ -96,7 +143,7 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
 
   // FIXME
   public Collection<Attribute> getPrivateAttributes() {
-    return FluentIterable.from(collected.values()).filter(new Predicate<Attribute>() {
+    return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
         return attribute.getName().isSpecial();
@@ -104,12 +151,11 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
     }).toList();
   }
 
-  // FIXME
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
     boolean skip = true;
-    for (Attribute attribute : collected.values()) {
+    for (Attribute attribute : attributes.values()) {
       builder.append(skip ? "" : "\n").append(attribute.toString());
       skip = false;
     }
@@ -125,16 +171,15 @@ public final class ZoneManagementInfo implements CompactSerializable, Hierarchic
       return false;
     }
     ZoneManagementInfo that = (ZoneManagementInfo) o;
-    return collected.equals(that.collected) && localName.equals(that.localName) &&
-        collected.equals(that.collected);
-
+    return attributes.equals(that.attributes) && computed.equals(that.computed) &&
+        localName.equals(that.localName);
   }
 
   @Override
   public int hashCode() {
     int result = localName.hashCode();
-    result = 31 * result + collected.hashCode();
-    result = 31 * result + collected.hashCode();
+    result = 31 * result + attributes.hashCode();
+    result = 31 * result + computed.hashCode();
     return result;
   }
 }

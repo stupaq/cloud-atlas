@@ -14,7 +14,7 @@ import javax.annotation.concurrent.Immutable;
 import stupaq.commons.base.ForwardingWrapper;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
-import stupaq.compact.DeserializationConstructor;
+import stupaq.compact.SerializableImplementation;
 import stupaq.compact.TypeDescriptor;
 
 import static stupaq.cloudatlas.naming.LocalName.getNotRoot;
@@ -46,7 +46,7 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
         }
       };
 
-  @DeserializationConstructor
+  @SerializableImplementation
   protected GlobalName() {
   }
 

@@ -5,11 +5,11 @@ import com.google.common.collect.FluentIterable;
 import java.util.Arrays;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CATime;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.commons.base.Function1;
@@ -77,7 +77,7 @@ public final class ZoneHierarchyTestUtils {
 
   public static ZoneManagementInfo addAttrs(ZoneManagementInfo zmi, Attribute... attributes) {
     for (Attribute attribute : attributes) {
-      zmi.recomputedAttribute(attribute);
+      zmi.setPrime(attribute);
     }
     return zmi;
   }

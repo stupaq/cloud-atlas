@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
-import stupaq.compact.DeserializationConstructor;
+import stupaq.compact.SerializableImplementation;
 
 /** PACKAGE-LOCAL */
 abstract class AbstractAtomic<Type extends Comparable<Type>>
@@ -19,7 +19,7 @@ abstract class AbstractAtomic<Type extends Comparable<Type>>
   private static final long serialVersionUID = 1L;
   @Nonnull private Optional<Type> value;
 
-  @DeserializationConstructor
+  @SerializableImplementation
   protected AbstractAtomic() {
     value = Optional.absent();
   }

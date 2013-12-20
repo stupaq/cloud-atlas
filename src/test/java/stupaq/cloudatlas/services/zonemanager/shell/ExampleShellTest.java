@@ -22,17 +22,17 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.attribute.values.CATime;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.errors.ParsingException;
 import stupaq.cloudatlas.query.parser.QueryParser;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
-import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceModifier;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchyTestUtils;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
 
@@ -114,7 +114,7 @@ public class ExampleShellTest {
       protected void process(Iterable<ZoneManagementInfo> children,
           ZoneManagementInfo managementInfo) {
         if (!Iterables.isEmpty(children)) {
-          managementInfo.recomputedAttribute(new Attribute<>(name, query));
+          managementInfo.setPrime(new Attribute<>(name, query));
         }
       }
     });
@@ -125,7 +125,7 @@ public class ExampleShellTest {
     root.modifyAll(new InPlaceModifier<ZoneManagementInfo>() {
       @Override
       protected void process(ZoneManagementInfo managementInfo) {
-        managementInfo.removeAttribute(name);
+        managementInfo.remove(name);
       }
     });
   }
@@ -137,14 +137,13 @@ public class ExampleShellTest {
   private void assertValue(String path, String name, AttributeValue value) {
     GlobalName globalName = GlobalName.parse(path);
     assertEquals(value,
-        root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name)).get()
-            .getValue());
+        root.find(globalName).get().getPayload().get(AttributeName.valueOf(name)).get().getValue());
   }
 
   private void assertNothing(String path, String name) {
     GlobalName globalName = GlobalName.parse(path);
-    assertFalse(root.find(globalName).get().getPayload().getAttribute(AttributeName.valueOf(name))
-        .isPresent());
+    assertFalse(
+        root.find(globalName).get().getPayload().get(AttributeName.valueOf(name)).isPresent());
   }
 
   @Before
@@ -453,7 +452,7 @@ public class ExampleShellTest {
   }
 
   @Test
-  public void testExample16() throws Exception {
+  public void testExample16() throws IllegalArgumentException {
     installQuery(AttributeName.valueOfReserved("&ex16_1"),
         new CAQuery("SELECT first(1, some_names) AS some_names ORDER BY name ASC"));
     installQuery(AttributeName.valueOfReserved("&ex16_2"),

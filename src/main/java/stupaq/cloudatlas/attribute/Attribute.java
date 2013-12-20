@@ -18,6 +18,7 @@ import javax.annotation.concurrent.Immutable;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
+import stupaq.compact.SerializableImplementation;
 import stupaq.compact.TypeDescriptor;
 import stupaq.compact.TypeRegistry;
 
@@ -68,11 +69,13 @@ public final class Attribute<Type extends AttributeValue>
     this.value = value;
   }
 
+  @SerializableImplementation
   private void writeObject(ObjectOutputStream out) throws IOException {
     out.defaultWriteObject();
     TypeRegistry.writeObject(out, value);
   }
 
+  @SerializableImplementation
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     value = TypeRegistry.readObject(in);

@@ -30,12 +30,12 @@ public class SerializablesTest {
   @Test
   public void testSerializables() {
     GlobalName globalName = GlobalName.parse("/warsaw/home");
-    AttributeName attributeName = AttributeName.valueOf("attribute");
+    AttributeName attributeName = AttributeName.valueOf("something");
     Attribute<CAList<CABoolean>> listAttribute = new Attribute<>(attributeName,
         new CAList<>(TypeInfo.of(CABoolean.class), Arrays.asList(new CABoolean(true))));
     CAContact contact = new CAContact("Some contact");
     ZoneManagementInfo zmi = new ZoneManagementInfo(LocalName.getNotRoot("warsaw"));
-    zmi.recomputedAttribute(listAttribute);
+    zmi.setPrime(listAttribute);
     EntityName entity = new EntityName(globalName, attributeName);
     LocalName localName = LocalName.getNotRoot("child");
     ZoneHierarchy<LocalName> hierarchy = new ZoneHierarchy<>(LocalName.getRoot());

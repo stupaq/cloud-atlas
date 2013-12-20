@@ -71,6 +71,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
   @Override
   protected void runOneIteration() throws Exception {
+    // FIXME clear computed
     // FIXME recompute parameters
     // FIXME update timestamps
   }
@@ -108,7 +109,12 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     @Override
     public void updateAttributes(AttributesUpdateMessage update) {
       Preconditions.checkArgument(agentsName.equals(update.getZone()));
-      agentsZmi.settableAttributes(update, update.isOverride());
+      if (update.isOverride()) {
+        agentsZmi.clear();
+      }
+      for (Attribute attribute : update) {
+        agentsZmi.setPrime(attribute);
+      }
     }
 
     @Override
@@ -122,7 +128,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
       for (EntityName entity : request) {
         Optional<ZoneManagementInfo> zmi = hierarchy.getPayload(entity.zone);
         if (zmi.isPresent()) {
-          Optional<Attribute> attribute = zmi.get().getAttribute(entity.attributeName);
+          Optional<Attribute> attribute = zmi.get().get(entity.attributeName);
           if (attribute.isPresent()) {
             attributes.add(attribute.get());
             continue;

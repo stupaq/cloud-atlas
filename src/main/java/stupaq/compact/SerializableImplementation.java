@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.CONSTRUCTOR})
-public @interface DeserializationConstructor {
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
+public @interface SerializableImplementation {
 }

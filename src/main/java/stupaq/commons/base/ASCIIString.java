@@ -6,11 +6,11 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import stupaq.compact.DeserializationConstructor;
+import stupaq.compact.SerializableImplementation;
 
 @Immutable
 public class ASCIIString extends ForwardingWrapper<String> {
-  @DeserializationConstructor
+  @SerializableImplementation
   protected ASCIIString() {
   }
 
