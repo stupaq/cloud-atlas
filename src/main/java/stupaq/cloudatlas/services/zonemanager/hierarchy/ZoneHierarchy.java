@@ -19,6 +19,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.naming.GlobalName.Builder;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.naming.LocallyNameable;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
@@ -166,7 +167,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
   }
 
   public GlobalName globalName() {
-    final GlobalName.Builder builder = GlobalName.builder();
+    final Builder builder = new Builder();
     walkUp(new InPlaceSynthesizer<Payload>() {
       @Override
       protected void process(Iterable<Payload> payloads, Payload payload) {
@@ -270,7 +271,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
   }
 
   public static abstract class Inserter<Payload extends Hierarchical> {
-    public void descend(@SuppressWarnings("unused") LocalName root) {
+    public void descend(LocalName root) {
       // Do nothing
     }
 

@@ -388,16 +388,18 @@ public class ExampleShellTest {
 
   @Test
   public void testExample8() throws Exception {
-    executeQuery("SELECT sum(cardinality) AS cardinality");
-    assertValue("/", "cardinality", Int(5));
-    assertValue("/uw", "cardinality", Int(3));
-    assertValue("/pjwstk", "cardinality", Int(2));
+    executeQuery("SELECT sum(cardinality) AS cardinality1");
+    executeQuery("SELECT sum(cardinality1) AS cardinality2");
+    assertValue("/", "cardinality2", Int(5));
+    assertValue("/uw", "cardinality1", Int(3));
+    assertValue("/pjwstk", "cardinality1", Int(2));
   }
 
   @Test
   public void testExample9() throws Exception {
-    executeQuery("SELECT to_set(random(100, unfold(contacts))) AS contacts");
-    assertValue("/", "contacts",
+    executeQuery("SELECT to_set(random(100, unfold(contacts))) AS contacts1");
+    executeQuery("SELECT to_set(random(100, unfold(contacts1))) AS contacts2");
+    assertValue("/", "contacts2",
         Set(TCont(), Cont("PJ1"), Cont("PJ2"), Cont("UW1A"), Cont("UW1B"), Cont("UW1C"),
             Cont("UW2A"), Cont("UW3A"), Cont("UW3B")));
   }

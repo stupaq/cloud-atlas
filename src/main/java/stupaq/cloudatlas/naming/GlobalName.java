@@ -47,16 +47,12 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
     Preconditions.checkArgument(!localNames.isEmpty(), "Global name cannot be empty");
   }
 
-  public static Builder builder() {
-    return new Builder();
-  }
-
   public static GlobalName parse(String string) {
     Preconditions.checkNotNull(string);
     Preconditions.checkArgument(!string.isEmpty(), "Global name cannot be empty");
     Preconditions.checkArgument(string.startsWith(SEPARATOR), "Global name must start with /");
     if (string.length() == 1) {
-      return builder().parent(getRoot()).build();
+      return new Builder().parent(getRoot()).build();
     } else {
       Preconditions.checkArgument(!string.endsWith(SEPARATOR), "Global name cannot end with /");
       Builder builder = new Builder().parent(getRoot());
@@ -118,11 +114,18 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
   }
 
   public static class Builder {
-    private Builder() {
+    private ArrayDeque<LocalName> chunks;
+    private boolean finalized;
+
+    public Builder() {
+      chunks = new ArrayDeque<>();
+      finalized = false;
     }
 
-    private ArrayDeque<LocalName> chunks = new ArrayDeque<>();
-    private boolean finalized = false;
+    public Builder(Builder other) {
+      chunks = new ArrayDeque<>(other.chunks);
+      finalized = other.finalized;
+    }
 
     private void checkBuilder() {
       Preconditions.checkState(chunks != null, "Builder already used");

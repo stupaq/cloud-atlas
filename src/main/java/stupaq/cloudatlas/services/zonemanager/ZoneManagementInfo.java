@@ -132,10 +132,6 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     return Optional.fromNullable(attributes.get(name));
   }
 
-  public boolean isComputed(AttributeName name) {
-    return computed.contains(name);
-  }
-
   public FluentIterable<Attribute> accessibleAttributes() {
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override

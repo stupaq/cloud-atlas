@@ -10,8 +10,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 

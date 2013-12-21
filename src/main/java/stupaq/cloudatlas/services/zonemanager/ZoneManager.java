@@ -25,8 +25,9 @@ import stupaq.cloudatlas.messaging.messages.KnownZonesResponse;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
+import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsInserter;
+import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsUpdater;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
-import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Inserter;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
 import stupaq.commons.base.Function1;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
@@ -45,12 +46,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     this.bus = config.getBus();
     this.agentsName = config.getLeafZone();
     hierarchy = new ZoneHierarchy<>(new ZoneManagementInfo(LocalName.getRoot()));
-    agentsZmi = hierarchy.insert(agentsName, new Inserter<ZoneManagementInfo>() {
-      @Override
-      public ZoneManagementInfo create(LocalName local) {
-        return new ZoneManagementInfo(local);
-      }
-    });
+    agentsZmi = hierarchy.insert(agentsName, new BuiltinsInserter(agentsName));
     executor = config.threadManager().singleThreaded(ZoneManager.class);
   }
 
@@ -73,6 +69,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   @Override
   protected void runOneIteration() throws Exception {
     hierarchy.synthesize(new InstalledQueriesUpdater());
+    hierarchy.synthesize(new BuiltinsUpdater());
     // TODO adjust timestamps
   }
 
