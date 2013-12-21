@@ -13,8 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
-import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
+import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 
 import static stupaq.commons.util.testing.Asserts.assertLasts;
 import static stupaq.commons.util.testing.Asserts.assertLastsLess;

@@ -466,11 +466,13 @@ public class ExampleShellTest {
 
   @Test
   public void testExample17() throws Exception {
-    removeQuery(executeQuery("SELECT sum(cardinality) AS base"));
-    executeQuery("SELECT sum(cardinality) + sum(base) AS base");
-    assertValue("/", "base", Int(5));
-    assertValue("/uw", "base", Int(3));
-    assertValue("/pjwstk", "base", Int(2));
+    executeQuery("SELECT sum(num_cores) AS base");
+    assertValue("/pjwstk", "base", Int(20));
+    assertValue("/uw", "base", Int(6));
+    executeQuery("SELECT sum(base) AS base1");
+    assertValue("/pjwstk", "base", Int(20));
+    assertValue("/uw", "base", Int(6));
+    assertValue("/", "base1", Int(26));
   }
 
   @Test
