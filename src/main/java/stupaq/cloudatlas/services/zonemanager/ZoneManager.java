@@ -35,10 +35,12 @@ import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
 import stupaq.cloudatlas.time.Clock;
 import stupaq.commons.base.Function1;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
+import stupaq.commons.util.concurrent.SingleThreadAssertion;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
 public class ZoneManager extends AbstractScheduledService implements ZoneManagerConfigKeys {
   private static final Log LOG = LogFactory.getLog(ZoneManager.class);
+  private final SingleThreadAssertion assertion = new SingleThreadAssertion();
   private final BootstrapConfiguration config;
   private final MessageBus bus;
   private final GlobalName agentsName;
@@ -75,6 +77,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
   @Override
   protected void runOneIteration() throws Exception {
+    assertion.check();
     if (LOG.isDebugEnabled()) {
       LOG.debug("Zone hierarchy as seen by: " + agentsName + "\n" + hierarchy);
     }
@@ -115,6 +118,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
     @Override
     public void updateAttributes(AttributesUpdateMessage update) {
+      assertion.check();
       Preconditions.checkArgument(agentsName.equals(update.getZone()));
       if (update.isOverride()) {
         agentsZmi.clearPrime();
@@ -126,11 +130,13 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
     @Override
     public void dumpZone(DumpZoneRequest request) {
+      assertion.check();
       bus.post(new DumpZoneResponse(agentsZmi.export()));
     }
 
     @Override
     public void dumpValues(EntitiesValuesRequest request) {
+      assertion.check();
       List<Attribute> attributes = new ArrayList<>();
       for (EntityName entity : request) {
         Optional<ZoneManagementInfo> zmi = hierarchy.getPayload(entity.zone);
@@ -153,6 +159,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
     @Override
     public void knownZones(KnownZonesRequest request) {
+      assertion.check();
       bus.post(new KnownZonesResponse(hierarchy.map(new Function1<ZoneManagementInfo, LocalName>() {
         @Override
         public LocalName apply(ZoneManagementInfo zoneManagementInfo) {
