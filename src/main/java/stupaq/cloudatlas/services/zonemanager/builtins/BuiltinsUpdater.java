@@ -1,5 +1,7 @@
 package stupaq.cloudatlas.services.zonemanager.builtins;
 
+import com.google.common.collect.Iterables;
+
 import java.util.Collections;
 
 import stupaq.cloudatlas.attribute.Attribute;
@@ -26,10 +28,15 @@ public class BuiltinsUpdater extends InPlaceSynthesizer<ZoneManagementInfo>
     zmi.setPrime(new Attribute<>(TIMESTAMP, time));
     zmi.setPrime(new Attribute<>(CONTACTS,
         new CASet<>(TypeInfo.of(CAContact.class), Collections.<CAContact>emptySet())));
-    AttributeValue cardinality = new CAInteger(1);
-    for (ZoneManagementInfo child : children) {
-      cardinality = cardinality.op()
-          .add(child.get(CARDINALITY).or(new Attribute<>(CARDINALITY, new CAInteger())).getValue());
+    AttributeValue cardinality;
+    if (Iterables.isEmpty(children)) {
+      cardinality = new CAInteger(1);
+    } else {
+      cardinality = new CAInteger(0);
+      for (ZoneManagementInfo child : children) {
+        cardinality = cardinality.op().add(
+            child.get(CARDINALITY).or(new Attribute<>(CARDINALITY, new CAInteger())).getValue());
+      }
     }
     zmi.setPrime(new Attribute<>(CARDINALITY, cardinality));
   }

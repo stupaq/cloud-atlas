@@ -182,7 +182,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
   }
 
   private void appendTo(StringBuilder builder) {
-    builder.append("Hierarchy node: ").append(globalName()).append('\n');
+    builder.append("\t:: ").append(globalName()).append(" ::\n");
     builder.append(payload.toString()).append("\n");
     for (ZoneHierarchy<Payload> child : childZones.values()) {
       child.appendTo(builder);
@@ -215,8 +215,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
     return result;
   }
 
-  public static <Payload extends Hierarchical & CompactSerializable>
-  CompactSerializer<ZoneHierarchy<Payload>> Serializer(
+  public static <Payload extends Hierarchical & CompactSerializable> CompactSerializer<ZoneHierarchy<Payload>> Serializer(
       final CompactSerializer<Payload> payloadSerializer) {
     return new CompactSerializer<ZoneHierarchy<Payload>>() {
       @Override

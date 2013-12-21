@@ -81,8 +81,8 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     if (LOG.isDebugEnabled()) {
       LOG.debug("Zone hierarchy as seen by: " + agentsName + "\n" + hierarchy);
     }
-    hierarchy.synthesize(new InstalledQueriesUpdater());
-    hierarchy.synthesize(new BuiltinsUpdater(clock.getTime()));
+    hierarchy.synthesizeFromLeaves(new InstalledQueriesUpdater());
+    hierarchy.synthesizeFromLeaves(new BuiltinsUpdater(clock.getTime()));
     // TODO adjust timestamps
   }
 
