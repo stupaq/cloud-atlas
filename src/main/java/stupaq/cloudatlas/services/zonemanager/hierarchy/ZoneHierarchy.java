@@ -215,7 +215,8 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
     return result;
   }
 
-  public static <Payload extends Hierarchical & CompactSerializable> CompactSerializer<ZoneHierarchy<Payload>> Serializer(
+  public static <Payload extends Hierarchical & CompactSerializable>
+  CompactSerializer<ZoneHierarchy<Payload>> Serializer(
       final CompactSerializer<Payload> payloadSerializer) {
     return new CompactSerializer<ZoneHierarchy<Payload>>() {
       @Override

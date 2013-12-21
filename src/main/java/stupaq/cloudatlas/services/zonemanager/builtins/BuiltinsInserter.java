@@ -27,7 +27,7 @@ public class BuiltinsInserter extends Inserter<ZoneManagementInfo> {
   public ZoneManagementInfo create(LocalName local) {
     ZoneManagementInfo zmi = new ZoneManagementInfo(local);
     set(zmi, "level", new CAInteger(level++));
-    set(zmi, "name", new CAString(local.isRoot()? null:local.toString()));
+    set(zmi, "name", new CAString(local.isRoot() ? null : local.toString()));
     set(zmi, "owner", new CAString(owner));
     return zmi;
   }
