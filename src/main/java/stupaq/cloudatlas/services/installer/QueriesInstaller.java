@@ -1,14 +1,14 @@
 package stupaq.cloudatlas.services.installer;
 
 import com.google.common.base.Optional;
-import com.google.common.util.concurrent.AbstractIdleService;
+import com.google.common.util.concurrent.AbstractScheduledService;
 
+import org.apache.commons.configuration.AbstractFileConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
+import org.apache.commons.configuration.event.ConfigurationEvent;
+import org.apache.commons.configuration.event.ConfigurationListener;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
-import org.apache.commons.io.monitor.FileAlterationMonitor;
-import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,6 +16,7 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAQuery;
@@ -26,21 +27,28 @@ import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 
 import static com.google.common.base.Optional.of;
 
-public class QueriesInstaller extends AbstractIdleService implements QueriesInstallerConfigKeys {
+public class QueriesInstaller extends AbstractScheduledService
+    implements QueriesInstallerConfigKeys {
   private static final Log LOG = LogFactory.getLog(QueriesInstaller.class);
   private final File queriesFile;
   private final LocalClientProtocol client;
   private final ScheduledExecutorService executor;
-  private HierarchicalINIConfiguration fileConfig;
-  private CAConfiguration queries;
-  private FileAlterationMonitor monitor;
+  private final Scheduler scheduler;
+  private HierarchicalINIConfiguration queriesConfig;
 
-  public QueriesInstaller(CAConfiguration configuration, LocalClientProtocol client,
+  public QueriesInstaller(final CAConfiguration configuration, LocalClientProtocol client,
       ScheduledExecutorService executor) {
     String source = configuration.getString(QUERIES_FILE);
     this.queriesFile = source == null ? null : new File(source);
     this.client = client;
     this.executor = executor;
+    scheduler = new CustomScheduler() {
+      @Override
+      protected Schedule getNextSchedule() throws Exception {
+        return new Schedule(configuration.getLong(POLL_INTERVAL, POLL_INTERVAL_DEFAULT),
+            TimeUnit.MILLISECONDS);
+      }
+    };
   }
 
   @Override
@@ -49,40 +57,44 @@ public class QueriesInstaller extends AbstractIdleService implements QueriesInst
   }
 
   @Override
-  protected void startUp() throws Exception {
+  protected void runOneIteration() throws Exception {
+    queriesConfig.reload();
+  }
+
+  @Override
+  protected void startUp() throws ConfigurationException, RemoteException {
     if (queriesFile == null) {
       LOG.warn("Queries file not set, nothing to do");
       return;
     }
     // Try to retrieve configuration
     try {
-      fileConfig = new HierarchicalINIConfiguration(queriesFile);
-      fileConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-      queries = new CAConfiguration(fileConfig);
+      queriesConfig = new HierarchicalINIConfiguration(queriesFile);
+      queriesConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
     } catch (ConfigurationException e) {
       LOG.error("Failed to load queries file: " + queriesFile);
       throw e;
     }
     // Remove all queries if we were to handover the agent
-    if (queries.getBoolean(REPLACE_ALL, REPLACE_ALL_DEFAULT)) {
+    if (queriesConfig.getBoolean(REPLACE_ALL, REPLACE_ALL_DEFAULT)) {
       client.removeQuery(Optional.<AttributeName>absent(), Optional.<List<GlobalName>>absent());
     }
+    // Install queries from file
+    processConfig();
     // Set up file monitor
-    FileAlterationObserver observer = new FileAlterationObserver(queriesFile);
-    observer.addListener(new FileAlterationListenerAdaptor() {
+    queriesConfig.addConfigurationListener(new ConfigurationListener() {
       @Override
-      public void onStart(FileAlterationObserver observer) {
-        onFileChange(queriesFile);
-      }
-
-      @Override
-      public void onFileChange(File file) {
-        processConfig();
+      public void configurationChanged(ConfigurationEvent event) {
+        if (!event.isBeforeUpdate()) {
+          switch (event.getType()) {
+            case AbstractFileConfiguration.EVENT_CONFIG_CHANGED:
+            case AbstractFileConfiguration.EVENT_RELOAD:
+              processConfig();
+              break;
+          }
+        }
       }
     });
-    monitor = new FileAlterationMonitor();
-    monitor.addObserver(observer);
-    monitor.start();
   }
 
   @Override
@@ -90,35 +102,41 @@ public class QueriesInstaller extends AbstractIdleService implements QueriesInst
     if (queriesFile == null) {
       return;
     }
-    monitor.stop();
-    monitor = null;
-    fileConfig = null;
-    queries = null;
+    for (ConfigurationListener listener : queriesConfig.getConfigurationListeners()) {
+      queriesConfig.removeConfigurationListener(listener);
+    }
+    queriesConfig = null;
+  }
+
+  @Override
+  protected Scheduler scheduler() {
+    return scheduler;
   }
 
   private void processConfig() {
-    for (String section : fileConfig.getSections()) {
-      processSection(section);
+    for (String section : queriesConfig.getSections()) {
+      if (section != null) {
+        processSection(section);
+      }
     }
   }
 
   private void processSection(String section) {
-    if (section != null) {
-      LOG.info("Processing query entry: " + section);
-      AttributeName name = AttributeName.special(section);
-      List<GlobalName> zones = queries.getGlobalNames(section + QUERY_ZONES);
-      try {
-        if (!queries.getBoolean(section + QUERY_ENABLED, QUERY_ENABLED_DEFAULT)) {
-          queries.subset(section).clear();
-        } else if (queries.containsKey(section + QUERY_CODE)) {
-          CAQuery query = new CAQuery(queries.getString(section + QUERY_CODE));
-          client.installQuery(new Attribute<>(name, query), of(zones));
-        } else {
-          LOG.error("Malformed query entry: " + section);
-        }
-      } catch (RemoteException e) {
-        LOG.error("Error processing query entry: " + section, e);
+    LOG.info("Processing query entry: " + section);
+    AttributeName name = AttributeName.special(section);
+    CAConfiguration queries = new CAConfiguration(queriesConfig);
+    List<GlobalName> zones = queries.getGlobalNames(section + QUERY_ZONES);
+    try {
+      if (!queries.getBoolean(section + QUERY_ENABLED, QUERY_ENABLED_DEFAULT)) {
+        queries.subset(section).clear();
+      } else if (queries.containsKey(section + QUERY_CODE)) {
+        CAQuery query = new CAQuery(queries.getString(section + QUERY_CODE));
+        client.installQuery(new Attribute<>(name, query), of(zones));
+      } else {
+        LOG.error("Malformed query entry: " + section);
       }
+    } catch (RemoteException e) {
+      LOG.error("Error processing query entry: " + section, e);
     }
   }
 }

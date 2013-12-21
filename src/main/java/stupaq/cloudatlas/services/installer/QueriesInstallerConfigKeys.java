@@ -5,6 +5,8 @@ public interface QueriesInstallerConfigKeys {
   static final String PREFIX = "installer.";
   // Runtime configuration entries
   static final String QUERIES_FILE = PREFIX + "queries_file";
+  static final String POLL_INTERVAL = PREFIX + "poll_interval";
+  static final long POLL_INTERVAL_DEFAULT = 10 * 1000L;
   // Queries file keys
   static final String REPLACE_ALL = "replace_all";
   static final boolean REPLACE_ALL_DEFAULT = false;
