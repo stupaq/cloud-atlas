@@ -2,6 +2,9 @@ package stupaq.cloudatlas.services.scribe;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +20,7 @@ import stupaq.cloudatlas.time.Clock;
 
 public class AttributesScribe extends AbstractScheduledService
     implements AttributesScribeConfigKeys {
+  private static final Log LOG = LogFactory.getLog(AttributesScribe.class);
   private final CAConfiguration configuration;
   private final LocalClientProtocol client;
   private final ScheduledExecutorService executor;
@@ -34,11 +38,15 @@ public class AttributesScribe extends AbstractScheduledService
   @Override
   protected void runOneIteration() throws IOException {
     List<EntityName> entitiesList = configuration.getEntities(ENTITIES);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Asking for entities: " + entitiesList);
+    }
     Iterator<Attribute> values = client.getValues(entitiesList).iterator();
     Iterator<EntityName> entities = entitiesList.iterator();
     long timestamp = clock.getTime();
     while (entities.hasNext() && entities.hasNext()) {
-      try (Records log = recordsManager.forEntity(entities.next())) {
+      EntityName entity = entities.next();
+      try (Records log = recordsManager.forEntity(entity)) {
         Attribute value = values.next();
         if (value != null) {
           log.record(timestamp, value.getValue());

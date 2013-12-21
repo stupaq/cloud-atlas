@@ -1,5 +1,7 @@
 package stupaq.cloudatlas.messaging.messages;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,6 +15,7 @@ public class FallbackContactsMessage extends Message implements Iterable<CAConta
   private final List<CAContact> contacts;
 
   public FallbackContactsMessage(List<CAContact> contacts) {
+    Preconditions.checkNotNull(contacts);
     this.contacts = contacts;
   }
 

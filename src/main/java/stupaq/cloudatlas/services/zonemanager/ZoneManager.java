@@ -5,6 +5,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractScheduledService;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,6 +38,7 @@ import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
 public class ZoneManager extends AbstractScheduledService implements ZoneManagerConfigKeys {
+  private static final Log LOG = LogFactory.getLog(ZoneManager.class);
   private final BootstrapConfiguration config;
   private final MessageBus bus;
   private final GlobalName agentsName;
@@ -49,6 +53,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     this.agentsName = config.getLeafZone();
     hierarchy = new ZoneHierarchy<>(new ZoneManagementInfo(LocalName.getRoot()));
     agentsZmi = hierarchy.insert(agentsName, new BuiltinsInserter(agentsName));
+    Preconditions.checkState(hierarchy.getPayload(agentsName).get() == agentsZmi);
     executor = config.threadManager().singleThreaded(ZoneManager.class);
   }
 
@@ -70,6 +75,9 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
   @Override
   protected void runOneIteration() throws Exception {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Zone hierarchy as seen by: " + agentsName + "\n" + hierarchy);
+    }
     hierarchy.synthesize(new InstalledQueriesUpdater());
     hierarchy.synthesize(new BuiltinsUpdater(clock.getTime()));
     // TODO adjust timestamps
@@ -130,8 +138,13 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
           Optional<Attribute> attribute = zmi.get().get(entity.attributeName);
           if (attribute.isPresent()) {
             attributes.add(attribute.get());
+            LOG.debug("Asked for entity: " + entity + " found: " + attribute.get());
             continue;
+          } else {
+            LOG.debug("Attribute not found: " + entity.attributeName + " in zone: " + entity.zone);
           }
+        } else {
+          LOG.debug("Zone not found: " + entity.zone + " ");
         }
         attributes.add(null);
       }

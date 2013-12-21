@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.messaging.messages;
 
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.SettableFuture;
 
 import javax.annotation.concurrent.Immutable;
@@ -12,6 +13,7 @@ public class DumpZoneRequest extends Request<SettableFuture<DumpZoneResponse>> {
   private final GlobalName zone;
 
   public DumpZoneRequest(GlobalName zone) {
+    Preconditions.checkNotNull(zone);
     this.zone = zone;
     attach(SettableFuture.<DumpZoneResponse>create());
   }
