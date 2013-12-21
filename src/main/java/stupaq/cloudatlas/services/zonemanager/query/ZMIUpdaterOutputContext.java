@@ -1,12 +1,9 @@
 package stupaq.cloudatlas.services.zonemanager.query;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeValue;
@@ -17,17 +14,8 @@ import stupaq.cloudatlas.query.semantics.values.RSingle;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 
-import static com.google.common.collect.FluentIterable.from;
-
 /** PACKAGE-LOCAL */
 class ZMIUpdaterOutputContext implements OutputContext, ZoneManagerConfigKeys {
-  private final Set<AttributeName> reservedNames =
-      Sets.newHashSet(from(RESERVED_NAMES).transform(new Function<String, AttributeName>() {
-        @Override
-        public AttributeName apply(String str) {
-          return AttributeName.valueOf(str);
-        }
-      }));
   private final ZoneManagementInfo destination;
   private final List<Attribute> putsLog;
 
@@ -43,11 +31,11 @@ class ZMIUpdaterOutputContext implements OutputContext, ZoneManagerConfigKeys {
     // Attribute value cannot start with reserved prefix
     AttributeName name;
     try {
-      name = AttributeName.valueOf(nameStr);
+      name = AttributeName.fromString(nameStr);
     } catch (IllegalArgumentException e) {
       throw new EvaluationException(e.getMessage());
     }
-    if (reservedNames.contains(name)) {
+    if (RESERVED_NAMES.contains(name)) {
       throw new EvaluationException("Name: " + name + " is reserved");
     }
     Attribute attribute = new Attribute<>(name, value.get());

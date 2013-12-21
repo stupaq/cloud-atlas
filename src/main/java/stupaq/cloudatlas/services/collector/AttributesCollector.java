@@ -77,19 +77,19 @@ public class AttributesCollector extends AbstractScheduledService
       List<Attribute> attributes = new ArrayList<>();
       for (String name : ATTRIBUTES_DOUBLE) {
         if (collected.containsKey(name)) {
-          attributes.add(new Attribute<>(AttributeName.valueOf(name),
+          attributes.add(new Attribute<>(AttributeName.fromString(name),
               new CADouble(collected.getDouble(name))));
         }
       }
       for (String name : ATTRIBUTES_LONG) {
         if (collected.containsKey(name)) {
           attributes.add(
-              new Attribute<>(AttributeName.valueOf(name), new CAInteger(collected.getLong(name))));
+              new Attribute<>(AttributeName.fromString(name), new CAInteger(collected.getLong(name))));
         }
       }
       for (String name : ATTRIBUTES_STRING) {
         if (collected.containsKey(name)) {
-          attributes.add(new Attribute<>(AttributeName.valueOf(name),
+          attributes.add(new Attribute<>(AttributeName.fromString(name),
               new CAString(collected.getString(name))));
         }
       }
@@ -99,7 +99,7 @@ public class AttributesCollector extends AbstractScheduledService
           for (String element : collected.getStringArray(name)) {
             list.add(new CAString(element));
           }
-          attributes.add(new Attribute<>(AttributeName.valueOf(name),
+          attributes.add(new Attribute<>(AttributeName.fromString(name),
               new CASet<>(TypeInfo.of(CAString.class), list)));
         }
       }

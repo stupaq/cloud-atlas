@@ -30,7 +30,7 @@ public class SerializablesTest {
   @Test
   public void testSerializables() {
     GlobalName globalName = GlobalName.parse("/warsaw/home");
-    AttributeName attributeName = AttributeName.valueOf("something");
+    AttributeName attributeName = AttributeName.fromString("something");
     Attribute<CAList<CABoolean>> listAttribute = new Attribute<>(attributeName,
         new CAList<>(TypeInfo.of(CABoolean.class), Arrays.asList(new CABoolean(true))));
     CAContact contact = new CAContact("Some contact");

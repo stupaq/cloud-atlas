@@ -48,7 +48,7 @@ public class ExampleShellTest {
   private ZoneHierarchy<ZoneManagementInfo> root;
 
   private static AttributeName getUniqueQueryName() {
-    return AttributeName.valueOfReserved("&unique" + uniqueId.getAndDecrement());
+    return AttributeName.special("&unique" + uniqueId.getAndDecrement());
   }
 
   private static Collection<Entry<AttributeName, CAQuery>> parse(InputStream in)
@@ -66,7 +66,7 @@ public class ExampleShellTest {
       if (parts.length < 2) {
         throw new ParsingException("Parse failed");
       }
-      AttributeName name = AttributeName.valueOfReserved(parts[0].trim());
+      AttributeName name = AttributeName.special(parts[0].trim());
       CAQuery query = new CAQuery(parts[1].trim());
       if (map.containsKey(name)) {
         throw new IllegalArgumentException("Duplicated query name");
@@ -137,13 +137,13 @@ public class ExampleShellTest {
   private void assertValue(String path, String name, AttributeValue value) {
     GlobalName globalName = GlobalName.parse(path);
     assertEquals(value,
-        root.find(globalName).get().getPayload().get(AttributeName.valueOf(name)).get().getValue());
+        root.find(globalName).get().getPayload().get(AttributeName.fromString(name)).get().getValue());
   }
 
   private void assertNothing(String path, String name) {
     GlobalName globalName = GlobalName.parse(path);
     assertFalse(
-        root.find(globalName).get().getPayload().get(AttributeName.valueOf(name)).isPresent());
+        root.find(globalName).get().getPayload().get(AttributeName.fromString(name)).isPresent());
   }
 
   @Before
@@ -455,9 +455,9 @@ public class ExampleShellTest {
 
   @Test
   public void testExample16() throws IllegalArgumentException {
-    installQuery(AttributeName.valueOfReserved("&ex16_1"),
+    installQuery(AttributeName.special("&ex16_1"),
         new CAQuery("SELECT first(1, some_names) AS some_names ORDER BY name ASC"));
-    installQuery(AttributeName.valueOfReserved("&ex16_2"),
+    installQuery(AttributeName.special("&ex16_2"),
         new CAQuery("SELECT count(distinct(unfold(some_names))) AS names_no ORDER BY name"));
     recomputeQueries();
     assertValue("/uw", "some_names", List(TList(TStr()), List(TStr())));
@@ -537,8 +537,8 @@ public class ExampleShellTest {
     Collection<Entry<AttributeName, CAQuery>> queries = parse(new ByteArrayInputStream(
         "&example1: SELECT 2 + 2 AS four;\n&example2: SELECT 2 + 3 AS five;".getBytes()));
     Map<AttributeName, CAQuery> expected = Maps.newHashMap();
-    expected.put(AttributeName.valueOfReserved("&example1"), new CAQuery("SELECT 2 + 2 AS four"));
-    expected.put(AttributeName.valueOfReserved("&example2"), new CAQuery("SELECT 2 + 3 AS five"));
+    expected.put(AttributeName.special("&example1"), new CAQuery("SELECT 2 + 2 AS four"));
+    expected.put(AttributeName.special("&example2"), new CAQuery("SELECT 2 + 3 AS five"));
     assertEquals(expected.entrySet(), queries);
   }
 }

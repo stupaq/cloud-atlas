@@ -22,7 +22,7 @@ public class CATypeRegistryTest {
   @Test
   public void testObject0() throws IOException {
     ZoneManagementInfo zmi = new ZoneManagementInfo(LocalName.getNotRoot("warsaw"));
-    zmi.setPrime(new Attribute(AttributeName.valueOf("timestamp"), CATime.now()));
+    zmi.setPrime(new Attribute(AttributeName.fromString("timestamp"), CATime.now()));
     assertEquals(zmi, CompactSerializableTestUtils.clone(zmi));
   }
 }

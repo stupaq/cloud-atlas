@@ -29,6 +29,7 @@ import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsInserter;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsUpdater;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
+import stupaq.cloudatlas.time.Clock;
 import stupaq.commons.base.Function1;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
@@ -40,6 +41,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   private final ZoneHierarchy<ZoneManagementInfo> hierarchy;
   private final ZoneManagementInfo agentsZmi;
   private final SingleThreadedExecutor executor;
+  private final Clock clock = new Clock();
 
   public ZoneManager(BootstrapConfiguration config) {
     this.config = config;
@@ -69,7 +71,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   @Override
   protected void runOneIteration() throws Exception {
     hierarchy.synthesize(new InstalledQueriesUpdater());
-    hierarchy.synthesize(new BuiltinsUpdater());
+    hierarchy.synthesize(new BuiltinsUpdater(clock.getTime()));
     // TODO adjust timestamps
   }
 

@@ -109,6 +109,6 @@ public final class ZoneHierarchyTestUtils {
   }
 
   public static AttributeName Name(String name) {
-    return AttributeName.valueOf(name);
+    return AttributeName.fromString(name);
   }
 }

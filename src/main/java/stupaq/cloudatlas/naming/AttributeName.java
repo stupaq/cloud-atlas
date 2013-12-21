@@ -45,18 +45,6 @@ public final class AttributeName extends CAIdentifier implements CompactSerializ
         "AttributeName cannot contain GlobalName separator");
   }
 
-  public static AttributeName valueOf(String str) throws IllegalArgumentException {
-    Preconditions.checkArgument(!str.startsWith(RESERVED_PREFIX),
-        "AttributeName cannot start with reserved prefix: " + RESERVED_PREFIX);
-    return new AttributeName(str);
-  }
-
-  public static AttributeName valueOfReserved(String str) throws IllegalArgumentException {
-    Preconditions.checkArgument(str.startsWith(RESERVED_PREFIX),
-        "AttributeName must start with reserved prefix: " + RESERVED_PREFIX);
-    return new AttributeName(str);
-  }
-
   public boolean isSpecial() {
     return toString().startsWith(RESERVED_PREFIX);
   }
@@ -64,5 +52,17 @@ public final class AttributeName extends CAIdentifier implements CompactSerializ
   @Override
   public TypeDescriptor descriptor() {
     return TypeDescriptor.AttributeName;
+  }
+
+  public static AttributeName fromString(String str) throws IllegalArgumentException {
+    Preconditions.checkArgument(!str.startsWith(RESERVED_PREFIX),
+        "AttributeName cannot start with reserved prefix: " + RESERVED_PREFIX);
+    return new AttributeName(str);
+  }
+
+  public static AttributeName special(String str) throws IllegalArgumentException {
+    Preconditions.checkArgument(str.startsWith(RESERVED_PREFIX),
+        "AttributeName must start with reserved prefix: " + RESERVED_PREFIX);
+    return new AttributeName(str);
   }
 }

@@ -22,7 +22,7 @@ public class EntityName implements Serializable {
 
   public static EntityName parse(String str) {
     GlobalName entity = GlobalName.parse(str);
-    return new EntityName(entity.parent(), AttributeName.valueOf(entity.child().toString()));
+    return new EntityName(entity.parent(), AttributeName.fromString(entity.child().toString()));
   }
 
   @Override
