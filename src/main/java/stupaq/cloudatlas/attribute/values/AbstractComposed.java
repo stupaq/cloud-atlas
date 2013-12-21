@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -20,6 +19,9 @@ import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.commons.lang.Fluent;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeRegistry;
+
+import static stupaq.compact.CompactSerializers.Collection;
+import static stupaq.compact.TypeRegistry.resolveOrThrow;
 
 /** PACKAGE-LOCAL */
 abstract class AbstractComposed<Type extends AttributeValue> implements AttributeValue {
@@ -113,13 +115,8 @@ abstract class AbstractComposed<Type extends AttributeValue> implements Attribut
       TypeInfo<Type> enclosingType = TypeRegistry.readObject(in);
       int size = in.readInt();
       if (size > 0) {
-        CompactSerializer<Type> serializer =
-            TypeRegistry.resolveOrThrow(enclosingType.aNull().descriptor());
-        ArrayList<Type> elements = new ArrayList<>();
-        for (; size > 0; size--) {
-          elements.add(serializer.readInstance(in));
-        }
-        return newInstance(enclosingType, elements);
+        CompactSerializer<Type> serializer = resolveOrThrow(enclosingType.aNull().descriptor());
+        return newInstance(enclosingType, Collection(serializer).readInstance(in));
       } else {
         return newInstance(enclosingType, size == 0 ? Collections.<Type>emptyList() : null);
       }
@@ -133,11 +130,8 @@ abstract class AbstractComposed<Type extends AttributeValue> implements Attribut
       int elements = object.isNull() ? -1 : object.get().size();
       out.writeInt(elements);
       if (elements > 0) {
-        CompactSerializer<AttributeValue> serializer =
-            TypeRegistry.resolveOrThrow(enclosingType.aNull().descriptor());
-        for (AttributeValue element : object.get()) {
-          serializer.writeInstance(out, element);
-        }
+        CompactSerializer<Type> serializer = resolveOrThrow(enclosingType.aNull().descriptor());
+        Collection(serializer).writeInstance(out, object.get());
       }
     }
   }

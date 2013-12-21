@@ -19,6 +19,7 @@ import stupaq.compact.TypeDescriptor;
 
 import static stupaq.cloudatlas.naming.LocalName.getNotRoot;
 import static stupaq.cloudatlas.naming.LocalName.getRoot;
+import static stupaq.compact.CompactSerializers.List;
 
 @Immutable
 public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
@@ -28,21 +29,12 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
       new CompactSerializer<GlobalName>() {
         @Override
         public GlobalName readInstance(ObjectInput in) throws IOException {
-          int elements = in.readInt();
-          Preconditions.checkState(elements >= 0);
-          ArrayList<LocalName> chunks = new ArrayList<>();
-          for (; elements > 0; --elements) {
-            chunks.add(LocalName.SERIALIZER.readInstance(in));
-          }
-          return new GlobalName(chunks);
+          return new GlobalName(List(LocalName.SERIALIZER).readInstance(in));
         }
 
         @Override
         public void writeInstance(ObjectOutput out, GlobalName object) throws IOException {
-          out.writeInt(object.get().size());
-          for (LocalName localName : object.get()) {
-            LocalName.SERIALIZER.writeInstance(out, localName);
-          }
+          List(LocalName.SERIALIZER).writeInstance(out, object.get());
         }
       };
 

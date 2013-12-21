@@ -142,11 +142,11 @@ public final class CompactSerializers {
     };
   }
 
-  public static <Element> CompactSerializer<List<Element>> List(
+  public static <Element> ListCompactSerializer<Element> List(
       final CompactSerializer<Element> elementSerializer) {
-    return new CompactSerializer<List<Element>>() {
+    return new ListCompactSerializer<Element>() {
       @Override
-      public List<Element> readInstance(ObjectInput in) throws IOException {
+      public ArrayList<Element> readInstance(ObjectInput in) throws IOException {
         int elements = in.readInt();
         Preconditions.checkState(elements >= 0);
         ArrayList<Element> list = new ArrayList<>(elements);
@@ -179,5 +179,10 @@ public final class CompactSerializers {
         }
       }
     };
+  }
+
+  public static interface ListCompactSerializer<Element> extends CompactSerializer<List<Element>> {
+    @Override
+    public abstract ArrayList<Element> readInstance(ObjectInput in) throws IOException;
   }
 }

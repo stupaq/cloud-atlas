@@ -28,10 +28,9 @@ import static stupaq.compact.CompactSerializers.Collection;
 public final class Attribute<Type extends AttributeValue>
     implements CompactSerializable, Serializable {
   public static final CompactSerializer<Attribute> SERIALIZER = new CompactSerializer<Attribute>() {
-    @SuppressWarnings("unchecked")
     @Override
     public Attribute readInstance(ObjectInput in) throws IOException {
-      return new Attribute(AttributeName.SERIALIZER.readInstance(in),
+      return new Attribute<>(AttributeName.SERIALIZER.readInstance(in),
           (AttributeValue) TypeRegistry.readObject(in));
     }
 
