@@ -5,8 +5,12 @@ public interface QueriesInstallerConfigKeys {
   static final String PREFIX = "installer.";
   // Runtime configuration entries
   static final String QUERIES_FILE = PREFIX + "queries_file";
-  // Static configuration
-  static final String ZONES_KEY = ".zones";
-  static final String QUERY_KEY = ".query";
-  static final String REMOVE_KEY = ".remove";
+  // Queries file keys
+  static final String REPLACE_ALL = "replace_all";
+  static final boolean REPLACE_ALL_DEFAULT = false;
+  // Per query keys
+  static final String QUERY_ZONES = ".zones";
+  static final String QUERY_CODE = ".query";
+  static final String QUERY_ENABLED = ".enabled";
+  static final boolean QUERY_ENABLED_DEFAULT = true;
 }

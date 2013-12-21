@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.services.rmiserver.handler;
 
+import com.google.common.base.Optional;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
@@ -77,13 +78,14 @@ public class LocalClientHandler implements LocalClientProtocol {
   }
 
   @Override
-  public void installQuery(AttributeName name, CAQuery query, List<GlobalName> zones)
+  public void installQuery(Attribute<CAQuery> query, Optional<List<GlobalName>> zones)
       throws RemoteException {
     // TODO
   }
 
   @Override
-  public void removeQuery(AttributeName name, List<GlobalName> zones) throws RemoteException {
+  public void removeQuery(Optional<AttributeName> name, Optional<List<GlobalName>> zones)
+      throws RemoteException {
     // TODO
   }
 

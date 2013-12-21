@@ -1,8 +1,12 @@
 package stupaq.cloudatlas.services.rmiserver.protocol;
 
+import com.google.common.base.Optional;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAContact;
@@ -14,6 +18,7 @@ import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 
+@ParametersAreNonnullByDefault
 public interface LocalClientProtocol extends Remote {
 
   public void updateAttributes(GlobalName zone, List<Attribute> attributes, boolean override)
@@ -27,8 +32,9 @@ public interface LocalClientProtocol extends Remote {
 
   public ZoneHierarchy<LocalName> getKnownZones() throws RemoteException;
 
-  public void installQuery(AttributeName name, CAQuery query, List<GlobalName> zones)
+  public void installQuery(Attribute<CAQuery> query, Optional<List<GlobalName>> zones)
       throws RemoteException;
 
-  public void removeQuery(AttributeName name, List<GlobalName> zones) throws RemoteException;
+  public void removeQuery(Optional<AttributeName> name, Optional<List<GlobalName>> zones)
+      throws RemoteException;
 }
