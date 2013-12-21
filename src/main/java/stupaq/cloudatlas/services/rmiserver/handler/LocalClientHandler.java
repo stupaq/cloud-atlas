@@ -16,6 +16,7 @@ import java.util.concurrent.TimeoutException;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAContact;
+import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.Request;
@@ -24,6 +25,7 @@ import stupaq.cloudatlas.messaging.messages.DumpZoneRequest;
 import stupaq.cloudatlas.messaging.messages.EntitiesValuesRequest;
 import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
 import stupaq.cloudatlas.messaging.messages.KnownZonesRequest;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
@@ -72,6 +74,17 @@ public class LocalClientHandler implements LocalClientProtocol {
     KnownZonesRequest request = new KnownZonesRequest();
     bus.post(request);
     return awaitResult(request).getZones();
+  }
+
+  @Override
+  public void installQuery(AttributeName name, CAQuery query, List<GlobalName> zones)
+      throws RemoteException {
+    // TODO
+  }
+
+  @Override
+  public void removeQuery(AttributeName name, List<GlobalName> zones) throws RemoteException {
+    // TODO
   }
 
   private <Result> Result awaitResult(Request<SettableFuture<Result>> request)

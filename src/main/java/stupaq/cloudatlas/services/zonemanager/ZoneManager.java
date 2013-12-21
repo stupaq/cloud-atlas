@@ -45,17 +45,18 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   private final MessageBus bus;
   private final GlobalName agentsName;
   private final ZoneHierarchy<ZoneManagementInfo> hierarchy;
-  private final ZoneManagementInfo agentsZmi;
   private final SingleThreadedExecutor executor;
   private final Clock clock = new Clock();
+  private final ZoneHierarchy<ZoneManagementInfo> agentsNode;
 
   public ZoneManager(BootstrapConfiguration config) {
     this.config = config;
     this.bus = config.getBus();
     this.agentsName = config.getLeafZone();
     hierarchy = new ZoneHierarchy<>(new ZoneManagementInfo(LocalName.getRoot()));
-    agentsZmi = hierarchy.insert(agentsName, new BuiltinsInserter(agentsName));
-    Preconditions.checkState(hierarchy.getPayload(agentsName).get() == agentsZmi);
+    ZoneManagementInfo agentsZmi = hierarchy.insert(agentsName, new BuiltinsInserter(agentsName));
+    agentsNode = hierarchy.find(agentsName).get();
+    Preconditions.checkState(agentsNode.getPayload() == agentsZmi);
     executor = config.threadManager().singleThreaded(ZoneManager.class);
   }
 
@@ -81,8 +82,9 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     if (LOG.isDebugEnabled()) {
       LOG.debug("Zone hierarchy as seen by: " + agentsName + "\n" + hierarchy);
     }
-    hierarchy.synthesizeFromLeaves(new InstalledQueriesUpdater());
-    hierarchy.synthesizeFromLeaves(new BuiltinsUpdater(clock.getTime()));
+    // We do the computation and updates for zones that we are a source of truth ONLY
+    agentsNode.walkUp(new InstalledQueriesUpdater());
+    agentsNode.walkUp(new BuiltinsUpdater(clock.getTime()));
     // TODO adjust timestamps
   }
 
@@ -121,17 +123,17 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
       assertion.check();
       Preconditions.checkArgument(agentsName.equals(update.getZone()));
       if (update.isOverride()) {
-        agentsZmi.clearPrime();
+        agentsNode.getPayload().clearPrime();
       }
       for (Attribute attribute : update) {
-        agentsZmi.setPrime(attribute);
+        agentsNode.getPayload().setPrime(attribute);
       }
     }
 
     @Override
     public void dumpZone(DumpZoneRequest request) {
       assertion.check();
-      bus.post(new DumpZoneResponse(agentsZmi.export()));
+      bus.post(new DumpZoneResponse(agentsNode.getPayload().export()));
     }
 
     @Override

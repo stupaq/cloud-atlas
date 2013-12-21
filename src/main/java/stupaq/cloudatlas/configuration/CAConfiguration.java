@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import stupaq.cloudatlas.naming.EntityName;
+import stupaq.cloudatlas.naming.GlobalName;
 
 public class CAConfiguration extends DataConfiguration {
   private static final Log LOG = LogFactory.getLog(CAConfiguration.class);
@@ -27,6 +28,22 @@ public class CAConfiguration extends DataConfiguration {
     super(configuration);
   }
 
+  public List<EntityName> getEntities(String key) {
+    List<EntityName> entities = new ArrayList<>();
+    for (String str : getStringArray(key)) {
+      entities.add(EntityName.parse(str));
+    }
+    return entities;
+  }
+
+  public List<GlobalName> getGlobalNames(String key) {
+    List<GlobalName> names = new ArrayList<>();
+    for (String str : getStringArray(key)) {
+      names.add(GlobalName.parse(str));
+    }
+    return names;
+  }
+
   public static CAConfiguration fromFile(File file) {
     try {
       FileConfiguration config = new HierarchicalINIConfiguration(file);
@@ -36,13 +53,5 @@ public class CAConfiguration extends DataConfiguration {
       LOG.warn("Failed loading configuration, defaulting to empty one", e);
       return new CAConfiguration();
     }
-  }
-
-  public List<EntityName> getEntities(String key) {
-    List<EntityName> entities = new ArrayList<>();
-    for (String str : getStringArray(key)) {
-      entities.add(EntityName.parse(str));
-    }
-    return entities;
   }
 }

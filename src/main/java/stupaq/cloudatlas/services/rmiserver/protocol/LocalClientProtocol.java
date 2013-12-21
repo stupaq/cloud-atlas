@@ -6,6 +6,8 @@ import java.util.List;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAContact;
+import stupaq.cloudatlas.attribute.values.CAQuery;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
@@ -24,4 +26,9 @@ public interface LocalClientProtocol extends Remote {
   public List<Attribute> getValues(List<EntityName> request) throws RemoteException;
 
   public ZoneHierarchy<LocalName> getKnownZones() throws RemoteException;
+
+  public void installQuery(AttributeName name, CAQuery query, List<GlobalName> zones)
+      throws RemoteException;
+
+  public void removeQuery(AttributeName name, List<GlobalName> zones) throws RemoteException;
 }

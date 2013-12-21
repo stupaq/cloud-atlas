@@ -20,6 +20,7 @@ import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.configuration.ConfigurationDiscovery;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.collector.AttributesCollector;
+import stupaq.cloudatlas.services.installer.QueriesInstaller;
 import stupaq.cloudatlas.services.rmiserver.RMIServer;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.cloudatlas.services.scribe.AttributesScribe;
@@ -43,7 +44,7 @@ public class CALocalClientProcess extends AbstractIdleService {
   @Override
   protected void startUp() throws NotBoundException, RemoteException {
     // Find and load configuration
-    CAConfiguration configuration = ConfigurationDiscovery.forLocalClient();
+    CAConfiguration config = ConfigurationDiscovery.forLocalClient();
     // Establish RMI connection that will be shared by all services
     Registry registry = LocateRegistry.getRegistry(host);
     client =
@@ -52,8 +53,9 @@ public class CALocalClientProcess extends AbstractIdleService {
     executor = new SingleThreadedExecutor();
     // Create and start all services
     List<Service> services = new ArrayList<>();
-    services.add(new AttributesCollector(zone, configuration, client, executor));
-    services.add(new AttributesScribe(configuration, client, executor));
+    services.add(new AttributesCollector(zone, config, client, executor));
+    services.add(new AttributesScribe(config, client, executor));
+    services.add(new QueriesInstaller(config, client, executor));
     manager = new ServiceManager(services);
     manager.startAsync().awaitHealthy();
   }

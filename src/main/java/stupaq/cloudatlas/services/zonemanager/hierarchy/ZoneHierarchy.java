@@ -182,7 +182,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
   }
 
   private void appendTo(StringBuilder builder) {
-    builder.append("\t:: ").append(globalName()).append(" ::\n");
+    builder.append("\tZone: ").append(globalName()).append('\n');
     builder.append(payload.toString()).append("\n");
     for (ZoneHierarchy<Payload> child : childZones.values()) {
       child.appendTo(builder);

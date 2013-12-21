@@ -30,7 +30,7 @@ public final class AttributeName extends CAIdentifier implements CompactSerializ
           CompactSerializers.ASCIIString.writeInstance(out, object);
         }
       };
-  public static final String RESERVED_PREFIX = "&";
+  public static final String SPECIAL_PREFIX = "&";
 
   @SerializableImplementation
   protected AttributeName() {
@@ -46,7 +46,7 @@ public final class AttributeName extends CAIdentifier implements CompactSerializ
   }
 
   public boolean isSpecial() {
-    return toString().startsWith(RESERVED_PREFIX);
+    return toString().startsWith(SPECIAL_PREFIX);
   }
 
   @Override
@@ -55,14 +55,14 @@ public final class AttributeName extends CAIdentifier implements CompactSerializ
   }
 
   public static AttributeName fromString(String str) throws IllegalArgumentException {
-    Preconditions.checkArgument(!str.startsWith(RESERVED_PREFIX),
-        "AttributeName cannot start with reserved prefix: " + RESERVED_PREFIX);
+    Preconditions.checkArgument(!str.startsWith(SPECIAL_PREFIX),
+        "AttributeName cannot start with reserved prefix: " + SPECIAL_PREFIX);
     return new AttributeName(str);
   }
 
   public static AttributeName special(String str) throws IllegalArgumentException {
-    Preconditions.checkArgument(str.startsWith(RESERVED_PREFIX),
-        "AttributeName must start with reserved prefix: " + RESERVED_PREFIX);
+    Preconditions.checkArgument(str.startsWith(SPECIAL_PREFIX),
+        "AttributeName must start with reserved prefix: " + SPECIAL_PREFIX);
     return new AttributeName(str);
   }
 }

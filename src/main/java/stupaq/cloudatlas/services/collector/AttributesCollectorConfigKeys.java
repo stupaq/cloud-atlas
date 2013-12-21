@@ -8,7 +8,7 @@ interface AttributesCollectorConfigKeys {
   static final String PREFIX = "collector";
   // Runtime configuration entries
   static final String PUSH_INTERVAL = PREFIX + ".push_interval";
-  static final long PUSH_INTERVAL_DEFAULT = 10 * 1000L;
+  static final long PUSH_INTERVAL_DEFAULT = 5 * 1000L;
   static final String SCRIPT = PREFIX + ".script";
   static final String SCRIPT_DEFAULT = "libexec/collector-script.sh";
   // Static configuration

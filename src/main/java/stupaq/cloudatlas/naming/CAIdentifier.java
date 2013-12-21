@@ -8,8 +8,16 @@ import javax.annotation.Nonnull;
 import stupaq.commons.base.ASCIIString;
 import stupaq.compact.SerializableImplementation;
 
+import static com.google.common.base.CharMatcher.DIGIT;
+import static com.google.common.base.CharMatcher.anyOf;
+import static com.google.common.base.CharMatcher.inRange;
+import static stupaq.cloudatlas.naming.AttributeName.SPECIAL_PREFIX;
+import static stupaq.cloudatlas.naming.GlobalName.SEPARATOR;
+
 public class CAIdentifier extends ASCIIString {
-  public static final CharSequence FORBIDDEN = "`~!@#$%^*(){}[]+=|\\:;'\"<,>.?";
+  public static final CharMatcher ALLOWED_CHARACTERS =
+      DIGIT.or(inRange('a', 'z')).or(inRange('A', 'Z'))
+          .or(anyOf(SPECIAL_PREFIX + SEPARATOR + "_-"));
 
   @SerializableImplementation
   protected CAIdentifier() {
@@ -21,7 +29,7 @@ public class CAIdentifier extends ASCIIString {
   }
 
   private void verifyInvariants() throws IllegalStateException {
-    Preconditions.checkState(!CharMatcher.anyOf(FORBIDDEN).matchesAllOf(toString()),
-        "Forbidden characters in AttributeName");
+    Preconditions.checkState(ALLOWED_CHARACTERS.matchesAllOf(toString()),
+        "Forbidden characters in CAIdentifier: " + toString());
   }
 }
