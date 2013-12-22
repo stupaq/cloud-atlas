@@ -42,7 +42,9 @@ import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsInserter;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsUpdater;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceModifier;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Modifier;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
 import stupaq.commons.base.Function1;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
@@ -101,6 +103,14 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   @Override
   protected void runOneIteration() throws Exception {
     assertion.check();
+    // We do the computation and updates for zones that we are a source of truth ONLY
+    agentsNode.walkUp(new InstalledQueriesUpdater());
+    agentsNode.walkUp(new BuiltinsUpdater(config.clock().getTime()));
+    // TODO adjust timestamps
+    dumpHierarchy();
+  }
+
+  private void dumpHierarchy() {
     if (hierarchyDump != null) {
       hierarchyDump.rewind();
       String dump = hierarchy.toString();
@@ -108,10 +118,6 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
       hierarchyDump.put(dump.getBytes(), 0, length);
       hierarchyDump.put(new byte[hierarchyDump.remaining()]);
     }
-    // We do the computation and updates for zones that we are a source of truth ONLY
-    agentsNode.walkUp(new InstalledQueriesUpdater());
-    agentsNode.walkUp(new BuiltinsUpdater(config.clock().getTime()));
-    // TODO adjust timestamps
   }
 
   @Override
@@ -179,7 +185,6 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
           Optional<Attribute> attribute = zmi.get().get(entity.attributeName);
           if (attribute.isPresent()) {
             attributes.add(attribute.get());
-            LOG.debug("Asked for entity: " + entity + " found: " + attribute.get());
             continue;
           } else {
             LOG.debug("Attribute not found: " + entity.attributeName + " in zone: " + entity.zone);
@@ -205,11 +210,13 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
     @Override
     public void updateQuery(final QueryUpdateMessage message) {
-      iterateZMIs(message.getZones(), new Function1<ZoneManagementInfo, Void>() {
+      // First remove this query from all zones
+      removeQuery(new QueryRemovalMessage(Optional.of(message.getQuery().getName()),
+          Optional.<List<GlobalName>>absent()));
+      iterateZMIs(message.getZones(), new InPlaceModifier<ZoneManagementInfo>() {
         @Override
-        public Void apply(ZoneManagementInfo zmi) {
+        public void process(ZoneManagementInfo zmi) {
           zmi.setPrime(message.getQuery());
-          return null;
         }
       }, true);
     }
@@ -217,9 +224,9 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     @Override
     public void removeQuery(QueryRemovalMessage message) {
       final Optional<AttributeName> name = message.getName();
-      iterateZMIs(message.getZones(), new Function1<ZoneManagementInfo, Void>() {
+      iterateZMIs(message.getZones(), new InPlaceModifier<ZoneManagementInfo>() {
         @Override
-        public Void apply(ZoneManagementInfo zmi) {
+        public void process(ZoneManagementInfo zmi) {
           if (name.isPresent()) {
             zmi.remove(name.get());
           } else {
@@ -230,13 +237,12 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
               }
             }
           }
-          return null;
         }
       }, true);
     }
 
     private void iterateZMIs(Optional<List<GlobalName>> names,
-        final Function1<ZoneManagementInfo, Void> action, final boolean noLeaves) {
+        final Modifier<ZoneManagementInfo> action, final boolean noLeaves) {
       if (names.isPresent()) {
         for (GlobalName name : names.get()) {
           Optional<ZoneHierarchy<ZoneManagementInfo>> zone = hierarchy.find(name);

@@ -1,5 +1,7 @@
 package stupaq.cloudatlas.configuration;
 
+import com.google.common.base.Optional;
+
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -36,12 +38,15 @@ public class CAConfiguration extends DataConfiguration {
     return entities;
   }
 
-  public List<GlobalName> getGlobalNames(String key) {
+  public Optional<List<GlobalName>> getGlobalNames(String key) {
+    if (!containsKey(key)) {
+      return Optional.absent();
+    }
     List<GlobalName> names = new ArrayList<>();
     for (String str : getStringArray(key)) {
       names.add(GlobalName.parse(str));
     }
-    return names;
+    return Optional.of(names);
   }
 
   public GlobalName getGlobalName(String key) {

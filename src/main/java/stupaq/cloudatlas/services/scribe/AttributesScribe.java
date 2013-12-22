@@ -35,9 +35,6 @@ public class AttributesScribe extends AbstractScheduledService
   @Override
   protected void runOneIteration() throws IOException {
     List<EntityName> entitiesList = config.getEntities(ENTITIES);
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Asking for entities: " + entitiesList);
-    }
     Iterator<Attribute> values = client.getValues(entitiesList).iterator();
     Iterator<EntityName> entities = entitiesList.iterator();
     long timestamp = config.clock().getTime();

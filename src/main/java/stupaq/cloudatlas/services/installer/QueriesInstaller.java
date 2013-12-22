@@ -125,13 +125,13 @@ public class QueriesInstaller extends AbstractScheduledService
     LOG.info("Processing query entry: " + section);
     AttributeName name = AttributeName.special(section);
     CAConfiguration queries = new CAConfiguration(queriesConfig);
-    List<GlobalName> zones = queries.getGlobalNames(section + QUERY_ZONES);
+    Optional<List<GlobalName>> zones = queries.getGlobalNames(section + QUERY_ZONES);
     try {
       if (!queries.getBoolean(section + QUERY_ENABLED, QUERY_ENABLED_DEFAULT)) {
-        client.removeQuery(of(name), of(zones));
+        client.removeQuery(of(name), zones);
       } else if (queries.containsKey(section + QUERY_CODE)) {
         CAQuery query = new CAQuery(queries.getString(section + QUERY_CODE));
-        client.installQuery(new Attribute<>(name, query), of(zones));
+        client.installQuery(new Attribute<>(name, query), zones);
       } else {
         LOG.error("Malformed query entry: " + section);
       }
