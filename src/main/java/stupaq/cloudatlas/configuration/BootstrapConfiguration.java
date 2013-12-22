@@ -2,6 +2,13 @@ package stupaq.cloudatlas.configuration;
 
 import com.google.common.base.Preconditions;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.FileConfiguration;
+import org.apache.commons.configuration.HierarchicalINIConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+
+import java.io.File;
+
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.threading.SingleThreadModel;
 import stupaq.cloudatlas.threading.ThreadModel;
@@ -34,12 +41,23 @@ public class BootstrapConfiguration extends CAConfiguration {
   }
 
   public static class Builder {
-    private CAConfiguration configuration = new CAConfiguration();
+    private static final String CONFIG_EXTENSION = ".ini";
+    private CAConfiguration config = new CAConfiguration();
     private MessageBus bus = new MessageBus();
     private ThreadModel threadModel;
 
-    public Builder configuration(CAConfiguration configuration) {
-      this.configuration = configuration;
+    public Builder config(CAConfiguration config) {
+      this.config = config;
+      return this;
+    }
+
+    public Builder configFile(File path, Class<?> clazz) throws ConfigurationException {
+      if (path.isDirectory()) {
+        path = new File(path, clazz.getSimpleName() + CONFIG_EXTENSION);
+      }
+      FileConfiguration config = new HierarchicalINIConfiguration(path);
+      config.setReloadingStrategy(new FileChangedReloadingStrategy());
+      this.config = new CAConfiguration(config);
       return this;
     }
 
@@ -57,7 +75,7 @@ public class BootstrapConfiguration extends CAConfiguration {
       if (threadModel == null) {
         threadModel = new SingleThreadModel();
       }
-      return new BootstrapConfiguration(configuration, bus, threadModel);
+      return new BootstrapConfiguration(config, bus, threadModel);
     }
   }
 }

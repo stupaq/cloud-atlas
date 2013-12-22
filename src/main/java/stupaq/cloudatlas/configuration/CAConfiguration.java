@@ -5,15 +5,10 @@ import com.google.common.base.Preconditions;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.DataConfiguration;
-import org.apache.commons.configuration.FileConfiguration;
-import org.apache.commons.configuration.HierarchicalINIConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,16 +51,5 @@ public class CAConfiguration extends DataConfiguration {
 
   public void mustContain(String key) {
     Preconditions.checkState(containsKey(key), "Configuration must contain value for key: " + key);
-  }
-
-  public static CAConfiguration fromFile(File file) {
-    try {
-      FileConfiguration config = new HierarchicalINIConfiguration(file);
-      config.setReloadingStrategy(new FileChangedReloadingStrategy());
-      return new CAConfiguration(config);
-    } catch (ConfigurationException e) {
-      LOG.warn("Failed loading configuration, defaulting to empty one", e);
-      return new CAConfiguration();
-    }
   }
 }
