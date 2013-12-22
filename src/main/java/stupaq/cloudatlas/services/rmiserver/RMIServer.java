@@ -31,7 +31,7 @@ public class RMIServer extends AbstractIdleService {
   private Registry registry;
 
   public RMIServer(BootstrapConfiguration config) {
-    this.bus = config.getBus();
+    this.bus = config.bus();
   }
 
   @Override

@@ -4,29 +4,29 @@ import com.google.common.base.Preconditions;
 
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.threading.PerServiceThreadModel;
+import stupaq.cloudatlas.threading.SingleThreadModel;
 import stupaq.cloudatlas.threading.ThreadModel;
 
 public class BootstrapConfiguration extends CAConfiguration {
-  private final GlobalName leafZone;
+  private final GlobalName zone;
   private final MessageBus bus;
   private final ThreadModel threadModel;
 
-  public BootstrapConfiguration(CAConfiguration configuration, GlobalName leafZone, MessageBus bus,
+  public BootstrapConfiguration(CAConfiguration configuration, GlobalName zone, MessageBus bus,
       ThreadModel threadModel) {
     super(configuration);
     Preconditions.checkNotNull(bus);
     Preconditions.checkNotNull(threadModel);
-    this.leafZone = leafZone;
+    this.zone = zone;
     this.bus = bus;
     this.threadModel = threadModel;
   }
 
-  public GlobalName getLeafZone() {
-    return leafZone;
+  public GlobalName zone() {
+    return zone;
   }
 
-  public MessageBus getBus() {
+  public MessageBus bus() {
     return bus;
   }
 
@@ -45,7 +45,7 @@ public class BootstrapConfiguration extends CAConfiguration {
       return this;
     }
 
-    public Builder leafZone(GlobalName leafZone) {
+    public Builder zone(GlobalName leafZone) {
       this.leafZone = leafZone;
       return this;
     }
@@ -62,7 +62,7 @@ public class BootstrapConfiguration extends CAConfiguration {
 
     public BootstrapConfiguration create() {
       if (threadModel == null) {
-        threadModel = new PerServiceThreadModel();
+        threadModel = new SingleThreadModel();
       }
       return new BootstrapConfiguration(configuration, leafZone, bus, threadModel);
     }

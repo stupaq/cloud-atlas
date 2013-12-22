@@ -7,19 +7,23 @@ import java.util.concurrent.ExecutorService;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
 public class SingleThreadModel implements ThreadModel {
-  private final SingleThreadedExecutor executor;
-
-  public SingleThreadModel() {
-    executor = new SingleThreadedExecutor();
-  }
+  private SingleThreadedExecutor executor = null;
+  private int refCount = 0;
 
   @Override
-  public SingleThreadedExecutor singleThreaded(Class<? extends Service> service) {
+  public synchronized SingleThreadedExecutor singleThreaded(Class<? extends Service> service) {
+    if (executor == null) {
+      executor = new SingleThreadedExecutor();
+    }
+    refCount++;
     return executor;
   }
 
   @Override
-  public void free(ExecutorService executor) {
-    // Do nothing
+  public synchronized void free(ExecutorService executor) {
+    refCount--;
+    if (refCount == 0) {
+      executor.shutdown();
+    }
   }
 }

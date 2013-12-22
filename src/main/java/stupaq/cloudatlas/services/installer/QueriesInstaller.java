@@ -92,9 +92,9 @@ public class QueriesInstaller extends AbstractScheduledService
   }
 
   @Override
-  protected void shutDown() throws Exception {
+  protected void shutDown() {
     config.threadManager().free(executor);
-    if (queriesFile != null) {
+    if (queriesConfig != null) {
       for (ConfigurationListener listener : queriesConfig.getConfigurationListeners()) {
         queriesConfig.removeConfigurationListener(listener);
       }

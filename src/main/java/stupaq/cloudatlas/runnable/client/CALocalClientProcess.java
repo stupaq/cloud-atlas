@@ -49,7 +49,7 @@ public class CALocalClientProcess extends AbstractIdleService {
     Registry registry = LocateRegistry.getRegistry(host);
     client = (LocalClientProtocol) registry.lookup(exportedName(LocalClientProtocol.class));
     // Configuration for client
-    BootstrapConfiguration config = new Builder().configuration(forLocalClient()).leafZone(zone)
+    BootstrapConfiguration config = new Builder().configuration(forLocalClient()).zone(zone)
         .threadModel(new SingleThreadModel()).create();
     // Create and start all services
     List<Service> services = new ArrayList<>();

@@ -34,7 +34,7 @@ public class AttributesCollector extends AbstractScheduledService
   private final LocalClientProtocol client;
 
   public AttributesCollector(BootstrapConfiguration config, LocalClientProtocol client) {
-    this.zone = config.getLeafZone();
+    this.zone = config.zone();
     this.client = client;
     this.config = config;
     this.executor = config.threadManager().singleThreaded(AttributesCollector.class);
@@ -43,6 +43,11 @@ public class AttributesCollector extends AbstractScheduledService
   @Override
   protected void runOneIteration() throws IOException {
     client.updateAttributes(zone, collectAttributes(), false);
+  }
+
+  @Override
+  protected void shutDown() {
+    config.threadManager().free(executor);
   }
 
   @Override

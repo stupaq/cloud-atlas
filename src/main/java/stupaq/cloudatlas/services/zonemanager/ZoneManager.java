@@ -51,8 +51,8 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
 
   public ZoneManager(BootstrapConfiguration config) {
     this.config = config;
-    this.bus = config.getBus();
-    this.agentsName = config.getLeafZone();
+    this.bus = config.bus();
+    this.agentsName = config.zone();
     hierarchy = new ZoneHierarchy<>(new ZoneManagementInfo(LocalName.getRoot()));
     ZoneManagementInfo agentsZmi = hierarchy.insert(agentsName, new BuiltinsInserter(agentsName));
     agentsNode = hierarchy.find(agentsName).get();
@@ -61,13 +61,13 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   }
 
   @Override
-  protected void startUp() throws Exception {
+  protected void startUp() {
     // We're ready to operate
     bus.register(new ZoneManagerListener());
   }
 
   @Override
-  protected void shutDown() throws Exception {
+  protected void shutDown() {
     config.threadManager().free(executor);
   }
 

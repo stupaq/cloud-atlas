@@ -19,7 +19,7 @@ public class ZoneManagerTest {
   @Before
   public void setUp() throws Exception {
     configuration =
-        new Builder().leafZone(GLOBAL_NAME).threadModel(new SingleThreadModel()).create();
+        new Builder().zone(GLOBAL_NAME).threadModel(new SingleThreadModel()).create();
     manager = new ZoneManager(configuration);
     manager.startAsync().awaitRunning();
   }

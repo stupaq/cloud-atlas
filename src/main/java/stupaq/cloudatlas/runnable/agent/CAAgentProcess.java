@@ -15,6 +15,7 @@ import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.rmiserver.RMIServer;
 import stupaq.cloudatlas.services.zonemanager.ZoneManager;
+import stupaq.cloudatlas.threading.PerServiceThreadModel;
 
 import static stupaq.cloudatlas.configuration.BootstrapConfiguration.Builder;
 import static stupaq.cloudatlas.configuration.ConfigurationDiscovery.forAgent;
@@ -33,8 +34,8 @@ public final class CAAgentProcess extends AbstractIdleService {
   @Override
   protected void startUp() throws Exception {
     // Configuration for agent
-    BootstrapConfiguration config =
-        new Builder().configuration(forAgent(leafZone)).leafZone(leafZone).create();
+    BootstrapConfiguration config = new Builder().configuration(forAgent(leafZone)).zone(leafZone)
+        .threadModel(new PerServiceThreadModel()).create();
     // Create and start all services
     List<Service> services = new ArrayList<>();
     services.add(new RMIServer(config));

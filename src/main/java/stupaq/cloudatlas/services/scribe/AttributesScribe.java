@@ -71,7 +71,7 @@ public class AttributesScribe extends AbstractScheduledService
   }
 
   @Override
-  protected void shutDown() throws Exception {
+  protected void shutDown() {
     recordsManager.close();
     config.threadManager().free(executor);
   }
