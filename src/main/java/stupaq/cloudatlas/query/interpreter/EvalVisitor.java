@@ -310,7 +310,7 @@ public class EvalVisitor {
 
     @Override
     public SemanticValue visit(final BasicExprCall p, InputContext context) {
-      final ArgumentsList args = new ArgumentsList();
+      ArgumentsList args = new ArgumentsList();
       // We follow greedy evaluation (it doesn't really matter here since our
       // functions need all arguments at all times)
       for (XExpression x : p.listxexpression_) {

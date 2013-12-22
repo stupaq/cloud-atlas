@@ -47,22 +47,6 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
     Preconditions.checkArgument(!localNames.isEmpty(), "Global name cannot be empty");
   }
 
-  public static GlobalName parse(String string) {
-    Preconditions.checkNotNull(string);
-    Preconditions.checkArgument(!string.isEmpty(), "Global name cannot be empty");
-    Preconditions.checkArgument(string.startsWith(SEPARATOR), "Global name must start with /");
-    if (string.length() == 1) {
-      return new Builder().parent(getRoot()).build();
-    } else {
-      Preconditions.checkArgument(!string.endsWith(SEPARATOR), "Global name cannot end with /");
-      Builder builder = new Builder().parent(getRoot());
-      for (String chunk : string.substring(1).split(SEPARATOR)) {
-        builder.child(getNotRoot(chunk));
-      }
-      return builder.build();
-    }
-  }
-
   public GlobalName parent() {
     ArrayList<LocalName> chunks = new ArrayList<>(get());
     chunks.remove(chunks.size() - 1);
@@ -76,11 +60,6 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
   @Override
   public boolean equals(Object o) {
     return o instanceof GlobalName && super.equals(o);
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
   }
 
   @Override
@@ -111,6 +90,22 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
   @Override
   public TypeDescriptor descriptor() {
     return TypeDescriptor.GlobalName;
+  }
+
+  public static GlobalName parse(String string) {
+    Preconditions.checkNotNull(string);
+    Preconditions.checkArgument(!string.isEmpty(), "Global name cannot be empty");
+    Preconditions.checkArgument(string.startsWith(SEPARATOR), "Global name must start with /");
+    if (string.length() == 1) {
+      return new Builder().parent(getRoot()).build();
+    } else {
+      Preconditions.checkArgument(!string.endsWith(SEPARATOR), "Global name cannot end with /");
+      Builder builder = new Builder().parent(getRoot());
+      for (String chunk : string.substring(1).split(SEPARATOR)) {
+        builder.child(getNotRoot(chunk));
+      }
+      return builder.build();
+    }
   }
 
   public static class Builder {

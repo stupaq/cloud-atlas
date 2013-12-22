@@ -18,7 +18,7 @@ public interface SemanticValue<Type extends AttributeValue> {
       SemanticValue<Other> second, Function2<Type, Other, Result> operation);
 
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RColumn first, Function2<Other, Type, Result> operation);
+      RColumn<Other> first, Function2<Other, Type, Result> operation);
 
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RList<Other> first, Function2<Other, Type, Result> operation);

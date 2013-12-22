@@ -57,19 +57,17 @@ public final class RSingle<Type extends AttributeValue> implements SemanticValue
   @Override
   @SuppressWarnings("unchecked")
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RColumn first, Function2<Other, Type, Result> operation) {
-    return RColumn
-        .zipImplementation(first.iterator(), Iterators.cycle(value), operation,
-            new RColumn(typeof2(first.getType(), getType(), operation)));
+      RColumn<Other> first, Function2<Other, Type, Result> operation) {
+    return RColumn.zipImplementation(first.iterator(), Iterators.cycle(value), operation,
+        new RColumn(typeof2(first.getType(), getType(), operation)));
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RList<Other> first, Function2<Other, Type, Result> operation) {
-    return RColumn
-        .zipImplementation(first.iterator(), Iterators.cycle(value), operation,
-            new RList<>(typeof2(first.getType(), getType(), operation)));
+    return RColumn.zipImplementation(first.iterator(), Iterators.cycle(value), operation,
+        new RList<>(typeof2(first.getType(), getType(), operation)));
   }
 
   @Override
@@ -85,8 +83,8 @@ public final class RSingle<Type extends AttributeValue> implements SemanticValue
 
   @Override
   public boolean equals(Object o) {
-    return this == o || !(o == null || getClass() != o.getClass()) && value
-        .equals(((RSingle) o).value);
+    return this == o ||
+        !(o == null || getClass() != o.getClass()) && value.equals(((RSingle) o).value);
 
   }
 

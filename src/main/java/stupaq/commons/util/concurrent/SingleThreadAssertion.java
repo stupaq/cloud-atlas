@@ -10,6 +10,7 @@ public class SingleThreadAssertion {
   private final boolean enabled;
   private Thread firstSeen = null;
 
+  @SuppressWarnings("ConstantConditions")
   public SingleThreadAssertion() {
     boolean enabled = false;
     assert enabled = true;

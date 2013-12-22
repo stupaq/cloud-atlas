@@ -32,18 +32,18 @@ public final class RList<Type extends AttributeValue> extends AbstractAggregate<
 
   @Override
   public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RColumn first, Function2<Other, Type, Result> operation) {
+      RColumn<Other> first, Function2<Other, Type, Result> operation) {
     throw new TypeCheckerException(
-        "Semantic value " + RList.class.getSimpleName() + ", cannot be zipped with other: "
-        + SemanticValue.class.getSimpleName());
+        "Semantic value " + RList.class.getSimpleName() + ", cannot be zipped with other: " +
+            SemanticValue.class.getSimpleName());
   }
 
   @Override
   public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RList<Other> first, Function2<Other, Type, Result> operation) {
     throw new TypeCheckerException(
-        "Semantic value " + RList.class.getSimpleName() + ", cannot be zipped with other: "
-        + SemanticValue.class.getSimpleName());
+        "Semantic value " + RList.class.getSimpleName() + ", cannot be zipped with other: " +
+            SemanticValue.class.getSimpleName());
   }
 
   @SuppressWarnings("unchecked")

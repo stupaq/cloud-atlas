@@ -19,19 +19,10 @@ public class RColumn<Type extends AttributeValue> extends AbstractAggregate<Type
     super(Collections.<Type>emptyList(), typeInfo);
   }
 
-  static <Arg0 extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipImplementation(
-      Iterator<Arg0> it0, Iterator<Arg1> it1, Function2<Arg0, Arg1, Result> operation,
-      AbstractAggregate<Result> result) {
-    while (it0.hasNext() && it1.hasNext()) {
-      result.add(operation.apply(it0.next(), it1.next()));
-    }
-    return result;
-  }
-
   @Override
-  protected <Result extends AttributeValue> RColumn emptyInstance(
+  protected <Result extends AttributeValue> AbstractAggregate<Result> emptyInstance(
       TypeInfo<Result> typeInfo) {
-    return new RColumn(typeInfo);
+    return new RColumn<>(typeInfo);
   }
 
   @Override
@@ -42,18 +33,17 @@ public class RColumn<Type extends AttributeValue> extends AbstractAggregate<Type
 
   @Override
   public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
-      RColumn first, Function2<Other, Type, Result> operation) {
-    return RColumn
-        .zipImplementation(first.iterator(), this.iterator(), operation,
-            new RColumn(typeof2(first.getType(), getType(), operation)));
+      RColumn<Other> first, Function2<Other, Type, Result> operation) {
+    return RColumn.zipImplementation(first.iterator(), this.iterator(), operation, new RColumn<>(
+        TypeInfo.<Other, Type, Result>typeof2(first.getType(), getType(), operation)));
   }
 
   @Override
   public final <Other extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipWith(
       RList<Other> first, Function2<Other, Type, Result> operation) {
     throw new TypeCheckerException(
-        "Semantic value " + RList.class.getSimpleName() + ", cannot be zipped with other: "
-        + SemanticValue.class.getSimpleName());
+        "Semantic value " + RList.class.getSimpleName() + ", cannot be zipped with other: " +
+            SemanticValue.class.getSimpleName());
   }
 
   @Override
@@ -62,5 +52,14 @@ public class RColumn<Type extends AttributeValue> extends AbstractAggregate<Type
       RSingle<Other> first, Function2<Other, Type, Result> operation) {
     return zipImplementation(Iterables.cycle(first.get()).iterator(), iterator(), operation,
         new RColumn(typeof2(first.getType(), getType(), operation)));
+  }
+
+  static <Arg0 extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> SemanticValue<Result> zipImplementation(
+      Iterator<Arg0> it0, Iterator<Arg1> it1, Function2<Arg0, Arg1, Result> operation,
+      AbstractAggregate<Result> result) {
+    while (it0.hasNext() && it1.hasNext()) {
+      result.add(operation.apply(it0.next(), it1.next()));
+    }
+    return result;
   }
 }

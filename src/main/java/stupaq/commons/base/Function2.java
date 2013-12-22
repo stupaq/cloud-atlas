@@ -24,9 +24,9 @@ public abstract class Function2<Arg0, Arg1, Result> {
     };
   }
 
-  public Optional<Result> applyOptional(final Optional<Arg0> arg0, final Optional<Arg1> arg1) {
+  public Optional<Result> applyOptional(Optional<Arg0> arg0, Optional<Arg1> arg1) {
     return (arg0.isPresent() && arg1.isPresent()) ?
-           Optional.fromNullable(apply(arg0.get(), arg1.get())) : Optional.<Result>absent();
+        Optional.fromNullable(apply(arg0.get(), arg1.get())) : Optional.<Result>absent();
   }
 
   public final Function2<Optional<Arg0>, Optional<Arg1>, Optional<Result>> liftOptional() {
