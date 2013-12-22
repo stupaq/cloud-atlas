@@ -36,6 +36,7 @@
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.0-beta9" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.0-beta9" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-jcl:2.0-beta9" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.0.13.Final" level="project" />
     <orderEntry type="library" name="Maven: net.sf.squirrel-sql.thirdparty-non-maven:java-cup:0.11a" level="project" />
   </component>
 </module>

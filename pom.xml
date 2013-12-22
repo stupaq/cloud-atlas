@@ -83,6 +83,12 @@
         </dependency>
 
         <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.0.13.Final</version>
+        </dependency>
+
+        <dependency>
             <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
             <artifactId>java-cup</artifactId>
             <version>0.11a</version>
@@ -125,6 +131,7 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
@@ -157,6 +164,7 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
                 <executions>
@@ -177,7 +185,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -204,10 +212,11 @@
                     <name>generateParser</name>
                 </property>
             </activation>
+
             <build>
                 <plugins>
-
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>1.7</version>
                         <executions>

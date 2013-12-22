@@ -21,7 +21,6 @@ import java.util.Set;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.GlobalName.Builder;
 import stupaq.cloudatlas.naming.LocalName;
-import stupaq.cloudatlas.naming.LocallyNameable;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.commons.base.Function1;
 import stupaq.commons.base.Function2;
@@ -222,7 +221,8 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
     return root;
   }
 
-  public static <Payload extends Hierarchical & CompactSerializable> CompactSerializer<ZoneHierarchy<Payload>> Serializer(
+  public static <Payload extends Hierarchical & CompactSerializable>
+  CompactSerializer<ZoneHierarchy<Payload>> Serializer(
       final CompactSerializer<Payload> payloadSerializer) {
     return new CompactSerializer<ZoneHierarchy<Payload>>() {
       @Override
@@ -244,7 +244,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
     };
   }
 
-  public static interface Hierarchical extends LocallyNameable {
+  public static interface Hierarchical extends stupaq.cloudatlas.naming.LocallyNameable {
   }
 
   public static abstract class Synthesizer<Payload extends Hierarchical>
