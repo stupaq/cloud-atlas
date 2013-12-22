@@ -128,7 +128,7 @@ public class QueriesInstaller extends AbstractScheduledService
     List<GlobalName> zones = queries.getGlobalNames(section + QUERY_ZONES);
     try {
       if (!queries.getBoolean(section + QUERY_ENABLED, QUERY_ENABLED_DEFAULT)) {
-        queries.subset(section).clear();
+        client.removeQuery(of(name), of(zones));
       } else if (queries.containsKey(section + QUERY_CODE)) {
         CAQuery query = new CAQuery(queries.getString(section + QUERY_CODE));
         client.installQuery(new Attribute<>(name, query), of(zones));

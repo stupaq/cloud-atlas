@@ -14,6 +14,9 @@ public interface ZoneManagerConfigKeys {
   static final String ZONE_NAME = PREFIX + "zone_name";
   static final String REEVALUATION_INTERVAL = PREFIX + "reevaluation_interval";
   static final long REEVALUATION_INTERVAL_DEFAULT = 5 * 1000L;
+  static final String HIERARCHY_DUMP_FILE = PREFIX + "hierarchy_dump_file";
+  static final String HIERARCHY_DUMP_SIZE = PREFIX + "hierarchy_dump_size";
+  static final long HIERARCHY_DUMP_SIZE_DEFAULT = 1024L * 16;
   // Static configuration
   static final AttributeName LEVEL = fromString("level");
   static final AttributeName NAME = fromString("name");
@@ -21,6 +24,6 @@ public interface ZoneManagerConfigKeys {
   static final AttributeName CONTACTS = fromString("contacts");
   static final AttributeName TIMESTAMP = fromString("timestamp");
   static final AttributeName CARDINALITY = fromString("cardinality");
-  static final List<AttributeName> RESERVED_NAMES =
+  static final List<AttributeName> BUILTIN_ATTRIBUTES =
       Arrays.asList(LEVEL, NAME, OWNER, CONTACTS, TIMESTAMP, CARDINALITY);
 }

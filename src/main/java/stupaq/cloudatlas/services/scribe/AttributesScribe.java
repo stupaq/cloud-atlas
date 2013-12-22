@@ -16,7 +16,6 @@ import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.cloudatlas.services.scribe.RecordsManager.Records;
-import stupaq.cloudatlas.time.Clock;
 
 public class AttributesScribe extends AbstractScheduledService
     implements AttributesScribeConfigKeys {
@@ -25,7 +24,6 @@ public class AttributesScribe extends AbstractScheduledService
   private final LocalClientProtocol client;
   private final ScheduledExecutorService executor;
   private final RecordsManager recordsManager;
-  private final Clock clock = new Clock();
 
   public AttributesScribe(BootstrapConfiguration config, LocalClientProtocol client) {
     this.config = config;
@@ -42,7 +40,7 @@ public class AttributesScribe extends AbstractScheduledService
     }
     Iterator<Attribute> values = client.getValues(entitiesList).iterator();
     Iterator<EntityName> entities = entitiesList.iterator();
-    long timestamp = clock.getTime();
+    long timestamp = config.clock().getTime();
     while (entities.hasNext() && entities.hasNext()) {
       EntityName entity = entities.next();
       try (Records log = recordsManager.forEntity(entity)) {

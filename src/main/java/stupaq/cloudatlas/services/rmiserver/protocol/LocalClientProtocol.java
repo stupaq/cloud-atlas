@@ -21,8 +21,7 @@ import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 @ParametersAreNonnullByDefault
 public interface LocalClientProtocol extends Remote {
 
-  public void updateAttributes(GlobalName zone, List<Attribute> attributes, boolean override)
-      throws RemoteException;
+  public void updateAttributes(GlobalName zone, List<Attribute> attributes) throws RemoteException;
 
   public void setFallbackContacts(List<CAContact> attributes) throws RemoteException;
 

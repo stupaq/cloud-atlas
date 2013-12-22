@@ -215,6 +215,13 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
     return result;
   }
 
+  public static <Payload extends Hierarchical> ZoneHierarchy<Payload> create(GlobalName path,
+      Inserter<Payload> inserter) {
+    ZoneHierarchy<Payload> root = new ZoneHierarchy<>(inserter.create(LocalName.getRoot()));
+    root.insert(path, inserter);
+    return root;
+  }
+
   public static <Payload extends Hierarchical & CompactSerializable> CompactSerializer<ZoneHierarchy<Payload>> Serializer(
       final CompactSerializer<Payload> payloadSerializer) {
     return new CompactSerializer<ZoneHierarchy<Payload>>() {

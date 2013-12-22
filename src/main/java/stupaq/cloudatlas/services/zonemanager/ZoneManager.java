@@ -4,11 +4,16 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.io.Files;
 import com.google.common.util.concurrent.AbstractScheduledService;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,7 +44,6 @@ import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsUpdater;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
-import stupaq.cloudatlas.time.Clock;
 import stupaq.commons.base.Function1;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.SingleThreadAssertion;
@@ -53,17 +57,15 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   private final GlobalName agentsName;
   private final ZoneHierarchy<ZoneManagementInfo> hierarchy;
   private final SingleThreadedExecutor executor;
-  private final Clock clock = new Clock();
   private final ZoneHierarchy<ZoneManagementInfo> agentsNode;
+  private MappedByteBuffer hierarchyDump;
 
   public ZoneManager(BootstrapConfiguration config) {
     this.config = config;
-    this.bus = config.bus();
-    this.agentsName = config.getGlobalName(ZONE_NAME);
-    hierarchy = new ZoneHierarchy<>(new ZoneManagementInfo(LocalName.getRoot()));
-    ZoneManagementInfo agentsZmi = hierarchy.insert(agentsName, new BuiltinsInserter(agentsName));
+    bus = config.bus();
+    agentsName = config.getGlobalName(ZONE_NAME);
+    hierarchy = ZoneHierarchy.create(agentsName, new BuiltinsInserter(agentsName));
     agentsNode = hierarchy.find(agentsName).get();
-    Preconditions.checkState(agentsNode.getPayload() == agentsZmi);
     executor = config.threadManager().singleThreaded(ZoneManager.class);
   }
 
@@ -71,6 +73,19 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   protected void startUp() {
     // We're ready to operate
     bus.register(new ZoneManagerListener());
+    // Create memory mapped file for zone hierarchy dumps
+    if (config.containsKey(HIERARCHY_DUMP_FILE)) {
+      try {
+        File dumpFile = new File(config.getString(HIERARCHY_DUMP_FILE));
+        if (!dumpFile.delete()) {
+          Files.createParentDirs(dumpFile);
+        }
+        hierarchyDump = Files.map(dumpFile, MapMode.READ_WRITE,
+            config.getLong(HIERARCHY_DUMP_SIZE, HIERARCHY_DUMP_SIZE_DEFAULT));
+      } catch (IOException e) {
+        LOG.error("Failed to open file for hierarchy dumps", e);
+      }
+    }
   }
 
   @Override
@@ -86,12 +101,16 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   @Override
   protected void runOneIteration() throws Exception {
     assertion.check();
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Zone hierarchy as seen by: " + agentsName + "\n" + hierarchy);
+    if (hierarchyDump != null) {
+      hierarchyDump.rewind();
+      String dump = hierarchy.toString();
+      int length = Math.min(hierarchyDump.remaining(), dump.length());
+      hierarchyDump.put(dump.getBytes(), 0, length);
+      hierarchyDump.put(new byte[hierarchyDump.remaining()]);
     }
     // We do the computation and updates for zones that we are a source of truth ONLY
     agentsNode.walkUp(new InstalledQueriesUpdater());
-    agentsNode.walkUp(new BuiltinsUpdater(clock.getTime()));
+    agentsNode.walkUp(new BuiltinsUpdater(config.clock().getTime()));
     // TODO adjust timestamps
   }
 
@@ -137,11 +156,10 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     public void updateAttributes(AttributesUpdateMessage update) {
       assertion.check();
       Preconditions.checkArgument(agentsName.equals(update.getZone()));
-      if (update.isOverride()) {
-        agentsNode.getPayload().clearPrime();
-      }
       for (Attribute attribute : update) {
-        agentsNode.getPayload().setPrime(attribute);
+        if (!BUILTIN_ATTRIBUTES.contains(attribute.getName())) {
+          agentsNode.getPayload().setPrime(attribute);
+        }
       }
     }
 

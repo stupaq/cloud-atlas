@@ -15,22 +15,16 @@ import stupaq.cloudatlas.naming.GlobalName;
 public final class AttributesUpdateMessage extends Message implements Iterable<Attribute> {
   private final GlobalName zone;
   private final List<Attribute> attributes;
-  private final boolean override;
 
-  public AttributesUpdateMessage(GlobalName zone, List<Attribute> attributes, boolean override) {
+  public AttributesUpdateMessage(GlobalName zone, List<Attribute> attributes) {
     Preconditions.checkNotNull(zone);
     Preconditions.checkNotNull(attributes);
     this.zone = zone;
     this.attributes = attributes;
-    this.override = override;
   }
 
   public GlobalName getZone() {
     return zone;
-  }
-
-  public boolean isOverride() {
-    return override;
   }
 
   @Override

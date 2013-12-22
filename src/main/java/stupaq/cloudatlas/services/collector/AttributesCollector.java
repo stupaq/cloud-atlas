@@ -42,7 +42,7 @@ public class AttributesCollector extends AbstractScheduledService
 
   @Override
   protected void runOneIteration() throws IOException {
-    client.updateAttributes(zone, collectAttributes(), false);
+    client.updateAttributes(zone, collectAttributes());
   }
 
   @Override

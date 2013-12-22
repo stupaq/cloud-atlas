@@ -5,10 +5,12 @@ import com.google.common.base.Preconditions;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.threading.SingleThreadModel;
 import stupaq.cloudatlas.threading.ThreadModel;
+import stupaq.cloudatlas.time.Clock;
 
 public class BootstrapConfiguration extends CAConfiguration {
   private final MessageBus bus;
   private final ThreadModel threadModel;
+  private final Clock clock = new Clock();
 
   public BootstrapConfiguration(CAConfiguration configuration, MessageBus bus,
       ThreadModel threadModel) {
@@ -25,6 +27,10 @@ public class BootstrapConfiguration extends CAConfiguration {
 
   public ThreadModel threadManager() {
     return threadModel;
+  }
+
+  public Clock clock() {
+    return clock;
   }
 
   public static class Builder {

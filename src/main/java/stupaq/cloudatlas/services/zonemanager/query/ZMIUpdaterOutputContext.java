@@ -35,8 +35,8 @@ class ZMIUpdaterOutputContext implements OutputContext, ZoneManagerConfigKeys {
     } catch (IllegalArgumentException e) {
       throw new EvaluationException(e.getMessage());
     }
-    if (RESERVED_NAMES.contains(name)) {
-      throw new EvaluationException("Name: " + name + " is reserved");
+    if (BUILTIN_ATTRIBUTES.contains(name)) {
+      throw new EvaluationException("Name: " + name + " is reserved for a built-in attribute");
     }
     Attribute attribute = new Attribute<>(name, value.get());
     putsLog.add(attribute);

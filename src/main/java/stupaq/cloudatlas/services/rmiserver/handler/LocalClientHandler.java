@@ -48,9 +48,8 @@ public class LocalClientHandler implements LocalClientProtocol {
   }
 
   @Override
-  public void updateAttributes(GlobalName zone, List<Attribute> attributes, boolean override)
-      throws RemoteException {
-    bus.post(new AttributesUpdateMessage(zone, attributes, override));
+  public void updateAttributes(GlobalName zone, List<Attribute> attributes) throws RemoteException {
+    bus.post(new AttributesUpdateMessage(zone, attributes));
   }
 
   @Override
