@@ -2,6 +2,7 @@ package stupaq.cloudatlas.services.zonemanager;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractScheduledService;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
+import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
@@ -25,12 +27,17 @@ import stupaq.cloudatlas.messaging.messages.EntitiesValuesRequest;
 import stupaq.cloudatlas.messaging.messages.EntitiesValuesResponse;
 import stupaq.cloudatlas.messaging.messages.KnownZonesRequest;
 import stupaq.cloudatlas.messaging.messages.KnownZonesResponse;
+import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
+import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
+import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsInserter;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsUpdater;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
+import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
 import stupaq.cloudatlas.time.Clock;
 import stupaq.commons.base.Function1;
@@ -111,6 +118,14 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     @Subscribe
     @ScheduledInvocation
     public void knownZones(KnownZonesRequest request);
+
+    @Subscribe
+    @ScheduledInvocation
+    public void updateQuery(QueryUpdateMessage message);
+
+    @Subscribe
+    @ScheduledInvocation
+    public void removeQuery(QueryRemovalMessage message);
   }
 
   private class ZoneManagerListener extends AbstractMessageListener implements ZoneManagerContract {
@@ -168,6 +183,63 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
           return zoneManagementInfo.localName();
         }
       })).attach(request));
+    }
+
+    @Override
+    public void updateQuery(final QueryUpdateMessage message) {
+      iterateZMIs(message.getZones(), new Function1<ZoneManagementInfo, Void>() {
+        @Override
+        public Void apply(ZoneManagementInfo zmi) {
+          zmi.setPrime(message.getQuery());
+          return null;
+        }
+      }, true);
+    }
+
+    @Override
+    public void removeQuery(QueryRemovalMessage message) {
+      final Optional<AttributeName> name = message.getName();
+      iterateZMIs(message.getZones(), new Function1<ZoneManagementInfo, Void>() {
+        @Override
+        public Void apply(ZoneManagementInfo zmi) {
+          if (name.isPresent()) {
+            zmi.remove(name.get());
+          } else {
+            // We have to materialize iterable here for future modifications
+            for (Attribute attribute : zmi.specialAttributes().toList()) {
+              if (TypeInfo.is(CAQuery.class, attribute.getValue())) {
+                zmi.remove(attribute.getName());
+              }
+            }
+          }
+          return null;
+        }
+      }, true);
+    }
+
+    private void iterateZMIs(Optional<List<GlobalName>> names,
+        final Function1<ZoneManagementInfo, Void> action, final boolean noLeaves) {
+      if (names.isPresent()) {
+        for (GlobalName name : names.get()) {
+          Optional<ZoneHierarchy<ZoneManagementInfo>> zone = hierarchy.find(name);
+          if (zone.isPresent()) {
+            if (!noLeaves || !zone.get().isLeaf()) {
+              action.apply(zone.get().getPayload());
+            }
+          } else {
+            LOG.warn("Specified zone: " + name + " does not exist");
+          }
+        }
+      } else {
+        agentsNode.walkUp(new InPlaceSynthesizer<ZoneManagementInfo>() {
+          @Override
+          protected void process(Iterable<ZoneManagementInfo> children, ZoneManagementInfo zmi) {
+            if (!noLeaves || !Iterables.isEmpty(children)) {
+              action.apply(zmi);
+            }
+          }
+        });
+      }
     }
   }
 }

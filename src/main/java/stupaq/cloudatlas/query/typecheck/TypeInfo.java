@@ -41,24 +41,6 @@ public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<C
     super(type);
   }
 
-  public static <Atomic extends AttributeValue> TypeInfo<Atomic> of(@Nonnull Class<Atomic> type) {
-    Preconditions.checkArgument(type != CASet.class && type != CAList.class,
-        type.getSimpleName() + " is composed");
-    return new TypeInfo<>(type);
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <Atomic extends AttributeValue, Result extends AttributeValue> TypeInfo<Result> typeof1(
-      TypeInfo<Atomic> that, Function1<Atomic, Result> function) {
-    return (TypeInfo<Result>) function.apply(that.aNull()).type();
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <Atomic extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> TypeInfo<Result> typeof2(
-      TypeInfo<Atomic> that, TypeInfo<Arg1> other, Function2<Atomic, Arg1, Result> function) {
-    return (TypeInfo<Result>) function.apply(that.aNull(), other.aNull()).type();
-  }
-
   public Atomic aNull() {
     try {
       return get().newInstance();
@@ -74,12 +56,36 @@ public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<C
 
   @Override
   public String toString() {
-    // TODO oh God!
     return " : " + get().getSimpleName().replace("CA", "").toLowerCase();
   }
 
   @Override
   public TypeDescriptor descriptor() {
     return TypeDescriptor.TypeInfo;
+  }
+
+  public static <Atomic extends AttributeValue> boolean is(@Nonnull Class<Atomic> type,
+      AttributeValue value) {
+    return value.type().equals(of(type));
+  }
+
+  public static <Atomic extends AttributeValue> TypeInfo<Atomic> of(@Nonnull Class<Atomic> type) {
+    Preconditions.checkArgument(type != CASet.class && type != CAList.class,
+        type.getSimpleName() + " is composed");
+    return new TypeInfo<>(type);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <Atomic extends AttributeValue, Result extends AttributeValue> TypeInfo<Result>
+  typeof1(
+      TypeInfo<Atomic> that, Function1<Atomic, Result> function) {
+    return (TypeInfo<Result>) function.apply(that.aNull()).type();
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <Atomic extends AttributeValue, Arg1 extends AttributeValue,
+      Result extends AttributeValue> TypeInfo<Result> typeof2(
+      TypeInfo<Atomic> that, TypeInfo<Arg1> other, Function2<Atomic, Arg1, Result> function) {
+    return (TypeInfo<Result>) function.apply(that.aNull(), other.aNull()).type();
   }
 }

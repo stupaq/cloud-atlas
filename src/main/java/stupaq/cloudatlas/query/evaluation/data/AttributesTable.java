@@ -55,10 +55,4 @@ public class AttributesTable extends ArrayList<AttributesRow> {
   public Set<Entry<AttributeName, TypeInfo>> getTypes() {
     return inputTypes.entrySet();
   }
-
-  @Override
-  public String toString() {
-    // TODO oh God!
-    return super.toString().replace("}, {", "\n\t\t").replace("[{", "value:\t").replace("}]", "");
-  }
 }

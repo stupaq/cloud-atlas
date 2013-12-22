@@ -26,6 +26,8 @@ import stupaq.cloudatlas.messaging.messages.DumpZoneRequest;
 import stupaq.cloudatlas.messaging.messages.EntitiesValuesRequest;
 import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
 import stupaq.cloudatlas.messaging.messages.KnownZonesRequest;
+import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
+import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
@@ -80,13 +82,13 @@ public class LocalClientHandler implements LocalClientProtocol {
   @Override
   public void installQuery(Attribute<CAQuery> query, Optional<List<GlobalName>> zones)
       throws RemoteException {
-    // TODO
+    bus.post(new QueryUpdateMessage(query, zones));
   }
 
   @Override
   public void removeQuery(Optional<AttributeName> name, Optional<List<GlobalName>> zones)
       throws RemoteException {
-    // TODO
+    bus.post(new QueryRemovalMessage(name, zones));
   }
 
   private <Result> Result awaitResult(Request<SettableFuture<Result>> request)

@@ -6,9 +6,4 @@ import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.naming.AttributeName;
 
 public class AttributesRow extends HashMap<AttributeName, AttributeValue> {
-  @Override
-  public String toString() {
-    // TODO oh God!
-    return super.toString().replace("=", " = ");
-  }
 }
