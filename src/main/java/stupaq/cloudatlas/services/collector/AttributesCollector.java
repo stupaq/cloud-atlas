@@ -34,7 +34,7 @@ public class AttributesCollector extends AbstractScheduledService
   private final LocalClientProtocol client;
 
   public AttributesCollector(BootstrapConfiguration config, LocalClientProtocol client) {
-    this.zone = config.zone();
+    this.zone = config.getGlobalName(ZONE_NAME);
     this.client = client;
     this.config = config;
     this.executor = config.threadManager().singleThreaded(AttributesCollector.class);

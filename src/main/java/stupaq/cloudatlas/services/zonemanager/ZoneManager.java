@@ -52,7 +52,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   public ZoneManager(BootstrapConfiguration config) {
     this.config = config;
     this.bus = config.bus();
-    this.agentsName = config.zone();
+    this.agentsName = config.getGlobalName(ZONE_NAME);
     hierarchy = new ZoneHierarchy<>(new ZoneManagementInfo(LocalName.getRoot()));
     ZoneManagementInfo agentsZmi = hierarchy.insert(agentsName, new BuiltinsInserter(agentsName));
     agentsNode = hierarchy.find(agentsName).get();

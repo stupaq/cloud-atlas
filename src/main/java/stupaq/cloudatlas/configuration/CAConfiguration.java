@@ -44,6 +44,10 @@ public class CAConfiguration extends DataConfiguration {
     return names;
   }
 
+  public GlobalName getGlobalName(String key) {
+    return GlobalName.parse(getString(key));
+  }
+
   public static CAConfiguration fromFile(File file) {
     try {
       FileConfiguration config = new HierarchicalINIConfiguration(file);

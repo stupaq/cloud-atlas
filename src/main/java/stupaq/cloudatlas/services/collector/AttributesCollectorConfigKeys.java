@@ -5,11 +5,12 @@ import java.util.List;
 
 interface AttributesCollectorConfigKeys {
   // Runtime configuration section
-  static final String PREFIX = "collector";
+  static final String PREFIX = "collector.";
   // Runtime configuration entries
-  static final String PUSH_INTERVAL = PREFIX + ".push_interval";
+  static final String ZONE_NAME = PREFIX + "zone_name";
+  static final String PUSH_INTERVAL = PREFIX + "push_interval";
   static final long PUSH_INTERVAL_DEFAULT = 5 * 1000L;
-  static final String SCRIPT = PREFIX + ".script";
+  static final String SCRIPT = PREFIX + "script";
   static final String SCRIPT_DEFAULT = "libexec/collector-script.sh";
   // Static configuration
   static final List<String> ATTRIBUTES_DOUBLE = Arrays.asList("cpu_load");

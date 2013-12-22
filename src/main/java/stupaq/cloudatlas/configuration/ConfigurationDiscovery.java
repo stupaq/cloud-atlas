@@ -2,7 +2,6 @@ package stupaq.cloudatlas.configuration;
 
 import java.io.File;
 
-import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.runnable.agent.CAAgentProcess;
 import stupaq.cloudatlas.runnable.client.CALocalClientProcess;
 
@@ -24,7 +23,7 @@ public class ConfigurationDiscovery implements EnvironmentConfigKeys {
         CONFIG_EXTENSION;
   }
 
-  public static CAConfiguration forAgent(GlobalName leafZone) {
+  public static CAConfiguration forAgent() {
     return CAConfiguration.fromFile(new File(findDir(), childName(CAAgentProcess.class)));
   }
 

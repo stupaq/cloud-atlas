@@ -9,9 +9,10 @@ import static stupaq.cloudatlas.naming.AttributeName.fromString;
 
 public interface ZoneManagerConfigKeys {
   // Runtime configuration section
-  static final String PREFIX = "zones";
+  static final String PREFIX = "zones.";
   // Runtime configuration entries
-  static final String REEVALUATION_INTERVAL = PREFIX + ".reevaluation_interval";
+  static final String ZONE_NAME = PREFIX + "zone_name";
+  static final String REEVALUATION_INTERVAL = PREFIX + "reevaluation_interval";
   static final long REEVALUATION_INTERVAL_DEFAULT = 5 * 1000L;
   // Static configuration
   static final AttributeName LEVEL = fromString("level");
