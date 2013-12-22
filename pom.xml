@@ -16,7 +16,7 @@
         <!-- auxiliary -->
         <classpath.file>${basedir}/classpath</classpath.file>
         <!-- parser -->
-        <parser.root-dir>${basedir}/src/main/java</parser.root-dir>
+        <parser.root-dir>${basedir}/src/main/java-gen</parser.root-dir>
         <parser.grammar-name>QueryLanguage</parser.grammar-name>
         <parser.grammar-file>${basedir}/src/${parser.grammar-name}.cf</parser.grammar-file>
         <parser.package-name>stupaq.cloudatlas.query.parser</parser.package-name>
@@ -198,6 +198,10 @@
                                         <exec executable="rm">
                                             <arg value="-rf"/>
                                             <arg value="${parser.code-dir}/"/>
+                                        </exec>
+                                        <exec executable="mkdir">
+                                            <arg value="-p"/>
+                                            <arg value="${parser.root-dir}"/>
                                         </exec>
                                         <exec dir="${parser.root-dir}" executable="bnfc">
                                             <arg value="-java"/>
