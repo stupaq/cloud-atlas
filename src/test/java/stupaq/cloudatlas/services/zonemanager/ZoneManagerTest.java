@@ -8,6 +8,7 @@ import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration.Builder;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.threading.SingleThreadModel;
 
 public class ZoneManagerTest {
   private static final GlobalName GLOBAL_NAME = GlobalName.parse("/test1/test2/test3");
@@ -17,7 +18,8 @@ public class ZoneManagerTest {
 
   @Before
   public void setUp() throws Exception {
-    configuration = new Builder().leafZone(GLOBAL_NAME).create();
+    configuration =
+        new Builder().leafZone(GLOBAL_NAME).threadModel(new SingleThreadModel()).create();
     manager = new ZoneManager(configuration);
     manager.startAsync().awaitRunning();
   }

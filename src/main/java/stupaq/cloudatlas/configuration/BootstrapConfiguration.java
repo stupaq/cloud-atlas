@@ -1,20 +1,25 @@
 package stupaq.cloudatlas.configuration;
 
+import com.google.common.base.Preconditions;
+
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.threading.ThreadManager;
+import stupaq.cloudatlas.threading.PerServiceThreadModel;
+import stupaq.cloudatlas.threading.ThreadModel;
 
 public class BootstrapConfiguration extends CAConfiguration {
   private final GlobalName leafZone;
   private final MessageBus bus;
-  private final ThreadManager threadManager;
+  private final ThreadModel threadModel;
 
   public BootstrapConfiguration(CAConfiguration configuration, GlobalName leafZone, MessageBus bus,
-      ThreadManager threadManager) {
+      ThreadModel threadModel) {
     super(configuration);
+    Preconditions.checkNotNull(bus);
+    Preconditions.checkNotNull(threadModel);
     this.leafZone = leafZone;
     this.bus = bus;
-    this.threadManager = threadManager;
+    this.threadModel = threadModel;
   }
 
   public GlobalName getLeafZone() {
@@ -25,15 +30,15 @@ public class BootstrapConfiguration extends CAConfiguration {
     return bus;
   }
 
-  public ThreadManager threadManager() {
-    return threadManager;
+  public ThreadModel threadManager() {
+    return threadModel;
   }
 
   public static class Builder {
     private CAConfiguration configuration = new CAConfiguration();
     private GlobalName leafZone;
     private MessageBus bus = new MessageBus();
-    private ThreadManager threadManager;
+    private ThreadModel threadModel;
 
     public Builder configuration(CAConfiguration configuration) {
       this.configuration = configuration;
@@ -50,16 +55,16 @@ public class BootstrapConfiguration extends CAConfiguration {
       return this;
     }
 
-    public Builder threadManager(ThreadManager threadManager) {
-      this.threadManager = threadManager;
+    public Builder threadModel(ThreadModel threadModel) {
+      this.threadModel = threadModel;
       return this;
     }
 
     public BootstrapConfiguration create() {
-      if (threadManager == null) {
-        threadManager = new ThreadManager(configuration);
+      if (threadModel == null) {
+        threadModel = new PerServiceThreadModel();
       }
-      return new BootstrapConfiguration(configuration, leafZone, bus, threadManager);
+      return new BootstrapConfiguration(configuration, leafZone, bus, threadModel);
     }
   }
 }

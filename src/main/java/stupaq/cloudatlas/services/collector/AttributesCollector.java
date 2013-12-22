@@ -9,8 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,7 +19,7 @@ import stupaq.cloudatlas.attribute.values.CADouble;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
-import stupaq.cloudatlas.configuration.CAConfiguration;
+import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
@@ -31,17 +29,15 @@ public class AttributesCollector extends AbstractScheduledService
     implements AttributesCollectorConfigKeys {
   private static final Log LOG = LogFactory.getLog(AttributesCollector.class);
   private final GlobalName zone;
-  private final CAConfiguration configuration;
+  private final BootstrapConfiguration config;
   private final ScheduledExecutorService executor;
   private final LocalClientProtocol client;
 
-  public AttributesCollector(GlobalName zone, CAConfiguration configuration,
-      LocalClientProtocol client, ScheduledExecutorService executor)
-      throws NotBoundException, RemoteException {
-    this.zone = zone;
+  public AttributesCollector(BootstrapConfiguration config, LocalClientProtocol client) {
+    this.zone = config.getLeafZone();
     this.client = client;
-    this.configuration = configuration;
-    this.executor = executor;
+    this.config = config;
+    this.executor = config.threadManager().singleThreaded(AttributesCollector.class);
   }
 
   @Override
@@ -54,7 +50,7 @@ public class AttributesCollector extends AbstractScheduledService
     return new CustomScheduler() {
       @Override
       protected Schedule getNextSchedule() throws Exception {
-        return new Schedule(configuration.getLong(PUSH_INTERVAL, PUSH_INTERVAL_DEFAULT),
+        return new Schedule(config.getLong(PUSH_INTERVAL, PUSH_INTERVAL_DEFAULT),
             TimeUnit.MILLISECONDS);
       }
     };
@@ -67,7 +63,7 @@ public class AttributesCollector extends AbstractScheduledService
 
   private List<Attribute> collectAttributes() throws IOException {
     try {
-      Process process = Runtime.getRuntime().exec(configuration.getString(SCRIPT, SCRIPT_DEFAULT));
+      Process process = Runtime.getRuntime().exec(config.getString(SCRIPT, SCRIPT_DEFAULT));
       FileConfiguration collected = new HierarchicalINIConfiguration();
       collected.load(process.getInputStream());
       if (process.waitFor() != 0) {
@@ -83,8 +79,8 @@ public class AttributesCollector extends AbstractScheduledService
       }
       for (String name : ATTRIBUTES_LONG) {
         if (collected.containsKey(name)) {
-          attributes.add(
-              new Attribute<>(AttributeName.fromString(name), new CAInteger(collected.getLong(name))));
+          attributes.add(new Attribute<>(AttributeName.fromString(name),
+              new CAInteger(collected.getLong(name))));
         }
       }
       for (String name : ATTRIBUTES_STRING) {

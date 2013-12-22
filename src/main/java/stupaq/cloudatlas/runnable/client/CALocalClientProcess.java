@@ -16,15 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
-import stupaq.cloudatlas.configuration.CAConfiguration;
-import stupaq.cloudatlas.configuration.ConfigurationDiscovery;
+import stupaq.cloudatlas.configuration.BootstrapConfiguration;
+import stupaq.cloudatlas.configuration.BootstrapConfiguration.Builder;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.collector.AttributesCollector;
 import stupaq.cloudatlas.services.installer.QueriesInstaller;
-import stupaq.cloudatlas.services.rmiserver.RMIServer;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.cloudatlas.services.scribe.AttributesScribe;
-import stupaq.commons.util.concurrent.SingleThreadedExecutor;
+import stupaq.cloudatlas.threading.SingleThreadModel;
+
+import static stupaq.cloudatlas.configuration.ConfigurationDiscovery.forLocalClient;
+import static stupaq.cloudatlas.services.rmiserver.RMIServer.exportedName;
 
 @SuppressWarnings("unused")
 public class CALocalClientProcess extends AbstractIdleService {
@@ -43,19 +45,17 @@ public class CALocalClientProcess extends AbstractIdleService {
 
   @Override
   protected void startUp() throws NotBoundException, RemoteException {
-    // Find and load configuration
-    CAConfiguration config = ConfigurationDiscovery.forLocalClient();
     // Establish RMI connection that will be shared by all services
     Registry registry = LocateRegistry.getRegistry(host);
-    client =
-        (LocalClientProtocol) registry.lookup(RMIServer.exportedName(LocalClientProtocol.class));
-    // Create shared executor
-    executor = new SingleThreadedExecutor();
+    client = (LocalClientProtocol) registry.lookup(exportedName(LocalClientProtocol.class));
+    // Configuration for client
+    BootstrapConfiguration config = new Builder().configuration(forLocalClient()).leafZone(zone)
+        .threadModel(new SingleThreadModel()).create();
     // Create and start all services
     List<Service> services = new ArrayList<>();
-    services.add(new AttributesCollector(zone, config, client, executor));
-    services.add(new AttributesScribe(config, client, executor));
-    services.add(new QueriesInstaller(config, client, executor));
+    services.add(new AttributesCollector(config, client));
+    services.add(new AttributesScribe(config, client));
+    services.add(new QueriesInstaller(config, client));
     manager = new ServiceManager(services);
     manager.startAsync().awaitHealthy();
   }
@@ -63,8 +63,6 @@ public class CALocalClientProcess extends AbstractIdleService {
   @Override
   protected void shutDown() throws Exception {
     manager.stopAsync().awaitStopped();
-    executor.shutdownNow();
-    executor = null;
     // The best what we can do about RMI client is to let it be finalized by the GC
     client = null;
   }

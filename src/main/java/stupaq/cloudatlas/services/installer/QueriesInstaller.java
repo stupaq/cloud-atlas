@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAQuery;
+import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
@@ -30,25 +31,18 @@ import static com.google.common.base.Optional.of;
 public class QueriesInstaller extends AbstractScheduledService
     implements QueriesInstallerConfigKeys {
   private static final Log LOG = LogFactory.getLog(QueriesInstaller.class);
+  private final BootstrapConfiguration config;
   private final File queriesFile;
   private final LocalClientProtocol client;
   private final ScheduledExecutorService executor;
-  private final Scheduler scheduler;
   private HierarchicalINIConfiguration queriesConfig;
 
-  public QueriesInstaller(final CAConfiguration configuration, LocalClientProtocol client,
-      ScheduledExecutorService executor) {
-    String source = configuration.getString(QUERIES_FILE);
+  public QueriesInstaller(BootstrapConfiguration config, LocalClientProtocol client) {
+    this.config = config;
+    String source = config.getString(QUERIES_FILE);
     this.queriesFile = source == null ? null : new File(source);
     this.client = client;
-    this.executor = executor;
-    scheduler = new CustomScheduler() {
-      @Override
-      protected Schedule getNextSchedule() throws Exception {
-        return new Schedule(configuration.getLong(POLL_INTERVAL, POLL_INTERVAL_DEFAULT),
-            TimeUnit.MILLISECONDS);
-      }
-    };
+    this.executor = config.threadManager().singleThreaded(QueriesInstaller.class);
   }
 
   @Override
@@ -99,18 +93,24 @@ public class QueriesInstaller extends AbstractScheduledService
 
   @Override
   protected void shutDown() throws Exception {
-    if (queriesFile == null) {
-      return;
+    config.threadManager().free(executor);
+    if (queriesFile != null) {
+      for (ConfigurationListener listener : queriesConfig.getConfigurationListeners()) {
+        queriesConfig.removeConfigurationListener(listener);
+      }
+      queriesConfig = null;
     }
-    for (ConfigurationListener listener : queriesConfig.getConfigurationListeners()) {
-      queriesConfig.removeConfigurationListener(listener);
-    }
-    queriesConfig = null;
   }
 
   @Override
   protected Scheduler scheduler() {
-    return scheduler;
+    return new CustomScheduler() {
+      @Override
+      protected Schedule getNextSchedule() throws Exception {
+        return new Schedule(config.getLong(POLL_INTERVAL, POLL_INTERVAL_DEFAULT),
+            TimeUnit.MILLISECONDS);
+      }
+    };
   }
 
   private void processConfig() {
