@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,24 +22,35 @@ import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
+import stupaq.cloudatlas.configuration.StartIfPresent;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.services.rmiserver.RMIServerConfigKeys;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
+import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
+import static stupaq.cloudatlas.services.rmiserver.RMIServer.createClient;
+
+@StartIfPresent(section = "collector")
 public class AttributesCollector extends AbstractScheduledService
-    implements AttributesCollectorConfigKeys {
+    implements AttributesCollectorConfigKeys, RMIServerConfigKeys {
   private static final Log LOG = LogFactory.getLog(AttributesCollector.class);
-  private final GlobalName zone;
   private final BootstrapConfiguration config;
-  private final ScheduledExecutorService executor;
-  private final LocalClientProtocol client;
+  private final SingleThreadedExecutor executor;
+  private final GlobalName zone;
+  private LocalClientProtocol client;
 
-  public AttributesCollector(BootstrapConfiguration config, LocalClientProtocol client) {
-    this.zone = config.getGlobalName(ZONE_NAME);
-    this.client = client;
+  public AttributesCollector(BootstrapConfiguration config) {
+    config.mustContain(ZONE_NAME);
     this.config = config;
+    this.zone = config.getGlobalName(ZONE_NAME);
     this.executor = config.threadManager().singleThreaded(AttributesCollector.class);
+  }
+
+  @Override
+  protected void startUp() throws NotBoundException, RemoteException {
+    client = createClient(LocalClientProtocol.class, config);
   }
 
   @Override
@@ -48,6 +61,7 @@ public class AttributesCollector extends AbstractScheduledService
   @Override
   protected void shutDown() {
     config.threadManager().free(executor);
+    client = null;
   }
 
   @Override

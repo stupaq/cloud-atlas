@@ -1,16 +1,15 @@
 package stupaq.cloudatlas.runnable.agent;
 
 import com.google.common.util.concurrent.AbstractIdleService;
-import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ServiceManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
+import stupaq.cloudatlas.configuration.ServicesList;
 import stupaq.cloudatlas.services.rmiserver.RMIServer;
 import stupaq.cloudatlas.services.zonemanager.ZoneManager;
 import stupaq.cloudatlas.threading.PerServiceThreadModel;
@@ -27,14 +26,16 @@ public final class CAAgentProcess extends AbstractIdleService {
   }
 
   @Override
-  protected void startUp() throws Exception {
+  protected void startUp()
+      throws InvocationTargetException, NoSuchMethodException, IllegalAccessException,
+             InstantiationException {
     // Configuration for agent
     BootstrapConfiguration config =
         new Builder().configuration(forAgent()).threadModel(new PerServiceThreadModel()).create();
     // Create and start all services
-    List<Service> services = new ArrayList<>();
-    services.add(new RMIServer(config));
-    services.add(new ZoneManager(config));
+    ServicesList services = new ServicesList();
+    services.addWith(config, RMIServer.class);
+    services.addWith(config, ZoneManager.class);
     modules = new ServiceManager(services);
     modules.startAsync().awaitHealthy();
   }

@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.configuration;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -51,6 +52,10 @@ public class CAConfiguration extends DataConfiguration {
 
   public GlobalName getGlobalName(String key) {
     return GlobalName.parse(getString(key));
+  }
+
+  public void mustContain(String key) {
+    Preconditions.checkState(containsKey(key), "Configuration must contain value for key: " + key);
   }
 
   public static CAConfiguration fromFile(File file) {

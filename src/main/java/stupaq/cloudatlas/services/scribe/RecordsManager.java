@@ -2,7 +2,6 @@ package stupaq.cloudatlas.services.scribe;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 import org.apache.commons.logging.Log;
@@ -27,14 +26,9 @@ public class RecordsManager implements AttributesScribeConfigKeys, AutoCloseable
   private final Map<EntityName, PrintWriter> writers = Maps.newHashMap();
 
   public RecordsManager(CAConfiguration config) {
-    String path = config.getString(RECORDS_DIRECTORY);
-    if (path == null) {
-      directory = null;
-      LOG.warn("Any records will be discarded as " + RECORDS_DIRECTORY + " is no set");
-    } else {
-      directory = new File(path);
-      Preconditions.checkState(directory.isDirectory() || !directory.exists());
-    }
+    config.mustContain(RECORDS_DIRECTORY);
+    directory = new File(config.getString(RECORDS_DIRECTORY));
+    Preconditions.checkState(directory.isDirectory() || !directory.exists());
   }
 
   @Override
@@ -43,9 +37,6 @@ public class RecordsManager implements AttributesScribeConfigKeys, AutoCloseable
   }
 
   public Records forEntity(EntityName entity) throws IOException {
-    if (directory == null) {
-      return new Records(new PrintWriter(ByteStreams.nullOutputStream()));
-    }
     PrintWriter writer = writers.get(entity);
     if (writer == null) {
       File file = new File(directory, entity + EXTENSION);

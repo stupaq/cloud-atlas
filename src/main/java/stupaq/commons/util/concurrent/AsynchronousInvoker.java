@@ -6,6 +6,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -60,11 +61,13 @@ public class AsynchronousInvoker implements InvocationHandler {
     }
   }
 
+  @Documented
   @Retention(value = RetentionPolicy.RUNTIME)
   @Target(value = ElementType.METHOD)
   public static @interface DirectInvocation {
   }
 
+  @Documented
   @Retention(value = RetentionPolicy.RUNTIME)
   @Target(value = ElementType.METHOD)
   public static @interface ScheduledInvocation {

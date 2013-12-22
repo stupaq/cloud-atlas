@@ -10,9 +10,12 @@ grant {
 EOF
 trap "rm -f $RMI_POLICY_SERVER" EXIT
 
-rmiregistry &
-RMI_REGISTRY_PID=$!
-trap "kill $RMI_REGISTRY_PID" EXIT
+ps cax | grep rmiregistry &>/dev/null
+if [[ $? -ne 0 ]]; then
+    rmiregistry &
+    RMI_REGISTRY_PID=$!
+    trap "kill $RMI_REGISTRY_PID" EXIT
+fi
 
 java \
     -ea \

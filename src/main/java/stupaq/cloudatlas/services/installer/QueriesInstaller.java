@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,26 +23,29 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.CAConfiguration;
+import stupaq.cloudatlas.configuration.StartIfPresent;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.services.rmiserver.RMIServerConfigKeys;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 
 import static com.google.common.base.Optional.of;
+import static stupaq.cloudatlas.services.rmiserver.RMIServer.createClient;
 
+@StartIfPresent(section = "installer")
 public class QueriesInstaller extends AbstractScheduledService
-    implements QueriesInstallerConfigKeys {
+    implements QueriesInstallerConfigKeys, RMIServerConfigKeys {
   private static final Log LOG = LogFactory.getLog(QueriesInstaller.class);
   private final BootstrapConfiguration config;
   private final File queriesFile;
-  private final LocalClientProtocol client;
   private final ScheduledExecutorService executor;
+  private LocalClientProtocol client;
   private HierarchicalINIConfiguration queriesConfig;
 
-  public QueriesInstaller(BootstrapConfiguration config, LocalClientProtocol client) {
+  public QueriesInstaller(BootstrapConfiguration config) {
+    config.mustContain(QUERIES_FILE);
     this.config = config;
-    String source = config.getString(QUERIES_FILE);
-    this.queriesFile = source == null ? null : new File(source);
-    this.client = client;
+    this.queriesFile = new File(config.getString(QUERIES_FILE));
     this.executor = config.threadManager().singleThreaded(QueriesInstaller.class);
   }
 
@@ -56,11 +60,8 @@ public class QueriesInstaller extends AbstractScheduledService
   }
 
   @Override
-  protected void startUp() throws ConfigurationException, RemoteException {
-    if (queriesFile == null) {
-      LOG.warn("Queries file not set, nothing to do");
-      return;
-    }
+  protected void startUp() throws ConfigurationException, RemoteException, NotBoundException {
+    client = createClient(LocalClientProtocol.class, config);
     // Try to retrieve configuration
     try {
       queriesConfig = new HierarchicalINIConfiguration(queriesFile);
@@ -94,12 +95,11 @@ public class QueriesInstaller extends AbstractScheduledService
   @Override
   protected void shutDown() {
     config.threadManager().free(executor);
-    if (queriesConfig != null) {
-      for (ConfigurationListener listener : queriesConfig.getConfigurationListeners()) {
-        queriesConfig.removeConfigurationListener(listener);
-      }
-      queriesConfig = null;
+    for (ConfigurationListener listener : queriesConfig.getConfigurationListeners()) {
+      queriesConfig.removeConfigurationListener(listener);
     }
+    queriesConfig = null;
+    client = null;
   }
 
   @Override
