@@ -13,6 +13,7 @@ import java.util.List;
 
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.ServicesList;
+import stupaq.cloudatlas.services.busybody.Busybody;
 import stupaq.cloudatlas.services.rmiserver.RMIServer;
 import stupaq.cloudatlas.services.zonemanager.ZoneManager;
 import stupaq.cloudatlas.threading.PerServiceThreadModel;
@@ -42,6 +43,7 @@ public final class CAAgentProcess extends AbstractIdleService {
       // Create and start all services
       services.addWith(config, RMIServer.class);
       services.addWith(config, ZoneManager.class);
+      services.addWith(config, Busybody.class);
     }
     modules = new ServiceManager(services);
     modules.startAsync().awaitHealthy();
