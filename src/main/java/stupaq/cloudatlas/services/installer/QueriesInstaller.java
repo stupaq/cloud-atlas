@@ -46,7 +46,7 @@ public class QueriesInstaller extends AbstractScheduledService
     config.mustContain(QUERIES_FILE);
     this.config = config;
     this.queriesFile = new File(config.getString(QUERIES_FILE));
-    this.executor = config.threadManager().singleThreaded(QueriesInstaller.class);
+    this.executor = config.threadModel().singleThreaded(QueriesInstaller.class);
   }
 
   @Override
@@ -94,7 +94,7 @@ public class QueriesInstaller extends AbstractScheduledService
 
   @Override
   protected void shutDown() {
-    config.threadManager().free(executor);
+    config.threadModel().free(executor);
     for (ConfigurationListener listener : queriesConfig.getConfigurationListeners()) {
       queriesConfig.removeConfigurationListener(listener);
     }

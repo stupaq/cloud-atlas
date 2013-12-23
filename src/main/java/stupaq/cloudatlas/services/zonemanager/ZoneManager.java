@@ -68,13 +68,11 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     agentsName = config.getGlobalName(ZONE_NAME);
     hierarchy = ZoneHierarchy.create(agentsName, new BuiltinsInserter(agentsName));
     agentsNode = hierarchy.find(agentsName).get();
-    executor = config.threadManager().singleThreaded(ZoneManager.class);
+    executor = config.threadModel().singleThreaded(ZoneManager.class);
   }
 
   @Override
   protected void startUp() {
-    // We're ready to operate
-    bus.register(new ZoneManagerListener());
     // Create memory mapped file for zone hierarchy dumps
     if (config.containsKey(HIERARCHY_DUMP_FILE)) {
       try {
@@ -88,11 +86,13 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
         LOG.error("Failed to open file for hierarchy dumps", e);
       }
     }
+    // We're ready to operate
+    bus.register(new ZoneManagerListener());
   }
 
   @Override
   protected void shutDown() {
-    config.threadManager().free(executor);
+    config.threadModel().free(executor);
   }
 
   @Override

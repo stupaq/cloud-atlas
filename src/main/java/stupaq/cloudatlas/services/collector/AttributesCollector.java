@@ -45,7 +45,7 @@ public class AttributesCollector extends AbstractScheduledService
     config.mustContain(ZONE_NAME);
     this.config = config;
     this.zone = config.getGlobalName(ZONE_NAME);
-    this.executor = config.threadManager().singleThreaded(AttributesCollector.class);
+    this.executor = config.threadModel().singleThreaded(AttributesCollector.class);
   }
 
   @Override
@@ -60,7 +60,7 @@ public class AttributesCollector extends AbstractScheduledService
 
   @Override
   protected void shutDown() {
-    config.threadManager().free(executor);
+    config.threadModel().free(executor);
     client = null;
   }
 

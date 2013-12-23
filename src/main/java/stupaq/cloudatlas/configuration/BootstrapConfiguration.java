@@ -32,7 +32,7 @@ public class BootstrapConfiguration extends CAConfiguration {
     return bus;
   }
 
-  public ThreadModel threadManager() {
+  public ThreadModel threadModel() {
     return threadModel;
   }
 

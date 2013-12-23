@@ -34,7 +34,7 @@ public class AttributesScribe extends AbstractScheduledService
 
   public AttributesScribe(BootstrapConfiguration config) {
     this.config = config;
-    this.executor = config.threadManager().singleThreaded(AttributesScribe.class);
+    this.executor = config.threadModel().singleThreaded(AttributesScribe.class);
     this.recordsManager = new RecordsManager(config);
   }
 
@@ -81,7 +81,7 @@ public class AttributesScribe extends AbstractScheduledService
   @Override
   protected void shutDown() {
     recordsManager.close();
-    config.threadManager().free(executor);
+    config.threadModel().free(executor);
     client = null;
   }
 }
