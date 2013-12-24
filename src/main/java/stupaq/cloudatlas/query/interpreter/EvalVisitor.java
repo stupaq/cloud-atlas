@@ -28,7 +28,6 @@ import stupaq.cloudatlas.query.parser.QueryLanguage.Absyn.*;
 import stupaq.cloudatlas.query.semantics.values.RSingle;
 import stupaq.cloudatlas.query.semantics.values.SemanticValue;
 import stupaq.cloudatlas.query.semantics.values.SemanticValue.SemanticValueCastException;
-import stupaq.commons.base.Function1;
 import stupaq.commons.base.Function2;
 
 public class EvalVisitor {
@@ -54,7 +53,7 @@ public class EvalVisitor {
   }
 
   private abstract static class AttributeValueMapper
-      extends Function1<AttributeValue, AttributeValue> {
+      implements Function<AttributeValue, AttributeValue> {
   }
 
   private abstract static class AttributeValueZipper
@@ -108,8 +107,10 @@ public class EvalVisitor {
       while (rows.hasNext()) {
         AttributeValue value;
         try {
-          value = p.xexpression_.accept(new XExpressionVisitor(), new InputContext(rows.next()))
-              .getSingle().get();
+          value = p.xexpression_
+              .accept(new XExpressionVisitor(), new InputContext(rows.next()))
+              .getSingle()
+              .get();
           if (!expect(CABoolean.class, value).getOr(false)) {
             rows.remove();
           }
@@ -147,8 +148,9 @@ public class EvalVisitor {
   private class XOrderItemVisitor implements XOrderItem.Visitor<Void, AttributesTable> {
     @Override
     public Void visit(final OrderItemCond p, AttributesTable table) {
-      Ordering<AttributesRow> ordering = p.xnullsoption_.accept(new XNullsOptionVisitor(),
-          p.xorderoption_.accept(new XOrderOptionVisitor(), null))
+      Ordering<AttributesRow> ordering = p.xnullsoption_
+          .accept(new XNullsOptionVisitor(),
+              p.xorderoption_.accept(new XOrderOptionVisitor(), null))
           .onResultOf(new Function<AttributesRow, AttributeValue>() {
             @SuppressWarnings("unchecked")
             @Override
@@ -227,7 +229,8 @@ public class EvalVisitor {
   private class XExpressionVisitor implements XExpression.Visitor<SemanticValue, InputContext> {
     @Override
     public SemanticValue visit(CondExprOr p, InputContext context) {
-      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+      return p.xexpression_1
+          .accept(new XExpressionVisitor(), context)
           .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
               new AttributeValueZipper() {
                 @Override
@@ -239,7 +242,8 @@ public class EvalVisitor {
 
     @Override
     public SemanticValue visit(CondExprAnd p, InputContext context) {
-      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+      return p.xexpression_1
+          .accept(new XExpressionVisitor(), context)
           .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
               new AttributeValueZipper() {
                 @Override
@@ -251,7 +255,8 @@ public class EvalVisitor {
 
     @Override
     public SemanticValue visit(CondExprNot p, InputContext context) {
-      return p.xexpression_.accept(new XExpressionVisitor(), context)
+      return p.xexpression_
+          .accept(new XExpressionVisitor(), context)
           .map(new AttributeValueMapper() {
             @Override
             public AttributeValue apply(AttributeValue value) {
@@ -262,7 +267,8 @@ public class EvalVisitor {
 
     @Override
     public SemanticValue visit(final BoolExprRegex p, InputContext context) {
-      return p.xexpression_.accept(new XExpressionVisitor(), context)
+      return p.xexpression_
+          .accept(new XExpressionVisitor(), context)
           .map(new AttributeValueMapper() {
             @Override
             public AttributeValue apply(AttributeValue value) {
@@ -273,28 +279,32 @@ public class EvalVisitor {
 
     @Override
     public SemanticValue visit(BoolExprRel p, InputContext context) {
-      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+      return p.xexpression_1
+          .accept(new XExpressionVisitor(), context)
           .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
               p.xrelop_.accept(new XRelOpVisitor(), context));
     }
 
     @Override
     public SemanticValue visit(ArithExprAdd p, InputContext context) {
-      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+      return p.xexpression_1
+          .accept(new XExpressionVisitor(), context)
           .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
               p.xarithopadd_.accept(new XArithOpAddVisitor(), context));
     }
 
     @Override
     public SemanticValue visit(ArithExprMultiply p, InputContext context) {
-      return p.xexpression_1.accept(new XExpressionVisitor(), context)
+      return p.xexpression_1
+          .accept(new XExpressionVisitor(), context)
           .zip(p.xexpression_2.accept(new XExpressionVisitor(), context),
               p.xarithopmultiply_.accept(new XArithOpMultiplyVisitor(), context));
     }
 
     @Override
     public SemanticValue visit(ArithExprNeg p, InputContext context) {
-      return p.xexpression_.accept(new XExpressionVisitor(), context)
+      return p.xexpression_
+          .accept(new XExpressionVisitor(), context)
           .map(new AttributeValueMapper() {
             @Override
             public AttributeValue apply(AttributeValue value) {
@@ -326,13 +336,16 @@ public class EvalVisitor {
           case "count":
             return args.get(0).aggregate().count();
           case "first":
-            return args.get(1).aggregate()
+            return args.get(1)
+                .aggregate()
                 .first(expect(CAInteger.class, args.get(0).getSingle().get()));
           case "last":
-            return args.get(1).aggregate()
+            return args.get(1)
+                .aggregate()
                 .last(expect(CAInteger.class, args.get(0).getSingle().get()));
           case "random":
-            return args.get(1).aggregate()
+            return args.get(1)
+                .aggregate()
                 .random(expect(CAInteger.class, args.get(0).getSingle().get()));
           case "min":
             return args.get(0).aggregate().min();

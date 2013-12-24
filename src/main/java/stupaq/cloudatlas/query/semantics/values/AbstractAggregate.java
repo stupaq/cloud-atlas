@@ -26,7 +26,6 @@ import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 import stupaq.cloudatlas.query.semantics.AggregatingValue;
 import stupaq.cloudatlas.query.semantics.AggregatingValue.AggregatingValueDefault;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
-import stupaq.commons.base.Function1;
 import stupaq.commons.base.Function2;
 
 import static com.google.common.collect.FluentIterable.from;
@@ -80,7 +79,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
 
   @Override
   public final <Result extends AttributeValue> SemanticValue<Result> map(
-      Function1<Type, Result> function) {
+      Function<Type, Result> function) {
     return from(this).transform(function)
         .copyInto(this.<Result>emptyInstance(TypeInfo.typeof1(getType(), function)));
   }

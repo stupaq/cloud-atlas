@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.services.zonemanager;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -45,8 +46,8 @@ import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceModifier;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Modifier;
+import stupaq.cloudatlas.services.zonemanager.purging.StaleZonesRemover;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
-import stupaq.commons.base.Function1;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.SingleThreadAssertion;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
@@ -104,9 +105,11 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
   protected void runOneIteration() throws Exception {
     assertion.check();
     // We do the computation and updates for zones that we are a source of truth ONLY
-    agentsNode.walkUp(new InstalledQueriesUpdater());
-    agentsNode.walkUp(new BuiltinsUpdater(config.clock().getTime()));
-    // TODO adjust timestamps
+    agentsNode.synthesizePath(new InstalledQueriesUpdater());
+    agentsNode.synthesizePath(new BuiltinsUpdater(config.clock().timestamp()));
+    long retention = config.getLong(PURGE_INTERVAL, PURGE_INTERVAL_DEFAULT);
+    agentsNode.filterLeaves(
+        new StaleZonesRemover(config.clock().timestamp(-retention, TimeUnit.MILLISECONDS)));
     dumpHierarchy();
   }
 
@@ -200,10 +203,10 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     @Override
     public void knownZones(KnownZonesRequest request) {
       assertion.check();
-      bus.post(new KnownZonesResponse(hierarchy.map(new Function1<ZoneManagementInfo, LocalName>() {
+      bus.post(new KnownZonesResponse(hierarchy.map(new Function<ZoneManagementInfo, LocalName>() {
         @Override
-        public LocalName apply(ZoneManagementInfo zoneManagementInfo) {
-          return zoneManagementInfo.localName();
+        public LocalName apply(ZoneManagementInfo zmi) {
+          return zmi.localName();
         }
       })).attach(request));
     }
@@ -255,7 +258,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
           }
         }
       } else {
-        agentsNode.walkUp(new InPlaceSynthesizer<ZoneManagementInfo>() {
+        agentsNode.synthesizePath(new InPlaceSynthesizer<ZoneManagementInfo>() {
           @Override
           protected void process(Iterable<ZoneManagementInfo> children, ZoneManagementInfo zmi) {
             if (!noLeaves || !Iterables.isEmpty(children)) {

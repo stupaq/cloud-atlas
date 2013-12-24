@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.query.typecheck;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
@@ -14,7 +15,6 @@ import stupaq.cloudatlas.attribute.values.CAList;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
 import stupaq.commons.base.ForwardingWrapper;
-import stupaq.commons.base.Function1;
 import stupaq.commons.base.Function2;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
@@ -76,15 +76,13 @@ public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<C
   }
 
   @SuppressWarnings("unchecked")
-  public static <Atomic extends AttributeValue, Result extends AttributeValue> TypeInfo<Result>
-  typeof1(
-      TypeInfo<Atomic> that, Function1<Atomic, Result> function) {
+  public static <Atomic extends AttributeValue, Result extends AttributeValue> TypeInfo<Result> typeof1(
+      TypeInfo<Atomic> that, Function<Atomic, Result> function) {
     return (TypeInfo<Result>) function.apply(that.aNull()).type();
   }
 
   @SuppressWarnings("unchecked")
-  public static <Atomic extends AttributeValue, Arg1 extends AttributeValue,
-      Result extends AttributeValue> TypeInfo<Result> typeof2(
+  public static <Atomic extends AttributeValue, Arg1 extends AttributeValue, Result extends AttributeValue> TypeInfo<Result> typeof2(
       TypeInfo<Atomic> that, TypeInfo<Arg1> other, Function2<Atomic, Arg1, Result> function) {
     return (TypeInfo<Result>) function.apply(that.aNull(), other.aNull()).type();
   }

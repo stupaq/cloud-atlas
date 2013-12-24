@@ -49,7 +49,7 @@ public class AttributesScribe extends AbstractScheduledService
     if (!entitiesList.isEmpty()) {
       Iterator<Attribute> values = client.getValues(entitiesList).iterator();
       Iterator<EntityName> entities = entitiesList.iterator();
-      long timestamp = config.clock().getTime();
+      long timestamp = config.clock().timestamp();
       while (entities.hasNext() && entities.hasNext()) {
         EntityName entity = entities.next();
         try (Records log = recordsManager.forEntity(entity)) {

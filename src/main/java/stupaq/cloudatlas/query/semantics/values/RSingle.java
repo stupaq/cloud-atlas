@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.query.semantics.values;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 
@@ -8,7 +9,6 @@ import stupaq.cloudatlas.attribute.values.CABoolean;
 import stupaq.cloudatlas.query.semantics.AggregatingValue;
 import stupaq.cloudatlas.query.semantics.AggregatingValue.AggregatingValueDefault;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
-import stupaq.commons.base.Function1;
 import stupaq.commons.base.Function2;
 
 import static stupaq.cloudatlas.query.typecheck.TypeInfo.typeof2;
@@ -44,7 +44,7 @@ public final class RSingle<Type extends AttributeValue> implements SemanticValue
 
   @Override
   public <Result extends AttributeValue> SemanticValue<Result> map(
-      Function1<Type, Result> function) {
+      Function<Type, Result> function) {
     return new RSingle<>(function.apply(value));
   }
 
