@@ -1,10 +1,10 @@
 package stupaq.cloudatlas.services.busybody.netty;
 
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.DatagramChannel;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 
-public class GossipChannelInitializer extends ChannelInitializer<SocketChannel> {
+public class GossipChannelInitializer extends ChannelInitializer<DatagramChannel> {
   private final BootstrapConfiguration config;
 
   public GossipChannelInitializer(BootstrapConfiguration config) {
@@ -12,7 +12,7 @@ public class GossipChannelInitializer extends ChannelInitializer<SocketChannel> 
   }
 
   @Override
-  protected void initChannel(SocketChannel channel) throws Exception {
+  protected void initChannel(DatagramChannel channel) throws Exception {
     channel.pipeline()
         .addLast(new CompactSerializableEncoder())
         .addLast(new CompactSerializableDecoder())

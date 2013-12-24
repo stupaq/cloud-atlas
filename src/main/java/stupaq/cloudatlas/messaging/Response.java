@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public abstract class Response<RequestType extends Request> extends Message {
+public abstract class Response<RequestType extends Request> implements Message {
   private RequestType request;
 
   public RequestType request() {

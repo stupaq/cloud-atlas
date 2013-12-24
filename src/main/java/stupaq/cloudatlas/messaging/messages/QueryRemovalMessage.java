@@ -8,7 +8,7 @@ import stupaq.cloudatlas.messaging.Message;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
 
-public class QueryRemovalMessage extends Message {
+public class QueryRemovalMessage implements Message {
   private final Optional<AttributeName> name;
   private final Optional<List<GlobalName>> zones;
 

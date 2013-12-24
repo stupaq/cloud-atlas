@@ -12,7 +12,7 @@ import stupaq.cloudatlas.messaging.Message;
 import stupaq.cloudatlas.naming.GlobalName;
 
 @Immutable
-public final class AttributesUpdateMessage extends Message implements Iterable<Attribute> {
+public final class AttributesUpdateMessage implements Iterable<Attribute>, Message {
   private final GlobalName zone;
   private final List<Attribute> attributes;
 
