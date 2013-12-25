@@ -28,7 +28,6 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
     this.zoneStrategy = zoneStrategy;
   }
 
-  @SuppressWarnings("unchecked")
   public Optional<CAContact> select(ZoneHierarchy<ZoneManagementInfo> leafZone) throws Exception {
     GlobalName leafName = leafZone.globalName();
     try {
@@ -38,6 +37,7 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
       LOG.info("Selected level: " + level);
       ZoneHierarchy<ZoneManagementInfo> parent = leafZone.parent(leafName.leafLevel() - level + 1);
       ZoneManagementInfo zmi = zoneStrategy.select(parent.childPayloads());
+      LOG.info("Selected zone's local name: " + zmi.localName());
       Collection<CAContact> contacts = CONTACTS.get(zmi).getValue();
       return Optional.fromNullable(
           contacts.isEmpty() ? null : Collections3.<CAContact>random(contacts));

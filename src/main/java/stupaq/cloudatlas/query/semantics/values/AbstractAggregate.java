@@ -119,13 +119,13 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
 
     @SuppressWarnings("unchecked")
     @Override
-    public RSingle sum() {
+    public RSingle<Type> sum() {
       // Determine whether we can sum values
       AttributeValue sum = getType().aNull().op().zero();
       for (Type elem : nonNulls.get()) {
         sum = sum.op().add(elem);
       }
-      return new RSingle<>(nullsOnly.get() ? getType().aNull() : sum);
+      return new RSingle<>(nullsOnly.get() ? getType().aNull() : (Type) sum);
     }
 
     @Override
