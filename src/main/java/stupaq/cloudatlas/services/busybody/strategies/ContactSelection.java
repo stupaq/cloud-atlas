@@ -2,24 +2,23 @@ package stupaq.cloudatlas.services.busybody.strategies;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.FluentIterable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import stupaq.cloudatlas.attribute.Attribute;
+import java.util.Collection;
+
 import stupaq.cloudatlas.attribute.values.CAContact;
-import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.plugins.Plugin;
-import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
-import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
+import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.commons.collect.Collections3;
 
-public class ContactSelection implements ContactSelectionConfigKeys, ZoneManagerConfigKeys {
+public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttributesConfigKeys {
   private static final Log LOG = LogFactory.getLog(ContactSelection.class);
   private final LevelSelection levelStrategy;
   private final ZoneSelection zoneStrategy;
@@ -29,20 +28,21 @@ public class ContactSelection implements ContactSelectionConfigKeys, ZoneManager
     this.zoneStrategy = zoneStrategy;
   }
 
-  public CAContact select(ZoneHierarchy<ZoneManagementInfo> leafZone) throws Exception {
+  @SuppressWarnings("unchecked")
+  public Optional<CAContact> select(ZoneHierarchy<ZoneManagementInfo> leafZone) throws Exception {
+    GlobalName leafName = leafZone.globalName();
     try {
-      GlobalName leafName = leafZone.globalName();
       int level = levelStrategy.select(leafName);
       Preconditions.checkState(0 < level, "Chosen level must not be a root");
       Preconditions.checkState(level <= leafName.leafLevel(), "Chosen level is below leaf level");
+      LOG.info("Selected level: " + level);
       ZoneHierarchy<ZoneManagementInfo> parent = leafZone.parent(leafName.leafLevel() - level + 1);
       ZoneManagementInfo zmi = zoneStrategy.select(parent.childPayloads());
-      Optional<Attribute<CASet>> attribute =
-          zmi.get(CONTACTS, ComposedTypeInfo.of(CASet.class, TypeInfo.of(CAContact.class)));
-      Preconditions.checkState(attribute.isPresent());
-      return (CAContact) Collections3.random(attribute.get().getValue().get());
+      Collection<CAContact> contacts = CONTACTS.get(zmi).getValue();
+      return Optional.fromNullable(
+          contacts.isEmpty() ? null : Collections3.<CAContact>random(contacts));
     } catch (Exception e) {
-      throw new Exception(e.getMessage());
+      throw new Exception(e.getMessage(), e);
     }
   }
 
@@ -51,11 +51,14 @@ public class ContactSelection implements ContactSelectionConfigKeys, ZoneManager
   }
 
   private static LevelSelection createLevel(CAConfiguration config) {
-    return Plugin.initialize(config.getPlugin(LEVEL_SELECTION, LEVEL_SELECTION_DEFAULT), config);
+    return Plugin.initialize(config.getPlugin(LEVEL_SELECTION, ContactSelectionConfigKeys.PREFIX,
+        LEVEL_SELECTION_DEFAULT), config);
   }
 
   private static ZoneSelection createZone(CAConfiguration config) {
-    return Plugin.initialize(config.getPlugin(ZONE_SELECTION, ZONE_SELECTION_DEFAULT), config);
+    return Plugin.initialize(
+        config.getPlugin(ZONE_SELECTION, ContactSelectionConfigKeys.PREFIX, ZONE_SELECTION_DEFAULT),
+        config);
   }
 
   public static interface LevelSelection {
@@ -63,6 +66,6 @@ public class ContactSelection implements ContactSelectionConfigKeys, ZoneManager
   }
 
   public static interface ZoneSelection {
-    public ZoneManagementInfo select(Iterable<ZoneManagementInfo> zones);
+    public ZoneManagementInfo select(FluentIterable<ZoneManagementInfo> zones);
   }
 }

@@ -59,6 +59,14 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
     return get().get(get().size() - 1);
   }
 
+  public LocalName leaf() {
+    return get().get(leafLevel());
+  }
+
+  public int leafLevel() {
+    return get().size() - 1;
+  }
+
   @Override
   public boolean equals(Object o) {
     return o instanceof GlobalName && super.equals(o);
@@ -79,14 +87,6 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
   @Override
   public Iterator<LocalName> iterator() {
     return get().iterator();
-  }
-
-  public LocalName leaf() {
-    return get().get(leafLevel());
-  }
-
-  public int leafLevel() {
-    return get().size() - 1;
   }
 
   @Override

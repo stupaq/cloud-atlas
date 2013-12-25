@@ -50,7 +50,7 @@ public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<C
   }
 
   public boolean matches(AttributeValue value) {
-    return equals(of(value.getClass()));
+    return equals(value.type());
   }
 
   @SuppressWarnings("unchecked")

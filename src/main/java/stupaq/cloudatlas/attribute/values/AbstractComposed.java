@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.attribute.values;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ForwardingCollection;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -24,7 +25,8 @@ import static stupaq.compact.CompactSerializers.Collection;
 import static stupaq.compact.TypeRegistry.resolveOrThrow;
 
 /** PACKAGE-LOCAL */
-abstract class AbstractComposed<Type extends AttributeValue> implements AttributeValue {
+abstract class AbstractComposed<Type extends AttributeValue> extends ForwardingCollection<Type>
+    implements AttributeValue {
   @Nonnull private final Collection<Type> value;
   @Nonnull private final TypeInfo<Type> enclosingType;
   private final boolean isNull;
@@ -43,12 +45,13 @@ abstract class AbstractComposed<Type extends AttributeValue> implements Attribut
         if (!enclosingType.equals(elem.type())) {
           throw new TypeCheckerException("Collection contains elements of not matching type");
         }
-        get().add(elem);
+        add(elem);
       }
     }
   }
 
-  public final Collection<Type> get() {
+  @Override
+  protected Collection<Type> delegate() {
     return isNull() ? Fluent.<Collection<Type>>raiseNPE() : value;
   }
 
@@ -100,7 +103,7 @@ abstract class AbstractComposed<Type extends AttributeValue> implements Attribut
 
   @Override
   public final String toString() {
-    return (isNull() ? "NULL" : get().toString()) + type();
+    return (isNull() ? "NULL" : delegate().toString()) + type();
   }
 
   protected abstract static class Serializer<Type extends AttributeValue, Actual extends AbstractComposed<Type>>
@@ -127,11 +130,11 @@ abstract class AbstractComposed<Type extends AttributeValue> implements Attribut
       TypeInfo<?> enclosingType = object.getEnclosingType();
       // This can be either TypeInfo or ComposedTypeInfo, we have to use dynamic dispatch here
       TypeRegistry.writeObject(out, enclosingType);
-      int elements = object.isNull() ? -1 : object.get().size();
+      int elements = object.isNull() ? -1 : object.size();
       out.writeInt(elements);
       if (elements > 0) {
         CompactSerializer<Type> serializer = resolveOrThrow(enclosingType.aNull().descriptor());
-        Collection(serializer).writeInstance(out, object.get());
+        Collection(serializer).writeInstance(out, object);
       }
     }
   }

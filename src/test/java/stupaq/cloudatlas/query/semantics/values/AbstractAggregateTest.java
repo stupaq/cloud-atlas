@@ -21,7 +21,7 @@ public class AbstractAggregateTest {
     if (resultSize < 0) {
       assertEquals(S(ListNull(collection.getType())), sample);
     } else {
-      assertTrue(collection.containsAll(sample.get().asCollection()));
+      assertTrue(collection.containsAll(sample.get()));
       assertEquals(Int(resultSize), sample.get().op().size());
     }
   }
@@ -119,22 +119,22 @@ public class AbstractAggregateTest {
     assertEquals(L(TInt()), L(TInt(), Int(), Int(), Int(), Int()).aggregate().distinct());
     // unfold
     assertEquals(L(TInt(), Int(2), Int(3), Int(3)),
-        L(TList(TInt()), List(TInt(), Int(2), Int(3)), List(TInt()), List(TInt(), Int(3)))
-            .aggregate().unfold());
+        L(TList(TInt()), List(TInt(), Int(2), Int(3)), List(TInt()),
+            List(TInt(), Int(3))).aggregate().unfold());
     assertEquals(L(TInt(), Int(2), Int(3), Int(3)),
         L(TSet(TInt()), Set(TInt(), Int(2), Int(3)), Set(TInt()), Set(TInt(), Int(3))).aggregate()
             .unfold());
     assertEquals(L(TInt(), Int(3), Int(3), Int(3)),
-        C(TList(TInt()), List(TInt(), Int(3), Int(3)), List(TInt()), List(TInt(), Int(3)))
-            .aggregate().unfold());
+        C(TList(TInt()), List(TInt(), Int(3), Int(3)), List(TInt()),
+            List(TInt(), Int(3))).aggregate().unfold());
     assertEquals(L(TInt(), Int(3), Int(3)),
         C(TSet(TInt()), Set(TInt(), Int(3), Int(3)), Set(TInt()), Set(TInt(), Int(3))).aggregate()
             .unfold());
     assertEquals(L(TInt()), C(TList(TInt())).aggregate().unfold());
     // unfold null
     assertEquals(L(TInt(), Int(3), Int(3), Int(3)),
-        C(TList(TInt()), List(TInt(), Int(3), Int(3)), ListNull(TInt()), List(TInt(), Int(3)))
-            .aggregate().unfold());
+        C(TList(TInt()), List(TInt(), Int(3), Int(3)), ListNull(TInt()),
+            List(TInt(), Int(3))).aggregate().unfold());
     assertEquals(L(TInt(), Int(3)),
         C(TList(TInt()), ListNull(TInt()), ListNull(TInt()), List(TInt(), Int(3))).aggregate()
             .unfold());

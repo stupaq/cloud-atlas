@@ -8,4 +8,8 @@ public class ContactSelectionMessage extends Request<Void> {
   public ContactSelectionMessage(ContactSelection strategy) {
     this.strategy = strategy;
   }
+
+  public ContactSelection getStrategy() {
+    return strategy;
+  }
 }

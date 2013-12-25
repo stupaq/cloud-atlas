@@ -21,25 +21,28 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
+import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
-import stupaq.cloudatlas.messaging.messages.requests.DumpZoneRequest;
-import stupaq.cloudatlas.messaging.messages.responses.DumpZoneResponse;
-import stupaq.cloudatlas.messaging.messages.requests.EntitiesValuesRequest;
-import stupaq.cloudatlas.messaging.messages.responses.EntitiesValuesResponse;
-import stupaq.cloudatlas.messaging.messages.requests.KnownZonesRequest;
-import stupaq.cloudatlas.messaging.messages.responses.KnownZonesResponse;
+import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
 import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
+import stupaq.cloudatlas.messaging.messages.requests.DumpZoneRequest;
+import stupaq.cloudatlas.messaging.messages.requests.EntitiesValuesRequest;
+import stupaq.cloudatlas.messaging.messages.requests.KnownZonesRequest;
+import stupaq.cloudatlas.messaging.messages.responses.DumpZoneResponse;
+import stupaq.cloudatlas.messaging.messages.responses.EntitiesValuesResponse;
+import stupaq.cloudatlas.messaging.messages.responses.KnownZonesResponse;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttribute;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsInserter;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsUpdater;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
@@ -69,6 +72,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     agentsName = config.getGlobalName(ZONE_NAME);
     hierarchy = ZoneHierarchy.create(agentsName, new BuiltinsInserter(agentsName));
     agentsNode = hierarchy.find(agentsName).get();
+    agentsNode.synthesizePath(new BuiltinsUpdater(config.clock().timestamp()));
     executor = config.threadModel().singleThreaded(ZoneManager.class);
   }
 
@@ -154,6 +158,10 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     @Subscribe
     @ScheduledInvocation
     public void removeQuery(QueryRemovalMessage message);
+
+    @Subscribe
+    @ScheduledInvocation
+    public void selectContact(ContactSelectionMessage message);
   }
 
   private class ZoneManagerListener extends AbstractMessageListener implements ZoneManagerContract {
@@ -166,7 +174,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
       assertion.check();
       Preconditions.checkArgument(agentsName.equals(update.getZone()));
       for (Attribute attribute : update) {
-        if (!BUILTIN_ATTRIBUTES.contains(attribute.getName())) {
+        if (!BuiltinAttribute.isBuiltin(attribute.getName())) {
           agentsNode.payload().setPrime(attribute);
         }
       }
@@ -267,6 +275,19 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
           }
         });
       }
+    }
+
+    @Override
+    public void selectContact(ContactSelectionMessage message) {
+      Optional<CAContact> contact;
+      try {
+        contact = message.getStrategy().select(agentsNode);
+      } catch (Exception e) {
+        LOG.error("Contact selection failed, aborting gossiping round", e);
+        return;
+      }
+      LOG.info("Selected contact: " + contact);
+      // TODO
     }
   }
 }

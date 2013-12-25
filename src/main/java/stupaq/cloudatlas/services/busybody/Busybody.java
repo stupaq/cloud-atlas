@@ -76,8 +76,13 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
 
   @Override
   protected Scheduler scheduler() {
-    long period = config.getLong(GOSSIP_PERIOD, GOSSIP_PERIOD_DEFAULT);
-    return Scheduler.newFixedRateSchedule(period / 10, period, TimeUnit.MILLISECONDS);
+    return new CustomScheduler() {
+      @Override
+      protected Schedule getNextSchedule() throws Exception {
+        return new Schedule(config.getLong(GOSSIP_PERIOD, GOSSIP_PERIOD_DEFAULT),
+            TimeUnit.MILLISECONDS);
+      }
+    };
   }
 
   @Override

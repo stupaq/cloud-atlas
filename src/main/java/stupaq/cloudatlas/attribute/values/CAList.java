@@ -5,8 +5,6 @@ import com.google.common.collect.Collections2;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -40,10 +38,6 @@ public final class CAList<Type extends AttributeValue> extends AbstractComposed<
     super(new ArrayList<Type>(), enclosingType, elements);
   }
 
-  public Collection<Type> asCollection() {
-    return Collections.unmodifiableCollection(get());
-  }
-
   @Override
   public RelationalValue rel() {
     return new RelationalImplementation();
@@ -73,19 +67,20 @@ public final class CAList<Type extends AttributeValue> extends AbstractComposed<
     @Override
     public CAString String() {
       return new CAString(isNull() ? null :
-          "[ " + StringUtils.join(Collections2.transform(get(), new Stringifier()), ", ") + " ]");
+          "[ " + StringUtils.join(Collections2.transform(delegate(), new Stringifier()), ", ") +
+              " ]");
     }
 
     @Override
     public CASet<Type> Set() {
-      return new CASet<>(getEnclosingType(), isNull() ? null : get());
+      return new CASet<>(getEnclosingType(), isNull() ? null : delegate());
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public CAInteger size() {
-      return new CAInteger(isNull() ? null : (long) get().size());
+      return new CAInteger(isNull() ? null : (long) delegate().size());
     }
   }
 

@@ -239,7 +239,7 @@ abstract class AbstractAggregate<Type extends AttributeValue> extends ArrayList<
         @Override
         public Iterable<AttributeValue> apply(Type elem) {
           try {
-            return elem.to().List().asCollection();
+            return elem.to().List();
           } catch (ConversionException e) {
             throw new UndefinedOperationException("Cannot unfold enclosing type: " + elem.type());
           }

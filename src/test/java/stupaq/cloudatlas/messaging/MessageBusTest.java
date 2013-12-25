@@ -61,10 +61,10 @@ public class MessageBusTest {
     public void handle2(TestMessage2 message);
   }
 
-  private static class TestMessage1 extends Message {
+  private static class TestMessage1 implements Message {
   }
 
-  private static class TestMessage2 extends Message {
+  private static class TestMessage2 implements Message {
   }
 
   private class TestListener1 extends AbstractMessageListener implements TestListener1Contract {

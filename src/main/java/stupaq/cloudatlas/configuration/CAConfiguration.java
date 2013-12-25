@@ -46,8 +46,8 @@ public class CAConfiguration extends DataConfiguration {
     return GlobalName.parse(getString(key));
   }
 
-  public <Contract> Class<Contract> getPlugin(String key, Class<Contract> fallback) {
-    return containsKey(key) ? Plugin.<Contract>forName(getString(key)) : fallback;
+  public <Contract> Class<Contract> getPlugin(String key, String bundle, Class<Contract> fallback) {
+    return containsKey(key) ? Plugin.<Contract>forName(bundle + getString(key)) : fallback;
   }
 
   public void mustContain(String key) {

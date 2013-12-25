@@ -1,15 +1,13 @@
 package stupaq.cloudatlas.services.zonemanager.purging;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
-import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CATime;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
-import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
+import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 
-public class StaleZonesRemover implements Predicate<ZoneManagementInfo>, ZoneManagerConfigKeys {
+public class StaleZonesRemover
+    implements Predicate<ZoneManagementInfo>, BuiltinAttributesConfigKeys {
   private final CATime threshold;
 
   public StaleZonesRemover(long threshold) {
@@ -18,8 +16,6 @@ public class StaleZonesRemover implements Predicate<ZoneManagementInfo>, ZoneMan
 
   @Override
   public boolean apply(ZoneManagementInfo zmi) {
-    Optional<Attribute<CATime>> timestamp = zmi.get(TIMESTAMP, TypeInfo.of(CATime.class));
-    return !timestamp.isPresent() ||
-        timestamp.get().getValue().rel().greaterThan(threshold).getOr(true);
+    return TIMESTAMP.get(zmi).getValue().rel().greaterThan(threshold).getOr(true);
   }
 }

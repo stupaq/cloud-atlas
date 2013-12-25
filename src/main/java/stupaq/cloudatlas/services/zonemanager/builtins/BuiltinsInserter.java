@@ -1,16 +1,14 @@
 package stupaq.cloudatlas.services.zonemanager.builtins;
 
-import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
-import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Inserter;
 
 public class BuiltinsInserter extends Inserter<ZoneManagementInfo>
-    implements ZoneManagerConfigKeys {
+    implements BuiltinAttributesConfigKeys {
   private final String owner;
   private int level = 0;
 
@@ -26,9 +24,9 @@ public class BuiltinsInserter extends Inserter<ZoneManagementInfo>
   @Override
   public ZoneManagementInfo create(LocalName local) {
     ZoneManagementInfo zmi = new ZoneManagementInfo(local);
-    zmi.setPrime(new Attribute<>(LEVEL, new CAInteger(level++)));
-    zmi.setPrime(new Attribute<>(NAME, new CAString(local.isRoot() ? null : local.toString())));
-    zmi.setPrime(new Attribute<>(OWNER, new CAString(owner)));
+    zmi.setPrime(LEVEL.create(new CAInteger(level++)));
+    zmi.setPrime(NAME.create(new CAString(local.isRoot() ? null : local.toString())));
+    zmi.setPrime(OWNER.create(new CAString(owner)));
     return zmi;
   }
 }

@@ -4,19 +4,16 @@ import com.google.common.collect.Iterables;
 
 import java.util.Collections;
 
-import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
-import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
 
 public class BuiltinsUpdater extends InPlaceSynthesizer<ZoneManagementInfo>
-    implements ZoneManagerConfigKeys {
+    implements BuiltinAttributesConfigKeys {
   private final CATime time;
 
   public BuiltinsUpdater(long time) {
@@ -25,19 +22,17 @@ public class BuiltinsUpdater extends InPlaceSynthesizer<ZoneManagementInfo>
 
   @Override
   protected void process(Iterable<ZoneManagementInfo> children, ZoneManagementInfo zmi) {
-    zmi.setPrime(new Attribute<>(TIMESTAMP, time));
-    zmi.setPrime(new Attribute<>(CONTACTS,
+    zmi.setPrime(TIMESTAMP.create(time));
+    zmi.setPrime(CONTACTS.create(
         new CASet<>(TypeInfo.of(CAContact.class), Collections.<CAContact>emptySet())));
-    AttributeValue cardinality;
     if (Iterables.isEmpty(children)) {
-      cardinality = new CAInteger(1);
+      zmi.setPrime(CARDINALITY.create(new CAInteger(1)));
     } else {
-      cardinality = new CAInteger(0);
+      long cardinality = 0;
       for (ZoneManagementInfo child : children) {
-        cardinality = cardinality.op().add(
-            child.get(CARDINALITY).or(new Attribute<>(CARDINALITY, new CAInteger())).getValue());
+        cardinality += CARDINALITY.get(child).getValue().getLong();
       }
+      zmi.setPrime(CARDINALITY.create(new CAInteger(cardinality)));
     }
-    zmi.setPrime(new Attribute<>(CARDINALITY, cardinality));
   }
 }

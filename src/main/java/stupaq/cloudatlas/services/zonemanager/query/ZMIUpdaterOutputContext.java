@@ -13,6 +13,7 @@ import stupaq.cloudatlas.query.evaluation.context.OutputContext;
 import stupaq.cloudatlas.query.semantics.values.RSingle;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
+import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttribute;
 
 /** PACKAGE-LOCAL */
 class ZMIUpdaterOutputContext implements OutputContext, ZoneManagerConfigKeys {
@@ -35,7 +36,7 @@ class ZMIUpdaterOutputContext implements OutputContext, ZoneManagerConfigKeys {
     } catch (IllegalArgumentException e) {
       throw new EvaluationException(e.getMessage());
     }
-    if (BUILTIN_ATTRIBUTES.contains(name)) {
+    if (BuiltinAttribute.isBuiltin(name)) {
       throw new EvaluationException("Name: " + name + " is reserved for a built-in attribute");
     }
     Attribute attribute = new Attribute<>(name, value.get());

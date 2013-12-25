@@ -61,7 +61,7 @@ public final class CASet<Type extends AttributeValue> extends AbstractComposed<T
   private class ConvertibleImplementation extends ConvertibleValueDefault {
     @Override
     public CAList<Type> List() {
-      return new CAList<>(getEnclosingType(), isNull() ? null : get());
+      return new CAList<>(getEnclosingType(), isNull() ? null : delegate());
     }
 
     @Override
@@ -72,14 +72,15 @@ public final class CASet<Type extends AttributeValue> extends AbstractComposed<T
     @Override
     public CAString String() {
       return new CAString(isNull() ? null :
-          "{ " + StringUtils.join(Collections2.transform(get(), new Stringifier()), ", ") + " }");
+          "{ " + StringUtils.join(Collections2.transform(delegate(), new Stringifier()), ", ") +
+              " }");
     }
   }
 
   private class OperableImplementation extends OperableValueDefault {
     @Override
     public CAInteger size() {
-      return new CAInteger(isNull() ? null : (long) get().size());
+      return new CAInteger(isNull() ? null : (long) delegate().size());
     }
   }
 
