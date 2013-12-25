@@ -16,6 +16,6 @@ public class StaleZonesRemover
 
   @Override
   public boolean apply(ZoneManagementInfo zmi) {
-    return TIMESTAMP.get(zmi).getValue().rel().greaterThan(threshold).getOr(true);
+    return TIMESTAMP.get(zmi).value().rel().greaterThan(threshold).getOr(true);
   }
 }

@@ -102,14 +102,14 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
 
   public void setPrime(Attribute attribute) {
     ensureCopied();
-    attributes.put(attribute.getName(), attribute);
-    computed.remove(attribute.getName());
+    attributes.put(attribute.name(), attribute);
+    computed.remove(attribute.name());
   }
 
   public void setComputed(Attribute attribute) {
     ensureCopied();
-    attributes.put(attribute.getName(), attribute);
-    computed.add(attribute.getName());
+    attributes.put(attribute.name(), attribute);
+    computed.add(attribute.name());
   }
 
   public void remove(AttributeName name) {
@@ -126,7 +126,7 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
   public <Expected extends AttributeValue> Optional<Attribute<Expected>> get(AttributeName name,
       TypeInfo<Expected> expected) {
     Attribute attribute = attributes.get(name);
-    if (attribute == null || !expected.matches(attribute.getValue())) {
+    if (attribute == null || !expected.matches(attribute.value())) {
       return Optional.absent();
     }
     return Optional.of((Attribute<Expected>) attribute);
@@ -136,7 +136,7 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
-        return !attribute.getName().isSpecial();
+        return !attribute.name().isSpecial();
       }
     });
   }
@@ -145,7 +145,7 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
-        return attribute.getName().isSpecial();
+        return attribute.name().isSpecial();
       }
     });
   }

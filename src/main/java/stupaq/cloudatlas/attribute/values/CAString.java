@@ -77,7 +77,7 @@ public final class CAString extends AbstractAtomic<String> {
 
     @Override
     public CAContact Contact() {
-      return new CAContact(isNull() ? null : get());
+      return isNull() ? new CAContact() : new CAContact(get());
     }
 
     @Override

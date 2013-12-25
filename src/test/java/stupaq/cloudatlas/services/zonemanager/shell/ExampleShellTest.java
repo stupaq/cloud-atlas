@@ -137,7 +137,7 @@ public class ExampleShellTest {
   private void assertValue(String path, String name, AttributeValue value) {
     GlobalName globalName = GlobalName.parse(path);
     assertEquals(value,
-        root.find(globalName).get().payload().get(AttributeName.fromString(name)).get().getValue());
+        root.find(globalName).get().payload().get(AttributeName.fromString(name)).get().value());
   }
 
   private void assertNothing(String path, String name) {

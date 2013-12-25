@@ -4,7 +4,7 @@ import java.util.Random;
 
 import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.services.busybody.strategies.ContactSelection.LevelSelection;
+import stupaq.cloudatlas.services.busybody.strategies.LevelSelection;
 
 public class UniformLevel implements LevelSelection {
   protected final Random random = new Random();

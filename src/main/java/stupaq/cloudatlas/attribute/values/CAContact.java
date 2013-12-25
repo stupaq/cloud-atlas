@@ -1,8 +1,11 @@
 package stupaq.cloudatlas.attribute.values;
 
+import com.google.common.net.HostAndPort;
+
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.net.InetSocketAddress;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -14,21 +17,30 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.commons.net.HostWithPort;
 import stupaq.compact.CompactSerializer;
-import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
 
+import static stupaq.compact.CompactSerializers.String;
+
 @Immutable
-public final class CAContact extends AbstractAtomic<String> {
+public final class CAContact extends AbstractAtomic<HostWithPort> {
   public static final CompactSerializer<CAContact> SERIALIZER = new CompactSerializer<CAContact>() {
     @Override
     public CAContact readInstance(ObjectInput in) throws IOException {
-      return new CAContact(CompactSerializers.String.readInstance(in));
+      return in.readBoolean() ?
+          new CAContact(HostAndPort.fromParts(String.readInstance(in), in.readInt())) :
+          new CAContact();
     }
 
     @Override
     public void writeInstance(ObjectOutput out, CAContact object) throws IOException {
-      CompactSerializers.String.writeInstance(out, object.orNull());
+      out.writeBoolean(!object.isNull());
+      if (!object.isNull()) {
+        HostWithPort address = object.get();
+        String.writeInstance(out, address.getHost());
+        out.writeInt(address.getPort());
+      }
     }
   };
 
@@ -36,8 +48,20 @@ public final class CAContact extends AbstractAtomic<String> {
     super(null);
   }
 
+  public CAContact(HostAndPort value) {
+    super(value == null ? null : new HostWithPort(value));
+  }
+
+  public CAContact(InetSocketAddress address) {
+    super(new HostWithPort(HostAndPort.fromParts(address.getHostName(), address.getPort())));
+  }
+
   public CAContact(String value) {
-    super(value);
+    this(HostAndPort.fromString(value));
+  }
+
+  public InetSocketAddress socketAddress() {
+    return new InetSocketAddress(get().getHost(), get().getPort());
   }
 
   @Override
@@ -73,7 +97,7 @@ public final class CAContact extends AbstractAtomic<String> {
 
     @Override
     public CAString String() {
-      return new CAString(isNull() ? null : get());
+      return new CAString(isNull() ? null : get().toString());
     }
   }
 }

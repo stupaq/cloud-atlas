@@ -7,7 +7,7 @@ import java.util.Map;
 
 import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.services.busybody.strategies.ContactSelection.ZoneSelection;
+import stupaq.cloudatlas.services.busybody.strategies.ZoneSelection;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 
 @SuppressWarnings("unused")

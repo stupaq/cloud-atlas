@@ -14,18 +14,18 @@ public class CAContactTest {
   @Test
   public void testConversions() {
     // -> CAString
-    assertEquals(Str("UW1"), Cont("UW1").to().String());
-    assertEquals(Str("UW2"), Cont("UW2").to().String());
+    assertEquals(Str("localhost:1921"), Cont("localhost:1921").to().String());
+    assertEquals(Str("localhost:121"), Cont("localhost:121").to().String());
     assertEquals(Str(), Cont().to().String());
   }
 
   @Test
   public void testOperations() {
-    assertTrue(Cont("UW1").op() instanceof OperableValueDefault);
+    assertTrue(Cont("localhost:1921").op() instanceof OperableValueDefault);
   }
 
   @Test
   public void testRelational() {
-    assertTrue(Cont("UW1").rel() instanceof RelationalValueDefault);
+    assertTrue(Cont("localhost:1921").rel() instanceof RelationalValueDefault);
   }
 }

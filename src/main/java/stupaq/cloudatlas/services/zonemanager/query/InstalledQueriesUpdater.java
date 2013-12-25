@@ -19,7 +19,7 @@ public class InstalledQueriesUpdater extends InPlaceSynthesizer<ZoneManagementIn
     current.clearComputed();
     // We have to materialize iterable here for future modifications
     for (Attribute attribute : current.specialAttributes().toList()) {
-      AttributeValue value = attribute.getValue();
+      AttributeValue value = attribute.value();
       if (!value.isNull() && TypeInfo.is(CAQuery.class, value)) {
         CAQuery query = (CAQuery) value;
         try {

@@ -12,7 +12,7 @@ import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 
-public class BuiltinAttribute<Type extends AttributeValue> {
+public class BuiltinAttribute<Type extends AttributeValue> implements BuiltinAttributesConfigKeys {
   private static final Set<AttributeName> KNOWN_NAMES = Sets.newConcurrentHashSet();
   private final AttributeName name;
   private final TypeInfo<Type> type;
@@ -33,18 +33,18 @@ public class BuiltinAttribute<Type extends AttributeValue> {
     return new Attribute<>(name, value);
   }
 
-  public AttributeName getName() {
+  public AttributeName name() {
     return name;
   }
 
   public static <Type extends AttributeValue> BuiltinAttribute create(String name,
       TypeInfo<Type> type) {
     BuiltinAttribute<Type> attribute = new BuiltinAttribute<>(AttributeName.fromString(name), type);
-    KNOWN_NAMES.add(attribute.getName());
+    KNOWN_NAMES.add(attribute.name());
     return attribute;
   }
 
-  public static boolean isBuiltin(AttributeName name) {
-    return KNOWN_NAMES.contains(name);
+  public static boolean isWriteProtected(AttributeName name) {
+    return KNOWN_NAMES.contains(name) && !name.equals(CONTACTS.name());
   }
 }

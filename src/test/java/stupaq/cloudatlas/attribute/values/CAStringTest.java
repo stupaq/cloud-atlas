@@ -32,7 +32,7 @@ public class CAStringTest {
     assertEquals(Doub(1337.33D), Str("1337.33").to().Double());
     assertEquals(Doub(), Str().to().Double());
     // -> CAContact
-    assertEquals(Cont("UW1"), Str("UW1").to().Contact());
+    assertEquals(Cont("localhost:1921"), Str("localhost:1921").to().Contact());
     assertEquals(Cont(), Str().to().Contact());
     // -> CAString
     assertEquals(Str("UW1"), Str("UW1").to().String());

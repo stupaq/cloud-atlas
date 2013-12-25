@@ -11,7 +11,11 @@ public final class Collections3 {
   }
 
   public static <Element> Element random(Collection<Element> collection) {
-    return random(FluentIterable.from(collection), new Random());
+    return random(FluentIterable.from(collection));
+  }
+
+  public static <Element> Element random(FluentIterable<Element> collection) {
+    return random(collection, new Random());
   }
 
   public static <Element> Element random(FluentIterable<Element> iterable, Random random) {

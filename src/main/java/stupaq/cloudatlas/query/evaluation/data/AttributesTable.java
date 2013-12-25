@@ -29,8 +29,8 @@ public class AttributesTable extends ArrayList<AttributesRow> {
     for (Iterable<Attribute> zone : subZones) {
       AttributesRow row = new AttributesRow();
       for (Attribute attribute : zone) {
-        AttributeName name = attribute.getName();
-        AttributeValue value = attribute.getValue();
+        AttributeName name = attribute.name();
+        AttributeValue value = attribute.value();
         TypeInfo known = inputTypes.get(name);
         if (known == null) {
           known = value.type();
@@ -39,7 +39,7 @@ public class AttributesTable extends ArrayList<AttributesRow> {
         if (!known.equals(value.type())) {
           throw new TypeCheckerException("AttributeName: " + name + " maps to not matching types.");
         }
-        row.put(name, attribute.getValue());
+        row.put(name, attribute.value());
       }
       add(row);
     }

@@ -16,11 +16,11 @@ import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttribute;
 
 /** PACKAGE-LOCAL */
-class ZMIUpdaterOutputContext implements OutputContext, ZoneManagerConfigKeys {
+class ZoneUpdaterOutputContext implements OutputContext, ZoneManagerConfigKeys {
   private final ZoneManagementInfo destination;
   private final List<Attribute> putsLog;
 
-  public ZMIUpdaterOutputContext(ZoneManagementInfo destination) {
+  public ZoneUpdaterOutputContext(ZoneManagementInfo destination) {
     this.destination = destination;
     this.putsLog = new ArrayList<>();
   }
@@ -36,8 +36,9 @@ class ZMIUpdaterOutputContext implements OutputContext, ZoneManagerConfigKeys {
     } catch (IllegalArgumentException e) {
       throw new EvaluationException(e.getMessage());
     }
-    if (BuiltinAttribute.isBuiltin(name)) {
-      throw new EvaluationException("Name: " + name + " is reserved for a built-in attribute");
+    if (BuiltinAttribute.isWriteProtected(name)) {
+      throw new EvaluationException(
+          "Name: " + name + " is write-protected as a built-in attribute");
     }
     Attribute attribute = new Attribute<>(name, value.get());
     putsLog.add(attribute);

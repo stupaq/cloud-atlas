@@ -46,7 +46,7 @@ public final class Attribute<Type extends AttributeValue>
         public Map<AttributeName, Attribute> readInstance(ObjectInput in) throws IOException {
           HashMap<AttributeName, Attribute> map = Maps.newHashMap();
           for (Attribute attribute : Collection(SERIALIZER).readInstance(in)) {
-            map.put(attribute.getName(), attribute);
+            map.put(attribute.name(), attribute);
           }
           return map;
         }
@@ -81,12 +81,12 @@ public final class Attribute<Type extends AttributeValue>
   }
 
   @Nonnull
-  public AttributeName getName() {
+  public AttributeName name() {
     return name;
   }
 
   @Nonnull
-  public Type getValue() {
+  public Type value() {
     return value;
   }
 

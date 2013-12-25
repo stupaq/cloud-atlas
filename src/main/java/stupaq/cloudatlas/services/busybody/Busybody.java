@@ -1,11 +1,14 @@
 package stupaq.cloudatlas.services.busybody;
 
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractScheduledService;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.net.InetSocketAddress;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +18,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.DefaultMessageSizeEstimator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.StartIfPresent;
 import stupaq.cloudatlas.messaging.MessageBus;
@@ -34,6 +38,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   private final BootstrapConfiguration config;
   private final SingleThreadedExecutor executor;
   private final MessageBus bus;
+  private final Set<CAContact> blacklisted = Sets.newHashSet();
   private NioEventLoopGroup group;
   private Channel channel;
 
@@ -47,7 +52,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   @Override
   protected void runOneIteration() throws Exception {
     // ZoneManager will determine contact following provided strategy
-    bus.post(new ContactSelectionMessage(ContactSelection.create(config)));
+    bus.post(new ContactSelectionMessage(ContactSelection.create(config, blacklisted)));
   }
 
   @Override
@@ -62,6 +67,9 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
         .bind(config.getInt(BIND_PORT))
         .syncUninterruptibly()
         .channel();
+    CAContact contact = new CAContact((InetSocketAddress) channel.localAddress());
+    blacklisted.add(contact);
+    LOG.info("Agent's contact information: " + contact);
     // We're ready to operate
     bus.register(new BusybodyListener());
   }

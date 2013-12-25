@@ -35,7 +35,7 @@ public class SingleQueryUpdater extends InPlaceSynthesizer<ZoneManagementInfo> {
             }
           }));
       // Run query for non-leaf zones
-      OutputContext outputContext = new ZMIUpdaterOutputContext(current);
+      OutputContext outputContext = new ZoneUpdaterOutputContext(current);
       new EvalVisitor(table).eval(program, outputContext);
       // Commit after successful execution
       outputContext.commit();

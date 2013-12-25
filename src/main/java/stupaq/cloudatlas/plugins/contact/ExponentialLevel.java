@@ -4,7 +4,7 @@ import java.util.Random;
 
 import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.services.busybody.strategies.ContactSelection.LevelSelection;
+import stupaq.cloudatlas.services.busybody.strategies.LevelSelection;
 
 import static java.lang.Math.log;
 import static java.lang.Math.max;

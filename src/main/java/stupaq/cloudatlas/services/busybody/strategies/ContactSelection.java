@@ -18,14 +18,21 @@ import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKe
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.commons.collect.Collections3;
 
+import static com.google.common.base.Predicates.in;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.FluentIterable.from;
+
 public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttributesConfigKeys {
   private static final Log LOG = LogFactory.getLog(ContactSelection.class);
   private final LevelSelection levelStrategy;
   private final ZoneSelection zoneStrategy;
+  private final Collection<CAContact> blacklisted;
 
-  public ContactSelection(LevelSelection levelStrategy, ZoneSelection zoneStrategy) {
+  protected ContactSelection(LevelSelection levelStrategy, ZoneSelection zoneStrategy,
+      Collection<CAContact> blacklisted) {
     this.levelStrategy = levelStrategy;
     this.zoneStrategy = zoneStrategy;
+    this.blacklisted = blacklisted;
   }
 
   public Optional<CAContact> select(ZoneHierarchy<ZoneManagementInfo> leafZone) throws Exception {
@@ -38,7 +45,8 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
       ZoneHierarchy<ZoneManagementInfo> parent = leafZone.parent(leafName.level() - level + 1);
       ZoneManagementInfo zmi = zoneStrategy.select(parent.globalName(), parent.childPayloads());
       LOG.info("Selected zone's local name: " + zmi.localName());
-      Collection<CAContact> contacts = CONTACTS.get(zmi).getValue();
+      FluentIterable<CAContact> contacts =
+          from(CONTACTS.get(zmi).value()).filter(not(in(blacklisted)));
       return Optional.fromNullable(
           contacts.isEmpty() ? null : Collections3.<CAContact>random(contacts));
     } catch (Exception e) {
@@ -46,8 +54,8 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
     }
   }
 
-  public static ContactSelection create(CAConfiguration config) {
-    return new ContactSelection(createLevel(config), createZone(config));
+  public static ContactSelection create(CAConfiguration config, Collection<CAContact> blacklisted) {
+    return new ContactSelection(createLevel(config), createZone(config), blacklisted);
   }
 
   private static LevelSelection createLevel(CAConfiguration config) {
@@ -59,13 +67,5 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
     return Plugin.initialize(
         config.getPlugin(ZONE_SELECTION, ContactSelectionConfigKeys.PREFIX, ZONE_SELECTION_DEFAULT),
         config);
-  }
-
-  public static interface LevelSelection {
-    public int select(GlobalName name);
-  }
-
-  public static interface ZoneSelection {
-    public ZoneManagementInfo select(GlobalName parent, FluentIterable<ZoneManagementInfo> zones);
   }
 }

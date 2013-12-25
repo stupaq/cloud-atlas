@@ -174,9 +174,11 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
       assertion.check();
       Preconditions.checkArgument(agentsName.equals(update.getZone()));
       for (Attribute attribute : update) {
-        if (!BuiltinAttribute.isBuiltin(attribute.getName())) {
-          agentsNode.payload().setPrime(attribute);
+        if (BuiltinAttribute.isWriteProtected(attribute.name())) {
+          LOG.warn("Attempt to update write-protected attribute: " + attribute.name());
+          continue;
         }
+        agentsNode.payload().setPrime(attribute);
       }
     }
 
@@ -222,7 +224,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     @Override
     public void updateQuery(final QueryUpdateMessage message) {
       // First remove this query from all zones
-      removeQuery(new QueryRemovalMessage(Optional.of(message.getQuery().getName()),
+      removeQuery(new QueryRemovalMessage(Optional.of(message.getQuery().name()),
           Optional.<List<GlobalName>>absent()));
       iterateZMIs(message.getZones(), new InPlaceModifier<ZoneManagementInfo>() {
         @Override
@@ -243,8 +245,8 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
           } else {
             // We have to materialize iterable here for future modifications
             for (Attribute attribute : zmi.specialAttributes().toList()) {
-              if (TypeInfo.is(CAQuery.class, attribute.getValue())) {
-                zmi.remove(attribute.getName());
+              if (TypeInfo.is(CAQuery.class, attribute.value())) {
+                zmi.remove(attribute.name());
               }
             }
           }

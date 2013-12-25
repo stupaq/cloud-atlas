@@ -22,18 +22,13 @@ import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import static org.junit.Assert.assertEquals;
 
 public class SerializablesTest {
-  @BeforeClass
-  public static void setUpClass() {
-    CATypeRegistry.registerCATypes();
-  }
-
   @Test
   public void testSerializables() {
     GlobalName globalName = GlobalName.parse("/warsaw/home");
     AttributeName attributeName = AttributeName.fromString("something");
     Attribute<CAList<CABoolean>> listAttribute = new Attribute<>(attributeName,
         new CAList<>(TypeInfo.of(CABoolean.class), Arrays.asList(new CABoolean(true))));
-    CAContact contact = new CAContact("Some contact");
+    CAContact contact = new CAContact("localhost:1921");
     ZoneManagementInfo zmi = new ZoneManagementInfo(LocalName.getNotRoot("warsaw"));
     zmi.setPrime(listAttribute);
     EntityName entity = new EntityName(globalName, attributeName);
@@ -53,5 +48,10 @@ public class SerializablesTest {
   private void assertSerializable(Serializable object) {
     Object clone = SerializationUtils.clone(object);
     assertEquals(object, clone);
+  }
+
+  @BeforeClass
+  public static void setUpClass() {
+    CATypeRegistry.registerCATypes();
   }
 }

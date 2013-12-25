@@ -55,7 +55,7 @@ public class AttributesScribe extends AbstractScheduledService
         try (Records log = recordsManager.forEntity(entity)) {
           Attribute value = values.next();
           if (value != null) {
-            log.record(timestamp, value.getValue());
+            log.record(timestamp, value.value());
           }
         }
       }
