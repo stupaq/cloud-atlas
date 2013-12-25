@@ -33,10 +33,10 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
     try {
       int level = levelStrategy.select(leafName);
       Preconditions.checkState(0 < level, "Chosen level must not be a root");
-      Preconditions.checkState(level <= leafName.leafLevel(), "Chosen level is below leaf level");
+      Preconditions.checkState(level <= leafName.level(), "Chosen level is below leaf level");
       LOG.info("Selected level: " + level);
-      ZoneHierarchy<ZoneManagementInfo> parent = leafZone.parent(leafName.leafLevel() - level + 1);
-      ZoneManagementInfo zmi = zoneStrategy.select(parent.childPayloads());
+      ZoneHierarchy<ZoneManagementInfo> parent = leafZone.parent(leafName.level() - level + 1);
+      ZoneManagementInfo zmi = zoneStrategy.select(parent.globalName(), parent.childPayloads());
       LOG.info("Selected zone's local name: " + zmi.localName());
       Collection<CAContact> contacts = CONTACTS.get(zmi).getValue();
       return Optional.fromNullable(
@@ -66,6 +66,6 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
   }
 
   public static interface ZoneSelection {
-    public ZoneManagementInfo select(FluentIterable<ZoneManagementInfo> zones);
+    public ZoneManagementInfo select(GlobalName parent, FluentIterable<ZoneManagementInfo> zones);
   }
 }

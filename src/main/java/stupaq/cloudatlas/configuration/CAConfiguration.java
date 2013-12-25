@@ -23,6 +23,11 @@ public class CAConfiguration extends DataConfiguration {
     super(configuration);
   }
 
+  @Override
+  public CAConfiguration subset(String prefix) {
+    return new CAConfiguration(super.subset(prefix));
+  }
+
   public List<EntityName> getEntities(String key) {
     List<EntityName> entities = new ArrayList<>();
     for (String str : getStringArray(key)) {

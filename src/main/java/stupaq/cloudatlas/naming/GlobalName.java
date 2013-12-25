@@ -60,10 +60,10 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
   }
 
   public LocalName leaf() {
-    return get().get(leafLevel());
+    return get().get(level());
   }
 
-  public int leafLevel() {
+  public int level() {
     return get().size() - 1;
   }
 

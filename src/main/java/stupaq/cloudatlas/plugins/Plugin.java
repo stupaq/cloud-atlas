@@ -2,7 +2,11 @@ package stupaq.cloudatlas.plugins;
 
 import stupaq.cloudatlas.configuration.CAConfiguration;
 
-public abstract class Plugin {
+public final class Plugin {
+  private Plugin() {
+  }
+
+  private static final String PREFIX = "plugin.";
   private static final String PACKAGE_PREFIX = Plugin.class.getPackage().getName() + ".";
 
   @SuppressWarnings("unchecked")
@@ -16,7 +20,7 @@ public abstract class Plugin {
 
   public static <Plugin> Plugin initialize(Class<? extends Plugin> clazz, CAConfiguration config) {
     try {
-      return clazz.getConstructor(CAConfiguration.class).newInstance(config);
+      return clazz.getConstructor(CAConfiguration.class).newInstance(config.subset(PREFIX));
     } catch (ReflectiveOperationException e) {
       throw new IllegalArgumentException(e);
     }

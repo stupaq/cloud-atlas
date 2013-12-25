@@ -1,23 +1,26 @@
 package stupaq.cloudatlas.plugins.contact;
 
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Maps;
 
-import java.util.Random;
+import java.util.Map;
 
 import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.busybody.strategies.ContactSelection.ZoneSelection;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
-import stupaq.commons.collect.Collections3;
 
-public class RandomZone implements ZoneSelection {
-  private final Random random = new Random();
+@SuppressWarnings("unused")
+public class RoundRobinZone implements ZoneSelection {
+  Map<GlobalName, Integer> nextIndices = Maps.newHashMap();
 
-  public RandomZone(CAConfiguration config) {
+  public RoundRobinZone(CAConfiguration config) {
   }
 
   @Override
   public ZoneManagementInfo select(GlobalName parent, FluentIterable<ZoneManagementInfo> zones) {
-    return Collections3.random(zones, random);
+    Integer index = nextIndices.get(parent);
+    nextIndices.put(parent, (index == null ? 1 : index + 1) % zones.size());
+    return zones.get(index == null ? 0 : index);
   }
 }
