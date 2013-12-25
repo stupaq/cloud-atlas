@@ -5,6 +5,7 @@ import com.google.common.base.Predicate;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CATime;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 
@@ -17,7 +18,7 @@ public class StaleZonesRemover implements Predicate<ZoneManagementInfo>, ZoneMan
 
   @Override
   public boolean apply(ZoneManagementInfo zmi) {
-    Optional<Attribute> timestamp = zmi.get(TIMESTAMP);
+    Optional<Attribute<CATime>> timestamp = zmi.get(TIMESTAMP, TypeInfo.of(CATime.class));
     return !timestamp.isPresent() ||
         timestamp.get().getValue().rel().greaterThan(threshold).getOr(true);
   }

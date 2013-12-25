@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.services.busybody.netty;
+package stupaq.cloudatlas.services.busybody.pipeline;
 
 import java.io.IOException;
 import java.util.List;

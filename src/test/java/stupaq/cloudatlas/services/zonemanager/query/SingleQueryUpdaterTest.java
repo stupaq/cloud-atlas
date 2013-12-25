@@ -20,7 +20,7 @@ public class SingleQueryUpdaterTest {
     ZoneHierarchy<ZoneManagementInfo> root =
         oneLevelHierarchy(Attr("attr", Int(1)), Attr("attr", Int(4)), Attr("attr", Int(6)),
             Attr("attr", Int(7)), Attr("attr", Int(0)));
-    ZoneManagementInfo rootZmi = root.getPayload();
+    ZoneManagementInfo rootZmi = root.payload();
     assertEquals(Attr("attr", Int(1)), rootZmi.get(Name("attr")).get());
     assertFalse(rootZmi.get(Name("attr_")).isPresent());
     CAQuery query = new CAQuery("SELECT to_integer(avg(attr)) AS attr, avg(attr) AS attr_");

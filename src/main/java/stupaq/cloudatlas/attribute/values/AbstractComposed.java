@@ -48,7 +48,7 @@ abstract class AbstractComposed<Type extends AttributeValue> implements Attribut
     }
   }
 
-  protected final Collection<Type> get() {
+  public final Collection<Type> get() {
     return isNull() ? Fluent.<Collection<Type>>raiseNPE() : value;
   }
 
@@ -72,7 +72,7 @@ abstract class AbstractComposed<Type extends AttributeValue> implements Attribut
   }
 
   @Override
-  public final int compareTo(AttributeValue o) {
+  public final int compareTo(@Nonnull AttributeValue o) {
     throw new UndefinedOperationException("Cannot compare: " + type());
   }
 

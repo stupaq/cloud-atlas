@@ -1,0 +1,25 @@
+package stupaq.cloudatlas.messaging.messages;
+
+import javax.annotation.concurrent.Immutable;
+
+import stupaq.cloudatlas.attribute.values.CAContact;
+import stupaq.cloudatlas.messaging.Message;
+
+@Immutable
+public abstract class Gossip implements Message {
+  private final CAContact contact;
+  private final Message gossip;
+
+  public Gossip(CAContact contact, Message gossip) {
+    this.contact = contact;
+    this.gossip = gossip;
+  }
+
+  public CAContact getContact() {
+    return contact;
+  }
+
+  public Message getGossip() {
+    return gossip;
+  }
+}

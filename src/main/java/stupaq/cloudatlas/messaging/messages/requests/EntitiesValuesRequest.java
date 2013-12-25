@@ -1,11 +1,12 @@
-package stupaq.cloudatlas.messaging.messages;
+package stupaq.cloudatlas.messaging.messages.requests;
 
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.Iterator;
 import java.util.List;
 
-import stupaq.cloudatlas.messaging.Request;
+import stupaq.cloudatlas.messaging.messages.Request;
+import stupaq.cloudatlas.messaging.messages.responses.EntitiesValuesResponse;
 import stupaq.cloudatlas.naming.EntityName;
 
 public class EntitiesValuesRequest extends Request<SettableFuture<EntitiesValuesResponse>>

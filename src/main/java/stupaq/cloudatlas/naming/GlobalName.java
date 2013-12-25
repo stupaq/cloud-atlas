@@ -47,10 +47,12 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
     Preconditions.checkArgument(!localNames.isEmpty(), "Global name cannot be empty");
   }
 
+  public GlobalName prefix(int level) {
+    return new GlobalName(new ArrayList<>(get().subList(0, level + 1)));
+  }
+
   public GlobalName parent() {
-    ArrayList<LocalName> chunks = new ArrayList<>(get());
-    chunks.remove(chunks.size() - 1);
-    return new GlobalName(chunks);
+    return prefix(get().size() - 1);
   }
 
   public LocalName child() {

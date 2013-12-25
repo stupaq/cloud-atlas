@@ -49,6 +49,10 @@ public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<C
     }
   }
 
+  public boolean matches(AttributeValue value) {
+    return equals(of(value.getClass()));
+  }
+
   @SuppressWarnings("unchecked")
   public TypeInfo<? extends AttributeValue> unfold() {
     throw new TypeCheckerException("Cannot unfold atomic type.");

@@ -1,6 +1,10 @@
 package stupaq.cloudatlas.services.busybody;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractScheduledService;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,11 +20,17 @@ import stupaq.cloudatlas.configuration.StartIfPresent;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
-import stupaq.cloudatlas.services.busybody.netty.GossipChannelInitializer;
+import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
+import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
+import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
+import stupaq.cloudatlas.services.busybody.pipeline.GossipChannelInitializer;
+import stupaq.cloudatlas.services.busybody.strategies.ContactSelection;
+import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
 @StartIfPresent(section = "gossip")
 public class Busybody extends AbstractScheduledService implements BusybodyConfigKeys {
+  private static final Log LOG = LogFactory.getLog(Busybody.class);
   private final BootstrapConfiguration config;
   private final SingleThreadedExecutor executor;
   private final MessageBus bus;
@@ -36,7 +46,8 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
 
   @Override
   protected void runOneIteration() throws Exception {
-    // FIXME initiate contact selection
+    // ZoneManager will determine contact following provided strategy
+    bus.post(new ContactSelectionMessage(ContactSelection.create(config)));
   }
 
   @Override
@@ -75,11 +86,30 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   }
 
   private static interface BusybodyContract extends MessageListener {
+    @Subscribe
+    @DirectInvocation
+    public void sendGossip(OutboundGossip gossip);
+
+    @Subscribe
+    @DirectInvocation
+    public void receiveGossip(InboundGossip gossip);
   }
 
   private class BusybodyListener extends AbstractMessageListener implements BusybodyContract {
     protected BusybodyListener() {
       super(executor, BusybodyContract.class);
+    }
+
+    @Override
+    public void sendGossip(OutboundGossip gossip) {
+      // TODO
+      LOG.info("Sending gossip: " + gossip);
+    }
+
+    @Override
+    public void receiveGossip(InboundGossip gossip) {
+      // TODO
+      LOG.info("Receiving gossip: " + gossip);
     }
   }
 }

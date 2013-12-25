@@ -14,8 +14,10 @@ import java.util.Map;
 import java.util.Set;
 
 import stupaq.cloudatlas.attribute.Attribute;
+import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.LocalName;
+import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.commons.util.concurrent.LazyCopy;
 import stupaq.compact.CompactSerializable;
@@ -118,6 +120,16 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
 
   public Optional<Attribute> get(AttributeName name) {
     return Optional.fromNullable(attributes.get(name));
+  }
+
+  @SuppressWarnings("unchecked")
+  public <Expected extends AttributeValue> Optional<Attribute<Expected>> get(AttributeName name,
+      TypeInfo<Expected> expected) {
+    Attribute attribute = attributes.get(name);
+    if (attribute == null || !expected.matches(attribute.getValue())) {
+      return Optional.absent();
+    }
+    return Optional.of((Attribute<Expected>) attribute);
   }
 
   public FluentIterable<Attribute> accessibleAttributes() {

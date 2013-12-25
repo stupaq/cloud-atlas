@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.services.busybody.netty;
+package stupaq.cloudatlas.services.busybody.pipeline;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.DatagramChannel;

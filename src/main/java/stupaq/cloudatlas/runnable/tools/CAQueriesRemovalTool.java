@@ -22,30 +22,33 @@ public class CAQueriesRemovalTool extends AbstractExecutionThreadService
     implements RMIServerConfigKeys {
   private static final Log LOG = LogFactory.getLog(CAQueriesRemovalTool.class);
   private static final int RMI_PORT_DEFAULT = 1099;
-  private final List<HostAndPort> repositories = new ArrayList<>();
+  private final List<HostAndPort> registries = new ArrayList<>();
 
   public CAQueriesRemovalTool(String[] args) {
     for (String address : args) {
-      repositories.add(HostAndPort.fromString(address).withDefaultPort(RMI_PORT_DEFAULT));
+      registries.add(HostAndPort.fromString(address).withDefaultPort(RMI_PORT_DEFAULT));
     }
   }
 
   @Override
-  protected void run() throws Exception {
-    for (HostAndPort address : repositories) {
+  protected void run() {
+    for (HostAndPort address : registries) {
+      Registry registry;
+      String[] names;
       try {
-        Registry registry = LocateRegistry.getRegistry(address.getHostText(), address.getPort());
-        for (String name : registry.list()) {
-          try {
-            LocalClientProtocol client = (LocalClientProtocol) registry.lookup(name);
-            client
-                .removeQuery(Optional.<AttributeName>absent(), Optional.<List<GlobalName>>absent());
-          } catch (Throwable e) {
-            LOG.warn("Failed for registry: " + registry + " with entry: " + name, e);
-          }
-        }
+        registry = LocateRegistry.getRegistry(address.getHostText(), address.getPort());
+        names = registry.list();
       } catch (Throwable e) {
-        LOG.warn("Failed for repository: " + address, e);
+        LOG.warn("Failed to reach registry: " + address, e);
+        continue;
+      }
+      for (String name : names) {
+        try {
+          LocalClientProtocol client = (LocalClientProtocol) registry.lookup(name);
+          client.removeQuery(Optional.<AttributeName>absent(), Optional.<List<GlobalName>>absent());
+        } catch (Throwable e) {
+          LOG.warn("Failed to lookup registry: " + registry + " with entry: " + name, e);
+        }
       }
     }
   }

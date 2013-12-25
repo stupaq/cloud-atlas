@@ -6,18 +6,15 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.DataConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.plugins.Plugin;
 
 public class CAConfiguration extends DataConfiguration {
-  private static final Log LOG = LogFactory.getLog(CAConfiguration.class);
-
   public CAConfiguration() {
     this(new BaseConfiguration());
   }
@@ -47,6 +44,10 @@ public class CAConfiguration extends DataConfiguration {
 
   public GlobalName getGlobalName(String key) {
     return GlobalName.parse(getString(key));
+  }
+
+  public <Contract> Class<Contract> getPlugin(String key, Class<Contract> fallback) {
+    return containsKey(key) ? Plugin.<Contract>forName(getString(key)) : fallback;
   }
 
   public void mustContain(String key) {

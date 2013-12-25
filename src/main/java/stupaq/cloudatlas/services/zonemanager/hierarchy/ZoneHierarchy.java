@@ -42,25 +42,50 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
     this.parentZone = null;
   }
 
+  public ZoneHierarchy<Payload> parent() {
+    return parentZone;
+  }
+
+  public ZoneHierarchy<Payload> parent(int levels) {
+    Preconditions.checkArgument(levels >= 0);
+    if (levels == 0) {
+      return this;
+    } else if (levels == 1) {
+      // This way we avoid NPE in a trivial case where this is a root
+      return parent();
+    } else {
+      return parent().parent(levels - 1);
+    }
+  }
+
   public boolean isLeaf() {
     return childZones.isEmpty();
+  }
+
+  public FluentIterable<Payload> childPayloads() {
+    return from(childZones.values()).transform(new Function<ZoneHierarchy<Payload>, Payload>() {
+      @Override
+      public Payload apply(ZoneHierarchy<Payload> zone) {
+        return zone.payload;
+      }
+    });
   }
 
   public void attachTo(ZoneHierarchy<Payload> parent) {
     Preconditions.checkNotNull(parent);
     detach();
     parentZone = parent;
-    parentZone.childZones.put(payload.localName(), this);
+    parent().childZones.put(payload.localName(), this);
   }
 
   public void detach() {
-    if (parentZone != null) {
-      parentZone.childZones.remove(payload.localName());
+    if (parent() != null) {
+      parent().childZones.remove(payload.localName());
       parentZone = null;
     }
   }
 
-  public Payload getPayload() {
+  public Payload payload() {
     return payload;
   }
 
@@ -93,7 +118,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
   }
 
   private Iterator<LocalName> resolveRelative(GlobalName globalName) {
-    Preconditions.checkState(parentZone == null && localName().equals(LocalName.getRoot()),
+    Preconditions.checkState(parent() == null && localName().equals(LocalName.getRoot()),
         "Resolving global name from non-root");
     Iterator<LocalName> suffix = globalName.iterator();
     assert suffix.next().equals(LocalName.getRoot());
@@ -102,7 +127,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
 
   public Optional<Payload> getPayload(GlobalName globalName) {
     Optional<ZoneHierarchy<Payload>> zone = find(globalName);
-    return Optional.fromNullable(zone.isPresent() ? zone.get().getPayload() : null);
+    return Optional.fromNullable(zone.isPresent() ? zone.get().payload() : null);
   }
 
   public void modify(Modifier<Payload> action) {
@@ -118,7 +143,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
 
   public void filterLeaves(Predicate<Payload> filter) {
     for (ZoneHierarchy<Payload> zone : findLeaves().toList()) {
-      if (!filter.apply(zone.getPayload())) {
+      if (!filter.apply(zone.payload())) {
         zone.detach();
       }
     }
@@ -135,7 +160,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
   }
 
   public void synthesize(Synthesizer<Payload> action) {
-    this.payload = action.apply(this.childZonesPayloads(), this.payload);
+    this.payload = action.apply(this.childPayloads(), this.payload);
   }
 
   public void synthesizeFromLeaves(Synthesizer<Payload> action) {
@@ -145,8 +170,8 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
     while (!queue.isEmpty()) {
       ZoneHierarchy<Payload> current = queue.remove();
       current.synthesize(action);
-      if (current != this && current.parentZone != null && added.add(current.parentZone)) {
-        queue.add(current.parentZone);
+      if (current != this && current.parent() != null && added.add(current.parent())) {
+        queue.add(current.parent());
       }
     }
   }
@@ -154,22 +179,13 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
   public void synthesizePath(Synthesizer<Payload> action) {
     ZoneHierarchy<Payload> current = this;
     while (current != null) {
-      current.payload = action.apply(current.childZonesPayloads(), current.payload);
-      current = current.parentZone;
+      current.payload = action.apply(current.childPayloads(), current.payload);
+      current = current.parent();
     }
   }
 
-  private FluentIterable<Payload> childZonesPayloads() {
-    return from(childZones.values()).transform(new Function<ZoneHierarchy<Payload>, Payload>() {
-      @Override
-      public Payload apply(ZoneHierarchy<Payload> zone) {
-        return zone.payload;
-      }
-    });
-  }
-
   public <Result extends Hierarchical> ZoneHierarchy<Result> map(Function<Payload, Result> fun) {
-    ZoneHierarchy<Result> node = new ZoneHierarchy<>(fun.apply(getPayload()));
+    ZoneHierarchy<Result> node = new ZoneHierarchy<>(fun.apply(payload()));
     for (ZoneHierarchy<Payload> child : childZones.values()) {
       child.map(fun).attachTo(node);
     }
@@ -190,7 +206,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
     } else {
       inserter.descend(local);
     }
-    return relative.hasNext() ? child.insert(relative, inserter) : child.getPayload();
+    return relative.hasNext() ? child.insert(relative, inserter) : child.payload();
   }
 
   @Override

@@ -42,13 +42,6 @@ public class ComposedTypeInfo<Atomic extends AttributeValue> extends TypeInfo<At
     this.enclosing = enclosing;
   }
 
-  public static <Atomic extends AttributeValue> ComposedTypeInfo<Atomic> of(Class<Atomic> type,
-      TypeInfo<? extends AttributeValue> enclosing) {
-    Preconditions.checkArgument(type == CASet.class || type == CAList.class,
-        type.getSimpleName() + " is not composed");
-    return new ComposedTypeInfo<>(type, enclosing);
-  }
-
   @Override
   public TypeInfo<? extends AttributeValue> unfold() {
     return enclosing;
@@ -86,5 +79,12 @@ public class ComposedTypeInfo<Atomic extends AttributeValue> extends TypeInfo<At
   @Override
   public TypeDescriptor descriptor() {
     return TypeDescriptor.ComposedTypeInfo;
+  }
+
+  public static <Atomic extends AttributeValue, Composed extends AttributeValue> ComposedTypeInfo<Composed> of(
+      Class<Composed> type, TypeInfo<Atomic> enclosing) {
+    Preconditions.checkArgument(type == CASet.class || type == CAList.class,
+        type.getSimpleName() + " is not composed");
+    return new ComposedTypeInfo<>(type, enclosing);
   }
 }

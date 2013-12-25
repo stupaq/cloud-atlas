@@ -27,12 +27,12 @@ import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
-import stupaq.cloudatlas.messaging.messages.DumpZoneRequest;
-import stupaq.cloudatlas.messaging.messages.DumpZoneResponse;
-import stupaq.cloudatlas.messaging.messages.EntitiesValuesRequest;
-import stupaq.cloudatlas.messaging.messages.EntitiesValuesResponse;
-import stupaq.cloudatlas.messaging.messages.KnownZonesRequest;
-import stupaq.cloudatlas.messaging.messages.KnownZonesResponse;
+import stupaq.cloudatlas.messaging.messages.requests.DumpZoneRequest;
+import stupaq.cloudatlas.messaging.messages.responses.DumpZoneResponse;
+import stupaq.cloudatlas.messaging.messages.requests.EntitiesValuesRequest;
+import stupaq.cloudatlas.messaging.messages.responses.EntitiesValuesResponse;
+import stupaq.cloudatlas.messaging.messages.requests.KnownZonesRequest;
+import stupaq.cloudatlas.messaging.messages.responses.KnownZonesResponse;
 import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
 import stupaq.cloudatlas.naming.AttributeName;
@@ -167,7 +167,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
       Preconditions.checkArgument(agentsName.equals(update.getZone()));
       for (Attribute attribute : update) {
         if (!BUILTIN_ATTRIBUTES.contains(attribute.getName())) {
-          agentsNode.getPayload().setPrime(attribute);
+          agentsNode.payload().setPrime(attribute);
         }
       }
     }
@@ -175,7 +175,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
     @Override
     public void dumpZone(DumpZoneRequest request) {
       assertion.check();
-      bus.post(new DumpZoneResponse(agentsNode.getPayload().export()));
+      bus.post(new DumpZoneResponse(agentsNode.payload().export()));
     }
 
     @Override
@@ -251,7 +251,7 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
           Optional<ZoneHierarchy<ZoneManagementInfo>> zone = hierarchy.find(name);
           if (zone.isPresent()) {
             if (!noLeaves || !zone.get().isLeaf()) {
-              action.apply(zone.get().getPayload());
+              action.apply(zone.get().payload());
             }
           } else {
             LOG.warn("Specified zone: " + name + " does not exist");
