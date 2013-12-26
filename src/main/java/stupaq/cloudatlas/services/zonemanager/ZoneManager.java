@@ -114,7 +114,7 @@ public class ZoneManager extends AbstractScheduledService
     agentsNode.synthesizePath(new InstalledQueriesUpdater());
     agentsNode.synthesizePath(new BuiltinsUpdater(config.clock().timestamp()));
     long retention = config.getLong(PURGE_INTERVAL, PURGE_INTERVAL_DEFAULT);
-    agentsNode.filterLeaves(
+    hierarchy.filterLeaves(
         new StaleZonesRemover(config.clock().timestamp(-retention, TimeUnit.MILLISECONDS)));
     dumpHierarchy();
   }
