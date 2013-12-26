@@ -1,7 +1,7 @@
 package stupaq.cloudatlas.services.busybody.strategies;
 
-import stupaq.cloudatlas.plugins.contact.UniformLevel;
 import stupaq.cloudatlas.plugins.contact.RandomZone;
+import stupaq.cloudatlas.plugins.contact.UniformLevel;
 
 public interface ContactSelectionConfigKeys {
   // Runtime configuration section

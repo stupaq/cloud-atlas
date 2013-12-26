@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.services.collector;
 
+import com.google.common.base.Function;
 import com.google.common.util.concurrent.AbstractScheduledService;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -17,6 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
+import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CADouble;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
@@ -25,16 +27,19 @@ import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.StartIfPresent;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.rmiserver.RMIServerConfigKeys;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
+import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
+import static com.google.common.collect.FluentIterable.from;
+import static java.util.Arrays.asList;
+import static stupaq.cloudatlas.query.typecheck.TypeInfo.of;
 import static stupaq.cloudatlas.services.rmiserver.RMIServer.createClient;
 
 @StartIfPresent(section = "collector")
 public class AttributesCollector extends AbstractScheduledService
-    implements AttributesCollectorConfigKeys, RMIServerConfigKeys {
+    implements AttributesCollectorConfigKeys, BuiltinAttributesConfigKeys, RMIServerConfigKeys {
   private static final Log LOG = LogFactory.getLog(AttributesCollector.class);
   private final BootstrapConfiguration config;
   private final SingleThreadedExecutor executor;
@@ -115,8 +120,18 @@ public class AttributesCollector extends AbstractScheduledService
             list.add(new CAString(element));
           }
           attributes.add(new Attribute<>(AttributeName.fromString(name),
-              new CASet<>(TypeInfo.of(CAString.class), list)));
+              new CASet<>(of(CAString.class), list)));
         }
+      }
+      if (config.containsKey(ZONE_CONTACTS)) {
+        Iterable<CAContact> contacts = from(asList(config.getStringArray(ZONE_CONTACTS))).transform(
+            new Function<String, CAContact>() {
+              @Override
+              public CAContact apply(String input) {
+                return new CAContact(input);
+              }
+            });
+        attributes.add(CONTACTS.create(new CASet<>(of(CAContact.class), contacts)));
       }
       return attributes;
     } catch (ConfigurationException e) {

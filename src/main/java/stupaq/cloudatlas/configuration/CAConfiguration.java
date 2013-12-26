@@ -12,7 +12,7 @@ import java.util.List;
 
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.plugins.Plugin;
+import stupaq.cloudatlas.plugins.PluginLoader;
 
 public class CAConfiguration extends DataConfiguration {
   public CAConfiguration() {
@@ -52,7 +52,7 @@ public class CAConfiguration extends DataConfiguration {
   }
 
   public <Contract> Class<Contract> getPlugin(String key, String bundle, Class<Contract> fallback) {
-    return containsKey(key) ? Plugin.<Contract>forName(bundle + getString(key)) : fallback;
+    return containsKey(key) ? PluginLoader.<Contract>forName(bundle + getString(key)) : fallback;
   }
 
   public void mustContain(String key) {

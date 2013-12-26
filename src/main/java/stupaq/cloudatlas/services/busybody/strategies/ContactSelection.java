@@ -12,7 +12,7 @@ import java.util.Collection;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.naming.GlobalName;
-import stupaq.cloudatlas.plugins.Plugin;
+import stupaq.cloudatlas.plugins.PluginLoader;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
@@ -47,6 +47,10 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
       LOG.info("Selected zone's local name: " + zmi.localName());
       FluentIterable<CAContact> contacts =
           from(CONTACTS.get(zmi).value()).filter(not(in(blacklisted)));
+      if (contacts.isEmpty()) {
+        LOG.warn("Selected ZMI has no contacts, falling back to leaf zone's");
+        contacts = from(CONTACTS.get(leafZone.payload()).value());
+      }
       return Optional.fromNullable(
           contacts.isEmpty() ? null : Collections3.<CAContact>random(contacts));
     } catch (Exception e) {
@@ -59,12 +63,13 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
   }
 
   private static LevelSelection createLevel(CAConfiguration config) {
-    return Plugin.initialize(config.getPlugin(LEVEL_SELECTION, ContactSelectionConfigKeys.PREFIX,
-        LEVEL_SELECTION_DEFAULT), config);
+    return PluginLoader.initialize(
+        config.getPlugin(LEVEL_SELECTION, ContactSelectionConfigKeys.PREFIX,
+            LEVEL_SELECTION_DEFAULT), config);
   }
 
   private static ZoneSelection createZone(CAConfiguration config) {
-    return Plugin.initialize(
+    return PluginLoader.initialize(
         config.getPlugin(ZONE_SELECTION, ContactSelectionConfigKeys.PREFIX, ZONE_SELECTION_DEFAULT),
         config);
   }

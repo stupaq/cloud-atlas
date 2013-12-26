@@ -2,12 +2,12 @@ package stupaq.cloudatlas.plugins;
 
 import stupaq.cloudatlas.configuration.CAConfiguration;
 
-public final class Plugin {
-  private Plugin() {
+public final class PluginLoader {
+  private PluginLoader() {
   }
 
   private static final String PREFIX = "plugin.";
-  private static final String PACKAGE_PREFIX = Plugin.class.getPackage().getName() + ".";
+  private static final String PACKAGE_PREFIX = PluginLoader.class.getPackage().getName() + ".";
 
   @SuppressWarnings("unchecked")
   public static <Contract> Class<Contract> forName(String name) {

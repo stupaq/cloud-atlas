@@ -43,6 +43,7 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttribute;
+import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsInserter;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsUpdater;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
@@ -55,7 +56,8 @@ import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.SingleThreadAssertion;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
-public class ZoneManager extends AbstractScheduledService implements ZoneManagerConfigKeys {
+public class ZoneManager extends AbstractScheduledService
+    implements ZoneManagerConfigKeys, BuiltinAttributesConfigKeys {
   private static final Log LOG = LogFactory.getLog(ZoneManager.class);
   private final SingleThreadAssertion assertion = new SingleThreadAssertion();
   private final BootstrapConfiguration config;
@@ -288,8 +290,12 @@ public class ZoneManager extends AbstractScheduledService implements ZoneManager
         LOG.error("Contact selection failed, aborting gossiping round", e);
         return;
       }
-      LOG.info("Selected contact: " + contact);
+      if (!contact.isPresent()) {
+        LOG.error("Could not find contact, aborting gossiping round");
+        return;
+      }
       // TODO
+      LOG.info("Selected contact: " + contact);
     }
   }
 }
