@@ -11,7 +11,7 @@ import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.messaging.Message;
 
 @Immutable
-public class FallbackContactsMessage implements Iterable<CAContact>, Message {
+public class FallbackContactsMessage extends Message implements Iterable<CAContact> {
   private final List<CAContact> contacts;
 
   public FallbackContactsMessage(List<CAContact> contacts) {

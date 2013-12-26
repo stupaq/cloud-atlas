@@ -9,7 +9,7 @@ import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.messaging.Message;
 import stupaq.cloudatlas.naming.GlobalName;
 
-public class QueryUpdateMessage implements Message {
+public class QueryUpdateMessage extends Message {
   private final Attribute<CAQuery> query;
   private final Optional<List<GlobalName>> zones;
 

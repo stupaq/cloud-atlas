@@ -74,7 +74,6 @@ public class ZoneManager extends AbstractScheduledService
     agentsName = config.getGlobalName(ZONE_NAME);
     hierarchy = ZoneHierarchy.create(agentsName, new BuiltinsInserter(agentsName));
     agentsNode = hierarchy.find(agentsName).get();
-    agentsNode.synthesizePath(new BuiltinsUpdater(config.clock().timestamp()));
     executor = config.threadModel().singleThreaded(ZoneManager.class);
   }
 
@@ -93,6 +92,9 @@ public class ZoneManager extends AbstractScheduledService
         LOG.error("Failed to open file for hierarchy dumps", e);
       }
     }
+    // We need to populate all attributes that are expected to exist
+    agentsNode.synthesizePath(new InstalledQueriesUpdater());
+    agentsNode.synthesizePath(new BuiltinsUpdater(config.clock().timestamp()));
     // We're ready to operate
     bus.register(new ZoneManagerListener());
   }

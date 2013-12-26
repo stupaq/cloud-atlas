@@ -7,7 +7,7 @@ import javax.annotation.concurrent.Immutable;
 import stupaq.cloudatlas.messaging.Message;
 
 @Immutable
-public abstract class Response<RequestType extends Request> implements Message {
+public abstract class Response<RequestType extends Request> extends Message {
   private RequestType request;
 
   public RequestType request() {
