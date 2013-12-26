@@ -12,6 +12,7 @@ trap "rm -f $RMI_POLICY_CLIENT" EXIT
 
 java \
     -ea \
+    -Djava.net.preferIPv4Stack=true \
     -Djava.security.policy="$RMI_POLICY_CLIENT" \
     -Djava.rmi.server.codebase="$RMI_CODEBASE" \
     "${PACKAGE_PREFIX}runnable.GenericServiceRunner" \

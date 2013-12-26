@@ -7,7 +7,6 @@ import com.google.common.util.concurrent.AbstractScheduledService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.net.InetSocketAddress;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -59,15 +58,15 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   protected void startUp() {
     // Bootstrap Netty
     group = new NioEventLoopGroup();
+    CAContact contact = new CAContact("127.0.0.1:" + config.getInt(BIND_PORT));
     channel = new Bootstrap().group(group)
         .channel(NioDatagramChannel.class)
         .option(ChannelOption.MESSAGE_SIZE_ESTIMATOR,
             new DefaultMessageSizeEstimator(MESSAGE_SIZE_DEFAULT))
         .handler(new GossipChannelInitializer(config))
-        .bind(config.getInt(BIND_PORT))
+        .bind(contact.socketAddress())
         .syncUninterruptibly()
         .channel();
-    CAContact contact = new CAContact((InetSocketAddress) channel.localAddress());
     blacklisted.add(contact);
     LOG.info("Agent's contact information: " + contact);
     // We're ready to operate

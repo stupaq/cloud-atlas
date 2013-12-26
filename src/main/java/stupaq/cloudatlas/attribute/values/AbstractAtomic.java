@@ -14,8 +14,7 @@ import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.compact.SerializableImplementation;
 
 /** PACKAGE-LOCAL */
-abstract class AbstractAtomic<Type extends Comparable<Type>>
-    implements AttributeValue, Serializable {
+abstract class AbstractAtomic<Type> implements AttributeValue, Serializable {
   private static final long serialVersionUID = 1L;
   @Nonnull private Optional<Type> value;
 
@@ -73,9 +72,17 @@ abstract class AbstractAtomic<Type extends Comparable<Type>>
   public int compareTo(AttributeValue other) {
     if (!type().equals(other.type())) {
       throw new UndefinedOperationException("Cannot compare: " + type() + " with: " + other.type());
+    } else if (equals(other)) {
+      return 0;
+    } else if (isNull()) {
+      return 1;
+    } else if (other.isNull()) {
+      return -1;
+    } else if (get() instanceof Comparable) {
+      return ((Comparable<Type>) get()).compareTo(((AbstractAtomic<Type>) other).get());
+    } else {
+      throw new UndefinedOperationException("Cannot compare: " + getClass().getSimpleName());
     }
-    return equals(other) ? 0 : (isNull() ? 1 :
-        (other.isNull() ? -1 : get().compareTo(((AbstractAtomic<Type>) other).get())));
   }
 
   @Override

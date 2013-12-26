@@ -49,7 +49,7 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
           from(CONTACTS.get(zmi).value()).filter(not(in(blacklisted)));
       if (contacts.isEmpty()) {
         LOG.warn("Selected ZMI has no contacts, falling back to leaf zone's");
-        contacts = from(CONTACTS.get(leafZone.payload()).value());
+        contacts = from(CONTACTS.get(leafZone.payload()).value()).filter(not(in(blacklisted)));
       }
       return Optional.fromNullable(
           contacts.isEmpty() ? null : Collections3.<CAContact>random(contacts));
