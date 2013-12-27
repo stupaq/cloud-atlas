@@ -174,7 +174,7 @@ public class ZoneManager extends AbstractScheduledService
 
     @Subscribe
     @ScheduledInvocation
-    void exportZones(ZonesInterestMessage message);
+    public void exportZones(ZonesInterestMessage message);
 
     @Subscribe
     @ScheduledInvocation

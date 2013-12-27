@@ -28,7 +28,7 @@ public class ZonesInterestMessage extends Message implements Iterable<Entry<Glob
   }
 
   public CATime getTimestamp(GlobalName name) {
-    return Optional.of(timestamps.get(name)).or(new CATime());
+    return Optional.fromNullable(timestamps.get(name)).or(new CATime());
   }
 
   public GlobalName getLeaf() {
