@@ -12,20 +12,18 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.DefaultMessageSizeEstimator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.StartIfPresent;
+import stupaq.cloudatlas.gossiping.pipeline.GossipChannelInitializer;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
 import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
-import stupaq.cloudatlas.services.busybody.pipeline.GossipChannelInitializer;
 import stupaq.cloudatlas.services.busybody.strategies.ContactSelection;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
 import stupaq.commons.util.concurrent.FastStartScheduler;
@@ -63,8 +61,6 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
     contactSelf = new CAContact("127.0.0.1:" + config.getInt(BIND_PORT));
     channel = new Bootstrap().group(group)
         .channel(NioDatagramChannel.class)
-        .option(ChannelOption.MESSAGE_SIZE_ESTIMATOR,
-            new DefaultMessageSizeEstimator(MESSAGE_SIZE_DEFAULT))
         .handler(new GossipChannelInitializer(config))
         .bind(contactSelf.socketAddress())
         .syncUninterruptibly()
@@ -115,14 +111,12 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
 
     @Override
     public void sendGossip(OutboundGossip gossip) {
-      // TODO
-      LOG.info("Sending gossip: " + gossip);
+      channel.writeAndFlush(gossip);
     }
 
     @Override
     public void receiveGossip(InboundGossip gossip) {
-      // TODO
-      LOG.info("Receiving gossip: " + gossip);
+      bus.post(gossip.getGossip());
     }
   }
 }

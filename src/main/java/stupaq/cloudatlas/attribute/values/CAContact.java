@@ -27,9 +27,8 @@ public final class CAContact extends AbstractAtomic<InetSocketAddress> {
   public static final CompactSerializer<CAContact> SERIALIZER = new CompactSerializer<CAContact>() {
     @Override
     public CAContact readInstance(ObjectInput in) throws IOException {
-      return in.readBoolean() ?
-          new CAContact(HostAndPort.fromParts(String.readInstance(in), in.readInt())) :
-          new CAContact();
+      return in.readBoolean() ? new CAContact(
+          HostAndPort.fromParts(String.readInstance(in), in.readInt())) : new CAContact();
     }
 
     @Override
@@ -57,7 +56,8 @@ public final class CAContact extends AbstractAtomic<InetSocketAddress> {
   }
 
   public CAContact(InetSocketAddress address) {
-    super(new InetSocketAddress(address.getHostString(), address.getPort()));
+    super(address.isUnresolved() ? new InetSocketAddress(address.getHostString(), address.getPort())
+        : address);
   }
 
   public InetSocketAddress socketAddress() {

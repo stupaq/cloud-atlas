@@ -6,10 +6,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.naming.GlobalName;
 
+@Immutable
 public class ZonesInterestMessage extends Message implements Iterable<Entry<GlobalName, CATime>> {
   private final GlobalName leaf;
   private final Map<GlobalName, CATime> timestamps;

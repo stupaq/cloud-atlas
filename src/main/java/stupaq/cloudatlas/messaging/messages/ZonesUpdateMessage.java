@@ -4,9 +4,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.concurrent.Immutable;
+
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 
+@Immutable
 public class ZonesUpdateMessage extends Message
     implements Iterable<Entry<GlobalName, ZoneManagementInfo>> {
   private final Map<GlobalName, ZoneManagementInfo> zones;

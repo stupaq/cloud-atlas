@@ -30,23 +30,24 @@ public abstract class ForwardingWrapper<Primitive> implements Serializable {
 
   @Nonnull
   protected Primitive get() {
+    Preconditions.checkNotNull(value);
     return value;
   }
 
   @Override
   public boolean equals(Object o) {
     return this == o ||
-        !(o == null || getClass() != o.getClass()) && value.equals(((ForwardingWrapper) o).value);
+        !(o == null || getClass() != o.getClass()) && get().equals(((ForwardingWrapper) o).get());
 
   }
 
   @Override
   public int hashCode() {
-    return value.hashCode();
+    return get().hashCode();
   }
 
   @Override
   public String toString() {
-    return String.valueOf(value);
+    return String.valueOf(get());
   }
 }

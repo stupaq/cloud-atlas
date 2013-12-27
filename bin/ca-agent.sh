@@ -19,6 +19,8 @@ fi
 
 java \
     -ea \
+    -Djava.net.preferIPv4Stack=true \
+    -Dio.netty.leakDetectionLevel=PARANOID \
     -Djava.security.policy="$RMI_POLICY_SERVER" \
     -Djava.rmi.server.codebase="$RMI_CODEBASE" \
     -Djava.rmi.server.hostname="$RMI_SERVER_HOSTNAME" \

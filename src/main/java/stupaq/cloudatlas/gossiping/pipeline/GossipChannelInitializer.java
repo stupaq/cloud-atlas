@@ -1,8 +1,10 @@
-package stupaq.cloudatlas.services.busybody.pipeline;
+package stupaq.cloudatlas.gossiping.pipeline;
 
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.DefaultMessageSizeEstimator;
 import io.netty.channel.socket.DatagramChannel;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
+import stupaq.cloudatlas.gossiping.dataformat.Frame;
 
 public class GossipChannelInitializer extends ChannelInitializer<DatagramChannel> {
   private final BootstrapConfiguration config;
@@ -13,9 +15,12 @@ public class GossipChannelInitializer extends ChannelInitializer<DatagramChannel
 
   @Override
   protected void initChannel(DatagramChannel channel) throws Exception {
+    channel.config()
+        .setMessageSizeEstimator(new DefaultMessageSizeEstimator(Frame.DATAGRAM_MAX_SIZE));
     channel.pipeline()
-        .addLast(new CompactSerializableEncoder())
-        .addLast(new CompactSerializableDecoder())
-        .addLast(new MessagePostInboundHandler(config.bus()));
+        .addLast(new DatagramCodec())
+        .addLast(new FrameCodec(null))
+        .addLast(new GossipCodec())
+        .addLast(new MessageInboundHandler(config.bus()));
   }
 }
