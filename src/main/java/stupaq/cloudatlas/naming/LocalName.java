@@ -3,12 +3,12 @@ package stupaq.cloudatlas.naming;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
 import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
@@ -18,12 +18,12 @@ import stupaq.compact.TypeDescriptor;
 public final class LocalName extends CAIdentifier implements CompactSerializable, Hierarchical {
   public static final CompactSerializer<LocalName> SERIALIZER = new CompactSerializer<LocalName>() {
     @Override
-    public LocalName readInstance(ObjectInput in) throws IOException {
+    public LocalName readInstance(CompactInput in) throws IOException {
       return new LocalName(CompactSerializers.ASCIIString.readInstance(in).toString());
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, LocalName object) throws IOException {
+    public void writeInstance(CompactOutput out, LocalName object) throws IOException {
       CompactSerializers.ASCIIString.writeInstance(out, object);
     }
   };

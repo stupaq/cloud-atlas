@@ -3,8 +3,6 @@ package stupaq.cloudatlas.naming;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +10,8 @@ import java.util.Iterator;
 import javax.annotation.concurrent.Immutable;
 
 import stupaq.commons.base.ForwardingWrapper;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.SerializableImplementation;
@@ -28,12 +28,12 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
   public static final CompactSerializer<GlobalName> SERIALIZER =
       new CompactSerializer<GlobalName>() {
         @Override
-        public GlobalName readInstance(ObjectInput in) throws IOException {
+        public GlobalName readInstance(CompactInput in) throws IOException {
           return new GlobalName(List(LocalName.SERIALIZER).readInstance(in));
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, GlobalName object) throws IOException {
+        public void writeInstance(CompactOutput out, GlobalName object) throws IOException {
           List(LocalName.SERIALIZER).writeInstance(out, object.get());
         }
       };

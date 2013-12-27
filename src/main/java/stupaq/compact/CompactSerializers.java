@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +23,7 @@ public final class CompactSerializers {
       new CompactSerializer<ASCIIString>() {
         @Override
         @Nullable
-        public ASCIIString readInstance(ObjectInput in) throws IOException {
+        public ASCIIString readInstance(CompactInput in) throws IOException {
           int length = in.readShort();
           if (length < 0) {
             return null;
@@ -37,7 +35,7 @@ public final class CompactSerializers {
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, @Nullable ASCIIString object)
+        public void writeInstance(CompactOutput out, @Nullable ASCIIString object)
             throws IOException {
           if (object == null) {
             out.writeShort(-1);
@@ -55,12 +53,12 @@ public final class CompactSerializers {
   public static final CompactSerializer<Boolean> Boolean = new CompactSerializer<Boolean>() {
     @Override
     @Nullable
-    public Boolean readInstance(ObjectInput in) throws IOException {
+    public Boolean readInstance(CompactInput in) throws IOException {
       return in.readBoolean() ? in.readBoolean() : null;
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, @Nullable Boolean object) throws IOException {
+    public void writeInstance(CompactOutput out, @Nullable Boolean object) throws IOException {
       out.writeBoolean(object != null);
       if (object != null) {
         out.writeBoolean(object);
@@ -70,12 +68,12 @@ public final class CompactSerializers {
   public static final CompactSerializer<Long> Long = new CompactSerializer<Long>() {
     @Override
     @Nullable
-    public Long readInstance(ObjectInput in) throws IOException {
+    public Long readInstance(CompactInput in) throws IOException {
       return in.readBoolean() ? in.readLong() : null;
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, @Nullable Long object) throws IOException {
+    public void writeInstance(CompactOutput out, @Nullable Long object) throws IOException {
       out.writeBoolean(object != null);
       if (object != null) {
         out.writeLong(object);
@@ -85,12 +83,12 @@ public final class CompactSerializers {
   public static final CompactSerializer<String> String = new CompactSerializer<String>() {
     @Override
     @Nullable
-    public String readInstance(ObjectInput in) throws IOException {
+    public String readInstance(CompactInput in) throws IOException {
       return in.readBoolean() ? in.readUTF() : null;
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, @Nullable String object) throws IOException {
+    public void writeInstance(CompactOutput out, @Nullable String object) throws IOException {
       out.writeBoolean(object != null);
       if (object != null) {
         out.writeUTF(object);
@@ -100,12 +98,12 @@ public final class CompactSerializers {
   public static final CompactSerializer<Double> Double = new CompactSerializer<Double>() {
     @Override
     @Nullable
-    public Double readInstance(ObjectInput in) throws IOException {
+    public Double readInstance(CompactInput in) throws IOException {
       return in.readBoolean() ? in.readDouble() : null;
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, @Nullable Double object) throws IOException {
+    public void writeInstance(CompactOutput out, @Nullable Double object) throws IOException {
       out.writeBoolean(object != null);
       if (object != null) {
         out.writeDouble(object);
@@ -116,13 +114,13 @@ public final class CompactSerializers {
   public static <Type> CompactSerializer<Type> ConstantSingleton(final Type instance) {
     return new CompactSerializer<Type>() {
       @Override
-      public Type readInstance(ObjectInput in) throws IOException {
+      public Type readInstance(CompactInput in) throws IOException {
         // Do nothing
         return instance;
       }
 
       @Override
-      public void writeInstance(ObjectOutput out, Type object) throws IOException {
+      public void writeInstance(CompactOutput out, Type object) throws IOException {
         // Do nothing
       }
     };
@@ -131,12 +129,12 @@ public final class CompactSerializers {
   public static <Type> CompactSerializer<Type> Nullable(final CompactSerializer<Type> serializer) {
     return new CompactSerializer<Type>() {
       @Override
-      public Type readInstance(ObjectInput in) throws IOException {
+      public Type readInstance(CompactInput in) throws IOException {
         return in.readBoolean() ? serializer.readInstance(in) : null;
       }
 
       @Override
-      public void writeInstance(ObjectOutput out, Type object) throws IOException {
+      public void writeInstance(CompactOutput out, Type object) throws IOException {
         out.writeBoolean(object != null);
         if (object != null) {
           serializer.writeInstance(out, object);
@@ -149,7 +147,7 @@ public final class CompactSerializers {
       final CompactSerializer<Element> elementSerializer) {
     return new ListCompactSerializer<Element>() {
       @Override
-      public ArrayList<Element> readInstance(ObjectInput in) throws IOException {
+      public ArrayList<Element> readInstance(CompactInput in) throws IOException {
         int elements = in.readInt();
         Preconditions.checkState(elements >= 0);
         ArrayList<Element> list = new ArrayList<>(elements);
@@ -160,7 +158,7 @@ public final class CompactSerializers {
       }
 
       @Override
-      public void writeInstance(ObjectOutput out, List<Element> object) throws IOException {
+      public void writeInstance(CompactOutput out, List<Element> object) throws IOException {
         Collection(elementSerializer).writeInstance(out, object);
       }
     };
@@ -170,12 +168,12 @@ public final class CompactSerializers {
       final CompactSerializer<Element> elementSerializer) {
     return new CompactSerializer<Collection<Element>>() {
       @Override
-      public Collection<Element> readInstance(ObjectInput in) throws IOException {
+      public Collection<Element> readInstance(CompactInput in) throws IOException {
         return List(elementSerializer).readInstance(in);
       }
 
       @Override
-      public void writeInstance(ObjectOutput out, Collection<Element> object) throws IOException {
+      public void writeInstance(CompactOutput out, Collection<Element> object) throws IOException {
         out.writeInt(object.size());
         for (Element attribute : object) {
           elementSerializer.writeInstance(out, attribute);
@@ -188,7 +186,7 @@ public final class CompactSerializers {
       final CompactSerializer<Key> keySerializer, final CompactSerializer<Value> valueSerializer) {
     return new CompactSerializer<Map<Key, Value>>() {
       @Override
-      public Map<Key, Value> readInstance(ObjectInput in) throws IOException {
+      public Map<Key, Value> readInstance(CompactInput in) throws IOException {
         int size = in.readInt();
         Map<Key, Value> map = Maps.newHashMap();
         while (size-- > 0) {
@@ -198,7 +196,7 @@ public final class CompactSerializers {
       }
 
       @Override
-      public void writeInstance(ObjectOutput out, Map<Key, Value> object) throws IOException {
+      public void writeInstance(CompactOutput out, Map<Key, Value> object) throws IOException {
         out.writeInt(object.size());
         for (Entry<Key, Value> entry : object.entrySet()) {
           keySerializer.writeInstance(out, entry.getKey());
@@ -210,6 +208,6 @@ public final class CompactSerializers {
 
   public static interface ListCompactSerializer<Element> extends CompactSerializer<List<Element>> {
     @Override
-    public abstract ArrayList<Element> readInstance(ObjectInput in) throws IOException;
+    public abstract ArrayList<Element> readInstance(CompactInput in) throws IOException;
   }
 }

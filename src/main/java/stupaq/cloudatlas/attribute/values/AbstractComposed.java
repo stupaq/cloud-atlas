@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ForwardingCollection;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -18,6 +16,8 @@ import stupaq.cloudatlas.query.errors.UndefinedOperationException;
 import stupaq.cloudatlas.query.typecheck.ComposedTypeInfo;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.commons.lang.Fluent;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeRegistry;
 
@@ -113,7 +113,7 @@ abstract class AbstractComposed<Type extends AttributeValue> extends ForwardingC
         @Nullable Iterable<Type> elements);
 
     @Override
-    public final Actual readInstance(ObjectInput in) throws IOException {
+    public final Actual readInstance(CompactInput in) throws IOException {
       // This can be either TypeInfo or ComposedTypeInfo, we have to use dynamic dispatch here
       TypeInfo<Type> enclosingType = TypeRegistry.readObject(in);
       int size = in.readInt();
@@ -126,7 +126,7 @@ abstract class AbstractComposed<Type extends AttributeValue> extends ForwardingC
     }
 
     @Override
-    public final void writeInstance(ObjectOutput out, Actual object) throws IOException {
+    public final void writeInstance(CompactOutput out, Actual object) throws IOException {
       TypeInfo<?> enclosingType = object.getEnclosingType();
       // This can be either TypeInfo or ComposedTypeInfo, we have to use dynamic dispatch here
       TypeRegistry.writeObject(out, enclosingType);

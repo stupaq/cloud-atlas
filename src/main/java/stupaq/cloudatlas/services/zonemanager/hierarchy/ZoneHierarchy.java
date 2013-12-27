@@ -8,8 +8,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -25,6 +23,8 @@ import stupaq.cloudatlas.naming.GlobalName.Builder;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.commons.base.Function2;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 
@@ -259,7 +259,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
       final CompactSerializer<Payload> payloadSerializer) {
     return new CompactSerializer<ZoneHierarchy<Payload>>() {
       @Override
-      public ZoneHierarchy<Payload> readInstance(ObjectInput in) throws IOException {
+      public ZoneHierarchy<Payload> readInstance(CompactInput in) throws IOException {
         ZoneHierarchy<Payload> node = new ZoneHierarchy<>(payloadSerializer.readInstance(in));
         for (ZoneHierarchy<Payload> zone : Collection(this).readInstance(in)) {
           zone.attachTo(node);
@@ -268,7 +268,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
       }
 
       @Override
-      public void writeInstance(ObjectOutput out, ZoneHierarchy<Payload> object)
+      public void writeInstance(CompactOutput out, ZoneHierarchy<Payload> object)
           throws IOException {
         // ZoneHierarchy forms a tree, we are good to go with usual serialization schema
         payloadSerializer.writeInstance(out, object.payload);

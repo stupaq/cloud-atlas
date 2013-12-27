@@ -3,8 +3,6 @@ package stupaq.cloudatlas.attribute.values;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -18,6 +16,8 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
@@ -26,12 +26,12 @@ import stupaq.compact.TypeDescriptor;
 public final class CATime extends AbstractAtomic<Long> {
   public static final CompactSerializer<CATime> SERIALIZER = new CompactSerializer<CATime>() {
     @Override
-    public CATime readInstance(ObjectInput in) throws IOException {
+    public CATime readInstance(CompactInput in) throws IOException {
       return new CATime(CompactSerializers.Long.readInstance(in));
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, CATime object) throws IOException {
+    public void writeInstance(CompactOutput out, CATime object) throws IOException {
       CompactSerializers.Long.writeInstance(out, object.orNull());
     }
   };

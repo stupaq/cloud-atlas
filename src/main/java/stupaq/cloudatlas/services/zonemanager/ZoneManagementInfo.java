@@ -8,9 +8,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.io.IOException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +19,8 @@ import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.commons.util.concurrent.LazyCopy;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.SerializableImplementation;
@@ -31,13 +31,13 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
   public static final CompactSerializer<ZoneManagementInfo> SERIALIZER =
       new CompactSerializer<ZoneManagementInfo>() {
         @Override
-        public ZoneManagementInfo readInstance(ObjectInput in) throws IOException {
+        public ZoneManagementInfo readInstance(CompactInput in) throws IOException {
           return new ZoneManagementInfo(LocalName.SERIALIZER.readInstance(in),
               Attribute.MAP_SERIALIZER.readInstance(in));
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, ZoneManagementInfo object) throws IOException {
+        public void writeInstance(CompactOutput out, ZoneManagementInfo object) throws IOException {
           LocalName.SERIALIZER.writeInstance(out, object.localName);
           Attribute.MAP_SERIALIZER.writeInstance(out, object.attributes);
         }

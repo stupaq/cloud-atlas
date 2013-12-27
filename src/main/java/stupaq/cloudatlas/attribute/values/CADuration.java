@@ -3,8 +3,6 @@ package stupaq.cloudatlas.attribute.values;
 import org.apache.commons.lang.time.DurationFormatUtils;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -15,6 +13,8 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
@@ -24,12 +24,12 @@ public final class CADuration extends AbstractAtomic<Long> {
   public static final CompactSerializer<CADuration> SERIALIZER =
       new CompactSerializer<CADuration>() {
         @Override
-        public CADuration readInstance(ObjectInput in) throws IOException {
+        public CADuration readInstance(CompactInput in) throws IOException {
           return new CADuration(CompactSerializers.Long.readInstance(in));
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, CADuration object) throws IOException {
+        public void writeInstance(CompactOutput out, CADuration object) throws IOException {
           CompactSerializers.Long.writeInstance(out, object.orNull());
         }
       };

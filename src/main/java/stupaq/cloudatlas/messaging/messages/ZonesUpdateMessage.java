@@ -1,8 +1,6 @@
 package stupaq.cloudatlas.messaging.messages;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,6 +10,8 @@ import javax.annotation.concurrent.Immutable;
 import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 
@@ -23,13 +23,13 @@ public class ZonesUpdateMessage extends Gossip
   public static final CompactSerializer<ZonesUpdateMessage> SERIALIZER =
       new CompactSerializer<ZonesUpdateMessage>() {
         @Override
-        public ZonesUpdateMessage readInstance(ObjectInput in) throws IOException {
+        public ZonesUpdateMessage readInstance(CompactInput in) throws IOException {
           return new ZonesUpdateMessage(
               Map(GlobalName.SERIALIZER, ZoneManagementInfo.SERIALIZER).readInstance(in));
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, ZonesUpdateMessage object) throws IOException {
+        public void writeInstance(CompactOutput out, ZonesUpdateMessage object) throws IOException {
           Map(GlobalName.SERIALIZER, ZoneManagementInfo.SERIALIZER).writeInstance(out,
               object.zones);
         }

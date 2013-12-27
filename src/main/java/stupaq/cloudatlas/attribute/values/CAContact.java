@@ -3,8 +3,6 @@ package stupaq.cloudatlas.attribute.values;
 import com.google.common.net.HostAndPort;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.net.InetSocketAddress;
 
 import javax.annotation.concurrent.Immutable;
@@ -17,6 +15,8 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 
@@ -26,13 +26,13 @@ import static stupaq.compact.CompactSerializers.String;
 public final class CAContact extends AbstractAtomic<InetSocketAddress> {
   public static final CompactSerializer<CAContact> SERIALIZER = new CompactSerializer<CAContact>() {
     @Override
-    public CAContact readInstance(ObjectInput in) throws IOException {
+    public CAContact readInstance(CompactInput in) throws IOException {
       return in.readBoolean() ? new CAContact(
           HostAndPort.fromParts(String.readInstance(in), in.readInt())) : new CAContact();
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, CAContact object) throws IOException {
+    public void writeInstance(CompactOutput out, CAContact object) throws IOException {
       out.writeBoolean(!object.isNull());
       if (!object.isNull()) {
         InetSocketAddress address = object.get();

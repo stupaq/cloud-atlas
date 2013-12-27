@@ -3,8 +3,6 @@ package stupaq.cloudatlas.query.typecheck;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.annotation.Nonnull;
@@ -13,6 +11,8 @@ import javax.annotation.concurrent.Immutable;
 import stupaq.cloudatlas.attribute.AttributeValue;
 import stupaq.cloudatlas.attribute.values.CAList;
 import stupaq.cloudatlas.attribute.values.CASet;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 
@@ -22,13 +22,13 @@ public class ComposedTypeInfo<Atomic extends AttributeValue> extends TypeInfo<At
       new CompactSerializer<ComposedTypeInfo>() {
         @SuppressWarnings("unchecked")
         @Override
-        public ComposedTypeInfo readInstance(ObjectInput in) throws IOException {
+        public ComposedTypeInfo readInstance(CompactInput in) throws IOException {
           return new ComposedTypeInfo<>(in.readBoolean() ? CAList.class : CASet.class,
               TypeInfo.SERIALIZER.readInstance(in));
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, ComposedTypeInfo object) throws IOException {
+        public void writeInstance(CompactOutput out, ComposedTypeInfo object) throws IOException {
           out.writeBoolean(object.get() == CAList.class);
           TypeInfo.SERIALIZER.writeInstance(out, object);
         }

@@ -1,8 +1,6 @@
 package stupaq.cloudatlas.attribute.values;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -19,6 +17,8 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
@@ -27,12 +27,12 @@ import stupaq.compact.TypeDescriptor;
 public final class CAString extends AbstractAtomic<String> {
   public static final CompactSerializer<CAString> SERIALIZER = new CompactSerializer<CAString>() {
     @Override
-    public CAString readInstance(ObjectInput in) throws IOException {
+    public CAString readInstance(CompactInput in) throws IOException {
       return new CAString(CompactSerializers.String.readInstance(in));
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, CAString object) throws IOException {
+    public void writeInstance(CompactOutput out, CAString object) throws IOException {
       CompactSerializers.String.writeInstance(out, object.orNull());
     }
   };

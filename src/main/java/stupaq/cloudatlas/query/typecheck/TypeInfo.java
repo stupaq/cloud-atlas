@@ -4,8 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -16,6 +14,8 @@ import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.query.errors.TypeCheckerException;
 import stupaq.commons.base.ForwardingWrapper;
 import stupaq.commons.base.Function2;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
@@ -27,12 +27,12 @@ public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<C
   public static final CompactSerializer<TypeInfo> SERIALIZER = new CompactSerializer<TypeInfo>() {
     @SuppressWarnings("unchecked")
     @Override
-    public TypeInfo readInstance(ObjectInput in) throws IOException {
+    public TypeInfo readInstance(CompactInput in) throws IOException {
       return new TypeInfo(TypeRegistry.readObject(in).getClass());
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, TypeInfo object) throws IOException {
+    public void writeInstance(CompactOutput out, TypeInfo object) throws IOException {
       TypeRegistry.writeObject(out, object.aNull());
     }
   };

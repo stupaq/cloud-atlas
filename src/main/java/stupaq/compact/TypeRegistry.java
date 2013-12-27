@@ -3,8 +3,6 @@ package stupaq.compact;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -48,11 +46,11 @@ public class TypeRegistry {
     serializers.put(descriptor, serializer);
   }
 
-  public static <Type> Type readObject(ObjectInput in) throws IOException {
+  public static <Type> Type readObject(CompactInput in) throws IOException {
     return TypeRegistry.<Type>resolveOrThrow(TypeDescriptor.readInstance(in)).readInstance(in);
   }
 
-  public static <Type extends CompactSerializable> void writeObject(ObjectOutput out, Type object)
+  public static <Type extends CompactSerializable> void writeObject(CompactOutput out, Type object)
       throws IOException {
     TypeDescriptor.writeInstance(out, object.descriptor());
     TypeRegistry.<Type>resolveOrThrow(object.descriptor()).writeInstance(out, object);

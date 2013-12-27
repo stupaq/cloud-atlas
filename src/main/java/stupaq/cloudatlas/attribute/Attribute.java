@@ -4,9 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -16,6 +14,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.naming.AttributeName;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializable;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.SerializableImplementation;
@@ -29,13 +29,13 @@ public final class Attribute<Type extends AttributeValue>
     implements CompactSerializable, Serializable {
   public static final CompactSerializer<Attribute> SERIALIZER = new CompactSerializer<Attribute>() {
     @Override
-    public Attribute readInstance(ObjectInput in) throws IOException {
+    public Attribute readInstance(CompactInput in) throws IOException {
       return new Attribute<>(AttributeName.SERIALIZER.readInstance(in),
           (AttributeValue) TypeRegistry.readObject(in));
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, Attribute object) throws IOException {
+    public void writeInstance(CompactOutput out, Attribute object) throws IOException {
       AttributeName.SERIALIZER.writeInstance(out, object.name);
       TypeRegistry.writeObject(out, object.value);
     }
@@ -43,7 +43,7 @@ public final class Attribute<Type extends AttributeValue>
   public static final CompactSerializer<Map<AttributeName, Attribute>> MAP_SERIALIZER =
       new CompactSerializer<Map<AttributeName, Attribute>>() {
         @Override
-        public Map<AttributeName, Attribute> readInstance(ObjectInput in) throws IOException {
+        public Map<AttributeName, Attribute> readInstance(CompactInput in) throws IOException {
           HashMap<AttributeName, Attribute> map = Maps.newHashMap();
           for (Attribute attribute : Collection(SERIALIZER).readInstance(in)) {
             map.put(attribute.name(), attribute);
@@ -52,7 +52,7 @@ public final class Attribute<Type extends AttributeValue>
         }
 
         @Override
-        public void writeInstance(ObjectOutput out, Map<AttributeName, Attribute> map)
+        public void writeInstance(CompactOutput out, Map<AttributeName, Attribute> map)
             throws IOException {
           Collection(SERIALIZER).writeInstance(out, map.values());
         }
@@ -71,13 +71,13 @@ public final class Attribute<Type extends AttributeValue>
   @SerializableImplementation
   private void writeObject(ObjectOutputStream out) throws IOException {
     out.defaultWriteObject();
-    TypeRegistry.writeObject(out, value);
+    TypeRegistry.writeObject(new CompactOutput(out), value);
   }
 
   @SerializableImplementation
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    value = TypeRegistry.readObject(in);
+    value = TypeRegistry.readObject(new CompactInput(in));
   }
 
   @Nonnull

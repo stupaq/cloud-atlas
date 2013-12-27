@@ -3,24 +3,24 @@ package stupaq.cloudatlas.gossiping.dataformat;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
 import javax.annotation.concurrent.Immutable;
 
 import stupaq.commons.base.ForwardingWrapper;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 
 @Immutable
 public class GossipId extends ForwardingWrapper<Integer> {
   public static final CompactSerializer<GossipId> SERIALIZER = new CompactSerializer<GossipId>() {
     @Override
-    public GossipId readInstance(ObjectInput in) throws IOException {
+    public GossipId readInstance(CompactInput in) throws IOException {
       return new GossipId(in.readInt(), in.readShort());
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, GossipId object) throws IOException {
+    public void writeInstance(CompactOutput out, GossipId object) throws IOException {
       out.writeInt(object.get());
       out.writeShort(object.framesCount);
     }

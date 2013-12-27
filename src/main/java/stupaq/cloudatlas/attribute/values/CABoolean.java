@@ -1,8 +1,6 @@
 package stupaq.cloudatlas.attribute.values;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -14,6 +12,8 @@ import stupaq.cloudatlas.query.semantics.OperableValue;
 import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
+import stupaq.compact.CompactInput;
+import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.CompactSerializers;
 import stupaq.compact.TypeDescriptor;
@@ -22,12 +22,12 @@ import stupaq.compact.TypeDescriptor;
 public final class CABoolean extends AbstractAtomic<Boolean> {
   public static final CompactSerializer<CABoolean> SERIALIZER = new CompactSerializer<CABoolean>() {
     @Override
-    public CABoolean readInstance(ObjectInput in) throws IOException {
+    public CABoolean readInstance(CompactInput in) throws IOException {
       return new CABoolean(CompactSerializers.Boolean.readInstance(in));
     }
 
     @Override
-    public void writeInstance(ObjectOutput out, CABoolean object) throws IOException {
+    public void writeInstance(CompactOutput out, CABoolean object) throws IOException {
       CompactSerializers.Boolean.writeInstance(out, object.orNull());
     }
   };
