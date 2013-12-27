@@ -17,12 +17,11 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.StartIfPresent;
-import stupaq.cloudatlas.gossiping.pipeline.GossipChannelInitializer;
+import stupaq.cloudatlas.gossiping.channel.GossipChannelInitializer;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
-import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
 import stupaq.cloudatlas.services.busybody.strategies.ContactSelection;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
@@ -50,8 +49,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   @Override
   protected void runOneIteration() throws Exception {
     // ZoneManager will determine contact following provided strategy
-    bus.post(
-        new ContactSelectionMessage(ContactSelection.create(config, blacklisted), contactSelf));
+    bus.post(new ContactSelectionMessage(ContactSelection.create(config, blacklisted)));
   }
 
   @Override
@@ -98,10 +96,6 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
     @Subscribe
     @DirectInvocation
     public void sendGossip(OutboundGossip gossip);
-
-    @Subscribe
-    @DirectInvocation
-    public void receiveGossip(InboundGossip gossip);
   }
 
   private class BusybodyListener extends AbstractMessageListener implements BusybodyContract {
@@ -110,13 +104,9 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
     }
 
     @Override
-    public void sendGossip(OutboundGossip gossip) {
-      channel.writeAndFlush(gossip);
-    }
-
-    @Override
-    public void receiveGossip(InboundGossip gossip) {
-      bus.post(gossip.getGossip());
+    public void sendGossip(OutboundGossip message) {
+      message.gossip().sender(contactSelf);
+      channel.writeAndFlush(message);
     }
   }
 }

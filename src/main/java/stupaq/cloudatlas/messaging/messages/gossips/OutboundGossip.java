@@ -6,8 +6,20 @@ import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.messaging.messages.Message;
 
 @Immutable
-public final class OutboundGossip extends Gossip {
-  public OutboundGossip(CAContact contact, Message gossip) {
-    super(contact, gossip);
+public final class OutboundGossip extends Message {
+  private final CAContact recipient;
+  private final Gossip gossip;
+
+  public OutboundGossip(CAContact recipient, Gossip gossip) {
+    this.recipient = recipient;
+    this.gossip = gossip;
+  }
+
+  public Gossip gossip() {
+    return gossip;
+  }
+
+  public CAContact recipient() {
+    return recipient;
   }
 }

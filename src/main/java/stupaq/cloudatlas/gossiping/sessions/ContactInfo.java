@@ -50,6 +50,7 @@ public class ContactInfo implements GossipingConfigKeys {
     GossipInfo info = received.get(id);
     if (info.add(msg)) {
       info.retain();
+      // This calls release automatically
       received.invalidate(id);
       return info;
     }

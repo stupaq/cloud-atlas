@@ -36,7 +36,7 @@ public class GossipInfo extends AbstractReferenceCounted {
     Preconditions.checkState(missingFrames == 0);
     CompositeByteBuf composite = Unpooled.compositeBuffer(received.length);
     for (Frame frame : received) {
-      // Created reference is passed to composite
+      // Created reference is passed to the composite
       composite.addComponent(frame.data());
     }
     return composite;

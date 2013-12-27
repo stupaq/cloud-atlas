@@ -318,8 +318,7 @@ public class ZoneManager extends AbstractScheduledService
           knownZones.put(sibling.globalName(), TIMESTAMP.get(sibling.payload()).value());
         }
       }
-      bus.post(new OutboundGossip(contact.get(),
-          new ZonesInterestMessage(message.getSelf(), agentsName, knownZones)));
+      bus.post(new OutboundGossip(contact.get(), new ZonesInterestMessage(agentsName, knownZones)));
     }
 
     @Override
@@ -345,7 +344,7 @@ public class ZoneManager extends AbstractScheduledService
             updates.put(name, zmi.export());
           }
         }
-        bus.post(new OutboundGossip(message.getContact(), new ZonesUpdateMessage(updates)));
+        bus.post(new OutboundGossip(message.sender(), new ZonesUpdateMessage(updates)));
       }
     }
 

@@ -2,28 +2,24 @@ package stupaq.cloudatlas.messaging.messages.gossips;
 
 import com.google.common.base.Preconditions;
 
-import javax.annotation.concurrent.Immutable;
-
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.messaging.messages.Message;
+import stupaq.compact.CompactSerializable;
 
-@Immutable
-public abstract class Gossip extends Message {
-  private final CAContact contact;
-  // FIXME make it serializable
-  private final Message gossip;
+public abstract class Gossip extends Message implements CompactSerializable {
+  private CAContact contact = null;
 
-  protected Gossip(CAContact contact, Message gossip) {
-    Preconditions.checkArgument(!(gossip instanceof Gossip));
-    this.contact = contact;
-    this.gossip = gossip;
-  }
-
-  public CAContact getContact() {
+  public final CAContact sender() {
+    Preconditions.checkNotNull(contact);
     return contact;
   }
 
-  public Message getGossip() {
-    return gossip;
+  public final Gossip sender(CAContact contact) {
+    this.contact = contact;
+    return this;
+  }
+
+  public final boolean hasSender() {
+    return contact != null;
   }
 }

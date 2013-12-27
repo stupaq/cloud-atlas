@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.gossiping.pipeline;
+package stupaq.cloudatlas.gossiping.channel;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -13,10 +13,8 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import stupaq.cloudatlas.gossiping.dataformat.EncodedGossip;
-import stupaq.cloudatlas.messaging.messages.Message;
-import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
+import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
-import stupaq.compact.CompactSerializable;
 import stupaq.compact.TypeRegistry;
 
 /** PACKAGE-LOCAL */
@@ -27,9 +25,8 @@ class GossipCodec extends MessageToMessageCodec<EncodedGossip, OutboundGossip> {
     ByteBuf buffer = Unpooled.buffer();
     try {
       ObjectOutput stream = new ObjectOutputStream(new ByteBufOutputStream(buffer));
-      // FIXME
-      TypeRegistry.writeObject(stream, (CompactSerializable) msg.getGossip());
-      out.add(new EncodedGossip(msg.getContact(), buffer));
+      TypeRegistry.writeObject(stream, msg.gossip());
+      out.add(new EncodedGossip(msg.recipient(), buffer));
     } finally {
       buffer.release();
     }
@@ -39,6 +36,10 @@ class GossipCodec extends MessageToMessageCodec<EncodedGossip, OutboundGossip> {
   protected void decode(ChannelHandlerContext ctx, EncodedGossip msg, List<Object> out)
       throws IOException {
     ObjectInput stream = new ObjectInputStream(msg.dataStream());
-    out.add(new InboundGossip(msg.contact(), (Message) TypeRegistry.readObject(stream)));
+    Gossip gossip = TypeRegistry.readObject(stream);
+    if (!gossip.hasSender()) {
+      gossip.sender(msg.contact());
+    }
+    out.add(gossip);
   }
 }

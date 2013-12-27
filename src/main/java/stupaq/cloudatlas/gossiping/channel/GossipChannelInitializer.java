@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.gossiping.pipeline;
+package stupaq.cloudatlas.gossiping.channel;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.DefaultMessageSizeEstimator;

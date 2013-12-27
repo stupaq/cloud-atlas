@@ -1,9 +1,10 @@
-package stupaq.cloudatlas.gossiping.pipeline;
+package stupaq.cloudatlas.gossiping.channel;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -44,15 +45,18 @@ final class FrameCodec extends MessageToMessageCodec<Frame, EncodedGossip>
 
   @Override
   protected void encode(ChannelHandlerContext ctx, EncodedGossip msg, List<Object> out)
-      throws ExecutionException {
+      throws ExecutionException, IOException {
     ContactInfo info = contacts.get(msg.contact());
     InetSocketAddress address = msg.contact().socketAddress();
     ByteBuf data = msg.data();
     try {
       int msgLength = data.readableBytes();
-      int framesCount = (msgLength + DATA_MAX_SIZE - 1) / DATA_MAX_SIZE;
+      int frameDataSize = DATA_MAX_SIZE;
+      int framesCount = (msgLength + frameDataSize - 1) / frameDataSize;
       FrameId frameId = info.nextGossipId(framesCount).first();
-      // FIXME
+      for (; framesCount > 0; framesCount--, frameId = frameId.next()) {
+        out.add(new Frame(frameId, address, data.readSlice(frameDataSize)));
+      }
     } finally {
       data.release();
     }

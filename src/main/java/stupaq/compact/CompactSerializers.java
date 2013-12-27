@@ -1,6 +1,7 @@
 package stupaq.compact;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -9,6 +10,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 
@@ -176,6 +179,30 @@ public final class CompactSerializers {
         out.writeInt(object.size());
         for (Element attribute : object) {
           elementSerializer.writeInstance(out, attribute);
+        }
+      }
+    };
+  }
+
+  public static <Key, Value> CompactSerializer<Map<Key, Value>> Map(
+      final CompactSerializer<Key> keySerializer, final CompactSerializer<Value> valueSerializer) {
+    return new CompactSerializer<Map<Key, Value>>() {
+      @Override
+      public Map<Key, Value> readInstance(ObjectInput in) throws IOException {
+        int size = in.readInt();
+        Map<Key, Value> map = Maps.newHashMap();
+        while (size-- > 0) {
+          map.put(keySerializer.readInstance(in), valueSerializer.readInstance(in));
+        }
+        return map;
+      }
+
+      @Override
+      public void writeInstance(ObjectOutput out, Map<Key, Value> object) throws IOException {
+        out.writeInt(object.size());
+        for (Entry<Key, Value> entry : object.entrySet()) {
+          keySerializer.writeInstance(out, entry.getKey());
+          valueSerializer.writeInstance(out, entry.getValue());
         }
       }
     };

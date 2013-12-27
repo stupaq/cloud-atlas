@@ -31,8 +31,9 @@ public enum TypeDescriptor {
   GlobalName,
   // ZMI
   ZoneManagementInfo,
-  // ? extends Message
-  ;
+  // Gossips
+  ZonesUpdateMessage,
+  ZonesInterestMessage;
 
   static {
     assert TypeDescriptor.values().length < Byte.MAX_VALUE;

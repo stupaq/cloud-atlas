@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.gossiping.pipeline;
+package stupaq.cloudatlas.gossiping.channel;
 
 import java.io.IOException;
 import java.util.List;
