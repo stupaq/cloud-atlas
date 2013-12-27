@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -29,6 +28,7 @@ import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
 import stupaq.cloudatlas.services.busybody.pipeline.GossipChannelInitializer;
 import stupaq.cloudatlas.services.busybody.strategies.ContactSelection;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
+import stupaq.commons.util.concurrent.FastStartScheduler;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
 @StartIfPresent(section = "gossip")
@@ -85,11 +85,10 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
 
   @Override
   protected Scheduler scheduler() {
-    return new CustomScheduler() {
+    return new FastStartScheduler() {
       @Override
-      protected Schedule getNextSchedule() throws Exception {
-        return new Schedule(config.getLong(GOSSIP_PERIOD, GOSSIP_PERIOD_DEFAULT),
-            TimeUnit.MILLISECONDS);
+      protected long getNextDelayMs() throws Exception {
+        return config.getLong(GOSSIP_PERIOD, GOSSIP_PERIOD_DEFAULT);
       }
     };
   }

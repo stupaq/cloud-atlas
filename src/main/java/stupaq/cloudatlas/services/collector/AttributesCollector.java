@@ -15,7 +15,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAContact;
@@ -30,6 +29,7 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.rmiserver.RMIServerConfigKeys;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
+import stupaq.commons.util.concurrent.FastStartScheduler;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
 import static com.google.common.collect.FluentIterable.from;
@@ -71,11 +71,10 @@ public class AttributesCollector extends AbstractScheduledService
 
   @Override
   protected Scheduler scheduler() {
-    return new CustomScheduler() {
+    return new FastStartScheduler() {
       @Override
-      protected Schedule getNextSchedule() throws Exception {
-        return new Schedule(config.getLong(PUSH_INTERVAL, PUSH_INTERVAL_DEFAULT),
-            TimeUnit.MILLISECONDS);
+      protected long getNextDelayMs() throws Exception {
+        return config.getLong(PUSH_INTERVAL, PUSH_INTERVAL_DEFAULT);
       }
     };
   }

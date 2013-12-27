@@ -13,12 +13,20 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration.Builder;
 import stupaq.cloudatlas.configuration.CAConfiguration;
-import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
+import stupaq.cloudatlas.messaging.MessageBus;
+import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.services.rmiserver.handler.LocalClientHandler;
+import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.cloudatlas.threading.SingleThreadModel;
 
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Int;
 import static stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchyTestUtils.Attr;
+import static stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchyTestUtils.Name;
 
 public class ZoneManagerTest {
   private static final GlobalName THE_ZONE = GlobalName.parse("/test1/test2/test3");
@@ -28,19 +36,43 @@ public class ZoneManagerTest {
   private static final long TIME_SCALE = 250L;
   private BootstrapConfiguration config;
   private ZoneManager manager;
+  private LocalClientProtocol client;
+  private MessageBus bus;
 
   @Before
   public void setUp() throws Exception {
     config = new Builder().config(prepareConfig()).threadModel(new SingleThreadModel()).create();
+    bus = config.bus();
     manager = new ZoneManager(config);
     manager.startAsync().awaitRunning();
+    client = new LocalClientHandler(bus);
     // Fill in with some attributes
-    config.bus().post(new AttributesUpdateMessage(THE_ZONE, SOME_ATTRIBUTES));
+    client.updateAttributes(THE_ZONE, SOME_ATTRIBUTES);
   }
 
   @After
   public void tearDown() throws Exception {
     manager.stopAsync().awaitTerminated();
+  }
+
+  @Test
+  public void testUpdateAttributes() throws Exception {
+    List<Attribute> attributes = client.getValues(asList(new EntityName(THE_ZONE, Name("free_ram")),
+        new EntityName(THE_ZONE, Name("nothing_that_exists"))));
+    assertNotNull(attributes.get(0));
+    assertEquals(Name("free_ram"), attributes.get(0).name());
+    assertEquals(Int(1073741824L), attributes.get(0).value());
+    assertNull(attributes.get(1));
+  }
+
+  @Test
+  public void testInstallQuery() throws Exception {
+    // FIXME
+  }
+
+  @Test
+  public void testRemoveQuery() throws Exception {
+    // FIXME
   }
 
   @Test

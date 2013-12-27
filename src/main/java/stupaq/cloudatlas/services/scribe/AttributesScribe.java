@@ -11,7 +11,6 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
@@ -20,6 +19,7 @@ import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.services.rmiserver.RMIServerConfigKeys;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 import stupaq.cloudatlas.services.scribe.RecordsManager.Records;
+import stupaq.commons.util.concurrent.FastStartScheduler;
 
 import static stupaq.cloudatlas.services.rmiserver.RMIServer.createClient;
 
@@ -56,6 +56,8 @@ public class AttributesScribe extends AbstractScheduledService
           Attribute value = values.next();
           if (value != null) {
             log.record(timestamp, value.value());
+          } else {
+            LOG.warn("No value for entity: " + entity);
           }
         }
       }
@@ -64,11 +66,10 @@ public class AttributesScribe extends AbstractScheduledService
 
   @Override
   protected Scheduler scheduler() {
-    return new CustomScheduler() {
+    return new FastStartScheduler() {
       @Override
-      protected Schedule getNextSchedule() throws Exception {
-        return new Schedule(config.getLong(FETCH_INTERVAL, FETCH_INTERVAL_DEFAULT),
-            TimeUnit.MILLISECONDS);
+      protected long getNextDelayMs() throws Exception {
+        return config.getLong(FETCH_INTERVAL, FETCH_INTERVAL_DEFAULT);
       }
     };
   }

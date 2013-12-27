@@ -17,7 +17,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAQuery;
@@ -28,6 +27,7 @@ import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.rmiserver.RMIServerConfigKeys;
 import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
+import stupaq.commons.util.concurrent.FastStartScheduler;
 
 import static com.google.common.base.Optional.of;
 import static stupaq.cloudatlas.services.rmiserver.RMIServer.createClient;
@@ -104,11 +104,10 @@ public class QueriesInstaller extends AbstractScheduledService
 
   @Override
   protected Scheduler scheduler() {
-    return new CustomScheduler() {
+    return new FastStartScheduler() {
       @Override
-      protected Schedule getNextSchedule() throws Exception {
-        return new Schedule(config.getLong(POLL_INTERVAL, POLL_INTERVAL_DEFAULT),
-            TimeUnit.MILLISECONDS);
+      protected long getNextDelayMs() throws Exception {
+        return config.getLong(POLL_INTERVAL, POLL_INTERVAL_DEFAULT);
       }
     };
   }
