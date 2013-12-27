@@ -67,6 +67,22 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
     return get().size() - 1;
   }
 
+  public GlobalName lca(GlobalName other) {
+    Iterator<LocalName> it1 = iterator(), it2 = other.iterator();
+    int level = 0;
+    while (it1.hasNext() && it2.hasNext()) {
+      if (!it1.next().equals(it2.next())) {
+        return prefix(level);
+      }
+      level++;
+    }
+    return this;
+  }
+
+  public boolean ancestor(GlobalName name) {
+    return lca(name).equals(this);
+  }
+
   @Override
   public boolean equals(Object o) {
     return o instanceof GlobalName && super.equals(o);

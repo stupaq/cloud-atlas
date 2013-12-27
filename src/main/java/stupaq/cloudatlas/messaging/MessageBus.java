@@ -8,6 +8,7 @@ import com.google.common.reflect.Reflection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import stupaq.cloudatlas.messaging.messages.Message;
 import stupaq.commons.util.concurrent.AsynchronousInvoker;
 
 public final class MessageBus {

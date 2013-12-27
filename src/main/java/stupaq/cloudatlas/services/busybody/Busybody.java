@@ -40,6 +40,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   private final Set<CAContact> blacklisted = Sets.newHashSet();
   private NioEventLoopGroup group;
   private Channel channel;
+  private CAContact contactSelf;
 
   public Busybody(BootstrapConfiguration config) {
     config.mustContain(BIND_PORT);
@@ -51,24 +52,25 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   @Override
   protected void runOneIteration() throws Exception {
     // ZoneManager will determine contact following provided strategy
-    bus.post(new ContactSelectionMessage(ContactSelection.create(config, blacklisted)));
+    bus.post(
+        new ContactSelectionMessage(ContactSelection.create(config, blacklisted), contactSelf));
   }
 
   @Override
   protected void startUp() {
     // Bootstrap Netty
     group = new NioEventLoopGroup();
-    CAContact contact = new CAContact("127.0.0.1:" + config.getInt(BIND_PORT));
+    contactSelf = new CAContact("127.0.0.1:" + config.getInt(BIND_PORT));
     channel = new Bootstrap().group(group)
         .channel(NioDatagramChannel.class)
         .option(ChannelOption.MESSAGE_SIZE_ESTIMATOR,
             new DefaultMessageSizeEstimator(MESSAGE_SIZE_DEFAULT))
         .handler(new GossipChannelInitializer(config))
-        .bind(contact.socketAddress())
+        .bind(contactSelf.socketAddress())
         .syncUninterruptibly()
         .channel();
-    blacklisted.add(contact);
-    LOG.info("Agent's contact information: " + contact);
+    blacklisted.add(contactSelf);
+    LOG.info("Agent's contact information: " + contactSelf);
     // We're ready to operate
     bus.register(new BusybodyListener());
   }

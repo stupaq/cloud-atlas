@@ -24,7 +24,7 @@ import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
 import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
-import stupaq.cloudatlas.messaging.messages.Request;
+import stupaq.cloudatlas.messaging.messages.requests.Request;
 import stupaq.cloudatlas.messaging.messages.requests.DumpZoneRequest;
 import stupaq.cloudatlas.messaging.messages.requests.EntitiesValuesRequest;
 import stupaq.cloudatlas.messaging.messages.requests.KnownZonesRequest;

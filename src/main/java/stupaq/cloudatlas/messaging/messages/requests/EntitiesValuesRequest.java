@@ -5,7 +5,6 @@ import com.google.common.util.concurrent.SettableFuture;
 import java.util.Iterator;
 import java.util.List;
 
-import stupaq.cloudatlas.messaging.messages.Request;
 import stupaq.cloudatlas.messaging.messages.responses.EntitiesValuesResponse;
 import stupaq.cloudatlas.naming.EntityName;
 

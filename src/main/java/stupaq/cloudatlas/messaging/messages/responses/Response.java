@@ -1,10 +1,11 @@
-package stupaq.cloudatlas.messaging.messages;
+package stupaq.cloudatlas.messaging.messages.responses;
 
 import com.google.common.base.Preconditions;
 
 import javax.annotation.concurrent.Immutable;
 
-import stupaq.cloudatlas.messaging.Message;
+import stupaq.cloudatlas.messaging.messages.Message;
+import stupaq.cloudatlas.messaging.messages.requests.Request;
 
 @Immutable
 public abstract class Response<RequestType extends Request> extends Message {

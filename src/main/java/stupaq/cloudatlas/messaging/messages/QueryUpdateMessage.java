@@ -6,7 +6,6 @@ import java.util.List;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAQuery;
-import stupaq.cloudatlas.messaging.Message;
 import stupaq.cloudatlas.naming.GlobalName;
 
 public class QueryUpdateMessage extends Message {

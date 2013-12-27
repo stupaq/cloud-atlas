@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 
 import java.util.List;
 
-import stupaq.cloudatlas.messaging.Message;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
 

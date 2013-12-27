@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
+import stupaq.cloudatlas.messaging.messages.Message;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 

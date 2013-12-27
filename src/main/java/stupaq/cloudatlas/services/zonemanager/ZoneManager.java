@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.AbstractScheduledService;
@@ -17,12 +18,15 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CAQuery;
+import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
@@ -31,6 +35,9 @@ import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
 import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
+import stupaq.cloudatlas.messaging.messages.ZonesInterestMessage;
+import stupaq.cloudatlas.messaging.messages.ZonesUpdateMessage;
+import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
 import stupaq.cloudatlas.messaging.messages.requests.DumpZoneRequest;
 import stupaq.cloudatlas.messaging.messages.requests.EntitiesValuesRequest;
 import stupaq.cloudatlas.messaging.messages.requests.KnownZonesRequest;
@@ -94,7 +101,7 @@ public class ZoneManager extends AbstractScheduledService
     }
     // We need to populate all attributes that are expected to exist
     agentsNode.synthesizePath(new InstalledQueriesUpdater());
-    agentsNode.synthesizePath(new BuiltinsUpdater(config.clock().timestamp()));
+    agentsNode.synthesizePath(new BuiltinsUpdater(config.clock()));
     // We're ready to operate
     bus.register(new ZoneManagerListener());
   }
@@ -114,10 +121,8 @@ public class ZoneManager extends AbstractScheduledService
     assertion.check();
     // We do the computation and updates for zones that we are a source of truth ONLY
     agentsNode.synthesizePath(new InstalledQueriesUpdater());
-    agentsNode.synthesizePath(new BuiltinsUpdater(config.clock().timestamp()));
-    long retention = config.getLong(PURGE_INTERVAL, PURGE_INTERVAL_DEFAULT);
-    hierarchy.filterLeaves(
-        new StaleZonesRemover(config.clock().timestamp(-retention, TimeUnit.MILLISECONDS)));
+    agentsNode.synthesizePath(new BuiltinsUpdater(config.clock()));
+    hierarchy.filterLeaves(new StaleZonesRemover(config.clock(), config));
     dumpHierarchy();
   }
 
@@ -166,6 +171,14 @@ public class ZoneManager extends AbstractScheduledService
     @Subscribe
     @ScheduledInvocation
     public void selectContact(ContactSelectionMessage message);
+
+    @Subscribe
+    @ScheduledInvocation
+    void exportZones(ZonesInterestMessage message);
+
+    @Subscribe
+    @ScheduledInvocation
+    public void updateZones(ZonesUpdateMessage message);
   }
 
   private class ZoneManagerListener extends AbstractMessageListener implements ZoneManagerContract {
@@ -197,7 +210,7 @@ public class ZoneManager extends AbstractScheduledService
       assertion.check();
       List<Attribute> attributes = new ArrayList<>();
       for (EntityName entity : request) {
-        Optional<ZoneManagementInfo> zmi = hierarchy.getPayload(entity.zone);
+        Optional<ZoneManagementInfo> zmi = hierarchy.findPayload(entity.zone);
         if (zmi.isPresent()) {
           Optional<Attribute> attribute = zmi.get().get(entity.attributeName);
           if (attribute.isPresent()) {
@@ -296,8 +309,69 @@ public class ZoneManager extends AbstractScheduledService
         LOG.error("Could not find contact, aborting gossiping round");
         return;
       }
-      // TODO
-      LOG.info("Selected contact: " + contact);
+      LOG.debug("Selected contact: " + contact);
+      Map<GlobalName, CATime> knownZones = Maps.newHashMap();
+      // Zones in a single agent form a single spine
+      ZoneHierarchy<ZoneManagementInfo> current = agentsNode.parent();
+      for (; current != null; current = current.parent()) {
+        for (ZoneHierarchy<ZoneManagementInfo> sibling : current.children()) {
+          knownZones.put(sibling.globalName(), TIMESTAMP.get(sibling.payload()).value());
+        }
+      }
+      bus.post(new OutboundGossip(contact.get(),
+          new ZonesInterestMessage(message.getSelf(), agentsName, knownZones)));
+    }
+
+    @Override
+    public void exportZones(ZonesInterestMessage message) {
+      GlobalName lca = agentsName.lca(message.getLeaf());
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Agent: " + agentsNode + " asked by: " + message.getLeaf() +
+            " for siblings of a path: " + lca);
+      }
+      Map<GlobalName, ZoneManagementInfo> updates = Maps.newHashMap();
+      ZoneHierarchy<ZoneManagementInfo> current = hierarchy.find(lca).get().parent();
+      for (; current != null; current = current.parent()) {
+        for (ZoneHierarchy<ZoneManagementInfo> sibling : current.children()) {
+          GlobalName name = sibling.globalName();
+          if (!name.ancestor(agentsName)) {
+            // Ancestor ZMIs will be recomputed by communicating agent
+            continue;
+          }
+          CATime knownTime = message.getTimestamp(name);
+          ZoneManagementInfo zmi = sibling.payload();
+          if (knownTime.rel().lesserOrEqual(TIMESTAMP.get(zmi).value()).getOr(true)) {
+            // Known timestamp is older or does not exist
+            updates.put(name, zmi.export());
+          }
+        }
+        bus.post(new OutboundGossip(message.getContact(), new ZonesUpdateMessage(updates)));
+      }
+    }
+
+    @Override
+    public void updateZones(ZonesUpdateMessage message) {
+      // We will reject zones that are too old and to be purged in the next iteration
+      StaleZonesRemover filter = new StaleZonesRemover(config.clock(), config);
+      for (Entry<GlobalName, ZoneManagementInfo> entry : message) {
+        GlobalName name = entry.getKey();
+        ZoneManagementInfo update = entry.getValue();
+        if (filter.apply(update)) {
+          Optional<ZoneManagementInfo> zone = hierarchy.findPayload(name);
+          if (zone.isPresent()) {
+            zone.get().update(update);
+            continue;
+          }
+          Optional<ZoneHierarchy<ZoneManagementInfo>> parent = hierarchy.find(name.parent());
+          if (parent.isPresent()) {
+            new ZoneHierarchy<>(update).attachTo(parent.get());
+            continue;
+          }
+          LOG.warn("Received unwanted zone update: " + name);
+        } else {
+          LOG.warn("Rejected too old update for zone: " + name);
+        }
+      }
     }
   }
 }

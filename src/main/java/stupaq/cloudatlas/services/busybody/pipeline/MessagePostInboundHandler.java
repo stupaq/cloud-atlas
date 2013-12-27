@@ -3,7 +3,7 @@ package stupaq.cloudatlas.services.busybody.pipeline;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import stupaq.cloudatlas.messaging.MessageBus;
-import stupaq.cloudatlas.messaging.messages.Gossip;
+import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
 
 public class MessagePostInboundHandler extends SimpleChannelInboundHandler<Gossip> {
   private final MessageBus bus;

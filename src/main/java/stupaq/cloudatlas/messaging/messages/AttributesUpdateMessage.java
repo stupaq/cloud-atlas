@@ -8,7 +8,6 @@ import java.util.List;
 import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.Attribute;
-import stupaq.cloudatlas.messaging.Message;
 import stupaq.cloudatlas.naming.GlobalName;
 
 @Immutable

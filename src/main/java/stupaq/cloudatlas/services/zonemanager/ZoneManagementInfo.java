@@ -1,6 +1,7 @@
 package stupaq.cloudatlas.services.zonemanager;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
@@ -80,6 +81,13 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
   @Override
   public ZoneManagementInfo export() {
     return new ZoneManagementInfo(localName, attributes, computed);
+  }
+
+  public void update(ZoneManagementInfo update) {
+    Preconditions.checkArgument(localName.equals(update.localName()));
+    ensureCopied();
+    computed.clear();
+    attributes = update.attributes;
   }
 
   @Override

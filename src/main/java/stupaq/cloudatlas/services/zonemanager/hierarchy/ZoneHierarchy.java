@@ -12,6 +12,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,6 +61,10 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
 
   public boolean isLeaf() {
     return childZones.isEmpty();
+  }
+
+  public Collection<ZoneHierarchy<Payload>> children() {
+    return childZones.values();
   }
 
   public FluentIterable<Payload> childPayloads() {
@@ -125,7 +130,7 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
     return suffix;
   }
 
-  public Optional<Payload> getPayload(GlobalName globalName) {
+  public Optional<Payload> findPayload(GlobalName globalName) {
     Optional<ZoneHierarchy<Payload>> zone = find(globalName);
     return Optional.fromNullable(zone.isPresent() ? zone.get().payload() : null);
   }

@@ -21,8 +21,7 @@ public class ZoneManagerTest {
 
   @Before
   public void setUp() throws Exception {
-    config =
-        new Builder().config(prepareConfig()).threadModel(new SingleThreadModel()).create();
+    config = new Builder().config(prepareConfig()).threadModel(new SingleThreadModel()).create();
     manager = new ZoneManager(config);
     manager.startAsync().awaitRunning();
   }
