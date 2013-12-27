@@ -47,6 +47,11 @@ public class FrameId {
     return result;
   }
 
+  @Override
+  public String toString() {
+    return "FrameId{" + "gossipId=" + gossipId + ", seqNo=" + seqNo + '}';
+  }
+
   public FrameId next() {
     return new FrameId(gossipId, (short) (seqNo + 1));
   }

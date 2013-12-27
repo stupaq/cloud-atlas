@@ -14,6 +14,8 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.util.internal.logging.CommonsLoggerFactory;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.StartIfPresent;
@@ -28,8 +30,12 @@ import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
 import stupaq.commons.util.concurrent.FastStartScheduler;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
-@StartIfPresent(section = "gossip")
+@StartIfPresent(section = "gossiping")
 public class Busybody extends AbstractScheduledService implements BusybodyConfigKeys {
+  static {
+    InternalLoggerFactory.setDefaultFactory(new CommonsLoggerFactory());
+  }
+
   private static final Log LOG = LogFactory.getLog(Busybody.class);
   private final BootstrapConfiguration config;
   private final SingleThreadedExecutor executor;

@@ -21,10 +21,10 @@ public class ContactInfo implements GossipingConfigKeys {
 
   public ContactInfo(CAConfiguration config) {
     received = CacheBuilder.newBuilder()
-        .removalListener(new ReferenceCountedRemovalListener())
         .expireAfterAccess(
             config.getLong(FRAME_ASSEMBLING_TIMEOUT, FRAME_ASSEMBLING_TIMEOUT_DEFAULT),
             TimeUnit.MILLISECONDS)
+        .removalListener(new ReferenceCountedRemovalListener())
         .build(new CacheLoader<GossipId, GossipInfo>() {
           @Override
           public GossipInfo load(GossipId key) {
