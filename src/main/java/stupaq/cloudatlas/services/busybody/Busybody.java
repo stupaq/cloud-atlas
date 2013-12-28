@@ -24,6 +24,7 @@ import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
+import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
 import stupaq.cloudatlas.services.busybody.strategies.ContactSelection;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
@@ -101,6 +102,10 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   private static interface BusybodyContract extends MessageListener {
     @Subscribe
     @DirectInvocation
+    public void receiveGossip(InboundGossip gossip);
+
+    @Subscribe
+    @DirectInvocation
     public void sendGossip(OutboundGossip gossip);
   }
 
@@ -110,8 +115,19 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
     }
 
     @Override
+    public void receiveGossip(InboundGossip gossip) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("INBOUND GOSSIP: " + gossip);
+      }
+      bus.post(gossip.gossip());
+    }
+
+    @Override
     public void sendGossip(OutboundGossip message) {
       message.gossip().sender(contactSelf);
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("OUTBOUND GOSSIP: " + message);
+      }
       channel.writeAndFlush(message);
     }
   }

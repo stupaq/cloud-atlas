@@ -60,4 +60,10 @@ public class ZonesInterestGossip extends Gossip implements Iterable<Entry<Global
   public TypeDescriptor descriptor() {
     return TypeDescriptor.ZonesInterestGossip;
   }
+
+  @Override
+  public String toString() {
+    return "ZonesInterestGossip{sender=" + sender() + ", leaf=" + leaf + ", timestamps=" +
+        timestamps + '}';
+  }
 }

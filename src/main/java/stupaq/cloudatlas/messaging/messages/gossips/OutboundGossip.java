@@ -22,4 +22,9 @@ public final class OutboundGossip extends Message {
   public CAContact recipient() {
     return recipient;
   }
+
+  @Override
+  public String toString() {
+    return "OutboundGossip{recipient=" + recipient + ", gossip=" + gossip + '}';
+  }
 }

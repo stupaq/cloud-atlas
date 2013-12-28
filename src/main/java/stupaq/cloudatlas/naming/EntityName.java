@@ -20,11 +20,6 @@ public class EntityName implements Serializable {
     this.attributeName = attributeName;
   }
 
-  public static EntityName parse(String str) {
-    GlobalName entity = GlobalName.parse(str);
-    return new EntityName(entity.parent(), AttributeName.fromString(entity.child().toString()));
-  }
-
   @Override
   public String toString() {
     return zone.toString() + GlobalName.SEPARATOR + attributeName.toString();
@@ -42,5 +37,10 @@ public class EntityName implements Serializable {
     int result = zone.hashCode();
     result = 31 * result + attributeName.hashCode();
     return result;
+  }
+
+  public static EntityName parse(String str) {
+    GlobalName entity = GlobalName.parse(str);
+    return new EntityName(entity.parent(), AttributeName.fromString(entity.leaf().toString()));
   }
 }

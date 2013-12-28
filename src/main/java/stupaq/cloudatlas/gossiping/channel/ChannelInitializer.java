@@ -19,11 +19,8 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Data
         .setMessageSizeEstimator(
             new DefaultMessageSizeEstimator(GossipingConfigKeys.DATAGRAM_MAX_SIZE));
     channel.pipeline()
-        .addLast(new LoggingHandler("DATAGRAM"))
         .addLast(new DatagramCodec(config))
-        .addLast(new LoggingHandler("FRAME"))
         .addLast(new FrameCodec(config))
-        .addLast(new LoggingHandler("GOSSIP"))
         .addLast(new GossipCodec(config))
         .addLast(new MessageInboundHandler(config));
   }

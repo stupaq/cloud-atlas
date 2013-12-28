@@ -40,4 +40,10 @@ public class ZonesInterestInitialGossip extends ZonesInterestGossip {
   public TypeDescriptor descriptor() {
     return TypeDescriptor.ZonesInterestInitialGossip;
   }
+
+  @Override
+  public String toString() {
+    return "ZonesInterestInitialGossip{sender=" + sender() + ", leaf=" + leaf + ", timestamps=" +
+        timestamps + '}';
+  }
 }

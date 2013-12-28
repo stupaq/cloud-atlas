@@ -48,4 +48,9 @@ public class ZonesUpdateGossip extends Gossip
   public TypeDescriptor descriptor() {
     return TypeDescriptor.ZonesUpdateGossip;
   }
+
+  @Override
+  public String toString() {
+    return "ZonesUpdateGossip{sender=" + sender() + ", zones=" + zones.keySet() + '}';
+  }
 }

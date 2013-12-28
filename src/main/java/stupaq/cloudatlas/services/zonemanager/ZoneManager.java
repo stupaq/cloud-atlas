@@ -357,7 +357,7 @@ public class ZoneManager extends AbstractScheduledService
     public void exportZones(ZonesInterestGossip message) {
       GlobalName lca = agentsName.lca(message.getLeaf());
       if (LOG.isDebugEnabled()) {
-        LOG.debug("Agent: " + agentsNode + " asked by: " + message.getLeaf() +
+        LOG.debug("Agent: " + agentsName + " asked by: " + message.getLeaf() +
             " for siblings of a path: " + lca);
       }
       Map<GlobalName, ZoneManagementInfo> updates = Maps.newHashMap();
@@ -376,8 +376,8 @@ public class ZoneManager extends AbstractScheduledService
             updates.put(name, zmi.export());
           }
         }
-        bus.post(new OutboundGossip(message.sender(), new ZonesUpdateGossip(updates)));
       }
+      bus.post(new OutboundGossip(message.sender(), new ZonesUpdateGossip(updates)));
     }
 
     @Override
@@ -391,11 +391,13 @@ public class ZoneManager extends AbstractScheduledService
           Optional<ZoneManagementInfo> zone = hierarchy.findPayload(name);
           if (zone.isPresent()) {
             zone.get().update(update);
+            LOG.info("Updated zone info: " + name);
             continue;
           }
           Optional<ZoneHierarchy<ZoneManagementInfo>> parent = hierarchy.find(name.parent());
           if (parent.isPresent()) {
             new ZoneHierarchy<>(update).attachTo(parent.get());
+            LOG.info("Received new zone: " + name);
             continue;
           }
           LOG.warn("Received unwanted zone update: " + name);

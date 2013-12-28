@@ -4,10 +4,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.messaging.MessageBus;
-import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
+import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
 
 /** PACKAGE-LOCAL */
-class MessageInboundHandler extends SimpleChannelInboundHandler<Gossip> {
+class MessageInboundHandler extends SimpleChannelInboundHandler<InboundGossip> {
   private final MessageBus bus;
 
   public MessageInboundHandler(BootstrapConfiguration config) {
@@ -15,7 +15,7 @@ class MessageInboundHandler extends SimpleChannelInboundHandler<Gossip> {
   }
 
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, Gossip msg) throws Exception {
+  protected void channelRead0(ChannelHandlerContext ctx, InboundGossip msg) throws Exception {
     bus.post(msg);
   }
 }

@@ -52,11 +52,7 @@ public final class GlobalName extends ForwardingWrapper<ArrayList<LocalName>>
   }
 
   public GlobalName parent() {
-    return prefix(get().size() - 1);
-  }
-
-  public LocalName child() {
-    return get().get(get().size() - 1);
+    return prefix(level() - 1);
   }
 
   public LocalName leaf() {

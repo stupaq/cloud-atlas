@@ -21,6 +21,7 @@ import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
 import stupaq.cloudatlas.gossiping.peerstate.ContactStateCache;
 import stupaq.cloudatlas.gossiping.peerstate.GossipIdAllocator;
 import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
+import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
@@ -67,7 +68,7 @@ class GossipCodec extends MessageToMessageCodec<WireGossip, OutboundGossip>
       if (!gossip.hasSender()) {
         gossip.sender(msg.contact());
       }
-      out.add(gossip);
+      out.add(new InboundGossip(gossip));
     } catch (Throwable t) {
       LOG.error("Decoding failed", t);
       // Ignore as we do not close the only channel
