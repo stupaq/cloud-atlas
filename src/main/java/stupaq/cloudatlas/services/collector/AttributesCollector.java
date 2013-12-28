@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -61,6 +62,7 @@ public class AttributesCollector extends AbstractScheduledService
   @Override
   protected void runOneIteration() throws IOException {
     client.updateAttributes(zone, collectAttributes());
+    client.setFallbackContacts(collectFallbackContacts());
   }
 
   @Override
@@ -82,6 +84,20 @@ public class AttributesCollector extends AbstractScheduledService
   @Override
   protected ScheduledExecutorService executor() {
     return executor;
+  }
+
+  private List<CAContact> collectFallbackContacts() {
+    if (config.containsKey(FALLBACK_CONTACTS)) {
+      return from(asList(config.getStringArray(FALLBACK_CONTACTS))).transform(
+          new Function<String, CAContact>() {
+            @Override
+            public CAContact apply(String input) {
+              return new CAContact(input);
+            }
+          }).toList();
+    } else {
+      return Collections.emptyList();
+    }
   }
 
   private List<Attribute> collectAttributes() throws IOException {
@@ -121,16 +137,6 @@ public class AttributesCollector extends AbstractScheduledService
           attributes.add(new Attribute<>(AttributeName.fromString(name),
               new CASet<>(of(CAString.class), list)));
         }
-      }
-      if (config.containsKey(ZONE_CONTACTS)) {
-        Iterable<CAContact> contacts = from(asList(config.getStringArray(ZONE_CONTACTS))).transform(
-            new Function<String, CAContact>() {
-              @Override
-              public CAContact apply(String input) {
-                return new CAContact(input);
-              }
-            });
-        attributes.add(CONTACTS.create(new CASet<>(of(CAContact.class), contacts)));
       }
       return attributes;
     } catch (ConfigurationException e) {

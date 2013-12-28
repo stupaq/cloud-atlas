@@ -35,7 +35,8 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
     this.blacklisted = blacklisted;
   }
 
-  public Optional<CAContact> select(ZoneHierarchy<ZoneManagementInfo> leafZone) throws Exception {
+  public Optional<CAContact> select(ZoneHierarchy<ZoneManagementInfo> leafZone,
+      Collection<CAContact> fallbackContacts) throws Exception {
     GlobalName leafName = leafZone.globalName();
     try {
       int level = levelStrategy.select(leafName);
@@ -48,8 +49,8 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
       FluentIterable<CAContact> contacts =
           from(CONTACTS.get(zmi).value()).filter(not(in(blacklisted)));
       if (contacts.isEmpty()) {
-        LOG.warn("Selected ZMI has no contacts, falling back to leaf zone's");
-        contacts = from(CONTACTS.get(leafZone.payload()).value()).filter(not(in(blacklisted)));
+        LOG.warn("Selected ZMI has no contacts, picking one from fallback set");
+        contacts = from(fallbackContacts).filter(not(in(blacklisted)));
       }
       return Optional.fromNullable(
           contacts.isEmpty() ? null : Collections3.<CAContact>random(contacts));

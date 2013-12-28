@@ -5,6 +5,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.AbstractScheduledService;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +35,7 @@ import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
+import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
 import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
@@ -73,6 +76,7 @@ public class ZoneManager extends AbstractScheduledService
   private final ZoneHierarchy<ZoneManagementInfo> hierarchy;
   private final SingleThreadedExecutor executor;
   private final ZoneHierarchy<ZoneManagementInfo> agentsNode;
+  private final Set<CAContact> fallbackContacts = Sets.newHashSet();
   private MappedByteBuffer hierarchyDump;
 
   public ZoneManager(BootstrapConfiguration config) {
@@ -167,6 +171,10 @@ public class ZoneManager extends AbstractScheduledService
     @Subscribe
     @ScheduledInvocation
     public void removeQuery(QueryRemovalMessage message);
+
+    @Subscribe
+    @ScheduledInvocation
+    public void setFallbackContacts(FallbackContactsMessage message);
 
     @Subscribe
     @ScheduledInvocation
@@ -271,6 +279,12 @@ public class ZoneManager extends AbstractScheduledService
       }, true);
     }
 
+    @Override
+    public void setFallbackContacts(FallbackContactsMessage message) {
+      fallbackContacts.clear();
+      Iterables.addAll(fallbackContacts, message);
+    }
+
     private void iterateZMIs(Optional<List<GlobalName>> names,
         final Modifier<ZoneManagementInfo> action, final boolean noLeaves) {
       if (names.isPresent()) {
@@ -300,7 +314,7 @@ public class ZoneManager extends AbstractScheduledService
     public void selectContact(ContactSelectionMessage message) {
       Optional<CAContact> contact;
       try {
-        contact = message.getStrategy().select(agentsNode);
+        contact = message.getStrategy().select(agentsNode, fallbackContacts);
       } catch (Exception e) {
         LOG.error("Contact selection failed, aborting gossiping round", e);
         return;
