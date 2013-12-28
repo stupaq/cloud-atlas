@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.messaging.messages;
+package stupaq.cloudatlas.messaging.messages.gossips;
 
 import com.google.common.base.Optional;
 
@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.values.CATime;
-import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
@@ -20,17 +19,17 @@ import stupaq.compact.TypeDescriptor;
 import static stupaq.compact.CompactSerializers.Map;
 
 @Immutable
-public class ZonesInterestMessage extends Gossip implements Iterable<Entry<GlobalName, CATime>> {
-  public static final CompactSerializer<ZonesInterestMessage> SERIALIZER =
-      new CompactSerializer<ZonesInterestMessage>() {
+public class ZonesInterestGossip extends Gossip implements Iterable<Entry<GlobalName, CATime>> {
+  public static final CompactSerializer<ZonesInterestGossip> SERIALIZER =
+      new CompactSerializer<ZonesInterestGossip>() {
         @Override
-        public ZonesInterestMessage readInstance(CompactInput in) throws IOException {
-          return new ZonesInterestMessage(GlobalName.SERIALIZER.readInstance(in),
+        public ZonesInterestGossip readInstance(CompactInput in) throws IOException {
+          return new ZonesInterestGossip(GlobalName.SERIALIZER.readInstance(in),
               Map(GlobalName.SERIALIZER, CATime.SERIALIZER).readInstance(in));
         }
 
         @Override
-        public void writeInstance(CompactOutput out, ZonesInterestMessage object)
+        public void writeInstance(CompactOutput out, ZonesInterestGossip object)
             throws IOException {
           GlobalName.SERIALIZER.writeInstance(out, object.getLeaf());
           Map(GlobalName.SERIALIZER, CATime.SERIALIZER).writeInstance(out, object.timestamps);
@@ -39,7 +38,7 @@ public class ZonesInterestMessage extends Gossip implements Iterable<Entry<Globa
   private final GlobalName leaf;
   private final Map<GlobalName, CATime> timestamps;
 
-  public ZonesInterestMessage(GlobalName leaf, Map<GlobalName, CATime> timestamps) {
+  public ZonesInterestGossip(GlobalName leaf, Map<GlobalName, CATime> timestamps) {
     this.leaf = leaf;
     this.timestamps = timestamps;
   }

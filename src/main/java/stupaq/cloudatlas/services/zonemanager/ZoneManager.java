@@ -35,9 +35,9 @@ import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
 import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
-import stupaq.cloudatlas.messaging.messages.ZonesInterestMessage;
-import stupaq.cloudatlas.messaging.messages.ZonesUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
+import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestGossip;
+import stupaq.cloudatlas.messaging.messages.gossips.ZonesUpdateGossip;
 import stupaq.cloudatlas.messaging.messages.requests.DumpZoneRequest;
 import stupaq.cloudatlas.messaging.messages.requests.EntitiesValuesRequest;
 import stupaq.cloudatlas.messaging.messages.requests.KnownZonesRequest;
@@ -174,11 +174,11 @@ public class ZoneManager extends AbstractScheduledService
 
     @Subscribe
     @ScheduledInvocation
-    public void exportZones(ZonesInterestMessage message);
+    public void exportZones(ZonesInterestGossip message);
 
     @Subscribe
     @ScheduledInvocation
-    public void updateZones(ZonesUpdateMessage message);
+    public void updateZones(ZonesUpdateGossip message);
   }
 
   private class ZoneManagerListener extends AbstractMessageListener implements ZoneManagerContract {
@@ -318,11 +318,11 @@ public class ZoneManager extends AbstractScheduledService
           knownZones.put(sibling.globalName(), TIMESTAMP.get(sibling.payload()).value());
         }
       }
-      bus.post(new OutboundGossip(contact.get(), new ZonesInterestMessage(agentsName, knownZones)));
+      bus.post(new OutboundGossip(contact.get(), new ZonesInterestGossip(agentsName, knownZones)));
     }
 
     @Override
-    public void exportZones(ZonesInterestMessage message) {
+    public void exportZones(ZonesInterestGossip message) {
       GlobalName lca = agentsName.lca(message.getLeaf());
       if (LOG.isDebugEnabled()) {
         LOG.debug("Agent: " + agentsNode + " asked by: " + message.getLeaf() +
@@ -344,12 +344,12 @@ public class ZoneManager extends AbstractScheduledService
             updates.put(name, zmi.export());
           }
         }
-        bus.post(new OutboundGossip(message.sender(), new ZonesUpdateMessage(updates)));
+        bus.post(new OutboundGossip(message.sender(), new ZonesUpdateGossip(updates)));
       }
     }
 
     @Override
-    public void updateZones(ZonesUpdateMessage message) {
+    public void updateZones(ZonesUpdateGossip message) {
       // We will reject zones that are too old and to be purged in the next iteration
       StaleZonesRemover filter = new StaleZonesRemover(config.clock(), config);
       for (Entry<GlobalName, ZoneManagementInfo> entry : message) {

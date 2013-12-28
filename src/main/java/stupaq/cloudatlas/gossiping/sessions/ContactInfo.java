@@ -37,7 +37,7 @@ public class ContactInfo implements GossipingConfigKeys {
     // We'd like to have a BloomFilter here... we I can't.
     heardAbout = new CacheSet<>(CacheBuilder.newBuilder()
         .expireAfterAccess(
-            config.getLong(GOSSIP_DUPLICATION_TIMEOUT, GOSSIP_DUPLICATION_TIMEOUT_DEFAULT),
+            config.getLong(GOSSIP_ID_RETENTION, GOSSIP_ID_RETENTION_DEFAULT),
             TimeUnit.MILLISECONDS));
   }
 

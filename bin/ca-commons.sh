@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BIN_DIR="$(pwd)/$(dirname $0)"
+BIN_DIR="$(dirname $0)"
 ROOT_DIR="$BIN_DIR/.."
 CP_FILE="$ROOT_DIR/classpath"
 
