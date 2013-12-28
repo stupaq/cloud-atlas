@@ -3,7 +3,7 @@ package stupaq.cloudatlas.gossiping.dataformat;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import stupaq.cloudatlas.attribute.values.CAContact;
-import stupaq.cloudatlas.gossiping.peerstate.GossipInfo;
+import stupaq.cloudatlas.gossiping.peerstate.GossipFrameIndex;
 
 public class WireGossip {
   private final CAContact contact;
@@ -17,7 +17,7 @@ public class WireGossip {
     this.data = data.retain();
   }
 
-  public WireGossip(CAContact contact, GossipId gossipId, GossipInfo gossip) {
+  public WireGossip(CAContact contact, GossipId gossipId, GossipFrameIndex gossip) {
     this.contact = contact;
     this.gossipId = gossipId;
     // We pass over reference created by assemble() to WireGossip's field

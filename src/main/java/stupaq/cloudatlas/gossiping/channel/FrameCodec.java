@@ -17,23 +17,23 @@ import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
 import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
 import stupaq.cloudatlas.gossiping.dataformat.WireFrame.FramesBuilder;
 import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
-import stupaq.cloudatlas.gossiping.peerstate.ContactInfo;
+import stupaq.cloudatlas.gossiping.peerstate.ContactFrameIndex;
 import stupaq.cloudatlas.gossiping.peerstate.ContactStateCache;
-import stupaq.cloudatlas.gossiping.peerstate.GossipInfo;
+import stupaq.cloudatlas.gossiping.peerstate.GossipFrameIndex;
 import stupaq.cloudatlas.time.LocalClock;
 
 /** PACKAGE-LOCAL */
 final class FrameCodec extends MessageToMessageCodec<WireFrame, WireGossip>
     implements GossipingConfigKeys {
   private static final Log LOG = LogFactory.getLog(FrameCodec.class);
-  private final ContactStateCache<ContactInfo> contacts;
+  private final ContactStateCache<ContactFrameIndex> contacts;
   private final LocalClock clock;
 
   public FrameCodec(final BootstrapConfiguration config) {
-    contacts = new ContactStateCache<>(config, new CacheLoader<CAContact, ContactInfo>() {
+    contacts = new ContactStateCache<>(config, new CacheLoader<CAContact, ContactFrameIndex>() {
       @Override
-      public ContactInfo load(CAContact key) {
-        return new ContactInfo(config);
+      public ContactFrameIndex load(CAContact key) {
+        return new ContactFrameIndex(config);
       }
     });
     clock = config.clock();
@@ -61,10 +61,10 @@ final class FrameCodec extends MessageToMessageCodec<WireFrame, WireGossip>
 
   @Override
   protected void decode(ChannelHandlerContext ctx, WireFrame msg, List<Object> out) {
-    GossipInfo gossip = null;
+    GossipFrameIndex gossip = null;
     try {
       CAContact contact = msg.contact();
-      ContactInfo info = contacts.get(contact);
+      ContactFrameIndex info = contacts.get(contact);
       gossip = info.add(msg);
       if (gossip != null) {
         out.add(new WireGossip(contact, msg.frameId().gossipId(), gossip));

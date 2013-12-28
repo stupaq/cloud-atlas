@@ -10,7 +10,7 @@ import io.netty.util.ReferenceCountUtil;
 import stupaq.cloudatlas.gossiping.dataformat.FrameId;
 import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
 
-public class GossipInfo extends AbstractReferenceCounted {
+public class GossipFrameIndex extends AbstractReferenceCounted {
   private WireFrame[] received = null;
   private int missingFrames;
 
