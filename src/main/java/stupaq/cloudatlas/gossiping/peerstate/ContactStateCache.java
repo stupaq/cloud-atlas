@@ -18,6 +18,7 @@ public class ContactStateCache<State> extends ForwardingLoadingCache<CAContact, 
 
   public ContactStateCache(CAConfiguration config, CacheLoader<CAContact, State> loader) {
     cache = CacheBuilder.newBuilder()
+        // FIXME we are more concerned about memory here
         .expireAfterAccess(config.getLong(CONTACT_INFO_RETENTION, CONTACT_INFO_RETENTION_DEFAULT),
             TimeUnit.MILLISECONDS)
         .removalListener(new ReferenceCountedRemovalListener())

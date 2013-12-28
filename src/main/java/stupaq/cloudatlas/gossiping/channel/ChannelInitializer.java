@@ -22,7 +22,9 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Data
     channel.pipeline()
         .addLast(new DatagramCodec(config))
         .addLast(new FrameCodec(config))
-        .addLast(new GossipCodec(config))
+        .addLast(new RetransmissionHandler(config))
+        .addLast(new GossipDecoder(config))
+        .addLast(new GossipEncoder(config))
         .addLast(new LoggingHandler(LogLevel.TRACE))
         .addLast(new MessageInboundHandler(config));
   }

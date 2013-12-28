@@ -30,14 +30,14 @@ public class FrameId {
   private final short framesCount;
   private final short sequenceNumber;
 
-  public FrameId(@Nonnull GossipId gossipId, long framesCount, short sequenceNumber) {
+  public FrameId(@Nonnull GossipId gossipId, long framesCount, long sequenceNumber) {
     Preconditions.checkNotNull(gossipId);
     Preconditions.checkArgument(framesCount <= Short.MAX_VALUE,
         "Too many frames for a single gossip");
     Preconditions.checkState(sequenceNumber < framesCount);
     this.gossipId = gossipId;
     this.framesCount = (short) framesCount;
-    this.sequenceNumber = sequenceNumber;
+    this.sequenceNumber = (short) sequenceNumber;
   }
 
   @Override

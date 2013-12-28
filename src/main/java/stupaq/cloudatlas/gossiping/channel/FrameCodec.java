@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.gossiping.channel;
 
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheLoader;
 
 import org.apache.commons.logging.Log;
@@ -23,13 +24,14 @@ import stupaq.cloudatlas.gossiping.peerstate.GossipFrameIndex;
 import stupaq.cloudatlas.time.LocalClock;
 
 /** PACKAGE-LOCAL */
-final class FrameCodec extends MessageToMessageCodec<WireFrame, WireGossip>
+class FrameCodec extends MessageToMessageCodec<WireFrame, WireGossip>
     implements GossipingConfigKeys {
   private static final Log LOG = LogFactory.getLog(FrameCodec.class);
   private final ContactStateCache<ContactFrameIndex> contacts;
   private final LocalClock clock;
 
   public FrameCodec(final BootstrapConfiguration config) {
+    Preconditions.checkState(!isSharable());
     contacts = new ContactStateCache<>(config, new CacheLoader<CAContact, ContactFrameIndex>() {
       @Override
       public ContactFrameIndex load(CAContact key) {
