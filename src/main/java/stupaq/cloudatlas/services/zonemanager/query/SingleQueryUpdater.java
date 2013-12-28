@@ -31,7 +31,7 @@ public class SingleQueryUpdater extends InPlaceSynthesizer<ZoneManagementInfo> {
           .transform(new Function<ZoneManagementInfo, Iterable<Attribute>>() {
             @Override
             public Collection<Attribute> apply(ZoneManagementInfo managementInfo) {
-              return managementInfo.accessibleAttributes().toList();
+              return managementInfo.publicAttributes().toList();
             }
           }));
       // Run query for non-leaf zones

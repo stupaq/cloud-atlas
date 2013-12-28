@@ -2,10 +2,12 @@ package stupaq.cloudatlas.gossiping.dataformat;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import io.netty.util.AbstractReferenceCounted;
+import io.netty.util.ReferenceCountUtil;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.gossiping.peerstate.GossipFrameIndex;
 
-public class WireGossip {
+public class WireGossip extends AbstractReferenceCounted {
   private final CAContact contact;
   private final GossipId gossipId;
   private final ByteBuf data;
@@ -44,5 +46,10 @@ public class WireGossip {
   @Override
   public String toString() {
     return "WireGossip{contact=" + contact + ", gossipId=" + gossipId + ", data=" + data + '}';
+  }
+
+  @Override
+  protected void deallocate() {
+    ReferenceCountUtil.release(data);
   }
 }

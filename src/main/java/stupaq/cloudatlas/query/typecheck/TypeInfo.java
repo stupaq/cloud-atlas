@@ -68,11 +68,6 @@ public class TypeInfo<Atomic extends AttributeValue> extends ForwardingWrapper<C
     return TypeDescriptor.TypeInfo;
   }
 
-  public static <Atomic extends AttributeValue> boolean is(@Nonnull Class<Atomic> type,
-      AttributeValue value) {
-    return value.type().equals(of(type));
-  }
-
   public static <Atomic extends AttributeValue> TypeInfo<Atomic> of(@Nonnull Class<Atomic> type) {
     Preconditions.checkArgument(type != CASet.class && type != CAList.class,
         type.getSimpleName() + " is composed");

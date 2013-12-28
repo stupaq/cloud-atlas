@@ -24,7 +24,9 @@ public abstract class LazyCopy<Type> implements Serializable {
 
   protected final void ensureCopied() {
     if (!deeplyCopied) {
-      LOG.info("Performing deep copy of object: " + getClass().getSimpleName());
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("Performing deep copy of object: " + getClass().getSimpleName());
+      }
       deepCopy();
       deeplyCopied = true;
     }

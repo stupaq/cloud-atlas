@@ -273,12 +273,7 @@ public class ZoneManager extends AbstractScheduledService
           if (name.isPresent()) {
             zmi.remove(name.get());
           } else {
-            // We have to materialize iterable here for future modifications
-            for (Attribute attribute : zmi.specialAttributes().toList()) {
-              if (TypeInfo.is(CAQuery.class, attribute.value())) {
-                zmi.remove(attribute.name());
-              }
-            }
+            zmi.removeOfType(TypeInfo.of(CAQuery.class));
           }
         }
       }, true);
@@ -371,7 +366,9 @@ public class ZoneManager extends AbstractScheduledService
           ZoneManagementInfo zmi = sibling.payload();
           if (knownTime.rel().lesserOrEqual(TIMESTAMP.get(zmi).value()).getOr(true)) {
             // Known timestamp is older or does not exist
-            updates.put(name, zmi.export());
+            ZoneManagementInfo exported = zmi.export();
+            exported.removeOfType(TypeInfo.of(CAQuery.class));
+            updates.put(name, exported);
           }
         }
       }

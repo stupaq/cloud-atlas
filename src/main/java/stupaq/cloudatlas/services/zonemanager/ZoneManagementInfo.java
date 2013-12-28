@@ -100,14 +100,6 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     return TypeDescriptor.ZoneManagementInfo;
   }
 
-  public void clearComputed() {
-    ensureCopied();
-    for (AttributeName name : computed) {
-      attributes.remove(name);
-    }
-    computed.clear();
-  }
-
   public void setPrime(Attribute attribute) {
     ensureCopied();
     attributes.put(attribute.name(), attribute);
@@ -126,6 +118,23 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     computed.remove(name);
   }
 
+  public void removeOfType(TypeInfo<?> type) {
+    ensureCopied();
+    for (Attribute attribute : attributes.values()) {
+      if (type.matches(attribute.value())) {
+        remove(attribute.name());
+      }
+    }
+  }
+
+  public void removeComputed() {
+    ensureCopied();
+    for (AttributeName name : computed) {
+      attributes.remove(name);
+    }
+    computed.clear();
+  }
+
   public Optional<Attribute> get(AttributeName name) {
     return Optional.fromNullable(attributes.get(name));
   }
@@ -140,7 +149,7 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     return Optional.of((Attribute<Expected>) attribute);
   }
 
-  public FluentIterable<Attribute> accessibleAttributes() {
+  public FluentIterable<Attribute> publicAttributes() {
     return FluentIterable.from(attributes.values()).filter(new Predicate<Attribute>() {
       @Override
       public boolean apply(Attribute attribute) {
