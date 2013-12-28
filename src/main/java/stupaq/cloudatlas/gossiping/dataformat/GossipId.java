@@ -44,4 +44,9 @@ public class GossipId extends ForwardingWrapper<UnsignedInteger> {
   public FrameId firstFrame(int framesCount) {
     return new FrameId(this, framesCount, (short) 0);
   }
+
+  @Override
+  public String toString() {
+    return "GossipId{value=" + super.toString() + '}';
+  }
 }

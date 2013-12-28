@@ -74,7 +74,7 @@ public class WireFrame extends AbstractReferenceCounted implements GossipingConf
 
   @Override
   public String toString() {
-    return "WireFrame{" + "contact=" + contact + ", frameId=" + frameId + ", header=" + header +
+    return "WireFrame{contact=" + contact + ", frameId=" + frameId + ", header=" + header +
         ", data=" + data + '}';
   }
 

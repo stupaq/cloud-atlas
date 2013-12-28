@@ -69,7 +69,7 @@ class GossipCodec extends MessageToMessageCodec<WireGossip, OutboundGossip>
       }
       out.add(gossip);
     } catch (Throwable t) {
-      LOG.error("Encoding failed", t);
+      LOG.error("Decoding failed", t);
       // Ignore as we do not close the only channel
     }
   }

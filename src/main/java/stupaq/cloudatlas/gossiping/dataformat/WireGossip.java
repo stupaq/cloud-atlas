@@ -43,6 +43,6 @@ public class WireGossip {
 
   @Override
   public String toString() {
-    return "WireGossip{" + "contact=" + contact + ", gossipId=" + gossipId + ", data=" + data + '}';
+    return "WireGossip{contact=" + contact + ", gossipId=" + gossipId + ", data=" + data + '}';
   }
 }
