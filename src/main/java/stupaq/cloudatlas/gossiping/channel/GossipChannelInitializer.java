@@ -20,13 +20,10 @@ public class GossipChannelInitializer extends ChannelInitializer<DatagramChannel
         .setMessageSizeEstimator(
             new DefaultMessageSizeEstimator(GossipingConfigKeys.DATAGRAM_MAX_SIZE));
     channel.pipeline()
-        .addLast(new LoggingHandler("Pre wire"))
+        .addLast(new LoggingHandler("ON WIRE"))
         .addLast(new DatagramCodec(config))
-        .addLast(new LoggingHandler("Pre datagram"))
         .addLast(new FrameCodec(config))
-        .addLast(new LoggingHandler("Pre frame"))
         .addLast(new GossipCodec())
-        .addLast(new LoggingHandler("Pre codec"))
         .addLast(new MessageInboundHandler(config.bus()));
   }
 }

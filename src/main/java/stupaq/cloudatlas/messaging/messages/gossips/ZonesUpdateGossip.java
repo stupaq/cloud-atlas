@@ -46,6 +46,6 @@ public class ZonesUpdateGossip extends Gossip
 
   @Override
   public TypeDescriptor descriptor() {
-    return TypeDescriptor.ZonesUpdateMessage;
+    return TypeDescriptor.ZonesUpdateGossip;
   }
 }

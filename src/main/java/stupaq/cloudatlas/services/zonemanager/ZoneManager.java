@@ -40,6 +40,7 @@ import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestGossip;
+import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestInitialGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesUpdateGossip;
 import stupaq.cloudatlas.messaging.messages.requests.DumpZoneRequest;
 import stupaq.cloudatlas.messaging.messages.requests.EntitiesValuesRequest;
@@ -83,7 +84,7 @@ public class ZoneManager extends AbstractScheduledService
     this.config = config;
     bus = config.bus();
     agentsName = config.getGlobalName(ZONE_NAME);
-    hierarchy = ZoneHierarchy.create(agentsName, new BuiltinsInserter(agentsName));
+    hierarchy = ZoneHierarchy.create(agentsName, new BuiltinsInserter(config));
     agentsNode = hierarchy.find(agentsName).get();
     executor = config.threadModel().singleThreaded(ZoneManager.class);
   }
@@ -179,6 +180,10 @@ public class ZoneManager extends AbstractScheduledService
     @Subscribe
     @ScheduledInvocation
     public void selectContact(ContactSelectionMessage message);
+
+    @Subscribe
+    @ScheduledInvocation
+    public void duplexCommunication(ZonesInterestInitialGossip message);
 
     @Subscribe
     @ScheduledInvocation
@@ -324,6 +329,19 @@ public class ZoneManager extends AbstractScheduledService
         return;
       }
       LOG.debug("Selected contact: " + contact);
+      bus.post(new OutboundGossip(contact.get(),
+          new ZonesInterestInitialGossip(agentsName, prepareKnownZones())));
+    }
+
+    @Override
+    public void duplexCommunication(ZonesInterestInitialGossip message) {
+      // Initial message is sent by the node who initiated communication only
+      // to make gossiping two-way we respond with interest message (non-initial version)
+      bus.post(new OutboundGossip(message.sender(),
+          new ZonesInterestGossip(agentsName, prepareKnownZones())));
+    }
+
+    private Map<GlobalName, CATime> prepareKnownZones() {
       Map<GlobalName, CATime> knownZones = Maps.newHashMap();
       // Zones in a single agent form a single spine
       ZoneHierarchy<ZoneManagementInfo> current = agentsNode.parent();
@@ -332,7 +350,7 @@ public class ZoneManager extends AbstractScheduledService
           knownZones.put(sibling.globalName(), TIMESTAMP.get(sibling.payload()).value());
         }
       }
-      bus.post(new OutboundGossip(contact.get(), new ZonesInterestGossip(agentsName, knownZones)));
+      return knownZones;
     }
 
     @Override

@@ -2,12 +2,14 @@ package stupaq.cloudatlas.services.busybody.strategies;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.Collection;
+import java.util.Set;
 
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.CAConfiguration;
@@ -26,10 +28,10 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
   private static final Log LOG = LogFactory.getLog(ContactSelection.class);
   private final LevelSelection levelStrategy;
   private final ZoneSelection zoneStrategy;
-  private final Collection<CAContact> blacklisted;
+  private final Set<CAContact> blacklisted;
 
   protected ContactSelection(LevelSelection levelStrategy, ZoneSelection zoneStrategy,
-      Collection<CAContact> blacklisted) {
+      Set<CAContact> blacklisted) {
     this.levelStrategy = levelStrategy;
     this.zoneStrategy = zoneStrategy;
     this.blacklisted = blacklisted;
@@ -37,20 +39,13 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
 
   public Optional<CAContact> select(ZoneHierarchy<ZoneManagementInfo> leafZone,
       Collection<CAContact> fallbackContacts) throws Exception {
-    GlobalName leafName = leafZone.globalName();
+    Predicate<CAContact> excluded = not(in(blacklisted));
     try {
-      int level = levelStrategy.select(leafName);
-      Preconditions.checkState(0 < level, "Chosen level must not be a root");
-      Preconditions.checkState(level <= leafName.level(), "Chosen level is below leaf level");
-      LOG.info("Selected level: " + level);
-      ZoneHierarchy<ZoneManagementInfo> parent = leafZone.parent(leafName.level() - level + 1);
-      ZoneManagementInfo zmi = zoneStrategy.select(parent.globalName(), parent.childPayloads());
-      LOG.info("Selected zone's local name: " + zmi.localName());
-      FluentIterable<CAContact> contacts =
-          from(CONTACTS.get(zmi).value()).filter(not(in(blacklisted)));
+      ZoneManagementInfo zmi = selectZone(selectParentLevel(leafZone));
+      FluentIterable<CAContact> contacts = from(CONTACTS.get(zmi).value()).filter(excluded);
       if (contacts.isEmpty()) {
         LOG.warn("Selected ZMI has no contacts, picking one from fallback set");
-        contacts = from(fallbackContacts).filter(not(in(blacklisted)));
+        contacts = from(fallbackContacts).filter(excluded);
       }
       return Optional.fromNullable(
           contacts.isEmpty() ? null : Collections3.<CAContact>random(contacts));
@@ -59,7 +54,23 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
     }
   }
 
-  public static ContactSelection create(CAConfiguration config, Collection<CAContact> blacklisted) {
+  private ZoneHierarchy<ZoneManagementInfo> selectParentLevel(
+      ZoneHierarchy<ZoneManagementInfo> leafZone) {
+    GlobalName leafName = leafZone.globalName();
+    int level = levelStrategy.select(leafName);
+    Preconditions.checkState(0 < level, "Chosen level must not be a root");
+    Preconditions.checkState(level <= leafName.level(), "Chosen level is below leaf level");
+    LOG.info("Selected level: " + level);
+    return leafZone.parent(leafName.level() - level + 1);
+  }
+
+  private ZoneManagementInfo selectZone(ZoneHierarchy<ZoneManagementInfo> parent) {
+    ZoneManagementInfo zmi = zoneStrategy.select(parent.globalName(), parent.childPayloads());
+    LOG.info("Selected zone's local name: " + zmi.localName());
+    return zmi;
+  }
+
+  public static ContactSelection create(CAConfiguration config, Set<CAContact> blacklisted) {
     return new ContactSelection(createLevel(config), createZone(config), blacklisted);
   }
 

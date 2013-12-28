@@ -1,25 +1,34 @@
 package stupaq.cloudatlas.services.zonemanager.builtins;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
+import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
+import stupaq.cloudatlas.services.busybody.BusybodyConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Inserter;
 
 import static stupaq.cloudatlas.query.typecheck.TypeInfo.of;
 
 public class BuiltinsInserter extends Inserter<ZoneManagementInfo>
-    implements BuiltinAttributesConfigKeys {
-  private final String owner;
+    implements BuiltinAttributesConfigKeys, BusybodyConfigKeys, ZoneManagerConfigKeys {
+  private final int leafLevel;
+  private final CAString owner;
+  private final CAContact selfContact;
   private int level = 0;
 
-  public BuiltinsInserter(GlobalName owner) {
-    this.owner = owner.toString();
+  public BuiltinsInserter(CAConfiguration config) {
+    GlobalName agentsName = config.getGlobalName(ZONE_NAME);
+    leafLevel = agentsName.level();
+    owner = new CAString(agentsName.toString());
+    selfContact = config.getLocalContact(config.getInt(BIND_PORT));
   }
 
   @Override
@@ -29,12 +38,19 @@ public class BuiltinsInserter extends Inserter<ZoneManagementInfo>
 
   @Override
   public ZoneManagementInfo create(LocalName local) {
-    ZoneManagementInfo zmi = new ZoneManagementInfo(local);
-    zmi.setPrime(LEVEL.create(new CAInteger(level++)));
-    zmi.setPrime(NAME.create(new CAString(local.isRoot() ? null : local.toString())));
-    zmi.setPrime(OWNER.create(new CAString(owner)));
-    zmi.setPrime(
-        CONTACTS.create(new CASet<>(of(CAContact.class), Collections.<CAContact>emptySet())));
-    return zmi;
+    try {
+      ZoneManagementInfo zmi = new ZoneManagementInfo(local);
+      zmi.setPrime(LEVEL.create(new CAInteger(level)));
+      zmi.setPrime(NAME.create(new CAString(local.isRoot() ? null : local.toString())));
+      zmi.setPrime(OWNER.create(owner));
+      Collection<CAContact> initialContacts =
+          leafLevel == level ? Collections.singleton(selfContact)
+              : Collections.<CAContact>emptySet();
+      zmi.setPrime(CONTACTS.create(new CASet<>(of(CAContact.class), initialContacts)));
+      return zmi;
+    } finally {
+      // Perform same actions as when descending
+      descend(local);
+    }
   }
 }

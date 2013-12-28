@@ -10,6 +10,7 @@ import org.apache.commons.configuration.DataConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
+import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.plugins.PluginLoader;
@@ -53,6 +54,10 @@ public class CAConfiguration extends DataConfiguration {
 
   public <Contract> Class<Contract> getPlugin(String key, String bundle, Class<Contract> fallback) {
     return containsKey(key) ? PluginLoader.<Contract>forName(bundle + getString(key)) : fallback;
+  }
+
+  public CAContact getLocalContact(int port) {
+    return new CAContact("127.0.0.1:" + port);
   }
 
   public void mustContain(String key) {

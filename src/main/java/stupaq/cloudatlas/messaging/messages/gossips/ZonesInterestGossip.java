@@ -35,8 +35,8 @@ public class ZonesInterestGossip extends Gossip implements Iterable<Entry<Global
           Map(GlobalName.SERIALIZER, CATime.SERIALIZER).writeInstance(out, object.timestamps);
         }
       };
-  private final GlobalName leaf;
-  private final Map<GlobalName, CATime> timestamps;
+  protected final GlobalName leaf;
+  protected final Map<GlobalName, CATime> timestamps;
 
   public ZonesInterestGossip(GlobalName leaf, Map<GlobalName, CATime> timestamps) {
     this.leaf = leaf;
@@ -58,6 +58,6 @@ public class ZonesInterestGossip extends Gossip implements Iterable<Entry<Global
 
   @Override
   public TypeDescriptor descriptor() {
-    return TypeDescriptor.ZonesInterestMessage;
+    return TypeDescriptor.ZonesInterestGossip;
   }
 }

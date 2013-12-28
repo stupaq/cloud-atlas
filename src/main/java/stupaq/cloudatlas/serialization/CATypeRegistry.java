@@ -14,6 +14,7 @@ import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestGossip;
+import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestInitialGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesUpdateGossip;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.GlobalName;
@@ -60,7 +61,8 @@ public final class CATypeRegistry {
     // ZMI
     register(TypeDescriptor.ZoneManagementInfo, ZoneManagementInfo.SERIALIZER);
     // Gossips
-    register(TypeDescriptor.ZonesUpdateMessage, ZonesUpdateGossip.SERIALIZER);
-    register(TypeDescriptor.ZonesInterestMessage, ZonesInterestGossip.SERIALIZER);
+    register(TypeDescriptor.ZonesUpdateGossip, ZonesUpdateGossip.SERIALIZER);
+    register(TypeDescriptor.ZonesInterestGossip, ZonesInterestGossip.SERIALIZER);
+    register(TypeDescriptor.ZonesInterestInitialGossip, ZonesInterestInitialGossip.SERIALIZER);
   }
 }

@@ -198,7 +198,6 @@ public final class ZoneHierarchy<Payload extends Hierarchical> implements Serial
   }
 
   public Payload insert(GlobalName globalName, Inserter<Payload> inserter) {
-    inserter.descend(LocalName.getRoot());
     return insert(resolveRelative(globalName), inserter);
   }
 

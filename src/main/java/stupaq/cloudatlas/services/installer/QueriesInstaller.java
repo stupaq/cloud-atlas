@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.services.installer;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.AbstractScheduledService;
 
@@ -129,7 +130,9 @@ public class QueriesInstaller extends AbstractScheduledService
       if (!queries.getBoolean(section + QUERY_ENABLED, QUERY_ENABLED_DEFAULT)) {
         client.removeQuery(of(name), zones);
       } else if (queries.containsKey(section + QUERY_CODE)) {
-        CAQuery query = new CAQuery(queries.getString(section + QUERY_CODE));
+        String queryStr = Joiner.on(HierarchicalINIConfiguration.getDefaultListDelimiter())
+            .join(queries.getStringArray(section + QUERY_CODE));
+        CAQuery query = new CAQuery(queryStr);
         client.installQuery(new Attribute<>(name, query), zones);
       } else {
         LOG.error("Malformed query entry: " + section);
