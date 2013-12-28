@@ -14,6 +14,6 @@ public class UniformLevel implements LevelSelection {
 
   @Override
   public int select(GlobalName name) {
-    return random.nextInt(name.level()) + 1;
+    return random.nextInt(name.leafLevel()) + 1;
   }
 }

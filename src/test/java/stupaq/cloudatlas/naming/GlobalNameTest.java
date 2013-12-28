@@ -90,10 +90,10 @@ public class GlobalNameTest {
 
   @Test
   public void testLeafLevel() throws Exception {
-    assertEquals(0, new Builder().parent(getRoot()).build().level());
-    assertEquals(1, new Builder().child(getNotRoot("asd")).parent(getRoot()).build().level());
+    assertEquals(0, new Builder().parent(getRoot()).build().leafLevel());
+    assertEquals(1, new Builder().child(getNotRoot("asd")).parent(getRoot()).build().leafLevel());
     assertEquals(2,
         new Builder().child(getNotRoot("asd")).child(getNotRoot("asd")).parent(getRoot()).build()
-            .level());
+            .leafLevel());
   }
 }

@@ -361,7 +361,7 @@ public class ZoneManager extends AbstractScheduledService
             " for siblings of a path: " + lca);
       }
       Map<GlobalName, ZoneManagementInfo> updates = Maps.newHashMap();
-      ZoneHierarchy<ZoneManagementInfo> current = hierarchy.find(lca).get().parent();
+      ZoneHierarchy<ZoneManagementInfo> current = hierarchy.find(lca).get();
       for (; current != null; current = current.parent()) {
         for (ZoneHierarchy<ZoneManagementInfo> sibling : current.children()) {
           GlobalName name = sibling.globalName();

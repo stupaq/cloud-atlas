@@ -59,9 +59,9 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
     GlobalName leafName = leafZone.globalName();
     int level = levelStrategy.select(leafName);
     Preconditions.checkState(0 < level, "Chosen level must not be a root");
-    Preconditions.checkState(level <= leafName.level(), "Chosen level is below leaf level");
+    Preconditions.checkState(level <= leafName.leafLevel(), "Chosen level is below leaf level");
     LOG.info("Selected level: " + level);
-    return leafZone.parent(leafName.level() - level + 1);
+    return leafZone.parent(leafName.leafLevel() - level + 1);
   }
 
   private ZoneManagementInfo selectZone(ZoneHierarchy<ZoneManagementInfo> parent) {

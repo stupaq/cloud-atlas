@@ -26,7 +26,7 @@ public class BuiltinsInserter extends Inserter<ZoneManagementInfo>
 
   public BuiltinsInserter(CAConfiguration config) {
     GlobalName agentsName = config.getGlobalName(ZONE_NAME);
-    leafLevel = agentsName.level();
+    leafLevel = agentsName.leafLevel();
     owner = new CAString(agentsName.toString());
     Collection<CAContact> contacts;
     selfContact =

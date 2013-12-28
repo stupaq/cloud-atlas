@@ -24,6 +24,6 @@ public class ExponentialLevel implements LevelSelection {
   @Override
   public int select(GlobalName name) {
     double num = -mean * log(1 - random.nextDouble());
-    return (int) (min(name.level() - 1, max(0, num)) + 1);
+    return (int) (min(name.leafLevel() - 1, max(0, num)) + 1);
   }
 }
