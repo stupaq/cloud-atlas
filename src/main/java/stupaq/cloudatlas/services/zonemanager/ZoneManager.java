@@ -355,17 +355,15 @@ public class ZoneManager extends AbstractScheduledService
 
     @Override
     public void exportZones(ZonesInterestGossip message) {
-      GlobalName lca = agentsName.lca(message.getLeaf());
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Agent: " + agentsName + " asked by: " + message.getLeaf() +
-            " for siblings of a path: " + lca);
-      }
+      GlobalName otherName = message.getLeaf();
+      GlobalName lca = agentsName.lca(otherName);
+      LOG.info("Agent: " + otherName + " is requested zone updates");
       Map<GlobalName, ZoneManagementInfo> updates = Maps.newHashMap();
       ZoneHierarchy<ZoneManagementInfo> current = hierarchy.find(lca).get();
       for (; current != null; current = current.parent()) {
         for (ZoneHierarchy<ZoneManagementInfo> sibling : current.children()) {
           GlobalName name = sibling.globalName();
-          if (!name.ancestor(agentsName)) {
+          if (name.ancestor(otherName)) {
             // Ancestor ZMIs will be recomputed by communicating agent
             continue;
           }

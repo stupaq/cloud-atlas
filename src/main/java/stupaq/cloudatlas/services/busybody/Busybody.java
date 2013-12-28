@@ -116,6 +116,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
 
     @Override
     public void receiveGossip(InboundGossip gossip) {
+      // If debug is disabled this call costs nothing because of @DirectInvocation
       if (LOG.isDebugEnabled()) {
         LOG.debug("INBOUND GOSSIP: " + gossip);
       }
@@ -124,6 +125,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
 
     @Override
     public void sendGossip(OutboundGossip message) {
+      // If debug is disabled this call costs nothing because of @DirectInvocation
       message.gossip().sender(contactSelf);
       if (LOG.isDebugEnabled()) {
         LOG.debug("OUTBOUND GOSSIP: " + message);
