@@ -1,4 +1,4 @@
-package stupaq.cloudatlas.gossiping.sessions;
+package stupaq.cloudatlas.gossiping.peerstate;
 
 import com.google.common.base.Preconditions;
 
@@ -7,22 +7,22 @@ import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.util.AbstractReferenceCounted;
 import io.netty.util.ReferenceCountUtil;
-import stupaq.cloudatlas.gossiping.dataformat.Frame;
 import stupaq.cloudatlas.gossiping.dataformat.FrameId;
+import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
 
 public class GossipInfo extends AbstractReferenceCounted {
-  private Frame[] received = null;
+  private WireFrame[] received = null;
   private int missingFrames;
 
-  public boolean add(Frame frame) throws Exception {
+  public boolean add(WireFrame frame) throws Exception {
     FrameId frameId = frame.frameId();
-    int claimedFramesCount = frameId.gossipId().framesCount();
+    int claimedFramesCount = frameId.framesCount();
     if (received == null) {
       missingFrames = claimedFramesCount;
-      received = new Frame[missingFrames];
+      received = new WireFrame[missingFrames];
     }
     Preconditions.checkArgument(claimedFramesCount == received.length);
-    int seqNo = frameId.seqNo();
+    int seqNo = frameId.sequenceNumber();
     Preconditions.checkArgument(seqNo < received.length);
     if (received[seqNo] == null) {
       // At this point we keep the reference
@@ -35,7 +35,7 @@ public class GossipInfo extends AbstractReferenceCounted {
   public ByteBuf assemble() {
     Preconditions.checkState(missingFrames == 0);
     CompositeByteBuf composite = Unpooled.compositeBuffer(received.length);
-    for (Frame frame : received) {
+    for (WireFrame frame : received) {
       // Created reference is passed to the composite
       composite.addComponent(frame.data());
     }
@@ -44,7 +44,7 @@ public class GossipInfo extends AbstractReferenceCounted {
 
   @Override
   protected void deallocate() {
-    for (Frame frame : received) {
+    for (WireFrame frame : received) {
       ReferenceCountUtil.release(frame);
     }
   }

@@ -20,12 +20,12 @@ import stupaq.compact.CompactOutput;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.base.Throwables.propagateIfInstanceOf;
 
-public class Frame extends AbstractReferenceCounted implements GossipingConfigKeys {
+public class WireFrame extends AbstractReferenceCounted implements GossipingConfigKeys {
   private final CAContact contact;
   private final FrameId frameId;
   private final ByteBuf header, data;
 
-  public Frame(DatagramPacket packet, LocalClock clock) throws IOException {
+  public WireFrame(LocalClock clock, DatagramPacket packet) throws IOException {
     Preconditions.checkNotNull(packet.sender());
     contact = new CAContact(packet.sender());
     ByteBuf content = packet.content();
@@ -36,7 +36,7 @@ public class Frame extends AbstractReferenceCounted implements GossipingConfigKe
     data = content.retain();
   }
 
-  public Frame(FrameId id, CAContact destination, ByteBuf data, LocalClock clock)
+  public WireFrame(LocalClock clock, CAContact destination, FrameId id, ByteBuf data)
       throws IOException {
     contact = destination;
     frameId = id;
@@ -73,14 +73,20 @@ public class Frame extends AbstractReferenceCounted implements GossipingConfigKe
   }
 
   @Override
+  public String toString() {
+    return "WireFrame{" + "contact=" + contact + ", frameId=" + frameId + ", header=" + header +
+        ", data=" + data + '}';
+  }
+
+  @Override
   protected void deallocate() {
     ReferenceCountUtil.release(header);
     ReferenceCountUtil.release(data);
   }
 
   @Override
-  public Frame retain() {
-    return (Frame) super.retain();
+  public WireFrame retain() {
+    return (WireFrame) super.retain();
   }
 
   public static class FramesBuilder {
@@ -88,16 +94,20 @@ public class Frame extends AbstractReferenceCounted implements GossipingConfigKe
     private final CAContact destination;
     private FrameId nextId;
 
-    public FramesBuilder(LocalClock clock, GossipId gossipId, CAContact destination) {
-      this.destination = destination;
-      nextId = gossipId.first();
+    public FramesBuilder(LocalClock clock, CAContact destination, GossipId gossipId,
+        int framesCount) {
       this.clock = clock;
+      this.destination = destination;
+      nextId = gossipId.firstFrame(framesCount);
     }
 
-    public Frame next(ByteBuf data) throws IOException {
-      FrameId frameId = nextId;
-      nextId = nextId.next();
-      return new Frame(frameId, destination, data, clock);
+    public WireFrame nextFrame(ByteBuf data) throws IOException {
+      try {
+        Preconditions.checkState(nextId != null);
+        return new WireFrame(clock, destination, nextId, data);
+      } finally {
+        nextId = nextId.hasNextFrame() ? nextId.nextFrame() : null;
+      }
     }
   }
 }

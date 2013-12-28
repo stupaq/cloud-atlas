@@ -1,6 +1,6 @@
 package stupaq.cloudatlas.gossiping.dataformat;
 
-import com.google.common.base.Preconditions;
+import com.google.common.primitives.UnsignedInteger;
 
 import java.io.IOException;
 
@@ -11,34 +11,37 @@ import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 
+import static com.google.common.primitives.UnsignedInteger.ONE;
+import static com.google.common.primitives.UnsignedInteger.ZERO;
+import static com.google.common.primitives.UnsignedInteger.fromIntBits;
+
 @Immutable
-public class GossipId extends ForwardingWrapper<Integer> {
+public class GossipId extends ForwardingWrapper<UnsignedInteger> {
   public static final CompactSerializer<GossipId> SERIALIZER = new CompactSerializer<GossipId>() {
     @Override
     public GossipId readInstance(CompactInput in) throws IOException {
-      return new GossipId(in.readInt(), in.readShort());
+      return new GossipId(fromIntBits(in.readInt()));
     }
 
     @Override
     public void writeInstance(CompactOutput out, GossipId object) throws IOException {
-      out.writeInt(object.get());
-      out.writeShort(object.framesCount);
+      out.writeInt(object.get().intValue());
     }
   };
-  private final short framesCount;
 
-  public GossipId(int value, int framesCount) {
+  public GossipId() {
+    super(ZERO);
+  }
+
+  public GossipId(UnsignedInteger value) {
     super(value);
-    Preconditions.checkArgument(framesCount <= Short.MAX_VALUE,
-        "Too many frames for a single gossip");
-    this.framesCount = (short) framesCount;
   }
 
-  public FrameId first() {
-    return new FrameId(this, (short) 0);
+  public GossipId nextGossip() {
+    return new GossipId(get().plus(ONE));
   }
 
-  public int framesCount() {
-    return framesCount;
+  public FrameId firstFrame(int framesCount) {
+    return new FrameId(this, framesCount, (short) 0);
   }
 }

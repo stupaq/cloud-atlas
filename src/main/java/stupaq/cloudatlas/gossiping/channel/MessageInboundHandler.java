@@ -2,6 +2,7 @@ package stupaq.cloudatlas.gossiping.channel;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
 
@@ -9,8 +10,8 @@ import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
 class MessageInboundHandler extends SimpleChannelInboundHandler<Gossip> {
   private final MessageBus bus;
 
-  public MessageInboundHandler(MessageBus bus) {
-    this.bus = bus;
+  public MessageInboundHandler(BootstrapConfiguration config) {
+    this.bus = config.bus();
   }
 
   @Override

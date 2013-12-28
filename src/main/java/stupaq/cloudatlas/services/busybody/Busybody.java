@@ -19,7 +19,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.StartIfPresent;
-import stupaq.cloudatlas.gossiping.channel.GossipChannelInitializer;
+import stupaq.cloudatlas.gossiping.channel.ChannelInitializer;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
@@ -65,7 +65,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
     contactSelf = config.getLocalContact(config.getInt(BIND_PORT));
     channel = new Bootstrap().group(group)
         .channel(NioDatagramChannel.class)
-        .handler(new GossipChannelInitializer(config))
+        .handler(new ChannelInitializer(config))
         .bind(contactSelf.address())
         .syncUninterruptibly()
         .channel();

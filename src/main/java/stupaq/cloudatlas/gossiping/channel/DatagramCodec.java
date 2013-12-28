@@ -9,11 +9,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageCodec;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
-import stupaq.cloudatlas.gossiping.dataformat.Frame;
+import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
 import stupaq.cloudatlas.time.LocalClock;
 
 /** PACKAGE-LOCAL */
-class DatagramCodec extends MessageToMessageCodec<DatagramPacket, Frame> {
+class DatagramCodec extends MessageToMessageCodec<DatagramPacket, WireFrame> {
   private static final Log LOG = LogFactory.getLog(DatagramCodec.class);
   private final LocalClock clock;
 
@@ -22,7 +22,7 @@ class DatagramCodec extends MessageToMessageCodec<DatagramPacket, Frame> {
   }
 
   @Override
-  protected void encode(ChannelHandlerContext ctx, Frame msg, List<Object> out) {
+  protected void encode(ChannelHandlerContext ctx, WireFrame msg, List<Object> out) {
     try {
       // As per convention the packet reference count has been incremented
       out.add(msg.packet());
@@ -36,7 +36,7 @@ class DatagramCodec extends MessageToMessageCodec<DatagramPacket, Frame> {
   protected void decode(ChannelHandlerContext ctx, DatagramPacket msg, List<Object> out) {
     try {
       // As per convention the packet reference will be incremented in the constructor if needed
-      out.add(new Frame(msg, clock));
+      out.add(new WireFrame(clock, msg));
     } catch (Throwable t) {
       LOG.error("Decoding failed", t);
       // Ignore as we do not close the only channel
