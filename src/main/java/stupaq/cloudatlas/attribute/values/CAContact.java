@@ -48,7 +48,7 @@ public final class CAContact extends AbstractAtomic<InetSocketAddress> {
   }
 
   public CAContact(HostAndPort value) {
-    super(new InetSocketAddress(value.getHostText(), value.getPortOrDefault(DEFAULT_PORT)));
+    this(new InetSocketAddress(value.getHostText(), value.getPortOrDefault(DEFAULT_PORT)));
   }
 
   public CAContact(String value) {
@@ -60,8 +60,8 @@ public final class CAContact extends AbstractAtomic<InetSocketAddress> {
         : address);
   }
 
-  public InetSocketAddress socketAddress() {
-    return new InetSocketAddress(get().getHostString(), get().getPort());
+  public InetSocketAddress address() {
+    return get();
   }
 
   @Override

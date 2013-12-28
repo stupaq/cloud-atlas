@@ -15,4 +15,7 @@ public interface GossipingConfigKeys {
   static final String GOSSIP_RETRY_DELAY = "gossip_retry_delay";
   static final int GOSSIP_RETRY_DELAY_DEFAULT = 300;
   // Static configuration
+  static int HEADER_MAX_SIZE = 24;
+  static int DATAGRAM_MAX_SIZE = 512;
+  static int DATA_MAX_SIZE = DATAGRAM_MAX_SIZE - HEADER_MAX_SIZE;
 }

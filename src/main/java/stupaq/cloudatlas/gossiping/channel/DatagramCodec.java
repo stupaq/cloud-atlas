@@ -8,11 +8,18 @@ import java.util.List;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageCodec;
+import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.gossiping.dataformat.Frame;
+import stupaq.cloudatlas.time.LocalClock;
 
 /** PACKAGE-LOCAL */
 class DatagramCodec extends MessageToMessageCodec<DatagramPacket, Frame> {
   private static final Log LOG = LogFactory.getLog(DatagramCodec.class);
+  private final LocalClock clock;
+
+  public DatagramCodec(BootstrapConfiguration config) {
+    clock = config.clock();
+  }
 
   @Override
   protected void encode(ChannelHandlerContext ctx, Frame msg, List<Object> out) {
@@ -29,7 +36,7 @@ class DatagramCodec extends MessageToMessageCodec<DatagramPacket, Frame> {
   protected void decode(ChannelHandlerContext ctx, DatagramPacket msg, List<Object> out) {
     try {
       // As per convention the packet reference will be incremented in the constructor if needed
-      out.add(new Frame(msg));
+      out.add(new Frame(msg, clock));
     } catch (Throwable t) {
       LOG.error("Decoding failed", t);
       // Ignore as we do not close the only channel

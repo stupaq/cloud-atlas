@@ -5,7 +5,7 @@ import io.netty.channel.DefaultMessageSizeEstimator;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.handler.logging.LoggingHandler;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
-import stupaq.cloudatlas.gossiping.dataformat.Frame;
+import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
 
 public class GossipChannelInitializer extends ChannelInitializer<DatagramChannel> {
   private final BootstrapConfiguration config;
@@ -17,10 +17,11 @@ public class GossipChannelInitializer extends ChannelInitializer<DatagramChannel
   @Override
   protected void initChannel(DatagramChannel channel) throws Exception {
     channel.config()
-        .setMessageSizeEstimator(new DefaultMessageSizeEstimator(Frame.DATAGRAM_MAX_SIZE));
+        .setMessageSizeEstimator(
+            new DefaultMessageSizeEstimator(GossipingConfigKeys.DATAGRAM_MAX_SIZE));
     channel.pipeline()
         .addLast(new LoggingHandler("Pre wire"))
-        .addLast(new DatagramCodec())
+        .addLast(new DatagramCodec(config))
         .addLast(new LoggingHandler("Pre datagram"))
         .addLast(new FrameCodec(config))
         .addLast(new LoggingHandler("Pre frame"))

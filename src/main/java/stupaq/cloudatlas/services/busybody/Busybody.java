@@ -66,7 +66,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
     channel = new Bootstrap().group(group)
         .channel(NioDatagramChannel.class)
         .handler(new GossipChannelInitializer(config))
-        .bind(contactSelf.socketAddress())
+        .bind(contactSelf.address())
         .syncUninterruptibly()
         .channel();
     blacklisted.add(contactSelf);
