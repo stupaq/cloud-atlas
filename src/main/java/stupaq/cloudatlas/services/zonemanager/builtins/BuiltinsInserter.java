@@ -28,7 +28,9 @@ public class BuiltinsInserter extends Inserter<ZoneManagementInfo>
     GlobalName agentsName = config.getGlobalName(ZONE_NAME);
     leafLevel = agentsName.level();
     owner = new CAString(agentsName.toString());
-    selfContact = config.getLocalContact(config.getInt(BIND_PORT));
+    Collection<CAContact> contacts;
+    selfContact =
+        config.containsKey(BIND_PORT) ? config.getLocalContact(config.getInt(BIND_PORT)) : null;
   }
 
   @Override
@@ -44,7 +46,7 @@ public class BuiltinsInserter extends Inserter<ZoneManagementInfo>
       zmi.setPrime(NAME.create(new CAString(local.isRoot() ? null : local.toString())));
       zmi.setPrime(OWNER.create(owner));
       Collection<CAContact> initialContacts =
-          leafLevel == level ? Collections.singleton(selfContact)
+          leafLevel == level && selfContact != null ? Collections.singleton(selfContact)
               : Collections.<CAContact>emptySet();
       zmi.setPrime(CONTACTS.create(new CASet<>(of(CAContact.class), initialContacts)));
       return zmi;
