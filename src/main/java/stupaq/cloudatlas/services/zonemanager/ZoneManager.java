@@ -54,6 +54,7 @@ import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.services.busybody.BusybodyConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttribute;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsInserter;
@@ -70,7 +71,7 @@ import stupaq.commons.util.concurrent.SingleThreadAssertion;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
 
 public class ZoneManager extends AbstractScheduledService
-    implements ZoneManagerConfigKeys, BuiltinAttributesConfigKeys {
+    implements ZoneManagerConfigKeys, BuiltinAttributesConfigKeys, BusybodyConfigKeys {
   private static final Log LOG = LogFactory.getLog(ZoneManager.class);
   private final SingleThreadAssertion assertion = new SingleThreadAssertion();
   private final BootstrapConfiguration config;
@@ -91,8 +92,8 @@ public class ZoneManager extends AbstractScheduledService
     agentsNode = hierarchy.find(agentsName).get();
     executor = config.threadModel().singleThreaded(ZoneManager.class);
     freshContacts = new CacheSet<>(CacheBuilder.newBuilder()
-        .expireAfterAccess(config.getLong(UNFRESH_CONTACT_TIMEOUT, UNFRESH_CONTACT_TIMEOUT_DEFAULT),
-            TimeUnit.MILLISECONDS));
+        .expireAfterAccess(config.getLong(UNFRESH_CONTACT_TIMEOUT,
+            config.getLong(GOSSIP_PERIOD, GOSSIP_PERIOD_DEFAULT)), TimeUnit.MILLISECONDS));
   }
 
   @Override

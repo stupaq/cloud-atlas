@@ -21,12 +21,11 @@ import stupaq.cloudatlas.services.rmiserver.protocol.LocalClientProtocol;
 public class CAQueriesRemovalTool extends AbstractExecutionThreadService
     implements RMIServerConfigKeys {
   private static final Log LOG = LogFactory.getLog(CAQueriesRemovalTool.class);
-  private static final int RMI_PORT_DEFAULT = 1099;
   private final List<HostAndPort> registries = new ArrayList<>();
 
   public CAQueriesRemovalTool(String[] args) {
     for (String address : args) {
-      registries.add(HostAndPort.fromString(address).withDefaultPort(RMI_PORT_DEFAULT));
+      registries.add(HostAndPort.fromString(address).withDefaultPort(PORT_DEFAULT));
     }
   }
 

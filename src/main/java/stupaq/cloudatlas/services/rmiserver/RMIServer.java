@@ -83,8 +83,8 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
   @SuppressWarnings("unchecked")
   public static <Protocol extends Remote> Protocol createClient(Class<Protocol> protocol,
       CAConfiguration config) throws RemoteException, NotBoundException {
-    return (Protocol) LocateRegistry.getRegistry(config.getString(HOST, HOST_DEFAULT))
-        .lookup(exportedName(protocol, contextHandle(config)));
+    return (Protocol) LocateRegistry.getRegistry(config.getString(HOST, HOST_DEFAULT),
+        config.getInt(PORT, PORT_DEFAULT)).lookup(exportedName(protocol, contextHandle(config)));
   }
 
   private static String contextHandle(CAConfiguration config) {
