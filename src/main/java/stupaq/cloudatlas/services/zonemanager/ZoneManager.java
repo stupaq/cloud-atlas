@@ -3,6 +3,7 @@ package stupaq.cloudatlas.services.zonemanager;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -63,6 +64,7 @@ import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSyn
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Modifier;
 import stupaq.cloudatlas.services.zonemanager.purging.StaleZonesRemover;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
+import stupaq.commons.cache.CacheSet;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.SingleThreadAssertion;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
@@ -78,6 +80,7 @@ public class ZoneManager extends AbstractScheduledService
   private final SingleThreadedExecutor executor;
   private final ZoneHierarchy<ZoneManagementInfo> agentsNode;
   private final Set<CAContact> fallbackContacts = Sets.newHashSet();
+  private final CacheSet<CAContact> freshContacts;
   private MappedByteBuffer hierarchyDump;
 
   public ZoneManager(BootstrapConfiguration config) {
@@ -87,6 +90,9 @@ public class ZoneManager extends AbstractScheduledService
     hierarchy = ZoneHierarchy.create(agentsName, new BuiltinsInserter(config));
     agentsNode = hierarchy.find(agentsName).get();
     executor = config.threadModel().singleThreaded(ZoneManager.class);
+    freshContacts = new CacheSet<>(CacheBuilder.newBuilder()
+        .expireAfterAccess(config.getLong(UNFRESH_CONTACT_TIMEOUT, UNFRESH_CONTACT_TIMEOUT_DEFAULT),
+            TimeUnit.MILLISECONDS));
   }
 
   @Override
@@ -332,6 +338,13 @@ public class ZoneManager extends AbstractScheduledService
     public void duplexCommunication(ZonesInterestInitialGossip message) {
       // Initial message is sent by the node who initiated communication only
       // to make gossiping two-way we respond with interest message (non-initial version)
+      // if we haven't heard from the contact for a configurable period of time.
+      if (freshContacts.contains(message.sender())) {
+        if (LOG.isInfoEnabled()) {
+          LOG.info("Contact: " + message.sender() + " considered fresh, aborting duplex gossiping");
+        }
+        return;
+      }
       bus.post(new OutboundGossip(message.sender(),
           new ZonesInterestGossip(agentsName, prepareKnownZones())));
     }
@@ -352,7 +365,7 @@ public class ZoneManager extends AbstractScheduledService
     public void exportZones(ZonesInterestGossip message) {
       GlobalName otherName = message.getLeaf();
       GlobalName lca = agentsName.lca(otherName);
-      LOG.info("Agent: " + otherName + " is requested zone updates");
+      LOG.info("Agent: " + otherName + " requested zone updates");
       Map<GlobalName, ZoneManagementInfo> updates = Maps.newHashMap();
       ZoneHierarchy<ZoneManagementInfo> current = hierarchy.find(lca).get();
       for (; current != null; current = current.parent()) {
@@ -400,6 +413,7 @@ public class ZoneManager extends AbstractScheduledService
           LOG.warn("Rejected too old update for zone: " + name);
         }
       }
+      freshContacts.add(message.sender());
     }
   }
 }

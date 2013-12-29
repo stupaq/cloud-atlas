@@ -7,6 +7,8 @@ public interface ZoneManagerConfigKeys {
   static final String ZONE_NAME = PREFIX + "zone_name";
   static final String REEVALUATION_INTERVAL = PREFIX + "reevaluation_interval";
   static final long REEVALUATION_INTERVAL_DEFAULT = 5 * 1000L;
+  static final String UNFRESH_CONTACT_TIMEOUT = PREFIX + "unfresh_contact_timeout";
+  static final long UNFRESH_CONTACT_TIMEOUT_DEFAULT = 5 * 1000L;
   static final String PURGE_INTERVAL = PREFIX + "purge_interval";
   static final long PURGE_INTERVAL_DEFAULT = 60 * 1000L;
   static final String HIERARCHY_DUMP_FILE = PREFIX + "hierarchy_dump_file";
