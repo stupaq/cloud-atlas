@@ -59,7 +59,7 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
 
   private void bind(Remote handler) throws RemoteException, AlreadyBoundException {
     Remote stub = UnicastRemoteObject.exportObject(handler, 0);
-    registry.bind(exportedName(handler.getClass(), context), stub);
+    registry.rebind(exportedName(handler.getClass(), context), stub);
     stubs.add(stub);
   }
 
@@ -67,10 +67,12 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
     try {
       registry.unbind(exportedName(handler.getClass(), context));
     } catch (NotBoundException | RemoteException ignored) {
+      LOG.error("Failed to unbind stub " + handler);
     }
     try {
       UnicastRemoteObject.unexportObject(handler, true);
     } catch (NoSuchObjectException ignored) {
+      LOG.error("Failed to unexport stub " + handler);
     }
   }
 

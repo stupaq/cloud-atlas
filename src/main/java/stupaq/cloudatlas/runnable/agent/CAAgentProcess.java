@@ -39,7 +39,8 @@ public final class CAAgentProcess extends AbstractIdleService {
     for (File configPath : configPaths) {
       // Configuration for agent
       BootstrapConfiguration config = new Builder().configFile(configPath, CAAgentProcess.class)
-          .threadModel(new PerServiceThreadModel()).create();
+          .threadModel(new PerServiceThreadModel())
+          .create();
       // Create and start all services
       services.addWith(config, RMIServer.class);
       services.addWith(config, ZoneManager.class);
