@@ -380,6 +380,9 @@ public class ZoneManager extends AbstractScheduledService
           if (zmi.isOlderThan(knownTime).op().not().getOr(true)) {
             // Known timestamp is older or does not exist
             ZoneManagementInfo exported = zmi.export();
+            // This is not very fast, however I do not want to break design or do some
+            // cryptic partial serialization and we will eventually distribute
+            // queries/certificates through gossiping.
             exported.removeOfType(TypeInfo.of(CAQuery.class));
             updates.put(name, exported);
           }
@@ -412,7 +415,10 @@ public class ZoneManager extends AbstractScheduledService
               didUpdate = true;
               LOG.info("Updated zone info: " + name);
             } else {
-              LOG.warn("Aborted zone: " + name + " update due to old timestamp");
+              if (LOG.isWarnEnabled()) {
+                LOG.warn("Aborted zone: " + name + " update due to no newer timestamp: known: " +
+                    TIMESTAMP.get(known) + " update: " + TIMESTAMP.get(update));
+              }
             }
             continue;
           }
