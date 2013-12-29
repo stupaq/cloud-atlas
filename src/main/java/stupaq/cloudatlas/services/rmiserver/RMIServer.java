@@ -18,9 +18,11 @@ import java.util.List;
 
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.CAConfiguration;
+import stupaq.cloudatlas.configuration.StartIfPresent;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.services.rmiserver.handler.LocalClientHandler;
 
+@StartIfPresent(section = "rmi")
 public class RMIServer extends AbstractIdleService implements RMIServerConfigKeys {
   private static final Log LOG = LogFactory.getLog(RMIServer.class);
 
@@ -37,7 +39,7 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
 
   public RMIServer(BootstrapConfiguration config) {
     this.bus = config.bus();
-    this.context = config.getString(HANDLE);
+    this.context = contextHandle(config);
     Preconditions.checkNotNull(context);
   }
 
@@ -71,7 +73,11 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
   @SuppressWarnings("unchecked")
   public static <Protocol extends Remote> Protocol createClient(Class<Protocol> protocol,
       CAConfiguration config) throws RemoteException, NotBoundException {
-    return (Protocol) LocateRegistry.getRegistry(config.getString(HOST))
-        .lookup(exportedName(protocol, config.getString(HANDLE)));
+    return (Protocol) LocateRegistry.getRegistry(config.getString(HOST, HOST_DEFAULT))
+        .lookup(exportedName(protocol, contextHandle(config)));
+  }
+
+  private static String contextHandle(CAConfiguration config) {
+    return config.containsKey(HANDLE) ? config.getString(HANDLE) : config.findCharacteristicZone();
   }
 }

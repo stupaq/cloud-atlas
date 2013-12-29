@@ -14,6 +14,8 @@ import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.plugins.PluginLoader;
+import stupaq.cloudatlas.services.collector.AttributesCollectorConfigKeys;
+import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 
 public class CAConfiguration extends DataConfiguration {
   public CAConfiguration() {
@@ -62,5 +64,15 @@ public class CAConfiguration extends DataConfiguration {
 
   public void mustContain(String key) {
     Preconditions.checkState(containsKey(key), "Configuration must contain value for key: " + key);
+  }
+
+  public String findCharacteristicZone() {
+    if (containsKey(ZoneManagerConfigKeys.ZONE_NAME)) {
+      return getString(ZoneManagerConfigKeys.ZONE_NAME);
+    }
+    if (containsKey(AttributesCollectorConfigKeys.ZONE_NAME)) {
+      return getString(AttributesCollectorConfigKeys.ZONE_NAME);
+    }
+    throw new IllegalArgumentException("Could not find any promising attribute");
   }
 }

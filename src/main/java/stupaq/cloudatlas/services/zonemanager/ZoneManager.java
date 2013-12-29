@@ -100,7 +100,11 @@ public class ZoneManager extends AbstractScheduledService
     // Create memory mapped file for zone hierarchy dumps
     if (config.containsKey(HIERARCHY_DUMP_FILE)) {
       try {
-        File dumpFile = new File(config.getString(HIERARCHY_DUMP_FILE));
+        String filename = config.getString(HIERARCHY_DUMP_FILE);
+        if (filename.endsWith(GlobalName.SEPARATOR)) {
+          filename += agentsName.toString();
+        }
+        File dumpFile = new File(filename);
         if (!dumpFile.delete()) {
           Files.createParentDirs(dumpFile);
         }

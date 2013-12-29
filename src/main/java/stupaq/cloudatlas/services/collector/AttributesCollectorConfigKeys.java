@@ -3,7 +3,7 @@ package stupaq.cloudatlas.services.collector;
 import java.util.Arrays;
 import java.util.List;
 
-interface AttributesCollectorConfigKeys {
+public interface AttributesCollectorConfigKeys {
   // Runtime configuration section
   static final String PREFIX = "collector.";
   // Runtime configuration entries
