@@ -13,7 +13,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.util.ReferenceCountUtil;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
 import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
 import stupaq.cloudatlas.gossiping.peerstate.ContactFrameIndex;
@@ -21,7 +21,8 @@ import stupaq.cloudatlas.gossiping.peerstate.ContactStateCache;
 import stupaq.cloudatlas.gossiping.peerstate.GossipFrameIndex;
 
 /** PACKAGE-LOCAL */
-class FrameDecoder extends MessageToMessageDecoder<WireFrame> implements GossipingConfigKeys {
+class FrameDecoder extends MessageToMessageDecoder<WireFrame> implements
+                                                              GossipingInternalsConfigKeys {
   private static final Log LOG = LogFactory.getLog(FrameDecoder.class);
   private final ContactStateCache<ContactFrameIndex> contacts;
 

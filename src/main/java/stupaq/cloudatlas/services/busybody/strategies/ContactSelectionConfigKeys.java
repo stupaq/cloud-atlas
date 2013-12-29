@@ -5,7 +5,7 @@ import stupaq.cloudatlas.plugins.contact.UniformLevel;
 
 public interface ContactSelectionConfigKeys {
   // Runtime configuration section
-  static final String PREFIX = "contact.";
+  static final String PREFIX = "contact_selection.";
   // Runtime configuration entries
   static final String LEVEL_SELECTION = PREFIX + "level_selection";
   static final Class<? extends LevelSelection> LEVEL_SELECTION_DEFAULT = UniformLevel.class;

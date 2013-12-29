@@ -3,7 +3,7 @@ package stupaq.cloudatlas.gossiping.channel;
 import io.netty.channel.DefaultMessageSizeEstimator;
 import io.netty.channel.socket.DatagramChannel;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 
 public class ChannelInitializer extends io.netty.channel.ChannelInitializer<DatagramChannel> {
   private final BootstrapConfiguration config;
@@ -16,7 +16,7 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Data
   protected void initChannel(DatagramChannel channel) throws Exception {
     channel.config()
         .setMessageSizeEstimator(
-            new DefaultMessageSizeEstimator(GossipingConfigKeys.DATAGRAM_PACKET_MAX_SIZE));
+            new DefaultMessageSizeEstimator(GossipingInternalsConfigKeys.DATAGRAM_PACKET_MAX_SIZE));
     channel.pipeline()
         .addLast(new GTPHeaderCodec(config))
         .addLast(new DatagramDecoder(config))

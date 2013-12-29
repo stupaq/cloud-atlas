@@ -12,9 +12,9 @@ import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.CAConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 
-public class GTPSynchronizedClock extends LocalClock implements GossipingConfigKeys {
+public class GTPSynchronizedClock extends LocalClock implements GossipingInternalsConfigKeys {
   private static final Log LOG = LogFactory.getLog(GTPSynchronizedClock.class);
   private final LoadingCache<CAContact, GTPOffsetInformation> offsets;
 

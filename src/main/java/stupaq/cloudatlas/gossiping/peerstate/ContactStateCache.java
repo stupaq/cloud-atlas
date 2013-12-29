@@ -9,11 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.CAConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.commons.cache.ReferenceCountedRemovalListener;
 
 public class ContactStateCache<State> extends ForwardingLoadingCache<CAContact, State>
-    implements GossipingConfigKeys {
+    implements GossipingInternalsConfigKeys {
   private final LoadingCache<CAContact, State> cache;
 
   public ContactStateCache(CAConfiguration config, CacheLoader<CAContact, State> loader) {

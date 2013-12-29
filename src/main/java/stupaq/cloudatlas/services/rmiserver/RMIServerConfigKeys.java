@@ -6,7 +6,7 @@ public interface RMIServerConfigKeys {
   // Runtime configuration entries
   static final String HANDLE = PREFIX + "handle";
   static final String HOST = PREFIX + "host";
-  static final String HOST_DEFAULT = PREFIX + "127.0.0.1";
+  static final String HOST_DEFAULT = "127.0.0.1";
   static final String PORT = PREFIX + "port";
   static final int PORT_DEFAULT = 1099;
 }

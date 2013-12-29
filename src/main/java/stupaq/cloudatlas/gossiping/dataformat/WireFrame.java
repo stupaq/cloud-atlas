@@ -12,14 +12,14 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.AbstractReferenceCounted;
 import io.netty.util.ReferenceCountUtil;
 import stupaq.cloudatlas.attribute.values.CAContact;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.base.Throwables.propagateIfInstanceOf;
 
-public class WireFrame extends AbstractReferenceCounted implements GossipingConfigKeys {
+public class WireFrame extends AbstractReferenceCounted implements GossipingInternalsConfigKeys {
   public static final int HEADERn_MAX_SIZE =
       FrameId.SERIALIZED_MAX_SIZE + WireGTPHeader.SERIALIZED_MIN_SIZE;
   public static final int HEADER0_MAX_SIZE =

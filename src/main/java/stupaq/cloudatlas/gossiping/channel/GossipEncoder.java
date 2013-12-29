@@ -20,7 +20,7 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.util.ReferenceCountUtil;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
 import stupaq.cloudatlas.gossiping.peerstate.GossipIdAllocator;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
@@ -28,7 +28,8 @@ import stupaq.compact.CompactOutput;
 import stupaq.compact.TypeRegistry;
 
 /** PACKAGE-LOCAL */
-class GossipEncoder extends MessageToMessageEncoder<OutboundGossip> implements GossipingConfigKeys {
+class GossipEncoder extends MessageToMessageEncoder<OutboundGossip> implements
+                                                                    GossipingInternalsConfigKeys {
   private static final Log LOG = LogFactory.getLog(GossipEncoder.class);
   private final LoadingCache<CAContact, GossipIdAllocator> allocators;
 

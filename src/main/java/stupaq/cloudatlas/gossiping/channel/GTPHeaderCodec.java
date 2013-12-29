@@ -23,7 +23,7 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.ReferenceCountUtil;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
 import stupaq.cloudatlas.gossiping.dataformat.WireGTPHeader;
 import stupaq.cloudatlas.time.GTPSynchronizedClock;
@@ -32,7 +32,7 @@ import stupaq.compact.CompactOutput;
 
 /** PACKAGE-LOCAL */
 class GTPHeaderCodec extends MessageToMessageCodec<DatagramPacket, DatagramPacket>
-    implements GossipingConfigKeys {
+    implements GossipingInternalsConfigKeys {
   private static final Log LOG = LogFactory.getLog(GTPHeaderCodec.class);
   private final GTPSynchronizedClock clock;
   private final LoadingCache<InetSocketAddress, WireGTPHeader> pendingResponses;

@@ -1,6 +1,6 @@
 package stupaq.cloudatlas.gossiping;
 
-public interface GossipingConfigKeys {
+public interface GossipingInternalsConfigKeys {
   // Runtime configuration section
   static final String PREFIX = "gossiping_internals.";
   // Runtime configuration entries

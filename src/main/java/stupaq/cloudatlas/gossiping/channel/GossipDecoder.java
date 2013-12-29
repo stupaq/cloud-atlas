@@ -15,7 +15,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
 import stupaq.cloudatlas.gossiping.peerstate.GossipIdDuplicate;
 import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
@@ -24,7 +24,8 @@ import stupaq.compact.CompactInput;
 import stupaq.compact.TypeRegistry;
 
 /** PACKAGE-LOCAL */
-class GossipDecoder extends MessageToMessageDecoder<WireGossip> implements GossipingConfigKeys {
+class GossipDecoder extends MessageToMessageDecoder<WireGossip> implements
+                                                                GossipingInternalsConfigKeys {
   private static final Log LOG = LogFactory.getLog(GossipDecoder.class);
   private final LoadingCache<CAContact, GossipIdDuplicate> duplicates;
 

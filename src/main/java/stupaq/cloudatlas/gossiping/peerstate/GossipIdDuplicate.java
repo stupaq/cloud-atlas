@@ -6,11 +6,11 @@ import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.configuration.CAConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.cloudatlas.gossiping.dataformat.GossipId;
 import stupaq.commons.cache.CacheSet;
 
-public class GossipIdDuplicate implements Predicate<GossipId>, GossipingConfigKeys {
+public class GossipIdDuplicate implements Predicate<GossipId>, GossipingInternalsConfigKeys {
   private final CacheSet<GossipId> seenGossips;
 
   public GossipIdDuplicate(CAConfiguration config) {

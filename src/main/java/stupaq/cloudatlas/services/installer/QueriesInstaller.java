@@ -33,7 +33,7 @@ import stupaq.commons.util.concurrent.FastStartScheduler;
 import static com.google.common.base.Optional.of;
 import static stupaq.cloudatlas.services.rmiserver.RMIServer.createClient;
 
-@StartIfPresent(section = "installer")
+@StartIfPresent(section = "queries_installer")
 public class QueriesInstaller extends AbstractScheduledService
     implements QueriesInstallerConfigKeys, RMIServerConfigKeys {
   private static final Log LOG = LogFactory.getLog(QueriesInstaller.class);

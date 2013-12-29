@@ -36,17 +36,19 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
   private final List<Remote> stubs = new ArrayList<>();
   private final MessageBus bus;
   private final String context;
+  private final CAConfiguration config;
   private Registry registry;
 
   public RMIServer(BootstrapConfiguration config) {
     this.bus = config.bus();
     this.context = contextHandle(config);
+    this.config = config;
     Preconditions.checkNotNull(context);
   }
 
   @Override
   protected void startUp() throws RemoteException, AlreadyBoundException {
-    registry = LocateRegistry.getRegistry();
+    registry = locateRegistry(config);
     bind(new LocalClientHandler(bus));
   }
 
@@ -59,8 +61,10 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
 
   private void bind(Remote handler) throws RemoteException, AlreadyBoundException {
     Remote stub = UnicastRemoteObject.exportObject(handler, 0);
-    registry.rebind(exportedName(handler.getClass(), context), stub);
+    String name = exportedName(handler.getClass(), context);
+    registry.rebind(name, stub);
     stubs.add(stub);
+    LOG.trace("Bound stub to name: " + name);
   }
 
   private void unbindForce(Remote handler) {
@@ -83,8 +87,12 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
   @SuppressWarnings("unchecked")
   public static <Protocol extends Remote> Protocol createClient(Class<Protocol> protocol,
       CAConfiguration config) throws RemoteException, NotBoundException {
-    return (Protocol) LocateRegistry.getRegistry(config.getString(HOST, HOST_DEFAULT),
-        config.getInt(PORT, PORT_DEFAULT)).lookup(exportedName(protocol, contextHandle(config)));
+    return (Protocol) locateRegistry(config).lookup(exportedName(protocol, contextHandle(config)));
+  }
+
+  private static Registry locateRegistry(CAConfiguration config) throws RemoteException {
+    return LocateRegistry.getRegistry(config.getString(HOST, HOST_DEFAULT),
+        config.getInt(PORT, PORT_DEFAULT));
   }
 
   private static String contextHandle(CAConfiguration config) {

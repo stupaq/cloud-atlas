@@ -7,12 +7,12 @@ import com.google.common.cache.LoadingCache;
 import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.cloudatlas.gossiping.dataformat.GossipId;
 import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
 import stupaq.commons.cache.ReferenceCountedRemovalListener;
 
-public class ContactFrameIndex implements GossipingConfigKeys {
+public class ContactFrameIndex implements GossipingInternalsConfigKeys {
   private final LoadingCache<GossipId, GossipFrameIndex> received;
 
   public ContactFrameIndex(BootstrapConfiguration config) {

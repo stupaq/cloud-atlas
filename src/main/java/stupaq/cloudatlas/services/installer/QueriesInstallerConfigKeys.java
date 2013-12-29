@@ -2,7 +2,7 @@ package stupaq.cloudatlas.services.installer;
 
 public interface QueriesInstallerConfigKeys {
   // Runtime configuration section
-  static final String PREFIX = "installer.";
+  static final String PREFIX = "queries_installer.";
   // Runtime configuration entries
   static final String QUERIES_FILE = PREFIX + "queries_file";
   static final String POLL_INTERVAL = PREFIX + "poll_interval";
