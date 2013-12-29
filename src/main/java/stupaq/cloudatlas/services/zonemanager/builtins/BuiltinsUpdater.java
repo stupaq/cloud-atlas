@@ -6,13 +6,13 @@ import stupaq.cloudatlas.attribute.values.CAInteger;
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
-import stupaq.cloudatlas.time.LocalClock;
+import stupaq.cloudatlas.time.SynchronizedClock;
 
 public class BuiltinsUpdater extends InPlaceSynthesizer<ZoneManagementInfo>
     implements BuiltinAttributesConfigKeys {
   private final CATime time;
 
-  public BuiltinsUpdater(LocalClock clock) {
+  public BuiltinsUpdater(SynchronizedClock clock) {
     time = new CATime(clock.timestamp());
   }
 

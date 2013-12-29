@@ -12,12 +12,12 @@ import java.io.File;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.threading.SingleThreadModel;
 import stupaq.cloudatlas.threading.ThreadModel;
-import stupaq.cloudatlas.time.LocalClock;
+import stupaq.cloudatlas.time.SynchronizedClock;
 
 public class BootstrapConfiguration extends CAConfiguration {
   private final MessageBus bus;
   private final ThreadModel threadModel;
-  private final LocalClock clock = new LocalClock();
+  private final SynchronizedClock clock = new SynchronizedClock();
 
   public BootstrapConfiguration(CAConfiguration configuration, MessageBus bus,
       ThreadModel threadModel) {
@@ -36,7 +36,7 @@ public class BootstrapConfiguration extends CAConfiguration {
     return threadModel;
   }
 
-  public LocalClock clock() {
+  public SynchronizedClock clock() {
     return clock;
   }
 

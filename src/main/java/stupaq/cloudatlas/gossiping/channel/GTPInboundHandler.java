@@ -14,12 +14,12 @@ import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestInitialGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesUpdateGossip;
-import stupaq.cloudatlas.time.LocalClock;
+import stupaq.cloudatlas.time.SynchronizedClock;
 
 /** PACKAGE-LOCAL */
 class GTPInboundHandler extends MessageToMessageDecoder<InboundGossip> {
   private static final Log LOG = LogFactory.getLog(GTPInboundHandler.class);
-  private final LocalClock clock;
+  private final SynchronizedClock clock;
 
   public GTPInboundHandler(BootstrapConfiguration config) {
     clock = config.clock();

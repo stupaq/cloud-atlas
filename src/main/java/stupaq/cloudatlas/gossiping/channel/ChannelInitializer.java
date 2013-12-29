@@ -2,6 +2,8 @@ package stupaq.cloudatlas.gossiping.channel;
 
 import io.netty.channel.DefaultMessageSizeEstimator;
 import io.netty.channel.socket.DatagramChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
 
@@ -18,6 +20,7 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Data
         .setMessageSizeEstimator(
             new DefaultMessageSizeEstimator(GossipingConfigKeys.DATAGRAM_PACKET_MAX_SIZE));
     channel.pipeline()
+        .addLast(new LoggingHandler("UDP", LogLevel.TRACE))
         .addLast(new GTPHeaderCodec(config))
         .addLast(new DatagramDecoder(config))
         .addLast(new DatagramEncoder(config))
