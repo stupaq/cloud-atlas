@@ -15,20 +15,18 @@ import io.netty.util.ReferenceCountUtil;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
+import stupaq.cloudatlas.gossiping.dataformat.FrameId;
 import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
-import stupaq.cloudatlas.gossiping.dataformat.WireFrame.FramesBuilder;
 import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
 import stupaq.cloudatlas.gossiping.peerstate.ContactFrameIndex;
 import stupaq.cloudatlas.gossiping.peerstate.ContactStateCache;
 import stupaq.cloudatlas.gossiping.peerstate.GossipFrameIndex;
-import stupaq.cloudatlas.time.LocalClock;
 
 /** PACKAGE-LOCAL */
 class FrameCodec extends MessageToMessageCodec<WireFrame, WireGossip>
     implements GossipingConfigKeys {
   private static final Log LOG = LogFactory.getLog(FrameCodec.class);
   private final ContactStateCache<ContactFrameIndex> contacts;
-  private final LocalClock clock;
 
   public FrameCodec(final BootstrapConfiguration config) {
     Preconditions.checkState(!isSharable());
@@ -38,20 +36,24 @@ class FrameCodec extends MessageToMessageCodec<WireFrame, WireGossip>
         return new ContactFrameIndex(config);
       }
     });
-    clock = config.clock();
   }
 
   @Override
   protected void encode(ChannelHandlerContext ctx, WireGossip msg, List<Object> out) {
+    CAContact destination = msg.contact();
     ByteBuf data = null;
     try {
       data = msg.data();
-      int msgLength = data.readableBytes();
-      int frameDataSize = DATA_MAX_SIZE;
-      int framesCount = (msgLength + frameDataSize - 1) / frameDataSize;
-      FramesBuilder builder = new FramesBuilder(clock, msg.contact(), msg.gossipId(), framesCount);
-      for (; framesCount > 0; framesCount--) {
-        out.add(builder.nextFrame(data.readSlice(Math.min(frameDataSize, data.readableBytes()))));
+      int framesCount = WireFrame.howManyFrames(data.readableBytes());
+      for (FrameId frameId : msg.gossipId().frames(framesCount)) {
+        int bytes = Math.min(WireFrame.frameDataMaxSize(frameId), data.readableBytes());
+        out.add(new WireFrame(destination, frameId, data.readSlice(bytes)));
+        if (LOG.isTraceEnabled()) {
+          LOG.trace("Wrote frame: " + frameId + " data size: " + bytes);
+          if (bytes == 0) {
+            LOG.error("WROTE EMPTY FRAME!");
+          }
+        }
       }
     } catch (Throwable t) {
       LOG.error("Encoding failed", t);

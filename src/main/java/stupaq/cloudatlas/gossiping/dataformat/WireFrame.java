@@ -13,7 +13,6 @@ import io.netty.util.AbstractReferenceCounted;
 import io.netty.util.ReferenceCountUtil;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
-import stupaq.cloudatlas.time.LocalClock;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 
@@ -21,11 +20,15 @@ import static com.google.common.base.Throwables.propagate;
 import static com.google.common.base.Throwables.propagateIfInstanceOf;
 
 public class WireFrame extends AbstractReferenceCounted implements GossipingConfigKeys {
+  public static final int HEADERn_MAX_SIZE = FrameId.SERIALIZED_MAX_SIZE;
+  public static final int HEADER0_MAX_SIZE = HEADERn_MAX_SIZE + WireGTPHeader.SERIALIZED_MAX_SIZE;
+  public static final int DATAn_MAX_SIZE = DATAGRAM_PACKET_MAX_SIZE - HEADERn_MAX_SIZE;
+  public static final int DATA0_MAX_SIZE = DATAGRAM_PACKET_MAX_SIZE - HEADERn_MAX_SIZE;
   private final CAContact contact;
   private final FrameId frameId;
   private final ByteBuf header, data;
 
-  public WireFrame(LocalClock clock, DatagramPacket packet) throws IOException {
+  public WireFrame(DatagramPacket packet) throws IOException {
     Preconditions.checkNotNull(packet.sender());
     contact = new CAContact(packet.sender());
     ByteBuf content = packet.content();
@@ -36,12 +39,11 @@ public class WireFrame extends AbstractReferenceCounted implements GossipingConf
     data = content.retain();
   }
 
-  public WireFrame(LocalClock clock, CAContact destination, FrameId id, ByteBuf data)
-      throws IOException {
+  public WireFrame(CAContact destination, FrameId id, ByteBuf data) throws IOException {
     contact = destination;
     frameId = id;
     this.data = data.retain();
-    header = Unpooled.buffer(HEADER_MAX_SIZE);
+    header = Unpooled.buffer(frameId.isFirst() ? HEADER0_MAX_SIZE : HEADERn_MAX_SIZE);
     try {
       CompactOutput headerStream = new CompactOutput(new ByteBufOutputStream(header));
       FrameId.SERIALIZER.writeInstance(headerStream, frameId);
@@ -89,25 +91,13 @@ public class WireFrame extends AbstractReferenceCounted implements GossipingConf
     return (WireFrame) super.retain();
   }
 
-  public static class FramesBuilder {
-    private final LocalClock clock;
-    private final CAContact destination;
-    private FrameId nextId;
+  public static int frameDataMaxSize(FrameId frameId) {
+    return frameId.isFirst() ? DATA0_MAX_SIZE : DATAn_MAX_SIZE;
+  }
 
-    public FramesBuilder(LocalClock clock, CAContact destination, GossipId gossipId,
-        int framesCount) {
-      this.clock = clock;
-      this.destination = destination;
-      nextId = gossipId.firstFrame(framesCount);
-    }
-
-    public WireFrame nextFrame(ByteBuf data) throws IOException {
-      try {
-        Preconditions.checkState(nextId != null);
-        return new WireFrame(clock, destination, nextId, data);
-      } finally {
-        nextId = nextId.hasNextFrame() ? nextId.nextFrame() : null;
-      }
-    }
+  public static int howManyFrames(int dataLength) {
+    Preconditions.checkArgument(dataLength >= 0);
+    return dataLength == 0 ? 0
+        : ((dataLength - DATA0_MAX_SIZE + DATAn_MAX_SIZE - 1) / DATAn_MAX_SIZE + 1);
   }
 }

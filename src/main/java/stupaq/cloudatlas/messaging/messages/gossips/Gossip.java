@@ -8,7 +8,7 @@ import stupaq.compact.CompactSerializable;
 
 public abstract class Gossip extends Message implements CompactSerializable {
   /** This field should not be serialized, instead we set it from datagram. */
-  private CAContact contact = null;
+  private transient CAContact contact = null;
 
   public final CAContact sender() {
     Preconditions.checkNotNull(contact);

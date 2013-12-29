@@ -17,7 +17,5 @@ public interface GossipingConfigKeys {
   static final String CONTACT_INFO_RETENTION = "contact_info_retention";
   static final long CONTACT_INFO_RETENTION_DEFAULT = 1000L * 60 * 10;
   // Static configuration
-  static int HEADER_MAX_SIZE = 24;
-  static int DATAGRAM_MAX_SIZE = 512;
-  static int DATA_MAX_SIZE = DATAGRAM_MAX_SIZE - HEADER_MAX_SIZE;
+  static final int DATAGRAM_PACKET_MAX_SIZE = 512;
 }

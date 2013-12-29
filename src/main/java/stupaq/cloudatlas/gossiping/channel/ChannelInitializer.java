@@ -18,14 +18,17 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Data
   protected void initChannel(DatagramChannel channel) throws Exception {
     channel.config()
         .setMessageSizeEstimator(
-            new DefaultMessageSizeEstimator(GossipingConfigKeys.DATAGRAM_MAX_SIZE));
+            new DefaultMessageSizeEstimator(GossipingConfigKeys.DATAGRAM_PACKET_MAX_SIZE));
     channel.pipeline()
         .addLast(new DatagramCodec(config))
+        .addLast(new GTPHeaderCodec(config))
         .addLast(new FrameCodec(config))
         .addLast(new RetransmissionHandler(config))
         .addLast(new GossipDecoder(config))
         .addLast(new GossipEncoder(config))
-        .addLast(new LoggingHandler(LogLevel.TRACE))
+        .addLast(new LoggingHandler("BEFORE TIMESTAMPS ADJUSTMENT", LogLevel.TRACE))
+        .addLast(new GTPInboundAdjuster(config))
+        .addLast(new LoggingHandler("AFTER TIMESTAMPS ADJUSTMENT", LogLevel.TRACE))
         .addLast(new MessageInboundHandler(config));
   }
 }

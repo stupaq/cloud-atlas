@@ -13,6 +13,7 @@ import stupaq.compact.CompactSerializer;
 
 @Immutable
 public class FrameId {
+  public static final int SERIALIZED_MAX_SIZE = GossipId.SERIALIZED_MAX_SIZE + 2 * 2;
   public static final CompactSerializer<FrameId> SERIALIZER = new CompactSerializer<FrameId>() {
     @Override
     public FrameId readInstance(CompactInput in) throws IOException {
@@ -85,5 +86,9 @@ public class FrameId {
 
   public int sequenceNumber() {
     return sequenceNumber;
+  }
+
+  public boolean isFirst() {
+    return sequenceNumber == 0;
   }
 }

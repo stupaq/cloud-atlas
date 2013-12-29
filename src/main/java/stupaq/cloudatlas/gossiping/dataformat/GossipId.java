@@ -1,8 +1,10 @@
 package stupaq.cloudatlas.gossiping.dataformat;
 
+import com.google.common.collect.AbstractIterator;
 import com.google.common.primitives.UnsignedInteger;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -19,6 +21,7 @@ import static com.google.common.primitives.UnsignedInteger.valueOf;
 
 @Immutable
 public class GossipId extends ForwardingWrapper<UnsignedInteger> implements Comparable<GossipId> {
+  public static final int SERIALIZED_MAX_SIZE = 4;
   public static final CompactSerializer<GossipId> SERIALIZER = new CompactSerializer<GossipId>() {
     @Override
     public GossipId readInstance(CompactInput in) throws IOException {
@@ -60,5 +63,31 @@ public class GossipId extends ForwardingWrapper<UnsignedInteger> implements Comp
   @Override
   public int compareTo(@Nonnull GossipId other) {
     return get().compareTo(other.get());
+  }
+
+  public Iterable<FrameId> frames(final int framesCount) {
+    return new Iterable<FrameId>() {
+      @Override
+      public Iterator<FrameId> iterator() {
+        return GossipId.this.framesIterator(framesCount);
+      }
+    };
+  }
+
+  public Iterator<FrameId> framesIterator(final int framesCount) {
+    return new AbstractIterator<FrameId>() {
+      private FrameId id = GossipId.this.firstFrame(framesCount);
+
+      @Override
+      protected FrameId computeNext() {
+        try {
+          return id == null ? endOfData() : id;
+        } finally {
+          if (id != null) {
+            id = id.hasNextFrame() ? id.nextFrame() : null;
+          }
+        }
+      }
+    };
   }
 }
