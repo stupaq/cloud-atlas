@@ -1,3 +1,3 @@
 #!/bin/sh
 
-pr -m -t -w 100 "$@"
+pr -m -t -w $(tput cols) "$@"
