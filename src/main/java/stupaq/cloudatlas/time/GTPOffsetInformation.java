@@ -21,7 +21,7 @@ class GTPOffsetInformation {
     }
   }
 
-  public long difference() {
-    return Math.round(difference.mean());
+  public GTPOffset offset() {
+    return new GTPOffset(Math.round(difference.mean()));
   }
 }

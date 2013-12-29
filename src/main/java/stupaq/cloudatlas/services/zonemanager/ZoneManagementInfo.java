@@ -21,6 +21,8 @@ import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
+import stupaq.cloudatlas.time.GTPAdjustable;
+import stupaq.cloudatlas.time.GTPOffset;
 import stupaq.commons.util.concurrent.LazyCopy;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
@@ -30,7 +32,7 @@ import stupaq.compact.SerializableImplementation;
 import stupaq.compact.TypeDescriptor;
 
 public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
-    implements CompactSerializable, Hierarchical, BuiltinAttributesConfigKeys {
+    implements CompactSerializable, Hierarchical, BuiltinAttributesConfigKeys, GTPAdjustable {
   public static final CompactSerializer<ZoneManagementInfo> SERIALIZER =
       new CompactSerializer<ZoneManagementInfo>() {
         @Override
@@ -92,6 +94,13 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
 
   public CABoolean isOlderThan(CATime time) {
     return TIMESTAMP.get(this).rel().lesserThan(time);
+  }
+
+  @Override
+  public void adjustToLocal(GTPOffset offset) {
+    // I've decided not to adjust all attributes of CATime type.
+    // It can be easily done (if needed) and might be surprising to the user.
+    setPrime(TIMESTAMP.create(offset.toLocal(TIMESTAMP.get(this))));
   }
 
   public boolean update(ZoneManagementInfo update) {

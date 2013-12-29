@@ -11,6 +11,7 @@ import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.time.GTPOffset;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
@@ -65,5 +66,12 @@ public class ZonesInterestGossip extends Gossip implements Iterable<Entry<Global
   public String toString() {
     return "ZonesInterestGossip{sender=" + sender() + ", leaf=" + leaf + ", timestamps=" +
         timestamps + '}';
+  }
+
+  @Override
+  public void adjustToLocal(GTPOffset offset) {
+    for (Entry<GlobalName, CATime> entry : timestamps.entrySet()) {
+      entry.setValue(offset.toLocal(entry.getValue()));
+    }
   }
 }

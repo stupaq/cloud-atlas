@@ -40,7 +40,7 @@ public class BootstrapConfiguration extends CAConfiguration {
   }
 
   public LocalClock clock() {
-    return synchronizedClock.localClock();
+    return synchronizedClock;
   }
 
   public GTPSynchronizedClock synchronizedClock() {

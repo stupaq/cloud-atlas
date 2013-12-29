@@ -8,21 +8,26 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.CAConfiguration;
+import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
 
-public class GTPSynchronizedClock extends LocalClock {
+public class GTPSynchronizedClock extends LocalClock implements GossipingConfigKeys {
   private static final Log LOG = LogFactory.getLog(GTPSynchronizedClock.class);
   private final LoadingCache<CAContact, GTPOffsetInformation> offsets;
 
   public GTPSynchronizedClock(CAConfiguration config) {
-    offsets = CacheBuilder.newBuilder().build(new CacheLoader<CAContact, GTPOffsetInformation>() {
-      @Override
-      public GTPOffsetInformation load(CAContact key) throws Exception {
-        return new GTPOffsetInformation();
-      }
-    });
+    offsets = CacheBuilder.newBuilder()
+        .expireAfterAccess(config.getLong(GTP_OFFSET_RETENTION, GTP_OFFSET_RETENTION_DEFAULT),
+            TimeUnit.MILLISECONDS)
+        .build(new CacheLoader<CAContact, GTPOffsetInformation>() {
+          @Override
+          public GTPOffsetInformation load(CAContact key) throws Exception {
+            return new GTPOffsetInformation();
+          }
+        });
   }
 
   public void record(InetSocketAddress othersAddress, GTPSample sample) {
@@ -36,15 +41,11 @@ public class GTPSynchronizedClock extends LocalClock {
     offsets.getUnchecked(contact).update(sample);
   }
 
-  public long convertToLocal(CAContact contact, long timestamp) {
-    return GTPSample.convertToLocal(timestamp, offsets.getUnchecked(contact).difference());
-  }
-
-  public long convertToRemote(CAContact contact, long timestamp) {
-    return GTPSample.convertToRemote(timestamp, offsets.getUnchecked(contact).difference());
-  }
-
-  public LocalClock localClock() {
-    return this;
+  public GTPOffset offset(CAContact contact) {
+    GTPOffset offset = offsets.getUnchecked(contact).offset();
+    if (LOG.isInfoEnabled()) {
+      LOG.info("Responded with offset: " + offset + " associated with: " + contact);
+    }
+    return offset;
   }
 }

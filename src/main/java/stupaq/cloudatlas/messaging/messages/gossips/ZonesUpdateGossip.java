@@ -9,6 +9,7 @@ import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
+import stupaq.cloudatlas.time.GTPOffset;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
@@ -52,5 +53,12 @@ public class ZonesUpdateGossip extends Gossip
   @Override
   public String toString() {
     return "ZonesUpdateGossip{sender=" + sender() + ", zones=" + zones.keySet() + '}';
+  }
+
+  @Override
+  public void adjustToLocal(GTPOffset offset) {
+    for (ZoneManagementInfo zmi : zones.values()) {
+      zmi.adjustToLocal(offset);
+    }
   }
 }

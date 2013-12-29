@@ -7,6 +7,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public class GTPSample {
   public final long roundTrip;
+  /** Definition of this field influences {@link stupaq.cloudatlas.time.GTPOffset} implementation */
   public final long difference;
 
   public GTPSample(long[] samples) {
@@ -18,13 +19,5 @@ public class GTPSample {
   @Override
   public String toString() {
     return "GTPSample{roundTrip=" + roundTrip + ", difference=" + difference + '}';
-  }
-
-  public static long convertToLocal(long timestamp, long difference) {
-    return timestamp - difference;
-  }
-
-  public static long convertToRemote(long timestamp, long difference) {
-    return timestamp + difference;
   }
 }
