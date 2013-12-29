@@ -24,7 +24,7 @@ public class BuiltinsUpdater extends InPlaceSynthesizer<ZoneManagementInfo>
     } else {
       long cardinality = 0;
       for (ZoneManagementInfo child : children) {
-        cardinality += CARDINALITY.get(child).value().getLong();
+        cardinality += CARDINALITY.get(child).getLong();
       }
       zmi.setPrime(CARDINALITY.create(new CAInteger(cardinality)));
     }

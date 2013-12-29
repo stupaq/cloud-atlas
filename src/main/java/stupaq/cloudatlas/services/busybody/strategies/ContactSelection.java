@@ -42,7 +42,7 @@ public class ContactSelection implements ContactSelectionConfigKeys, BuiltinAttr
     Predicate<CAContact> excluded = not(in(blacklisted));
     try {
       ZoneManagementInfo zmi = selectZone(selectParentLevel(leafZone));
-      FluentIterable<CAContact> contacts = from(CONTACTS.get(zmi).value()).filter(excluded);
+      FluentIterable<CAContact> contacts = from(CONTACTS.get(zmi)).filter(excluded);
       if (contacts.isEmpty()) {
         LOG.warn("Selected ZMI has no contacts, picking one from fallback set");
         contacts = from(fallbackContacts).filter(excluded);

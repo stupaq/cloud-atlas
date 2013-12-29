@@ -14,9 +14,12 @@ import java.util.Set;
 
 import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.attribute.AttributeValue;
+import stupaq.cloudatlas.attribute.values.CABoolean;
+import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.naming.AttributeName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
+import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Hierarchical;
 import stupaq.commons.util.concurrent.LazyCopy;
 import stupaq.compact.CompactInput;
@@ -27,7 +30,7 @@ import stupaq.compact.SerializableImplementation;
 import stupaq.compact.TypeDescriptor;
 
 public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
-    implements CompactSerializable, Hierarchical {
+    implements CompactSerializable, Hierarchical, BuiltinAttributesConfigKeys {
   public static final CompactSerializer<ZoneManagementInfo> SERIALIZER =
       new CompactSerializer<ZoneManagementInfo>() {
         @Override
@@ -83,11 +86,23 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     return new ZoneManagementInfo(localName, attributes, computed);
   }
 
-  public void update(ZoneManagementInfo update) {
-    Preconditions.checkArgument(localName.equals(update.localName()));
-    ensureCopied();
-    computed.clear();
-    attributes = update.attributes;
+  public CABoolean isOlderThan(ZoneManagementInfo zmi) {
+    return isOlderThan(TIMESTAMP.get(zmi));
+  }
+
+  public CABoolean isOlderThan(CATime time) {
+    return TIMESTAMP.get(this).rel().lesserThan(time);
+  }
+
+  public boolean update(ZoneManagementInfo update) {
+    if (isOlderThan(update).getOr(false)) {
+      Preconditions.checkArgument(localName.equals(update.localName()));
+      ensureCopied();
+      computed.clear();
+      attributes = update.attributes;
+      return true;
+    }
+    return false;
   }
 
   @Override

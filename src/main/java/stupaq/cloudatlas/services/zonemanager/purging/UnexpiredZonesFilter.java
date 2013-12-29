@@ -11,17 +11,17 @@ import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 import stupaq.cloudatlas.time.LocalClock;
 
-public class StaleZonesRemover
+public class UnexpiredZonesFilter
     implements Predicate<ZoneManagementInfo>, BuiltinAttributesConfigKeys, ZoneManagerConfigKeys {
   private final CATime threshold;
 
-  public StaleZonesRemover(LocalClock clock, CAConfiguration config) {
+  public UnexpiredZonesFilter(LocalClock clock, CAConfiguration config) {
     threshold = new CATime(clock.timestamp(-config.getLong(PURGE_INTERVAL, PURGE_INTERVAL_DEFAULT),
         TimeUnit.MILLISECONDS));
   }
 
   @Override
   public boolean apply(ZoneManagementInfo zmi) {
-    return TIMESTAMP.get(zmi).value().rel().greaterThan(threshold).getOr(true);
+    return zmi.isOlderThan(threshold).op().not().getOr(true);
   }
 }

@@ -62,7 +62,7 @@ import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceModifier;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSynthesizer;
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Modifier;
-import stupaq.cloudatlas.services.zonemanager.purging.StaleZonesRemover;
+import stupaq.cloudatlas.services.zonemanager.purging.UnexpiredZonesFilter;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
 import stupaq.commons.cache.CacheSet;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
@@ -133,7 +133,7 @@ public class ZoneManager extends AbstractScheduledService
     // We do the computation and updates for zones that we are a source of truth ONLY
     agentsNode.synthesizePath(new InstalledQueriesUpdater());
     agentsNode.synthesizePath(new BuiltinsUpdater(config.clock()));
-    hierarchy.filterLeaves(new StaleZonesRemover(config.clock(), config));
+    hierarchy.filterLeaves(new UnexpiredZonesFilter(config.clock(), config));
     dumpHierarchy();
   }
 
@@ -355,7 +355,7 @@ public class ZoneManager extends AbstractScheduledService
       ZoneHierarchy<ZoneManagementInfo> current = agentsNode.parent();
       for (; current != null; current = current.parent()) {
         for (ZoneHierarchy<ZoneManagementInfo> sibling : current.children()) {
-          knownZones.put(sibling.globalName(), TIMESTAMP.get(sibling.payload()).value());
+          knownZones.put(sibling.globalName(), TIMESTAMP.get(sibling.payload()));
         }
       }
       return knownZones;
@@ -377,7 +377,7 @@ public class ZoneManager extends AbstractScheduledService
           }
           CATime knownTime = message.getTimestamp(name);
           ZoneManagementInfo zmi = sibling.payload();
-          if (knownTime.rel().lesserOrEqual(TIMESTAMP.get(zmi).value()).getOr(true)) {
+          if (zmi.isOlderThan(knownTime).op().not().getOr(true)) {
             // Known timestamp is older or does not exist
             ZoneManagementInfo exported = zmi.export();
             exported.removeOfType(TypeInfo.of(CAQuery.class));
@@ -390,16 +390,30 @@ public class ZoneManager extends AbstractScheduledService
 
     @Override
     public void updateZones(ZonesUpdateGossip message) {
+      boolean didUpdate = false;
       // We will reject zones that are too old and to be purged in the next iteration
-      StaleZonesRemover filter = new StaleZonesRemover(config.clock(), config);
+      UnexpiredZonesFilter filter = new UnexpiredZonesFilter(config.clock(), config);
       for (Entry<GlobalName, ZoneManagementInfo> entry : message) {
         GlobalName name = entry.getKey();
         ZoneManagementInfo update = entry.getValue();
         if (filter.apply(update)) {
+          if (name.ancestor(agentsName)) {
+            // Ancestor ZMIs will be recomputed by us
+            LOG.warn("This ZMI update: " + name + " will be ignored by: " + agentsNode);
+            continue;
+          }
           Optional<ZoneManagementInfo> zone = hierarchy.findPayload(name);
           if (zone.isPresent()) {
-            zone.get().update(update);
-            LOG.info("Updated zone info: " + name);
+            ZoneManagementInfo known = zone.get();
+            // We make sure that this update actually makes sense, this way we don't care for
+            // how long the packet has been roaming in the network and we do not care about
+            // long-lasting gossiping sessions
+            if (known.update(update)) {
+              didUpdate = true;
+              LOG.info("Updated zone info: " + name);
+            } else {
+              LOG.warn("Aborted zone: " + name + " update due to old timestamp");
+            }
             continue;
           }
           Optional<ZoneHierarchy<ZoneManagementInfo>> parent = hierarchy.find(name.parent());
@@ -413,7 +427,9 @@ public class ZoneManager extends AbstractScheduledService
           LOG.warn("Rejected too old update for zone: " + name);
         }
       }
-      freshContacts.add(message.sender());
+      if (didUpdate) {
+        freshContacts.add(message.sender());
+      }
     }
   }
 }

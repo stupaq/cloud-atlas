@@ -22,10 +22,9 @@ public class BuiltinAttribute<Type extends AttributeValue> implements BuiltinAtt
     this.type = type;
   }
 
-  public Attribute<Type> get(ZoneManagementInfo zmi) {
+  public Type get(ZoneManagementInfo zmi) {
     Optional<Attribute<Type>> value = zmi.get(name, type);
-    Preconditions.checkState(value.isPresent());
-    return value.get();
+    return value.isPresent() ? value.get().value() : type.aNull();
   }
 
   public Attribute<Type> create(Type value) {
