@@ -12,6 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.internal.logging.CommonsLoggerFactory;
@@ -68,6 +69,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
         .channel(NioDatagramChannel.class)
         .handler(new ChannelInitializer(config))
         .bind(contactSelf.address())
+        .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE)
         .syncUninterruptibly()
         .channel();
     blacklisted.add(contactSelf);

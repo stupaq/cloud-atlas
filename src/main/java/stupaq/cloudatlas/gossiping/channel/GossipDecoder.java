@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.gossiping.channel;
 
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -28,6 +29,7 @@ class GossipDecoder extends MessageToMessageDecoder<WireGossip> implements Gossi
   private final LoadingCache<CAContact, GossipIdDuplicate> duplicates;
 
   public GossipDecoder(final BootstrapConfiguration config) {
+    Preconditions.checkState(!isSharable());
     int maxSize = config.getInt(EXPECTED_CONTACTS_MAX_COUNT, EXPECTED_CONTACTS_MAX_COUNT_DEFAULT);
     duplicates = CacheBuilder.newBuilder()
         /** This is deliberate as {@link GossipEncoder} will set maximum size to twice that. */
@@ -43,20 +45,21 @@ class GossipDecoder extends MessageToMessageDecoder<WireGossip> implements Gossi
   @Override
   protected void decode(ChannelHandlerContext ctx, WireGossip msg, List<Object> out)
       throws IOException {
-    try {
-      if (duplicates.get(msg.contact()).apply(msg.gossipId())) {
-        LOG.warn("Duplicate gossip: " + msg.gossipId() + " will be dropped");
-        return;
-      }
-      CompactInput stream = new CompactInput(msg.dataStream());
+    if (duplicates.getUnchecked(msg.contact()).apply(msg.gossipId())) {
+      LOG.warn("Duplicated gossip: " + msg.gossipId() + " will be dropped");
+      return;
+    }
+    try (CompactInput stream = new CompactInput(msg.dataStream())) {
       Gossip gossip = TypeRegistry.readObject(stream);
       if (!gossip.hasSender()) {
         gossip.sender(msg.contact());
       }
       out.add(new InboundGossip(gossip));
-    } catch (Throwable t) {
-      LOG.error("Decoding failed", t);
-      // Ignore as we do not close the only channel
     }
+  }
+
+  @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    LOG.error("Decoder failed", cause);
   }
 }

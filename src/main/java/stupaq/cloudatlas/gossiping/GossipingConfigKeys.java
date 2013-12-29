@@ -14,6 +14,9 @@ public interface GossipingConfigKeys {
   static final long GOSSIP_ID_UNIQUENESS_INTERVAL_DEFAULT = 1000L * 60;
   static final String FRAME_ASSEMBLING_TIMEOUT = "frame_assembling_timeout";
   static final long FRAME_ASSEMBLING_TIMEOUT_DEFAULT = 2000;
+  static final String GTP_PENDING_RESPONSE_RETENTION = "gtp_pending_response_retention";
+  static final long GTP_PENDING_RESPONSE_RETENTION_DEFAULT = 1000L * 10;
+  // FIXME remove these
   static final String CONTACT_INFO_RETENTION = "contact_info_retention";
   static final long CONTACT_INFO_RETENTION_DEFAULT = 1000L * 60 * 10;
   // Static configuration

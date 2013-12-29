@@ -8,12 +8,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import io.netty.buffer.ByteBuf;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 
+import static io.netty.buffer.Unpooled.copyBoolean;
+import static io.netty.buffer.Unpooled.unmodifiableBuffer;
+import static io.netty.buffer.Unpooled.unreleasableBuffer;
+
 public class WireGTPHeader extends ForwardingList<Long> {
+  public static final int SERIALIZED_MIN_SIZE = 1;
   public static final int SERIALIZED_MAX_SIZE = 8 * 4 + 1;
+  public static final ByteBuf SERIALIZED_EMPTY =
+      unreleasableBuffer(unmodifiableBuffer(copyBoolean(false)));
   public static final CompactSerializer<WireGTPHeader> SERIALIZER =
       new CompactSerializer<WireGTPHeader>() {
         @Override

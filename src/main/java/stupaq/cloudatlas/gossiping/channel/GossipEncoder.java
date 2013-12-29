@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.gossiping.channel;
 
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -9,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
@@ -31,6 +33,7 @@ class GossipEncoder extends MessageToMessageEncoder<OutboundGossip> implements G
   private final LoadingCache<CAContact, GossipIdAllocator> allocators;
 
   public GossipEncoder(BootstrapConfiguration config) {
+    Preconditions.checkState(!isSharable());
     int maxSize = config.getInt(EXPECTED_CONTACTS_MAX_COUNT, EXPECTED_CONTACTS_MAX_COUNT_DEFAULT);
     allocators = CacheBuilder.newBuilder()
         /** This is deliberate as {@link GossipDecoder} will set maximum size to half of that. */
@@ -45,18 +48,18 @@ class GossipEncoder extends MessageToMessageEncoder<OutboundGossip> implements G
 
   @Override
   protected void encode(ChannelHandlerContext ctx, OutboundGossip msg, List<Object> out)
-      throws IOException {
-    ByteBuf buffer = null;
-    try {
-      buffer = Unpooled.buffer();
-      CompactOutput stream = new CompactOutput(new ByteBufOutputStream(buffer));
+      throws IOException, ExecutionException {
+    ByteBuf buffer = Unpooled.buffer();
+    try (CompactOutput stream = new CompactOutput(new ByteBufOutputStream(buffer))) {
       TypeRegistry.writeObject(stream, msg.gossip());
       out.add(new WireGossip(msg.recipient(), allocators.get(msg.recipient()).next(), buffer));
-    } catch (Throwable t) {
-      LOG.error("Encoding failed", t);
-      // Ignore as we do not close the only channel
     } finally {
       ReferenceCountUtil.release(buffer);
     }
+  }
+
+  @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    LOG.error("Decoding failed", cause);
   }
 }

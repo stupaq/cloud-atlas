@@ -17,17 +17,16 @@ import stupaq.cloudatlas.messaging.messages.gossips.ZonesUpdateGossip;
 import stupaq.cloudatlas.time.LocalClock;
 
 /** PACKAGE-LOCAL */
-class GTPInboundAdjuster extends MessageToMessageDecoder<InboundGossip> {
-  private static final Log LOG = LogFactory.getLog(GTPInboundAdjuster.class);
+class GTPInboundHandler extends MessageToMessageDecoder<InboundGossip> {
+  private static final Log LOG = LogFactory.getLog(GTPInboundHandler.class);
   private final LocalClock clock;
 
-  public GTPInboundAdjuster(BootstrapConfiguration config) {
+  public GTPInboundHandler(BootstrapConfiguration config) {
     clock = config.clock();
   }
 
   @Override
-  protected void decode(ChannelHandlerContext ctx, InboundGossip msg, List<Object> out)
-      throws Exception {
+  protected void decode(ChannelHandlerContext ctx, InboundGossip msg, List<Object> out) {
     Gossip gossip = msg.gossip();
     try {
       if (gossip instanceof ZonesInterestInitialGossip) {
@@ -54,5 +53,10 @@ class GTPInboundAdjuster extends MessageToMessageDecoder<InboundGossip> {
   }
 
   private void adjust(ZonesUpdateGossip gossip) {
+  }
+
+  @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    LOG.error("Handler failed", cause);
   }
 }

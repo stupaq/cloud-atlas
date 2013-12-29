@@ -20,10 +20,12 @@ import static com.google.common.base.Throwables.propagate;
 import static com.google.common.base.Throwables.propagateIfInstanceOf;
 
 public class WireFrame extends AbstractReferenceCounted implements GossipingConfigKeys {
-  public static final int HEADERn_MAX_SIZE = FrameId.SERIALIZED_MAX_SIZE;
-  public static final int HEADER0_MAX_SIZE = HEADERn_MAX_SIZE + WireGTPHeader.SERIALIZED_MAX_SIZE;
+  public static final int HEADERn_MAX_SIZE =
+      FrameId.SERIALIZED_MAX_SIZE + WireGTPHeader.SERIALIZED_MIN_SIZE;
+  public static final int HEADER0_MAX_SIZE =
+      FrameId.SERIALIZED_MAX_SIZE + WireGTPHeader.SERIALIZED_MAX_SIZE;
   public static final int DATAn_MAX_SIZE = DATAGRAM_PACKET_MAX_SIZE - HEADERn_MAX_SIZE;
-  public static final int DATA0_MAX_SIZE = DATAGRAM_PACKET_MAX_SIZE - HEADERn_MAX_SIZE;
+  public static final int DATA0_MAX_SIZE = DATAGRAM_PACKET_MAX_SIZE - HEADER0_MAX_SIZE;
   private final CAContact contact;
   private final FrameId frameId;
   private final ByteBuf header, data;
@@ -32,8 +34,9 @@ public class WireFrame extends AbstractReferenceCounted implements GossipingConf
     Preconditions.checkNotNull(packet.sender());
     contact = new CAContact(packet.sender());
     ByteBuf content = packet.content();
-    CompactInput stream = new CompactInput(new ByteBufInputStream(content));
-    frameId = FrameId.SERIALIZER.readInstance(stream);
+    try (CompactInput stream = new CompactInput(new ByteBufInputStream(content))) {
+      frameId = FrameId.SERIALIZER.readInstance(stream);
+    }
     // At this point we know that we have the reference
     header = null;
     data = content.retain();
@@ -42,15 +45,14 @@ public class WireFrame extends AbstractReferenceCounted implements GossipingConf
   public WireFrame(CAContact destination, FrameId id, ByteBuf data) throws IOException {
     contact = destination;
     frameId = id;
+    // References will be freed if anything fails later
     this.data = data.retain();
     header = Unpooled.buffer(frameId.isFirst() ? HEADER0_MAX_SIZE : HEADERn_MAX_SIZE);
-    try {
-      CompactOutput headerStream = new CompactOutput(new ByteBufOutputStream(header));
+    try (CompactOutput headerStream = new CompactOutput(new ByteBufOutputStream(header))) {
       FrameId.SERIALIZER.writeInstance(headerStream, frameId);
-      // We copy both references when creating a composite
     } catch (Throwable t) {
-      this.data.release();
-      header.release();
+      ReferenceCountUtil.release(this.data);
+      ReferenceCountUtil.release(header);
       propagateIfInstanceOf(t, IOException.class);
       throw propagate(t);
     }
@@ -89,6 +91,13 @@ public class WireFrame extends AbstractReferenceCounted implements GossipingConf
   @Override
   public WireFrame retain() {
     return (WireFrame) super.retain();
+  }
+
+  public static boolean sneakPeakIsFirst(ByteBuf frame) throws IOException {
+    try (CompactInput stream = new CompactInput(new ByteBufInputStream(frame.slice()))) {
+      FrameId frameId = FrameId.SERIALIZER.readInstance(stream);
+      return frameId.isFirst();
+    }
   }
 
   public static int frameDataMaxSize(FrameId frameId) {
