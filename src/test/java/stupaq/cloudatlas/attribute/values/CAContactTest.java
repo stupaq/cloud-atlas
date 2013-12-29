@@ -6,6 +6,7 @@ import stupaq.cloudatlas.query.semantics.OperableValue.OperableValueDefault;
 import stupaq.cloudatlas.query.semantics.RelationalValue.RelationalValueDefault;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Cont;
 import static stupaq.cloudatlas.attribute.values.AttributeValueTestUtils.Str;
@@ -27,5 +28,12 @@ public class CAContactTest {
   @Test
   public void testRelational() {
     assertTrue(Cont("localhost:1921").rel() instanceof RelationalValueDefault);
+  }
+
+  @Test
+  public void testEquals() throws Exception {
+    assertTrue(Cont("localhost:1921").equals(Cont("localhost:1921")));
+    assertFalse(Cont("localhost:1922").equals(Cont("localhost:1921")));
+    assertFalse(Cont("localhost:1922").equals(Cont("some-nonexistent-host:1922")));
   }
 }

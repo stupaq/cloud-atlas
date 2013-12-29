@@ -20,8 +20,9 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Data
         .setMessageSizeEstimator(
             new DefaultMessageSizeEstimator(GossipingConfigKeys.DATAGRAM_PACKET_MAX_SIZE));
     channel.pipeline()
-        .addLast(new LoggingHandler("UDP", LogLevel.TRACE))
+        .addLast(new LoggingHandler("GTP|FRAME", LogLevel.TRACE))
         .addLast(new GTPHeaderCodec(config))
+        .addLast(new LoggingHandler("FRAME", LogLevel.TRACE))
         .addLast(new DatagramDecoder(config))
         .addLast(new DatagramEncoder(config))
         .addLast(new FrameDecoder(config))

@@ -9,13 +9,13 @@ import stupaq.cloudatlas.configuration.CAConfiguration;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagementInfo;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
-import stupaq.cloudatlas.time.SynchronizedClock;
+import stupaq.cloudatlas.time.LocalClock;
 
 public class UnexpiredZonesFilter
     implements Predicate<ZoneManagementInfo>, BuiltinAttributesConfigKeys, ZoneManagerConfigKeys {
   private final CATime threshold;
 
-  public UnexpiredZonesFilter(SynchronizedClock clock, CAConfiguration config) {
+  public UnexpiredZonesFilter(LocalClock clock, CAConfiguration config) {
     threshold = new CATime(clock.timestamp(-config.getLong(PURGE_INTERVAL, PURGE_INTERVAL_DEFAULT),
         TimeUnit.MILLISECONDS));
   }

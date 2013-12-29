@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 
 import io.netty.buffer.ByteBuf;
-import stupaq.cloudatlas.gossiping.peerstate.GTPSample;
+import stupaq.cloudatlas.time.GTPSample;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
@@ -33,8 +33,8 @@ public class WireGTPHeader {
         @Override
         public void writeInstance(CompactOutput out, WireGTPHeader object) throws IOException {
           out.writeByte(object.samplesCount);
-          for (long value : object.samples) {
-            out.writeLong(value);
+          for (int i = 0; i < object.samplesCount; i++) {
+            out.writeLong(object.samples[i]);
           }
         }
       };

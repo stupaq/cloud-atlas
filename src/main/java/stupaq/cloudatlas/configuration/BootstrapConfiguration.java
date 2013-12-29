@@ -12,20 +12,23 @@ import java.io.File;
 import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.threading.SingleThreadModel;
 import stupaq.cloudatlas.threading.ThreadModel;
-import stupaq.cloudatlas.time.SynchronizedClock;
+import stupaq.cloudatlas.time.GTPSynchronizedClock;
+import stupaq.cloudatlas.time.LocalClock;
 
 public class BootstrapConfiguration extends CAConfiguration {
   private final MessageBus bus;
   private final ThreadModel threadModel;
-  private final SynchronizedClock clock = new SynchronizedClock();
+  private final GTPSynchronizedClock synchronizedClock;
 
   public BootstrapConfiguration(CAConfiguration configuration, MessageBus bus,
-      ThreadModel threadModel) {
+      ThreadModel threadModel, GTPSynchronizedClock synchronizedClock) {
     super(configuration);
     Preconditions.checkNotNull(bus);
     Preconditions.checkNotNull(threadModel);
+    Preconditions.checkNotNull(synchronizedClock);
     this.bus = bus;
     this.threadModel = threadModel;
+    this.synchronizedClock = synchronizedClock;
   }
 
   public MessageBus bus() {
@@ -36,15 +39,20 @@ public class BootstrapConfiguration extends CAConfiguration {
     return threadModel;
   }
 
-  public SynchronizedClock clock() {
-    return clock;
+  public LocalClock clock() {
+    return synchronizedClock.localClock();
+  }
+
+  public GTPSynchronizedClock synchronizedClock() {
+    return synchronizedClock;
   }
 
   public static class Builder {
     private static final String CONFIG_EXTENSION = ".ini";
+    private final MessageBus bus = new MessageBus();
     private CAConfiguration config = new CAConfiguration();
-    private MessageBus bus = new MessageBus();
     private ThreadModel threadModel;
+    private GTPSynchronizedClock synchronizedClock;
 
     public Builder config(CAConfiguration config) {
       this.config = config;
@@ -61,11 +69,6 @@ public class BootstrapConfiguration extends CAConfiguration {
       return this;
     }
 
-    public Builder bus(MessageBus bus) {
-      this.bus = bus;
-      return this;
-    }
-
     public Builder threadModel(ThreadModel threadModel) {
       this.threadModel = threadModel;
       return this;
@@ -75,7 +78,10 @@ public class BootstrapConfiguration extends CAConfiguration {
       if (threadModel == null) {
         threadModel = new SingleThreadModel();
       }
-      return new BootstrapConfiguration(config, bus, threadModel);
+      if (synchronizedClock == null) {
+        synchronizedClock = new GTPSynchronizedClock(config);
+      }
+      return new BootstrapConfiguration(config, bus, threadModel, synchronizedClock);
     }
   }
 }

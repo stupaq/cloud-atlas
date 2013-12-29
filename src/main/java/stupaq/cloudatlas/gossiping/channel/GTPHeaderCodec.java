@@ -26,7 +26,7 @@ import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.gossiping.GossipingConfigKeys;
 import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
 import stupaq.cloudatlas.gossiping.dataformat.WireGTPHeader;
-import stupaq.cloudatlas.time.SynchronizedClock;
+import stupaq.cloudatlas.time.GTPSynchronizedClock;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 
@@ -34,11 +34,11 @@ import stupaq.compact.CompactOutput;
 class GTPHeaderCodec extends MessageToMessageCodec<DatagramPacket, DatagramPacket>
     implements GossipingConfigKeys {
   private static final Log LOG = LogFactory.getLog(GTPHeaderCodec.class);
-  private final SynchronizedClock clock;
+  private final GTPSynchronizedClock clock;
   private final LoadingCache<InetSocketAddress, WireGTPHeader> pendingResponses;
 
   public GTPHeaderCodec(BootstrapConfiguration config) {
-    clock = config.clock();
+    clock = config.synchronizedClock();
     pendingResponses = CacheBuilder.newBuilder()
         .expireAfterAccess(
             config.getLong(GTP_PENDING_RESPONSE_RETENTION, GTP_PENDING_RESPONSE_RETENTION_DEFAULT),
