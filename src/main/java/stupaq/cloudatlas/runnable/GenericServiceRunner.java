@@ -27,7 +27,7 @@ public class GenericServiceRunner {
       Class<? extends Service> clazz = (Class<? extends Service>) Class.forName(args[0]);
       String[] serviceArgs = new String[args.length - 1];
       System.arraycopy(args, 1, serviceArgs, 0, args.length - 1);
-      LOG.info("Starting service " + clazz.getSimpleName() + " with arguments: " +
+      LOG.info("Initializing service " + clazz.getSimpleName() + " with arguments: " +
           Arrays.asList(serviceArgs));
       final Service process =
           (Service) ConstructorUtils.getAccessibleConstructor(clazz, String[].class)
@@ -35,9 +35,11 @@ public class GenericServiceRunner {
       Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
         @Override
         public void run() {
+          LOG.info("Stopping service");
           process.stopAsync().awaitTerminated();
         }
       }));
+      LOG.info("Starting service");
       process.startAsync().awaitTerminated();
       if (process.state() == State.FAILED) {
         LOG.error("Service exited abnormally", process.failureCause());

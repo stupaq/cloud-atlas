@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -52,11 +53,7 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
   @Override
   protected void shutDown() throws Exception {
     for (Remote stub : stubs) {
-      try {
-        UnicastRemoteObject.unexportObject(stub, true);
-      } catch (RemoteException e) {
-        // Ignored
-      }
+      unbindForce(stub);
     }
   }
 
@@ -64,6 +61,17 @@ public class RMIServer extends AbstractIdleService implements RMIServerConfigKey
     Remote stub = UnicastRemoteObject.exportObject(handler, 0);
     registry.bind(exportedName(handler.getClass(), context), stub);
     stubs.add(stub);
+  }
+
+  private void unbindForce(Remote handler) {
+    try {
+      registry.unbind(exportedName(handler.getClass(), context));
+    } catch (NotBoundException | RemoteException ignored) {
+    }
+    try {
+      UnicastRemoteObject.unexportObject(handler, true);
+    } catch (NoSuchObjectException ignored) {
+    }
   }
 
   public static String exportedName(Class<? extends Remote> clazz, String context) {
