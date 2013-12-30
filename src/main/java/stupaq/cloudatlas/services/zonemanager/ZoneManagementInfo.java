@@ -148,7 +148,8 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
 
   public void removeOfType(TypeInfo<?> type) {
     ensureCopied();
-    for (Attribute attribute : attributes.values()) {
+    // We have to materialize iterator for removal
+    for (Attribute attribute : FluentIterable.from(attributes.values()).toList()) {
       if (type.matches(attribute.value())) {
         remove(attribute.name());
       }
