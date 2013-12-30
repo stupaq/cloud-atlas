@@ -1,7 +1,6 @@
 package stupaq.cloudatlas.gossiping.dataformat;
 
 import com.google.common.collect.AbstractIterator;
-import com.google.common.primitives.UnsignedInteger;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -9,54 +8,66 @@ import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import stupaq.commons.base.ForwardingWrapper;
+import stupaq.cloudatlas.services.busybody.sessions.SessionId;
 import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 
-import static com.google.common.primitives.UnsignedInteger.ONE;
-import static com.google.common.primitives.UnsignedInteger.ZERO;
-import static com.google.common.primitives.UnsignedInteger.fromIntBits;
+import static com.google.common.primitives.UnsignedBytes.toInt;
 
 @Immutable
-public class GossipId extends ForwardingWrapper<UnsignedInteger> implements Comparable<GossipId> {
-  public static final int SERIALIZED_MAX_SIZE = 4;
+public class GossipId {
+  public static final int SERIALIZED_MAX_SIZE = SessionId.SERIALIZED_MAX_SIZE + 1;
   public static final CompactSerializer<GossipId> SERIALIZER = new CompactSerializer<GossipId>() {
     @Override
     public GossipId readInstance(CompactInput in) throws IOException {
-      return new GossipId(fromIntBits(in.readInt()));
+      return new GossipId(SessionId.SERIALIZER.readInstance(in), in.readByte());
     }
 
     @Override
     public void writeInstance(CompactOutput out, GossipId object) throws IOException {
-      out.writeInt(object.get().intValue());
+      SessionId.SERIALIZER.writeInstance(out, object.sessionId);
+      out.writeByte(object.value);
     }
   };
+  @Nonnull private final SessionId sessionId;
+  private final byte value;
 
-  public GossipId() {
-    super(ZERO);
+  public GossipId(@Nonnull SessionId sessionId) {
+    this(sessionId, (byte) 0);
   }
 
-  public GossipId(UnsignedInteger value) {
-    super(value);
+  protected GossipId(@Nonnull SessionId sessionId, byte value) {
+    this.sessionId = sessionId;
+    this.value = value;
   }
 
   public GossipId nextGossip() {
-    return new GossipId(get().plus(ONE));
+    return new GossipId(sessionId, (byte) (toInt(value) + 1));
   }
 
-  public FrameId firstFrame(int framesCount) {
-    return new FrameId(this, framesCount, (short) 0);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    GossipId gossipId = (GossipId) o;
+    return value == gossipId.value && sessionId.equals(gossipId.sessionId);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = sessionId.hashCode();
+    result = 31 * result + toInt(value);
+    return result;
   }
 
   @Override
   public String toString() {
-    return "GossipId{value=" + super.toString() + '}';
-  }
-
-  @Override
-  public int compareTo(@Nonnull GossipId other) {
-    return get().compareTo(other.get());
+    return "GossipId{sessionId=" + sessionId + ", value=" + toInt(value) + '}';
   }
 
   public Iterable<FrameId> frames(final int framesCount) {
@@ -70,7 +81,7 @@ public class GossipId extends ForwardingWrapper<UnsignedInteger> implements Comp
 
   public Iterator<FrameId> framesIterator(final int framesCount) {
     return new AbstractIterator<FrameId>() {
-      private FrameId id = GossipId.this.firstFrame(framesCount);
+      private FrameId id = new FrameId(GossipId.this, framesCount);
 
       @Override
       protected FrameId computeNext() {

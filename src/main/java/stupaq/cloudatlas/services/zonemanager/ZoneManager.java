@@ -39,9 +39,10 @@ import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
 import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
 import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
+import stupaq.cloudatlas.messaging.messages.gossips.AbstractZonesInterestGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
-import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestInitialGossip;
+import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestResponseGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesUpdateGossip;
 import stupaq.cloudatlas.messaging.messages.requests.DumpZoneRequest;
 import stupaq.cloudatlas.messaging.messages.requests.EntitiesValuesRequest;
@@ -55,6 +56,7 @@ import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.naming.LocalName;
 import stupaq.cloudatlas.query.typecheck.TypeInfo;
 import stupaq.cloudatlas.services.busybody.BusybodyConfigKeys;
+import stupaq.cloudatlas.services.busybody.sessions.SessionId;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttribute;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinAttributesConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.builtins.BuiltinsInserter;
@@ -198,7 +200,7 @@ public class ZoneManager extends AbstractScheduledService
 
     @Subscribe
     @ScheduledInvocation
-    public void exportZones(ZonesInterestGossip message);
+    public void exportZones(AbstractZonesInterestGossip message);
 
     @Subscribe
     @ScheduledInvocation
@@ -323,20 +325,22 @@ public class ZoneManager extends AbstractScheduledService
 
     @Override
     public void selectContact(ContactSelectionMessage message) {
-      Optional<CAContact> contact;
+      CAContact contact;
       try {
-        contact = message.getStrategy().select(agentsNode, fallbackContacts);
+        Optional<CAContact> choice = message.getStrategy().select(agentsNode, fallbackContacts);
+        if (!choice.isPresent()) {
+          LOG.error("Could not find contact, aborting gossiping round");
+          return;
+        }
+        contact = choice.get();
       } catch (Exception e) {
         LOG.error("Contact selection failed, aborting gossiping round", e);
         return;
       }
-      if (!contact.isPresent()) {
-        LOG.error("Could not find contact, aborting gossiping round");
-        return;
-      }
       LOG.debug("Selected contact: " + contact);
-      bus.post(new OutboundGossip(contact.get(),
-          new ZonesInterestInitialGossip(agentsName, prepareKnownZones())));
+      SessionId session = message.getSessionId();
+      bus.post(new OutboundGossip(contact,
+          new ZonesInterestInitialGossip(agentsName, prepareKnownZones()).initiates(session)));
     }
 
     @Override
@@ -351,7 +355,7 @@ public class ZoneManager extends AbstractScheduledService
         return;
       }
       bus.post(new OutboundGossip(message.sender(),
-          new ZonesInterestGossip(agentsName, prepareKnownZones())));
+          new ZonesInterestResponseGossip(agentsName, prepareKnownZones()).respondsTo(message)));
     }
 
     private Map<GlobalName, CATime> prepareKnownZones() {
@@ -367,7 +371,7 @@ public class ZoneManager extends AbstractScheduledService
     }
 
     @Override
-    public void exportZones(ZonesInterestGossip message) {
+    public void exportZones(AbstractZonesInterestGossip message) {
       GlobalName otherName = message.getLeaf();
       GlobalName lca = agentsName.lca(otherName);
       LOG.info("Agent: " + otherName + " requested zone updates");
@@ -393,7 +397,8 @@ public class ZoneManager extends AbstractScheduledService
           }
         }
       }
-      bus.post(new OutboundGossip(message.sender(), new ZonesUpdateGossip(updates)));
+      bus.post(
+          new OutboundGossip(message.sender(), new ZonesUpdateGossip(updates).respondsTo(message)));
     }
 
     @Override

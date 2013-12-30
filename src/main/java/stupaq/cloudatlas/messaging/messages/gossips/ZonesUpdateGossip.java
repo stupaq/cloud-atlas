@@ -41,6 +41,11 @@ public class ZonesUpdateGossip extends Gossip
   }
 
   @Override
+  public Gossip respondsTo(Gossip gossip) {
+    return super.respondsTo(gossip);
+  }
+
+  @Override
   public Iterator<Entry<GlobalName, ZoneManagementInfo>> iterator() {
     return zones.entrySet().iterator();
   }

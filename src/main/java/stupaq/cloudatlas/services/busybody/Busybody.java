@@ -1,5 +1,6 @@
 package stupaq.cloudatlas.services.busybody;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractScheduledService;
@@ -25,8 +26,10 @@ import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
+import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
 import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
+import stupaq.cloudatlas.services.busybody.sessions.SessionId;
 import stupaq.cloudatlas.services.busybody.strategies.ContactSelection;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.DirectInvocation;
 import stupaq.commons.util.concurrent.FastStartScheduler;
@@ -46,6 +49,7 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   private NioEventLoopGroup group;
   private Channel channel;
   private CAContact contactSelf;
+  private SessionId nextSessionId = new SessionId();
 
   public Busybody(BootstrapConfiguration config) {
     config.mustContain(BIND_PORT);
@@ -57,7 +61,12 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   @Override
   protected void runOneIteration() throws Exception {
     // ZoneManager will determine contact following provided strategy
-    bus.post(new ContactSelectionMessage(ContactSelection.create(config, blacklisted)));
+    try {
+      bus.post(
+          new ContactSelectionMessage(ContactSelection.create(config, blacklisted), nextSessionId));
+    } finally {
+      nextSessionId = nextSessionId.nextSession();
+    }
   }
 
   @Override
@@ -104,27 +113,35 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   private static interface BusybodyContract extends MessageListener {
     @Subscribe
     @DirectInvocation
-    public void receiveGossip(InboundGossip gossip);
+    public void receiveGossip(InboundGossip message);
 
     @Subscribe
     @DirectInvocation
-    public void sendGossip(OutboundGossip gossip);
+    public void sendGossip(OutboundGossip message);
   }
 
+  /**
+   * Under no circumstance this class can access service state due to {@link DirectInvocation}
+   * annotation of subscribing methods.
+   */
   private class BusybodyListener extends AbstractMessageListener implements BusybodyContract {
     protected BusybodyListener() {
       super(executor, BusybodyContract.class);
     }
 
     @Override
-    public void receiveGossip(InboundGossip gossip) {
-      // If debug is disabled this call costs nothing because of @DirectInvocation
-      bus.post(gossip.gossip());
+    public void receiveGossip(InboundGossip message) {
+      Gossip gossip = message.gossip();
+      Preconditions.checkNotNull(gossip.sender());
+      Preconditions.checkNotNull(gossip.id());
+      bus.post(gossip);
     }
 
     @Override
     public void sendGossip(OutboundGossip message) {
-      message.gossip().sender(contactSelf);
+      Gossip gossip = message.gossip();
+      Preconditions.checkNotNull(gossip.id());
+      gossip.sender(contactSelf);
       channel.writeAndFlush(message);
     }
   }

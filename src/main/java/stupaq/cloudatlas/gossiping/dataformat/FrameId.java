@@ -11,6 +11,8 @@ import stupaq.compact.CompactInput;
 import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 
+import static stupaq.commons.lang.UnsignedShorts.toInt;
+
 @Immutable
 public class FrameId {
   public static final int SERIALIZED_MAX_SIZE = GossipId.SERIALIZED_MAX_SIZE + 2 * 2;
@@ -27,15 +29,19 @@ public class FrameId {
       out.writeShort(object.sequenceNumber);
     }
   };
+  private static final int FRAMES_COUNT_MAX = Short.MAX_VALUE; // - Short.MIN_VALUE +1
   @Nonnull private final GossipId gossipId;
   private final short framesCount;
   private final short sequenceNumber;
 
-  public FrameId(@Nonnull GossipId gossipId, long framesCount, long sequenceNumber) {
-    Preconditions.checkNotNull(gossipId);
-    Preconditions.checkArgument(framesCount <= Short.MAX_VALUE,
-        "Too many frames for a single gossip");
-    Preconditions.checkState(sequenceNumber < framesCount);
+  public FrameId(@Nonnull GossipId gossipId, int framesCount) {
+    this(gossipId, framesCount, 0);
+  }
+
+  protected FrameId(@Nonnull GossipId gossipId, int framesCount, int sequenceNumber) {
+    Preconditions.checkArgument(framesCount <= FRAMES_COUNT_MAX);
+    Preconditions.checkArgument(0 <= sequenceNumber);
+    Preconditions.checkArgument(sequenceNumber < framesCount);
     this.gossipId = gossipId;
     this.framesCount = (short) framesCount;
     this.sequenceNumber = (short) sequenceNumber;
@@ -57,23 +63,23 @@ public class FrameId {
   @Override
   public int hashCode() {
     int result = gossipId.hashCode();
-    result = 31 * result + (int) framesCount;
-    result = 31 * result + (int) sequenceNumber;
+    result = 31 * result + toInt(framesCount);
+    result = 31 * result + toInt(sequenceNumber);
     return result;
   }
 
   @Override
   public String toString() {
-    return "FrameId{" + "gossipId=" + gossipId + ", framesCount=" + framesCount +
-        ", sequenceNumber=" + sequenceNumber + '}';
+    return "FrameId{" + "gossipId=" + gossipId + ", framesCount=" + toInt(framesCount) +
+        ", sequenceNumber=" + toInt(sequenceNumber) + '}';
   }
 
   public FrameId nextFrame() {
-    return new FrameId(gossipId, framesCount, (short) (sequenceNumber + 1));
+    return new FrameId(gossipId, toInt(framesCount), toInt(sequenceNumber) + 1);
   }
 
   public boolean hasNextFrame() {
-    return sequenceNumber + 1 < framesCount;
+    return toInt(sequenceNumber) + 1 < toInt(framesCount);
   }
 
   public GossipId gossipId() {
@@ -81,11 +87,11 @@ public class FrameId {
   }
 
   public int framesCount() {
-    return framesCount;
+    return toInt(framesCount);
   }
 
   public int sequenceNumber() {
-    return sequenceNumber;
+    return toInt(sequenceNumber);
   }
 
   public boolean isFirst() {

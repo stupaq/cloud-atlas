@@ -24,17 +24,16 @@ import stupaq.compact.CompactInput;
 import stupaq.compact.TypeRegistry;
 
 /** PACKAGE-LOCAL */
-class GossipDecoder extends MessageToMessageDecoder<WireGossip> implements
-                                                                GossipingInternalsConfigKeys {
+class GossipDecoder extends MessageToMessageDecoder<WireGossip>
+    implements GossipingInternalsConfigKeys {
   private static final Log LOG = LogFactory.getLog(GossipDecoder.class);
   private final LoadingCache<CAContact, GossipIdDuplicate> duplicates;
 
   public GossipDecoder(final BootstrapConfiguration config) {
     Preconditions.checkState(!isSharable());
-    int maxSize = config.getInt(EXPECTED_CONTACTS_MAX_COUNT, EXPECTED_CONTACTS_MAX_COUNT_DEFAULT);
     duplicates = CacheBuilder.newBuilder()
-        /** This is deliberate as {@link GossipEncoder} will set maximum size to twice that. */
-        .maximumSize(maxSize)
+        .maximumSize(
+            config.getInt(EXPECTED_CONTACTS_MAX_COUNT, EXPECTED_CONTACTS_MAX_COUNT_DEFAULT))
         .build(new CacheLoader<CAContact, GossipIdDuplicate>() {
           @Override
           public GossipIdDuplicate load(CAContact key) throws Exception {

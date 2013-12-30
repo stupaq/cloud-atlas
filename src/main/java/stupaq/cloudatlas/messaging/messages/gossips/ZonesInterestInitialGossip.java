@@ -7,24 +7,21 @@ import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.services.busybody.sessions.SessionId;
 import stupaq.compact.CompactInput;
-import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
 import stupaq.compact.TypeDescriptor;
 
+import static stupaq.compact.CompactSerializers.Map;
+
 @Immutable
-public class ZonesInterestInitialGossip extends ZonesInterestGossip {
+public class ZonesInterestInitialGossip extends ZonesInterestResponseGossip {
   public static final CompactSerializer<ZonesInterestInitialGossip> SERIALIZER =
-      new CompactSerializer<ZonesInterestInitialGossip>() {
+      new AbstractCompactSerializer<ZonesInterestInitialGossip>() {
         @Override
         public ZonesInterestInitialGossip readInstance(CompactInput in) throws IOException {
-          return new ZonesInterestInitialGossip(ZonesInterestGossip.SERIALIZER.readInstance(in));
-        }
-
-        @Override
-        public void writeInstance(CompactOutput out, ZonesInterestInitialGossip object)
-            throws IOException {
-          ZonesInterestGossip.SERIALIZER.writeInstance(out, object);
+          return new ZonesInterestInitialGossip(GlobalName.SERIALIZER.readInstance(in),
+              Map(GlobalName.SERIALIZER, CATime.SERIALIZER).readInstance(in));
         }
       };
 
@@ -32,8 +29,9 @@ public class ZonesInterestInitialGossip extends ZonesInterestGossip {
     super(leaf, timestamps);
   }
 
-  public ZonesInterestInitialGossip(ZonesInterestGossip gossip) {
-    super(gossip.leaf, gossip.timestamps);
+  @Override
+  public Gossip initiates(SessionId session) {
+    return super.initiates(session);
   }
 
   @Override
@@ -43,7 +41,6 @@ public class ZonesInterestInitialGossip extends ZonesInterestGossip {
 
   @Override
   public String toString() {
-    return "ZonesInterestInitialGossip{sender=" + sender() + ", leaf=" + leaf + ", timestamps=" +
-        timestamps + '}';
+    return "ZonesInterestInitialGossip" + super.toString();
   }
 }
