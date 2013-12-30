@@ -2,6 +2,9 @@
 
 BIN_DIR="$(dirname $0)"
 ROOT_DIR="$BIN_DIR/.."
+SKELETONS_DIR="$ROOT_DIR/skeletons"
+CONFIGS_DIR="$ROOT_DIR/configs"
+
 CP_FILE="$ROOT_DIR/classpath"
 
 PACKAGE_PREFIX="stupaq.cloudatlas."

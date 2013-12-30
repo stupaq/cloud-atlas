@@ -7,7 +7,7 @@ fi
 
 zone_name="$1"
 bind_port="$2"
-config_file="${CONFIGS_DIR:-`dirname $0`/../../configs/}/$zone_name/`basename ${0%.*}.ini`"
+config_file="${CONFIGS_DIR:?Variable CONFIGS_DIR must be set!}/$zone_name/`basename ${0%.*}.ini`"
 
 mkdir -p `dirname ${config_file}`
 egrep '^[^;].*$' > ${config_file} <<EOF
@@ -52,7 +52,13 @@ egrep '^[^;].*$' > ${config_file} <<EOF
 ; Obligatory port that this agent listens on for gossiping requests.
     bind_port = ${bind_port}
 ; Determines how often gossiping should be initiated by the agent, defaults to 5s.
-;   gossip_period = 5000
+    period = 10000
+; Determines how long to wait before retransmitting a single gossip if remote contact does not
+; respond, defaults to 300ms.
+    retry_delay = 300
+; Determines how many times a single gossip should be retransmitted if remote contact does not
+; respond, defaults to 3.
+    retry_count = 3
 
 ;;; Optional configuration section for gossiping protocol internals.
 ; Inexperienced user should rely on defaults.

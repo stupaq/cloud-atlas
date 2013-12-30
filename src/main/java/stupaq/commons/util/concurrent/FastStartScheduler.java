@@ -9,7 +9,7 @@ public abstract class FastStartScheduler extends CustomScheduler {
   private boolean firstShot = true;
 
   public FastStartScheduler() {
-    this(0.1);
+    this(0.05);
   }
 
   public FastStartScheduler(double ratio) {

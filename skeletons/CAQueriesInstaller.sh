@@ -6,7 +6,7 @@ if [[ $# -ne 1 ]]; then
 fi
 
 zone_name="$1"
-config_file="${CONFIGS_DIR:-`dirname $0`/../../configs/}/$zone_name/`basename ${0%.*}.ini`"
+config_file="${CONFIGS_DIR:?Variable CONFIGS_DIR must be set!}/$zone_name/`basename ${0%.*}.ini`"
 
 mkdir -p `dirname ${config_file}`
 egrep '^[^;].*$' > ${config_file} <<EOF

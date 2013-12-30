@@ -1,7 +1,6 @@
 package stupaq.cloudatlas.gossiping.channel;
 
 import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
@@ -15,7 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
-import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
+import stupaq.cloudatlas.gossiping.GossipingInternalsHelpers;
 import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
 import stupaq.cloudatlas.gossiping.peerstate.GossipIdDuplicate;
 import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
@@ -24,16 +23,13 @@ import stupaq.compact.CompactInput;
 import stupaq.compact.TypeRegistry;
 
 /** PACKAGE-LOCAL */
-class GossipDecoder extends MessageToMessageDecoder<WireGossip>
-    implements GossipingInternalsConfigKeys {
+class GossipDecoder extends MessageToMessageDecoder<WireGossip> {
   private static final Log LOG = LogFactory.getLog(GossipDecoder.class);
   private final LoadingCache<CAContact, GossipIdDuplicate> duplicates;
 
   public GossipDecoder(final BootstrapConfiguration config) {
     Preconditions.checkState(!isSharable());
-    duplicates = CacheBuilder.newBuilder()
-        .maximumSize(
-            config.getInt(EXPECTED_CONTACTS_MAX_COUNT, EXPECTED_CONTACTS_MAX_COUNT_DEFAULT))
+    duplicates = GossipingInternalsHelpers.contactsInfoCache(config)
         .build(new CacheLoader<CAContact, GossipIdDuplicate>() {
           @Override
           public GossipIdDuplicate load(CAContact key) throws Exception {

@@ -81,7 +81,7 @@ public class Busybody extends AbstractScheduledService
     bus = config.bus();
     executor = config.threadModel().singleThreaded(Busybody.class);
     freshContacts = new CacheSet<>(CacheBuilder.newBuilder()
-        .expireAfterAccess(config.getLong(UNFRESH_CONTACT_TIMEOUT,
+        .expireAfterWrite(config.getLong(CONTACT_FRESH_TIMEOUT,
             config.getLong(GOSSIP_PERIOD, GOSSIP_PERIOD_DEFAULT)), TimeUnit.MILLISECONDS));
   }
 

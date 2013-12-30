@@ -19,7 +19,7 @@ affected in any way.
 
 CloudAtlas configuration
 ------------------------
-Examples configuration files with very verbose comments can be found under `etc/skeletons/` directory.
+Examples configuration files with very verbose comments can be found under `skeletons/` directory.
 It is strongly advised to read them before starting to play around this CloudAtlas system.
 
 CloudAtlas local client

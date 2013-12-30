@@ -1,7 +1,11 @@
 #!/bin/sh
-gen_agent=`dirname $0`/CAAgentProcess.sh
-gen_client=`dirname $0`/CALocalClientProcess.sh
-gen_queries=`dirname $0`/CAQueriesInstaller.sh
+
+source "$(dirname $0)/ca-commons.sh"
+
+export CONFIGS_DIR
+gen_agent="$SKELETONS_DIR/CAAgentProcess.sh"
+gen_client="$SKELETONS_DIR/CALocalClientProcess.sh"
+gen_queries="$SKELETONS_DIR/CAQueriesInstaller.sh"
 
 port_seed=11
 host_seed=localhost:${port_seed}
