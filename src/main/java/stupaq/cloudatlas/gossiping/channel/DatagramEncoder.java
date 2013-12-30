@@ -22,10 +22,4 @@ class DatagramEncoder extends MessageToMessageEncoder<WireFrame> {
     // As per convention the packet reference count has been incremented
     out.add(msg.packet());
   }
-
-  @SuppressWarnings("deprecation")
-  @Override
-  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    LOG.error("Encoding failed", cause);
-  }
 }

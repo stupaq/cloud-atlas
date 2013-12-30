@@ -13,6 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
@@ -61,12 +62,9 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
   @Override
   protected void runOneIteration() throws Exception {
     // ZoneManager will determine contact following provided strategy
-    try {
-      bus.post(
-          new ContactSelectionMessage(ContactSelection.create(config, blacklisted), nextSessionId));
-    } finally {
-      nextSessionId = nextSessionId.nextSession();
-    }
+    SessionId session = nextSessionId;
+    nextSessionId = nextSessionId.nextSession();
+    bus.post(new ContactSelectionMessage(ContactSelection.create(config, blacklisted), session));
   }
 
   @Override
@@ -78,7 +76,14 @@ public class Busybody extends AbstractScheduledService implements BusybodyConfig
         .channel(NioDatagramChannel.class)
         .handler(new ChannelInitializer(config))
         .bind(contactSelf.address())
-        .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE)
+        .addListener(new ChannelFutureListener() {
+          @Override
+          public void operationComplete(ChannelFuture future) {
+            if (!future.isSuccess()) {
+              LOG.error("Pipeline failed", future.cause());
+            }
+          }
+        })
         .syncUninterruptibly()
         .channel();
     blacklisted.add(contactSelf);

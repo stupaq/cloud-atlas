@@ -63,8 +63,8 @@ public class FrameId {
   @Override
   public int hashCode() {
     int result = gossipId.hashCode();
-    result = 31 * result + toInt(framesCount);
-    result = 31 * result + toInt(sequenceNumber);
+    result = 31 * result + (int) framesCount;
+    result = 31 * result + (int) sequenceNumber;
     return result;
   }
 

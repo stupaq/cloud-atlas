@@ -22,10 +22,6 @@ public class GossipIdDuplicate implements Predicate<GossipId>, GossipingInternal
 
   @Override
   public boolean apply(GossipId input) {
-    try {
-      return seenGossips.contains(input);
-    } finally {
-      seenGossips.add(input);
-    }
+    return !seenGossips.add(input);
   }
 }

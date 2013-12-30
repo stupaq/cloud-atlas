@@ -23,7 +23,6 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Data
         .addLast(new DatagramEncoder(config))
         .addLast(new FrameDecoder(config))
         .addLast(new FrameEncoder(config))
-        .addLast(new RetransmissionHandler(config))
         .addLast(new GossipDecoder(config))
         .addLast(new GossipEncoder(config))
         .addLast(new GTPInboundHandler(config))

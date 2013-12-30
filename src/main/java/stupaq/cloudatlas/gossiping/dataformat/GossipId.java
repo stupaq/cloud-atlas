@@ -61,7 +61,7 @@ public class GossipId {
   @Override
   public int hashCode() {
     int result = sessionId.hashCode();
-    result = 31 * result + toInt(value);
+    result = 31 * result + (int) value;
     return result;
   }
 

@@ -40,13 +40,19 @@ public class SessionId {
 
   @Override
   public boolean equals(Object o) {
-    return this == o ||
-        !(o == null || getClass() != o.getClass()) && value == ((SessionId) o).value;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    SessionId sessionId = (SessionId) o;
+    return value == sessionId.value;
   }
 
   @Override
   public int hashCode() {
-    return toInt(value);
+    return (int) value;
   }
 
   @Override

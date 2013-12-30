@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class SessionIdTest {
   @Test
   public void testNextSession() throws Exception {
+    assertEquals(new SessionId(), new SessionId());
     SessionId session = new SessionId();
     Set<SessionId> seen = Sets.newHashSet();
     int count = Short.MAX_VALUE - Short.MIN_VALUE + 1;
