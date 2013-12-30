@@ -29,11 +29,6 @@ public class ZonesInterestResponseGossip extends AbstractZonesInterestGossip {
   }
 
   @Override
-  public Gossip respondsTo(Gossip gossip) {
-    return super.respondsTo(gossip);
-  }
-
-  @Override
   public TypeDescriptor descriptor() {
     return TypeDescriptor.ZonesInterestGossip;
   }

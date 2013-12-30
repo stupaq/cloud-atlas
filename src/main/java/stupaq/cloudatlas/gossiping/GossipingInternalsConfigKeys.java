@@ -18,6 +18,7 @@ public interface GossipingInternalsConfigKeys {
   static final long GTP_PENDING_RESPONSE_RETENTION_DEFAULT = 1000L * 10;
   static final String GTP_OFFSET_RETENTION = "gtp_offset_retention";
   static final long GTP_OFFSET_RETENTION_DEFAULT = 1000L * 60 * 10;
+  static final String UNFRESH_CONTACT_TIMEOUT = PREFIX + "unfresh_contact_timeout";
   // Static configuration
   static final int DATAGRAM_PACKET_MAX_SIZE = 512;
 }

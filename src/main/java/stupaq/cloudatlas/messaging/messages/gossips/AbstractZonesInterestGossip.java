@@ -11,6 +11,7 @@ import javax.annotation.concurrent.Immutable;
 
 import stupaq.cloudatlas.attribute.values.CATime;
 import stupaq.cloudatlas.naming.GlobalName;
+import stupaq.cloudatlas.services.busybody.sessions.SessionId;
 import stupaq.cloudatlas.time.GTPOffset;
 import stupaq.compact.CompactOutput;
 import stupaq.compact.CompactSerializer;
@@ -42,6 +43,11 @@ public abstract class AbstractZonesInterestGossip extends Gossip
   }
 
   @Override
+  public Gossip initiates(SessionId session) {
+    return super.initiates(session);
+  }
+
+  @Override
   public final void adjustToLocal(GTPOffset offset) {
     for (Entry<GlobalName, CATime> entry : timestamps.entrySet()) {
       entry.setValue(offset.toLocal(entry.getValue()));
@@ -53,7 +59,8 @@ public abstract class AbstractZonesInterestGossip extends Gossip
     return super.toString() + "{leaf = " + leaf + ", timestamps=" + timestamps + '}';
   }
 
-  protected static abstract class AbstractCompactSerializer<Type extends AbstractZonesInterestGossip>
+  protected static abstract class AbstractCompactSerializer<Type extends
+      AbstractZonesInterestGossip>
       implements CompactSerializer<Type> {
     @Override
     public final void writeInstance(CompactOutput out, Type object) throws IOException {

@@ -22,9 +22,6 @@ egrep '^[^;].*$' > ${config_file} <<EOF
     zone_name = ${zone_name}
 ; Determines how often queries values should be recomputed, defaults to 5s.
 ;   reevaluation_interval = 5000
-; Determines for how long a contact is considered 'fresh' which has several implications on
-; gossiping algorithm's operation. Default value is reasonably computed from other properties.
-;   unfresh_contact_timeout = 5000
 ; Interval after which zone will be removed if not contact gossiping for its behalf is contacted.
 ; Defaults to 60s.
 ;   purge_interval = 60000

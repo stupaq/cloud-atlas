@@ -49,6 +49,7 @@ class GossipDecoder extends MessageToMessageDecoder<WireGossip>
       LOG.warn("Duplicated gossip: " + msg.gossipId() + " will be dropped");
       return;
     }
+    LOG.trace("Decoding gossip: " + msg.gossipId());
     try (CompactInput stream = new CompactInput(msg.dataStream())) {
       Gossip gossip = TypeRegistry.readObject(stream);
       gossip.readsFrom(msg);

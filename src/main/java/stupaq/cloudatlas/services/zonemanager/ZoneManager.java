@@ -3,7 +3,6 @@ package stupaq.cloudatlas.services.zonemanager;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -36,6 +35,7 @@ import stupaq.cloudatlas.messaging.MessageListener;
 import stupaq.cloudatlas.messaging.MessageListener.AbstractMessageListener;
 import stupaq.cloudatlas.messaging.messages.AttributesUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.ContactSelectionMessage;
+import stupaq.cloudatlas.messaging.messages.DuplexGossipingMessage;
 import stupaq.cloudatlas.messaging.messages.FallbackContactsMessage;
 import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
@@ -67,7 +67,6 @@ import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.InPlaceSyn
 import stupaq.cloudatlas.services.zonemanager.hierarchy.ZoneHierarchy.Modifier;
 import stupaq.cloudatlas.services.zonemanager.purging.UnexpiredZonesFilter;
 import stupaq.cloudatlas.services.zonemanager.query.InstalledQueriesUpdater;
-import stupaq.commons.cache.CacheSet;
 import stupaq.commons.util.concurrent.AsynchronousInvoker.ScheduledInvocation;
 import stupaq.commons.util.concurrent.SingleThreadAssertion;
 import stupaq.commons.util.concurrent.SingleThreadedExecutor;
@@ -83,7 +82,6 @@ public class ZoneManager extends AbstractScheduledService
   private final SingleThreadedExecutor executor;
   private final ZoneHierarchy<ZoneManagementInfo> agentsNode;
   private final Set<CAContact> fallbackContacts = Sets.newHashSet();
-  private final CacheSet<CAContact> freshContacts;
   private MappedByteBuffer hierarchyDump;
 
   public ZoneManager(BootstrapConfiguration config) {
@@ -93,9 +91,6 @@ public class ZoneManager extends AbstractScheduledService
     hierarchy = ZoneHierarchy.create(agentsName, new BuiltinsInserter(config));
     agentsNode = hierarchy.find(agentsName).get();
     executor = config.threadModel().singleThreaded(ZoneManager.class);
-    freshContacts = new CacheSet<>(CacheBuilder.newBuilder()
-        .expireAfterAccess(config.getLong(UNFRESH_CONTACT_TIMEOUT,
-            config.getLong(GOSSIP_PERIOD, GOSSIP_PERIOD_DEFAULT)), TimeUnit.MILLISECONDS));
   }
 
   @Override
@@ -196,7 +191,7 @@ public class ZoneManager extends AbstractScheduledService
 
     @Subscribe
     @ScheduledInvocation
-    public void duplexCommunication(ZonesInterestInitialGossip message);
+    public void duplexCommunication(DuplexGossipingMessage message);
 
     @Subscribe
     @ScheduledInvocation
@@ -344,18 +339,14 @@ public class ZoneManager extends AbstractScheduledService
     }
 
     @Override
-    public void duplexCommunication(ZonesInterestInitialGossip message) {
-      // Initial message is sent by the node who initiated communication only
-      // to make gossiping two-way we respond with interest message (non-initial version)
-      // if we haven't heard from the contact for a configurable period of time.
-      if (freshContacts.contains(message.sender())) {
-        if (LOG.isInfoEnabled()) {
-          LOG.info("Contact: " + message.sender() + " considered fresh, aborting duplex gossiping");
-        }
-        return;
+    public void duplexCommunication(DuplexGossipingMessage message) {
+      SessionId session = message.getSessionId();
+      if (LOG.isTraceEnabled()) {
+        LOG.trace(
+            "Duplex communication with: " + message.getContact() + " using session: " + session);
       }
-      bus.post(new OutboundGossip(message.sender(),
-          new ZonesInterestResponseGossip(agentsName, prepareKnownZones()).respondsTo(message)));
+      bus.post(new OutboundGossip(message.getContact(),
+          new ZonesInterestResponseGossip(agentsName, prepareKnownZones()).initiates(session)));
     }
 
     private Map<GlobalName, CATime> prepareKnownZones() {
@@ -403,7 +394,6 @@ public class ZoneManager extends AbstractScheduledService
 
     @Override
     public void updateZones(ZonesUpdateGossip message) {
-      boolean didUpdate = false;
       // We will reject zones that are too old and to be purged in the next iteration
       UnexpiredZonesFilter filter = new UnexpiredZonesFilter(config.clock(), config);
       for (Entry<GlobalName, ZoneManagementInfo> entry : message) {
@@ -422,7 +412,6 @@ public class ZoneManager extends AbstractScheduledService
             // how long the packet has been roaming in the network and we do not care about
             // long-lasting gossiping sessions
             if (known.update(update)) {
-              didUpdate = true;
               LOG.info("Updated zone info: " + name);
             } else {
               if (LOG.isWarnEnabled()) {
@@ -442,9 +431,6 @@ public class ZoneManager extends AbstractScheduledService
         } else {
           LOG.warn("Rejected too old update for zone: " + name);
         }
-      }
-      if (didUpdate) {
-        freshContacts.add(message.sender());
       }
     }
   }
