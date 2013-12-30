@@ -51,4 +51,9 @@ public abstract class Gossip extends Message implements CompactSerializable, GTP
     sender = gossip.contact();
     return this;
   }
+
+  @Override
+  public String toString() {
+    return "Gossip{sender=" + sender + ", gossipId=" + gossipId + '}';
+  }
 }

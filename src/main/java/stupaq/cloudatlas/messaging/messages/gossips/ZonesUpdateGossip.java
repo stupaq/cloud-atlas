@@ -57,7 +57,7 @@ public class ZonesUpdateGossip extends Gossip
 
   @Override
   public String toString() {
-    return "ZonesUpdateGossip{sender=" + sender() + ", zones=" + zones.keySet() + '}';
+    return "ZonesUpdate" + super.toString() + "{zones=" + zones.keySet() + '}';
   }
 
   @Override

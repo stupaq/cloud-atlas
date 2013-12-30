@@ -41,6 +41,6 @@ public class ZonesInterestInitialGossip extends ZonesInterestResponseGossip {
 
   @Override
   public String toString() {
-    return "ZonesInterestInitialGossip" + super.toString();
+    return "ZonesInterestInitial" + super.toString();
   }
 }

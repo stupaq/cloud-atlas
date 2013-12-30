@@ -50,8 +50,7 @@ public abstract class AbstractZonesInterestGossip extends Gossip
 
   @Override
   public String toString() {
-    return "{sender = " + sender() + ", gossipId = " + id() + ", leaf = " + leaf + ", timestamps=" +
-        timestamps + '}';
+    return super.toString() + "{leaf = " + leaf + ", timestamps=" + timestamps + '}';
   }
 
   protected static abstract class AbstractCompactSerializer<Type extends AbstractZonesInterestGossip>

@@ -51,7 +51,8 @@ class GossipDecoder extends MessageToMessageDecoder<WireGossip>
     }
     try (CompactInput stream = new CompactInput(msg.dataStream())) {
       Gossip gossip = TypeRegistry.readObject(stream);
-      out.add(new InboundGossip(gossip.readsFrom(msg)));
+      gossip.readsFrom(msg);
+      out.add(new InboundGossip(gossip));
     }
   }
 
