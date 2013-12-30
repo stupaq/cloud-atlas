@@ -4,6 +4,7 @@ import com.google.common.collect.Collections2;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 
 import javax.annotation.Nullable;
@@ -36,6 +37,10 @@ public final class CASet<Type extends AttributeValue> extends AbstractComposed<T
 
   public CASet(TypeInfo<Type> enclosingType, Iterable<Type> elements) {
     super(new LinkedHashSet<Type>(), enclosingType, elements);
+  }
+
+  public CASet<Type> orEmpty() {
+    return isNull() ? new CASet<>(getEnclosingType(), Collections.<Type>emptySet()) : this;
   }
 
   @Override
@@ -71,8 +76,8 @@ public final class CASet<Type extends AttributeValue> extends AbstractComposed<T
 
     @Override
     public CAString String() {
-      return new CAString(isNull() ? null :
-          "{ " + StringUtils.join(Collections2.transform(delegate(), new Stringifier()), ", ") +
+      return new CAString(isNull() ? null
+          : "{ " + StringUtils.join(Collections2.transform(delegate(), new Stringifier()), ", ") +
               " }");
     }
   }
