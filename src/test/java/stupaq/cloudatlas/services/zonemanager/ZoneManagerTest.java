@@ -13,7 +13,6 @@ import stupaq.cloudatlas.attribute.Attribute;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration.Builder;
 import stupaq.cloudatlas.configuration.CAConfiguration;
-import stupaq.cloudatlas.messaging.MessageBus;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.services.rmiserver.handler.LocalClientHandler;
@@ -37,15 +36,13 @@ public class ZoneManagerTest {
   private BootstrapConfiguration config;
   private ZoneManager manager;
   private LocalClientProtocol client;
-  private MessageBus bus;
 
   @Before
   public void setUp() throws Exception {
     config = new Builder().config(prepareConfig()).threadModel(new SingleThreadModel()).create();
-    bus = config.bus();
     manager = new ZoneManager(config);
     manager.startAsync().awaitRunning();
-    client = new LocalClientHandler(bus);
+    client = new LocalClientHandler(config.bus());
     // Fill in with some attributes
     client.updateAttributes(THE_ZONE, SOME_ATTRIBUTES);
   }
@@ -63,31 +60,6 @@ public class ZoneManagerTest {
     assertEquals(Name("free_ram"), attributes.get(0).name());
     assertEquals(Int(1073741824L), attributes.get(0).value());
     assertNull(attributes.get(1));
-  }
-
-  @Test
-  public void testInstallQuery() throws Exception {
-    // FIXME
-  }
-
-  @Test
-  public void testRemoveQuery() throws Exception {
-    // FIXME
-  }
-
-  @Test
-  public void testSelectContact() throws Exception {
-    // FIXME
-  }
-
-  @Test
-  public void testExportZones() throws Exception {
-    // FIXME
-  }
-
-  @Test
-  public void testUpdateZones() throws Exception {
-    // FIXME
   }
 
   private static CAConfiguration prepareConfig() {

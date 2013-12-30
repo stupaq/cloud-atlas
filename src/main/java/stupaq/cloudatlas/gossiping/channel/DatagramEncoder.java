@@ -23,6 +23,7 @@ class DatagramEncoder extends MessageToMessageEncoder<WireFrame> {
     out.add(msg.packet());
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
     LOG.error("Encoding failed", cause);

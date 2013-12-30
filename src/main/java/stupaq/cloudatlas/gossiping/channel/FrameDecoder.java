@@ -1,7 +1,9 @@
 package stupaq.cloudatlas.gossiping.channel;
 
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,23 +19,25 @@ import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.cloudatlas.gossiping.dataformat.WireFrame;
 import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
 import stupaq.cloudatlas.gossiping.peerstate.ContactFrameIndex;
-import stupaq.cloudatlas.gossiping.peerstate.ContactStateCache;
 import stupaq.cloudatlas.gossiping.peerstate.GossipFrameIndex;
 
 /** PACKAGE-LOCAL */
-class FrameDecoder extends MessageToMessageDecoder<WireFrame> implements
-                                                              GossipingInternalsConfigKeys {
+class FrameDecoder extends MessageToMessageDecoder<WireFrame>
+    implements GossipingInternalsConfigKeys {
   private static final Log LOG = LogFactory.getLog(FrameDecoder.class);
-  private final ContactStateCache<ContactFrameIndex> contacts;
+  private final LoadingCache<CAContact, ContactFrameIndex> contacts;
 
   public FrameDecoder(final BootstrapConfiguration config) {
     Preconditions.checkState(!isSharable());
-    contacts = new ContactStateCache<>(config, new CacheLoader<CAContact, ContactFrameIndex>() {
-      @Override
-      public ContactFrameIndex load(CAContact key) {
-        return new ContactFrameIndex(config);
-      }
-    });
+    contacts = CacheBuilder.newBuilder()
+        .maximumSize(
+            config.getInt(EXPECTED_CONTACTS_MAX_COUNT, EXPECTED_CONTACTS_MAX_COUNT_DEFAULT))
+        .build(new CacheLoader<CAContact, ContactFrameIndex>() {
+          @Override
+          public ContactFrameIndex load(CAContact key) {
+            return new ContactFrameIndex(config);
+          }
+        });
   }
 
   @Override

@@ -17,7 +17,6 @@ import stupaq.compact.CompactSerializer;
 import static com.google.common.primitives.UnsignedInteger.ONE;
 import static com.google.common.primitives.UnsignedInteger.ZERO;
 import static com.google.common.primitives.UnsignedInteger.fromIntBits;
-import static com.google.common.primitives.UnsignedInteger.valueOf;
 
 @Immutable
 public class GossipId extends ForwardingWrapper<UnsignedInteger> implements Comparable<GossipId> {
@@ -44,11 +43,6 @@ public class GossipId extends ForwardingWrapper<UnsignedInteger> implements Comp
 
   public GossipId nextGossip() {
     return new GossipId(get().plus(ONE));
-  }
-
-  public GossipId prevGossip(int maxSteps) {
-    long value = Math.max(0, get().longValue() - maxSteps);
-    return new GossipId(valueOf(value));
   }
 
   public FrameId firstFrame(int framesCount) {

@@ -46,6 +46,7 @@ class FrameEncoder extends MessageToMessageEncoder<WireGossip> {
     }
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
     LOG.error("Decoding failed", cause);
