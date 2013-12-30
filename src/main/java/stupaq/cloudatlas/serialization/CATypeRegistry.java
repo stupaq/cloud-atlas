@@ -13,6 +13,7 @@ import stupaq.cloudatlas.attribute.values.CAQuery;
 import stupaq.cloudatlas.attribute.values.CASet;
 import stupaq.cloudatlas.attribute.values.CAString;
 import stupaq.cloudatlas.attribute.values.CATime;
+import stupaq.cloudatlas.messaging.messages.gossips.SessionAcknowledgedGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestInitialGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestResponseGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesUpdateGossip;
@@ -64,5 +65,6 @@ public final class CATypeRegistry {
     register(TypeDescriptor.ZonesUpdateGossip, ZonesUpdateGossip.SERIALIZER);
     register(TypeDescriptor.ZonesInterestGossip, ZonesInterestResponseGossip.SERIALIZER);
     register(TypeDescriptor.ZonesInterestInitialGossip, ZonesInterestInitialGossip.SERIALIZER);
+    register(TypeDescriptor.SessionAcknowledgedGossip, SessionAcknowledgedGossip.SERIALIZER);
   }
 }

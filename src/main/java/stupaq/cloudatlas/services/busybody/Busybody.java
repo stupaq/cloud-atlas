@@ -35,6 +35,7 @@ import stupaq.cloudatlas.messaging.messages.DuplexGossipingMessage;
 import stupaq.cloudatlas.messaging.messages.gossips.Gossip;
 import stupaq.cloudatlas.messaging.messages.gossips.InboundGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
+import stupaq.cloudatlas.messaging.messages.gossips.SessionAcknowledgedGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestInitialGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesUpdateGossip;
 import stupaq.cloudatlas.services.busybody.sessions.SessionId;
@@ -156,6 +157,10 @@ public class Busybody extends AbstractScheduledService
     @Subscribe
     @DirectInvocation
     public void sendGossip(OutboundGossip message);
+
+    @Subscribe
+    @DirectInvocation
+    public void ignoreAcknowledgment(SessionAcknowledgedGossip message);
   }
 
   private class BusybodyListener extends AbstractMessageListener implements BusybodyContract {
@@ -200,6 +205,12 @@ public class Busybody extends AbstractScheduledService
       Preconditions.checkNotNull(gossip.id());
       gossip.sender(contactSelf);
       channel.writeAndFlush(message);
+    }
+
+    /** Under no circumstance this method can access service state. */
+    @Override
+    public void ignoreAcknowledgment(SessionAcknowledgedGossip message) {
+      // Ignore, we don't want this message to pop out in the logs.
     }
   }
 }

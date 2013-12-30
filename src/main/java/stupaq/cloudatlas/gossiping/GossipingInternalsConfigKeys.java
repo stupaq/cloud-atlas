@@ -19,4 +19,5 @@ public interface GossipingInternalsConfigKeys {
   static final long GTP_OFFSET_RETENTION_DEFAULT = 1000L * 60 * 10;
   // Static configuration
   static final int DATAGRAM_PACKET_MAX_SIZE = 512;
+  static final int LAST_GOSSIP_IN_SESSION_ID = 2;
 }

@@ -15,26 +15,27 @@ import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.ReferenceCountUtil;
 import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
+import stupaq.cloudatlas.gossiping.GossipingInternalsConfigKeys;
 import stupaq.cloudatlas.gossiping.GossipingInternalsHelpers;
 import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
-import stupaq.cloudatlas.gossiping.peerstate.SessionRetransmissions;
+import stupaq.cloudatlas.gossiping.peerstate.SessionRetransmits;
 import stupaq.cloudatlas.services.busybody.BusybodyConfigKeys;
 
 /** PACKAGE-LOCAL */
 class RetransmissionHandler extends MessageToMessageCodec<WireGossip, WireGossip>
-    implements BusybodyConfigKeys {
+    implements BusybodyConfigKeys, GossipingInternalsConfigKeys {
   private static final Log LOG = LogFactory.getLog(RetransmissionHandler.class);
-  private final LoadingCache<CAContact, SessionRetransmissions> contacts;
+  private final LoadingCache<CAContact, SessionRetransmits> contacts;
 
   public RetransmissionHandler(final BootstrapConfiguration config) {
     Preconditions.checkState(!isSharable());
     int retryCount = config.getInt(GOSSIP_RETRY_COUNT, GOSSIP_RETRY_COUNT_DEFAULT);
     if (retryCount > 0) {
       contacts = GossipingInternalsHelpers.contactsInfoCache(config)
-          .build(new CacheLoader<CAContact, SessionRetransmissions>() {
+          .build(new CacheLoader<CAContact, SessionRetransmits>() {
             @Override
-            public SessionRetransmissions load(CAContact key) throws Exception {
-              return new SessionRetransmissions(config);
+            public SessionRetransmits load(CAContact key) throws Exception {
+              return new SessionRetransmits(config);
             }
           });
     } else {
@@ -46,7 +47,7 @@ class RetransmissionHandler extends MessageToMessageCodec<WireGossip, WireGossip
   @Override
   protected void encode(ChannelHandlerContext ctx, WireGossip msg, List<Object> out)
       throws ExecutionException {
-    if (contacts != null) {
+    if (contacts != null && shouldRetransmit(msg)) {
       try {
         // msg.contact() point to the recipient of the message
         contacts.get(msg.contact()).sending(ctx, msg);
@@ -56,6 +57,10 @@ class RetransmissionHandler extends MessageToMessageCodec<WireGossip, WireGossip
     }
     ReferenceCountUtil.retain(msg);
     out.add(msg);
+  }
+
+  private boolean shouldRetransmit(WireGossip msg) {
+    return msg.gossipId().intValue() < LAST_GOSSIP_IN_SESSION_ID;
   }
 
   @Override

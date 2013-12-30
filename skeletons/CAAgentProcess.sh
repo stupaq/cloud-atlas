@@ -52,10 +52,10 @@ egrep '^[^;].*$' > ${config_file} <<EOF
 ; Obligatory port that this agent listens on for gossiping requests.
     bind_port = ${bind_port}
 ; Determines how often gossiping should be initiated by the agent, defaults to 5s.
-    period = 10000
+    period = 5000
 ; Determines how long to wait before retransmitting a single gossip if remote contact does not
 ; respond, defaults to 300ms.
-    retry_delay = 300
+    retry_delay = 500
 ; Determines how many times a single gossip should be retransmitted if remote contact does not
 ; respond, defaults to 3.
     retry_count = 3

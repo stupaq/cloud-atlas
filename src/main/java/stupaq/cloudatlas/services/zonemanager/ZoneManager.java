@@ -41,6 +41,7 @@ import stupaq.cloudatlas.messaging.messages.QueryRemovalMessage;
 import stupaq.cloudatlas.messaging.messages.QueryUpdateMessage;
 import stupaq.cloudatlas.messaging.messages.gossips.AbstractZonesInterestGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.OutboundGossip;
+import stupaq.cloudatlas.messaging.messages.gossips.SessionAcknowledgedGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestInitialGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesInterestResponseGossip;
 import stupaq.cloudatlas.messaging.messages.gossips.ZonesUpdateGossip;
@@ -394,6 +395,9 @@ public class ZoneManager extends AbstractScheduledService
 
     @Override
     public void updateZones(ZonesUpdateGossip message) {
+      // Got it! Whatever happens next we can respond with acknowledgement.
+      bus.post(new OutboundGossip(message.sender(),
+          new SessionAcknowledgedGossip().respondsTo(message)));
       // We will reject zones that are too old and to be purged in the next iteration
       UnexpiredZonesFilter filter = new UnexpiredZonesFilter(config.clock(), config);
       for (Entry<GlobalName, ZoneManagementInfo> entry : message) {

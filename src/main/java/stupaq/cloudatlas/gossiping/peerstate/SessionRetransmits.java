@@ -27,18 +27,18 @@ import stupaq.cloudatlas.services.busybody.sessions.SessionId;
 import static java.util.Collections.synchronizedList;
 import static stupaq.commons.util.concurrent.LimitedRepeatsRunnable.scheduleAtFixedRate;
 
-public class SessionRetransmissions implements BusybodyConfigKeys {
-  private static final Log LOG = LogFactory.getLog(SessionRetransmissions.class);
+public class SessionRetransmits implements BusybodyConfigKeys {
+  private static final Log LOG = LogFactory.getLog(SessionRetransmits.class);
   private final LoadingCache<SessionId, List<PendingGossip>> sessions;
   private final int retryCount;
   private final long retryDelay;
 
-  public SessionRetransmissions(BootstrapConfiguration config) {
+  public SessionRetransmits(BootstrapConfiguration config) {
     // We can safely assume that retryCount > 0.
     retryCount = config.getInt(GOSSIP_RETRY_COUNT, GOSSIP_RETRY_COUNT_DEFAULT);
     retryDelay = config.getLong(GOSSIP_RETRY_DELAY, GOSSIP_RETRY_DELAY_DEFAULT);
     sessions = CacheBuilder.newBuilder()
-        .expireAfterAccess(retryDelay * (retryCount + 1), TimeUnit.MILLISECONDS)
+        .expireAfterAccess(retryDelay * retryCount * 10, TimeUnit.MILLISECONDS)
         .removalListener(new RemovalListener<SessionId, List<PendingGossip>>() {
           @Override
           public void onRemoval(RemovalNotification<SessionId, List<PendingGossip>> notification) {

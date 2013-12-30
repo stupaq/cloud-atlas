@@ -34,7 +34,8 @@ public enum TypeDescriptor {
   // Gossips
   ZonesUpdateGossip,
   ZonesInterestGossip,
-  ZonesInterestInitialGossip;
+  ZonesInterestInitialGossip,
+  SessionAcknowledgedGossip;
 
   static {
     assert TypeDescriptor.values().length < Byte.MAX_VALUE;
