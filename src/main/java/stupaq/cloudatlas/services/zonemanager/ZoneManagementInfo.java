@@ -96,6 +96,10 @@ public final class ZoneManagementInfo extends LazyCopy<ZoneManagementInfo>
     return TIMESTAMP.get(this).rel().lesserThan(time);
   }
 
+  public CABoolean isNewerThan(CATime time) {
+    return TIMESTAMP.get(this).rel().greaterThan(time);
+  }
+
   @Override
   public void adjustToLocal(GTPOffset offset) {
     // I've decided not to adjust all attributes of CATime type.

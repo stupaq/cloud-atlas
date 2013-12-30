@@ -377,7 +377,7 @@ public class ZoneManager extends AbstractScheduledService
           }
           CATime knownTime = message.getTimestamp(name);
           ZoneManagementInfo zmi = sibling.payload();
-          if (zmi.isOlderThan(knownTime).op().not().getOr(true)) {
+          if (zmi.isNewerThan(knownTime).getOr(true)) {
             // Known timestamp is older or does not exist
             ZoneManagementInfo exported = zmi.export();
             // This is not very fast, however I do not want to break design or do some
@@ -415,7 +415,7 @@ public class ZoneManager extends AbstractScheduledService
               LOG.info("Updated zone info: " + name);
             } else {
               if (LOG.isWarnEnabled()) {
-                LOG.warn("Aborted zone: " + name + " update due to no newer timestamp: known: " +
+                LOG.warn("Aborted update: " + name + " no newer timestamp: known: " +
                     TIMESTAMP.get(known) + " update: " + TIMESTAMP.get(update));
               }
             }
