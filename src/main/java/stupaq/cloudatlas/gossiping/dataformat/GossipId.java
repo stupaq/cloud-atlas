@@ -43,7 +43,23 @@ public class GossipId {
   }
 
   public GossipId nextGossip() {
-    return new GossipId(sessionId, (byte) (toInt(value) + 1));
+    return new GossipId(sessionId, (byte) (intValue() + 1));
+  }
+
+  public SessionId sessionId() {
+    return sessionId;
+  }
+
+  public boolean isRequest() {
+    return intValue() % 2 == 0;
+  }
+
+  public int intValue() {
+    return toInt(value);
+  }
+
+  public boolean isResponseTo(GossipId request) {
+    return (isRequest() ^ request.isRequest()) && intValue() > request.intValue();
   }
 
   @Override
@@ -67,7 +83,7 @@ public class GossipId {
 
   @Override
   public String toString() {
-    return "GossipId{sessionId=" + sessionId + ", value=" + toInt(value) + '}';
+    return "GossipId{sessionId=" + sessionId + ", value=" + intValue() + '}';
   }
 
   public Iterable<FrameId> frames(final int framesCount) {

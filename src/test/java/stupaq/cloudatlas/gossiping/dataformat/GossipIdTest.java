@@ -17,6 +17,24 @@ public class GossipIdTest {
   private final SessionId session = new SessionId();
 
   @Test
+  public void testIsRequest() throws Exception {
+    assertTrue(new GossipId(session).isRequest());
+    assertFalse(new GossipId(session).nextGossip().isRequest());
+    assertTrue(new GossipId(session).nextGossip().nextGossip().isRequest());
+  }
+
+  @Test
+  public void testIsResponseTo() throws Exception {
+    assertFalse(new GossipId(session).isResponseTo(new GossipId(session)));
+    assertTrue(new GossipId(session).nextGossip().isResponseTo(new GossipId(session)));
+    assertFalse(
+        new GossipId(session).nextGossip().nextGossip().isResponseTo(new GossipId(session)));
+    assertFalse(new GossipId(session).isResponseTo(new GossipId(session).nextGossip()));
+    assertFalse(
+        new GossipId(session).isResponseTo(new GossipId(session).nextGossip().nextGossip()));
+  }
+
+  @Test
   public void testNextGossip() throws Exception {
     assertEquals(new GossipId(session), new GossipId(session));
     GossipId gossip = new GossipId(session);

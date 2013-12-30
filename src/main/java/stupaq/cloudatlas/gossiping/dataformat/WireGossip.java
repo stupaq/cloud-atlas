@@ -52,4 +52,10 @@ public class WireGossip extends AbstractReferenceCounted {
   protected void deallocate() {
     ReferenceCountUtil.release(data);
   }
+
+  @Override
+  public WireGossip retain() {
+    super.retain();
+    return this;
+  }
 }

@@ -70,16 +70,16 @@ public class FrameId {
 
   @Override
   public String toString() {
-    return "FrameId{" + "gossipId=" + gossipId + ", framesCount=" + toInt(framesCount) +
-        ", sequenceNumber=" + toInt(sequenceNumber) + '}';
+    return "FrameId{" + "gossipId=" + gossipId + ", framesCount=" + framesCount() +
+        ", sequenceNumber=" + sequenceNumber() + '}';
   }
 
   public FrameId nextFrame() {
-    return new FrameId(gossipId, toInt(framesCount), toInt(sequenceNumber) + 1);
+    return new FrameId(gossipId, framesCount(), sequenceNumber() + 1);
   }
 
   public boolean hasNextFrame() {
-    return toInt(sequenceNumber) + 1 < toInt(framesCount);
+    return sequenceNumber() + 1 < framesCount();
   }
 
   public GossipId gossipId() {

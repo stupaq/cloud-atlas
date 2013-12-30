@@ -35,7 +35,11 @@ public class SessionId {
   }
 
   public SessionId nextSession() {
-    return new SessionId((short) (toInt(value) + 1));
+    return new SessionId((short) (intValue() + 1));
+  }
+
+  private int intValue() {
+    return toInt(value);
   }
 
   @Override
@@ -57,6 +61,6 @@ public class SessionId {
 
   @Override
   public String toString() {
-    return "SessionId{value=" + toInt(value) + '}';
+    return "SessionId{value=" + intValue() + '}';
   }
 }

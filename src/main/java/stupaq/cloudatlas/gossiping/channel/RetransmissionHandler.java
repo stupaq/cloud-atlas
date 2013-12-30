@@ -17,28 +17,43 @@ import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.configuration.BootstrapConfiguration;
 import stupaq.cloudatlas.gossiping.GossipingInternalsHelpers;
 import stupaq.cloudatlas.gossiping.dataformat.WireGossip;
-import stupaq.cloudatlas.gossiping.peerstate.GossipSessionIndex;
+import stupaq.cloudatlas.gossiping.peerstate.SessionRetransmissions;
+import stupaq.cloudatlas.services.busybody.BusybodyConfigKeys;
 
 /** PACKAGE-LOCAL */
-class RetransmissionHandler extends MessageToMessageCodec<WireGossip, WireGossip> {
+class RetransmissionHandler extends MessageToMessageCodec<WireGossip, WireGossip>
+    implements BusybodyConfigKeys {
   private static final Log LOG = LogFactory.getLog(RetransmissionHandler.class);
-  private final LoadingCache<CAContact, GossipSessionIndex> contacts;
+  private final LoadingCache<CAContact, SessionRetransmissions> contacts;
 
-  public RetransmissionHandler(BootstrapConfiguration config) {
+  public RetransmissionHandler(final BootstrapConfiguration config) {
     Preconditions.checkState(!isSharable());
-    contacts = GossipingInternalsHelpers.contactsInfoCache(config)
-        .build(new CacheLoader<CAContact, GossipSessionIndex>() {
-          @Override
-          public GossipSessionIndex load(CAContact key) throws Exception {
-            return new GossipSessionIndex();
-          }
-        });
+    int retryCount = config.getInt(GOSSIP_RETRY_COUNT, GOSSIP_RETRY_COUNT_DEFAULT);
+    if (retryCount > 0) {
+      contacts = GossipingInternalsHelpers.contactsInfoCache(config)
+          .build(new CacheLoader<CAContact, SessionRetransmissions>() {
+            @Override
+            public SessionRetransmissions load(CAContact key) throws Exception {
+              return new SessionRetransmissions(config);
+            }
+          });
+    } else {
+      contacts = null;
+      LOG.warn("Retry count set to 0, retransmission handler disabled");
+    }
   }
 
   @Override
   protected void encode(ChannelHandlerContext ctx, WireGossip msg, List<Object> out)
       throws ExecutionException {
-    contacts.get(msg.contact()).sending(msg, ctx);
+    if (contacts != null) {
+      try {
+        // msg.contact() point to the recipient of the message
+        contacts.get(msg.contact()).sending(ctx, msg);
+      } catch (Throwable t) {
+        LOG.error("Gossip: " + msg.gossipId() + " will not be retransmitted", t);
+      }
+    }
     ReferenceCountUtil.retain(msg);
     out.add(msg);
   }
@@ -46,7 +61,14 @@ class RetransmissionHandler extends MessageToMessageCodec<WireGossip, WireGossip
   @Override
   protected void decode(ChannelHandlerContext ctx, WireGossip msg, List<Object> out)
       throws ExecutionException {
-    contacts.get(msg.contact()).received(msg.gossipId());
+    if (contacts != null) {
+      try {
+        // msg.contact() point to the sender of the message
+        contacts.get(msg.contact()).received(msg.gossipId());
+      } catch (Throwable t) {
+        LOG.error("Failed to acknowledge with gossip: " + msg.gossipId(), t);
+      }
+    }
     ReferenceCountUtil.retain(msg);
     out.add(msg);
   }

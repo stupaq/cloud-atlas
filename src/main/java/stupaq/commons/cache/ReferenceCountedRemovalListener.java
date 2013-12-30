@@ -8,7 +8,13 @@ import io.netty.util.ReferenceCountUtil;
 public class ReferenceCountedRemovalListener implements RemovalListener<Object, Object> {
   @Override
   public void onRemoval(RemovalNotification<Object, Object> notification) {
-    ReferenceCountUtil.release(notification.getKey());
-    ReferenceCountUtil.release(notification.getValue());
+    try {
+      ReferenceCountUtil.release(notification.getKey());
+    } catch (Throwable ignored) {
+    }
+    try {
+      ReferenceCountUtil.release(notification.getValue());
+    } catch (Throwable ignored) {
+    }
   }
 }
