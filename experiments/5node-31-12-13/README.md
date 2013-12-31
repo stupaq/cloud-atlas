@@ -33,4 +33,8 @@ Time series files can be found under appropriate subdirectory (one for each agen
 of `scribe/`. Additionally four full zone hierarchy snapshots were taken for each of the agents during the course of the
 experiment, you can find them under appropriate `dump_hh-mm/` subdirectories, where `hh` and `mm` denote hour and minute
 time, the snapshot has been taken.
+For viewing time series file please use provided `ts_plot.sh` script (it requires `gnuplot` to be installed).
+For example to show time series for agent serving `/uw/pjwstk/khaki31`, attribute `num_processes` in a zone `/` run
+`ts_plot.sh khaki31 / num_processes`. Note the lack of data points around 0130 hours, the agent was dead at this time
+as described previously.
 
