@@ -12,7 +12,7 @@ trap "rm -f $RMI_POLICY_SERVER" EXIT
 
 ps cax | grep rmiregistry &>/dev/null
 if [[ $? -ne 0 ]]; then
-    rmiregistry &
+    rmiregistry "$RMI_SERVER_PORT" &
     RMI_REGISTRY_PID=$!
     trap "kill $RMI_REGISTRY_PID" EXIT
 fi
@@ -23,7 +23,6 @@ java \
     -Dio.netty.leakDetectionLevel=PARANOID \
     -Djava.security.policy="$RMI_POLICY_SERVER" \
     -Djava.rmi.server.codebase="$RMI_CODEBASE" \
-    -Djava.rmi.server.hostname="$RMI_SERVER_HOSTNAME" \
     "${PACKAGE_PREFIX}runnable.GenericServiceRunner" \
     "${PACKAGE_PREFIX}runnable.agent.CAAgentProcess" \
     "$@"

@@ -38,9 +38,9 @@ egrep '^[^;].*$' > ${config_file} <<EOF
 ; client can connect to this agent).
 [rmi]
 ; A host running RMI registry, that the server should export RMI handlers to.
-    host = localhost
+    host = ${RMI_SERVER_HOSTNAME}
 ; A port of the RMI registry.
-;   port = 1099
+    port = ${RMI_SERVER_PORT}
 ; A handler that agent's RMI server bound to. Defaults to the value of zone_name property
 ; in zones section.
 ;   handle = ${zone_name}

@@ -22,9 +22,9 @@ egrep '^[^;].*$' > ${config_file} <<EOF
 ;;; Obligatory configuration section for RMI client.
 [rmi]
 ; A host running RMI registry, that agent's RMI server bound to, defaults to 127.0.0.1
-;   host = localhost
+    host = ${RMI_SERVER_HOSTNAME}
 ; A port of the RMI registry.
-;   port = 1099
+    port = ${RMI_SERVER_PORT}
 ; A handler that agent's RMI server bound to. Defaults to the value of zone_name property
 ; in collector section.
 ;   handle = ${zone_name}
