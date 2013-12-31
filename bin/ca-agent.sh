@@ -10,7 +10,7 @@ grant {
 EOF
 trap "rm -f $RMI_POLICY_SERVER" EXIT
 
-ps cax | grep rmiregistry &>/dev/null
+ps cax -U `whoami` | grep rmiregistry &>/dev/null
 if [[ $? -ne 0 ]]; then
     rmiregistry "$RMI_SERVER_PORT" &
     RMI_REGISTRY_PID=$!
