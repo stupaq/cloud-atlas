@@ -1,12 +1,13 @@
 #!/bin/sh
 
-if [[ $# -ne 2 ]]; then
-    echo "Missing arguments: zone_name bind_port"
+if [[ $# -ne 3 ]]; then
+    echo "Missing arguments: zone_name bind_host bind_port"
     exit 1
 fi
 
 zone_name="$1"
-bind_port="$2"
+bind_host="$2"
+bind_port="$3"
 config_file="${CONFIGS_DIR:?Variable CONFIGS_DIR must be set!}/$zone_name/`basename ${0%.*}.ini`"
 
 mkdir -p `dirname ${config_file}`
@@ -49,6 +50,8 @@ egrep '^[^;].*$' > ${config_file} <<EOF
 ; If this section is not present then the agent wil not start the service (that means no
 ; gossiping can be made between this agent and the world).
 [gossiping]
+; Obligatory host address that this agent listens on for gossiping requests.
+    bind_host = ${bind_host}
 ; Obligatory port that this agent listens on for gossiping requests.
     bind_port = ${bind_port}
 ; Determines how often gossiping should be initiated by the agent, defaults to 5s.

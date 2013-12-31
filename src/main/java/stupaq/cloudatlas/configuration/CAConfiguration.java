@@ -7,6 +7,7 @@ import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.DataConfiguration;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +15,11 @@ import stupaq.cloudatlas.attribute.values.CAContact;
 import stupaq.cloudatlas.naming.EntityName;
 import stupaq.cloudatlas.naming.GlobalName;
 import stupaq.cloudatlas.plugins.PluginLoader;
+import stupaq.cloudatlas.services.busybody.BusybodyConfigKeys;
 import stupaq.cloudatlas.services.collector.AttributesCollectorConfigKeys;
 import stupaq.cloudatlas.services.zonemanager.ZoneManagerConfigKeys;
 
-public class CAConfiguration extends DataConfiguration {
+public class CAConfiguration extends DataConfiguration implements BusybodyConfigKeys {
   public CAConfiguration() {
     this(new BaseConfiguration());
   }
@@ -58,8 +60,11 @@ public class CAConfiguration extends DataConfiguration {
     return containsKey(key) ? PluginLoader.<Contract>forName(bundle + getString(key)) : fallback;
   }
 
-  public CAContact getLocalContact(int port) {
-    return new CAContact("127.0.0.1:" + port);
+  public CAContact getLocalContact() {
+    if (containsKey(BIND_HOST) && containsKey(BIND_PORT)) {
+      return new CAContact(new InetSocketAddress(getString(BIND_HOST), getInt(BIND_PORT)));
+    }
+    return null;
   }
 
   public void mustContain(String key) {

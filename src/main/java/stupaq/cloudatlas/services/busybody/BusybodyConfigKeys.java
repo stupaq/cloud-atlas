@@ -4,6 +4,7 @@ public interface BusybodyConfigKeys {
   // Runtime configuration section
   static final String PREFIX = "gossiping.";
   // Runtime configuration entries
+  static final String BIND_HOST = PREFIX + "bind_host";
   static final String BIND_PORT = PREFIX + "bind_port";
   static final String GOSSIP_PERIOD = PREFIX + "period";
   static final long GOSSIP_PERIOD_DEFAULT = 5 * 1000L;

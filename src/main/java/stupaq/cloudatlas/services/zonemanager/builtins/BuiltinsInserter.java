@@ -29,8 +29,7 @@ public class BuiltinsInserter extends Inserter<ZoneManagementInfo>
     leafLevel = agentsName.leafLevel();
     owner = new CAString(agentsName.toString());
     Collection<CAContact> contacts;
-    selfContact =
-        config.containsKey(BIND_PORT) ? config.getLocalContact(config.getInt(BIND_PORT)) : null;
+    selfContact = config.getLocalContact();
   }
 
   @Override

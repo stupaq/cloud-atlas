@@ -77,6 +77,7 @@ public class Busybody extends AbstractScheduledService
   private CAContact contactSelf;
 
   public Busybody(BootstrapConfiguration config) {
+    config.mustContain(BIND_HOST);
     config.mustContain(BIND_PORT);
     this.config = config;
     bus = config.bus();
@@ -97,7 +98,7 @@ public class Busybody extends AbstractScheduledService
   protected void startUp() {
     // Bootstrap Netty
     group = new NioEventLoopGroup();
-    contactSelf = config.getLocalContact(config.getInt(BIND_PORT));
+    contactSelf = config.getLocalContact();
     channel = new Bootstrap().group(group)
         .channel(NioDatagramChannel.class)
         .handler(new ChannelInitializer(config))
