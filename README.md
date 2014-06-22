@@ -2,6 +2,8 @@ CloudAtlas
 ==========
 CloudAtlas is a system for managing large collections of distributed resources.
 
+[![Build Status](https://travis-ci.org/stupaq/cloud-atlas.svg?branch=master)](https://travis-ci.org/stupaq/cloud-atlas)
+
 Compilation and installation
 ----------------------------
 There is not much to do at this point. To compile project run `mvn compile`, to build binaries `mvn package`.
